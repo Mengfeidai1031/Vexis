@@ -13,20 +13,30 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->string('nombre', 255);
+            $table->string('apellidos', 255);
+            $table->unsignedBigInteger('empresa_id');
+            $table->unsignedBigInteger('departamento_id');
+            $table->unsignedBigInteger('centro_id');
+            $table->string('email', 255)->unique();
+            $table->string('telefono', 12)->nullable();
+            $table->string('extension', 10)->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+    
+            // Relaciones
+            $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');
+            $table->foreign('departamento_id')->references('id')->on('departamentos')->onDelete('cascade');
+            $table->foreign('centro_id')->references('id')->on('centros')->onDelete('cascade');
         });
-
+    
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
-
+    
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->foreignId('user_id')->nullable()->index();
