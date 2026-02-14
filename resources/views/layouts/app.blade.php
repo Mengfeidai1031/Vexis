@@ -26,6 +26,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('users.index') }}">Usuarios</a>
+                        </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                                 {{ Auth::user()->nombre }}
