@@ -125,4 +125,12 @@ class UserRepository implements UserRepositoryInterface
     {
         return Centro::where('empresa_id', $empresaId)->get();
     }
+
+    /**
+     * Obtener todos los roles para el formulario
+     */
+    public function getRoles()
+    {
+        return \Spatie\Permission\Models\Role::all();
+    }
 }

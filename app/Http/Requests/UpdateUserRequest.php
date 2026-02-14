@@ -14,8 +14,8 @@ class UpdateUserRequest extends FormRequest
 
     public function rules(): array
     {
-        $userId = $this->route('user'); // Obtiene el ID de la ruta
-
+        $userId = $this->route('user');
+    
         return [
             'nombre' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
@@ -26,11 +26,13 @@ class UpdateUserRequest extends FormRequest
                 'required',
                 'email',
                 'max:255',
-                Rule::unique('users')->ignore($userId), // Ignora el email del usuario actual
+                Rule::unique('users')->ignore($userId),
             ],
             'telefono' => 'nullable|string|max:12',
             'extension' => 'nullable|string|max:10',
-            'password' => 'nullable|string|min:6|confirmed', // Nullable al editar
+            'password' => 'nullable|string|min:6|confirmed',
+            'roles' => 'nullable|array', // AÑADIR ESTA LÍNEA
+            'roles.*' => 'exists:roles,id', // AÑADIR ESTA LÍNEA
         ];
     }
 

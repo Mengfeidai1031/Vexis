@@ -53,4 +53,9 @@ interface UserRepositoryInterface
      * Obtener centros filtrados por empresa
      */
     public function getCentrosByEmpresa(int $empresaId);
+
+    /**
+     * Obtener todos los roles para el formulario
+     */
+    public function getRoles();
 }

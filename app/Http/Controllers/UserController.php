@@ -42,6 +42,7 @@ class UserController extends Controller
         $empresas = $this->userRepository->getEmpresas();
         $departamentos = $this->userRepository->getDepartamentos();
         $centros = $this->userRepository->getCentros();
+        $roles = $this->userRepository->getRoles();
 
         return view('users.create', compact('empresas', 'departamentos', 'centros'));
     }
@@ -51,7 +52,12 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        $this->userRepository->create($request->validated());
+        $user = $this->userRepository->create($request->validated());
+
+        // Asignar roles si se proporcionaron
+        if ($request->has('roles')) {
+            $user->syncRoles($request->roles);
+        }
 
         return redirect()->route('users.index')
             ->with('success', 'Usuario creado exitosamente.');
@@ -75,6 +81,7 @@ class UserController extends Controller
         $empresas = $this->userRepository->getEmpresas();
         $departamentos = $this->userRepository->getDepartamentos();
         $centros = $this->userRepository->getCentros();
+        $roles = $this->userRepository->getRoles();
 
         return view('users.edit', compact('user', 'empresas', 'departamentos', 'centros'));
     }
@@ -84,8 +91,15 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, int $id)
     {
-        $this->userRepository->update($id, $request->validated());
-
+        $user = $this->userRepository->update($id, $request->validated());
+        
+        // Sincronizar roles
+        if ($request->has('roles')) {
+            $user->syncRoles($request->roles);
+        } else {
+            $user->syncRoles([]);
+        }
+    
         return redirect()->route('users.index')
             ->with('success', 'Usuario actualizado exitosamente.');
     }

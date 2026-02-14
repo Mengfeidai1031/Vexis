@@ -35,6 +35,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('centros.index') }}">Centros</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('roles.index') }}">Roles y Permisos</a>
+                        </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                                 {{ Auth::user()->nombre }}

@@ -66,6 +66,18 @@
                             </td>
                         </tr>
                         <tr>
+                            <th>Roles Asignados</th>
+                            <td>
+                                @if($user->roles->count() > 0)
+                                    @foreach($user->roles as $role)
+                                        <span class="badge bg-primary">{{ $role->name }}</span>
+                                    @endforeach
+                                @else
+                                    <span class="text-muted">Sin roles asignados</span>
+                                @endif
+                            </td>
+                        </tr>
+                        <tr>
                             <th>Fecha de Creación</th>
                             <td>{{ $user->created_at->format('d/m/Y H:i') }}</td>
                         </tr>

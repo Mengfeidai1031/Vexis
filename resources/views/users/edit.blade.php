@@ -163,6 +163,33 @@
                         @enderror
                     </div>
 
+                    <!-- Roles -->
+                    <div class="mb-3">
+                        <label class="form-label">Roles</label>
+                        <p class="text-muted small">Seleccione uno o varios roles para el usuario</p>
+                        @php
+                            $userRoleIds = $user->roles->pluck('id')->toArray();
+                        @endphp
+                        @foreach($roles as $role)
+                            <div class="form-check">
+                                <input 
+                                    class="form-check-input" 
+                                    type="checkbox" 
+                                    name="roles[]" 
+                                    value="{{ $role->id }}" 
+                                    id="role-{{ $role->id }}"
+                                    {{ in_array($role->id, old('roles', $userRoleIds)) ? 'checked' : '' }}
+                                >
+                                <label class="form-check-label" for="role-{{ $role->id }}">
+                                    {{ $role->name }}
+                                </label>
+                            </div>
+                        @endforeach
+                        @error('roles')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+
                     <!-- Password (opcional) -->
                     <div class="mb-3">
                         <label for="password" class="form-label">Nueva Contraseña (dejar en blanco para no cambiar)</label>

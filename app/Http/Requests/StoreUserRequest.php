@@ -29,6 +29,8 @@ class StoreUserRequest extends FormRequest
             'telefono' => 'nullable|string|max:12',
             'extension' => 'nullable|string|max:10',
             'password' => 'required|string|min:6|confirmed',
+            'roles' => 'nullable|array',
+            'roles.*' => 'exists:roles,id',
         ];
     }
 
