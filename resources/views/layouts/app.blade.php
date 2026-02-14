@@ -26,18 +26,31 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('users.index') }}">Usuarios</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('departamentos.index') }}">Departamentos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('centros.index') }}">Centros</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('roles.index') }}">Roles y Permisos</a>
-                        </li>
+                        
+                        @can('ver usuarios')
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('users.index') }}">Usuarios</a>
+                            </li>
+                        @endcan
+                        
+                        @can('ver departamentos')
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('departamentos.index') }}">Departamentos</a>
+                            </li>
+                        @endcan
+                        
+                        @can('ver centros')
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('centros.index') }}">Centros</a>
+                            </li>
+                        @endcan
+                        
+                        @can('ver roles')
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('roles.index') }}">Roles y Permisos</a>
+                            </li>
+                        @endcan
+                        
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                                 {{ Auth::user()->nombre }}

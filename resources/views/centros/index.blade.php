@@ -7,9 +7,11 @@
     <div class="col-12">
         <div class="d-flex justify-content-between align-items-center">
             <h2>Gestión de Centros</h2>
-            <a href="{{ route('centros.create') }}" class="btn btn-primary">
-                Nuevo Centro
-            </a>
+            @can('crear centros')
+                <a href="{{ route('centros.create') }}" class="btn btn-primary">
+                    Nuevo Centro
+                </a>
+            @endcan
         </div>
     </div>
 </div>
@@ -84,24 +86,32 @@
                                         <td>{{ $centro->provincia }}</td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                <a href="{{ route('centros.show', $centro->id) }}" 
-                                                   class="btn btn-sm btn-info">
-                                                    Ver
-                                                </a>
-                                                <a href="{{ route('centros.edit', $centro->id) }}" 
-                                                   class="btn btn-sm btn-warning">
-                                                    Editar
-                                                </a>
-                                                <form action="{{ route('centros.destroy', $centro->id) }}" 
-                                                      method="POST" 
-                                                      class="d-inline"
-                                                      onsubmit="return confirm('¿Está seguro de eliminar este centro?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger">
-                                                        Eliminar
-                                                    </button>
-                                                </form>
+                                                @can('ver centros')
+                                                    <a href="{{ route('centros.show', $centro->id) }}" 
+                                                       class="btn btn-sm btn-info">
+                                                        Ver
+                                                    </a>
+                                                @endcan
+                                                
+                                                @can('editar centros')
+                                                    <a href="{{ route('centros.edit', $centro->id) }}" 
+                                                       class="btn btn-sm btn-warning">
+                                                        Editar
+                                                    </a>
+                                                @endcan
+                                                
+                                                @can('eliminar centros')
+                                                    <form action="{{ route('centros.destroy', $centro->id) }}" 
+                                                          method="POST" 
+                                                          class="d-inline"
+                                                          onsubmit="return confirm('¿Está seguro de eliminar este centro?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-danger">
+                                                            Eliminar
+                                                        </button>
+                                                    </form>
+                                                @endcan
                                             </div>
                                         </td>
                                     </tr>

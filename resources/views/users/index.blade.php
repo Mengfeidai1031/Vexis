@@ -7,9 +7,11 @@
     <div class="col-12">
         <div class="d-flex justify-content-between align-items-center">
             <h2>Gestión de Usuarios</h2>
-            <a href="{{ route('users.create') }}" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i> Nuevo Usuario
-            </a>
+            @can('crear usuarios')
+                <a href="{{ route('users.create') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Nuevo Usuario
+                </a>
+            @endcan
         </div>
     </div>
 </div>
@@ -79,28 +81,36 @@
                                         <td>{{ $user->telefono ?? 'N/A' }}</td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                <a href="{{ route('users.show', $user->id) }}" 
-                                                   class="btn btn-sm btn-info" 
-                                                   title="Ver">
-                                                    Ver
-                                                </a>
-                                                <a href="{{ route('users.edit', $user->id) }}" 
-                                                   class="btn btn-sm btn-warning" 
-                                                   title="Editar">
-                                                    Editar
-                                                </a>
-                                                <form action="{{ route('users.destroy', $user->id) }}" 
-                                                      method="POST" 
-                                                      class="d-inline"
-                                                      onsubmit="return confirm('¿Está seguro de eliminar este usuario?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" 
-                                                            class="btn btn-sm btn-danger" 
-                                                            title="Eliminar">
-                                                        Eliminar
-                                                    </button>
-                                                </form>
+                                                @can('ver usuarios')
+                                                    <a href="{{ route('users.show', $user->id) }}" 
+                                                       class="btn btn-sm btn-info" 
+                                                       title="Ver">
+                                                        Ver
+                                                    </a>
+                                                @endcan
+                                                
+                                                @can('editar usuarios')
+                                                    <a href="{{ route('users.edit', $user->id) }}" 
+                                                       class="btn btn-sm btn-warning" 
+                                                       title="Editar">
+                                                        Editar
+                                                    </a>
+                                                @endcan
+                                                
+                                                @can('eliminar usuarios')
+                                                    <form action="{{ route('users.destroy', $user->id) }}" 
+                                                          method="POST" 
+                                                          class="d-inline"
+                                                          onsubmit="return confirm('¿Está seguro de eliminar este usuario?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" 
+                                                                class="btn btn-sm btn-danger" 
+                                                                title="Eliminar">
+                                                            Eliminar
+                                                        </button>
+                                                    </form>
+                                                @endcan
                                             </div>
                                         </td>
                                     </tr>

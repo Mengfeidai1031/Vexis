@@ -7,9 +7,11 @@
     <div class="col-12">
         <div class="d-flex justify-content-between align-items-center">
             <h2>Gestión de Roles y Permisos</h2>
-            <a href="{{ route('roles.create') }}" class="btn btn-primary">
-                Nuevo Rol
-            </a>
+            @can('crear roles')
+                <a href="{{ route('roles.create') }}" class="btn btn-primary">
+                    Nuevo Rol
+                </a>
+            @endcan
         </div>
     </div>
 </div>
@@ -88,30 +90,38 @@
                                         <td>{{ $role->created_at->format('d/m/Y') }}</td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                <a href="{{ route('roles.show', $role->id) }}" 
-                                                   class="btn btn-sm btn-info">
-                                                    Ver
-                                                </a>
-                                                <a href="{{ route('roles.edit', $role->id) }}" 
-                                                   class="btn btn-sm btn-warning">
-                                                    Editar
-                                                </a>
-                                                @if($role->users_count == 0)
-                                                    <form action="{{ route('roles.destroy', $role->id) }}" 
-                                                          method="POST" 
-                                                          class="d-inline"
-                                                          onsubmit="return confirm('¿Está seguro de eliminar este rol?');">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-danger">
+                                                @can('ver roles')
+                                                    <a href="{{ route('roles.show', $role->id) }}" 
+                                                       class="btn btn-sm btn-info">
+                                                        Ver
+                                                    </a>
+                                                @endcan
+                                                
+                                                @can('editar roles')
+                                                    <a href="{{ route('roles.edit', $role->id) }}" 
+                                                       class="btn btn-sm btn-warning">
+                                                        Editar
+                                                    </a>
+                                                @endcan
+                                                
+                                                @can('eliminar roles')
+                                                    @if($role->users_count == 0)
+                                                        <form action="{{ route('roles.destroy', $role->id) }}" 
+                                                              method="POST" 
+                                                              class="d-inline"
+                                                              onsubmit="return confirm('¿Está seguro de eliminar este rol?');">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                                Eliminar
+                                                            </button>
+                                                        </form>
+                                                    @else
+                                                        <button class="btn btn-sm btn-danger" disabled title="No se puede eliminar porque tiene usuarios asignados">
                                                             Eliminar
                                                         </button>
-                                                    </form>
-                                                @else
-                                                    <button class="btn btn-sm btn-danger" disabled title="No se puede eliminar porque tiene usuarios asignados">
-                                                        Eliminar
-                                                    </button>
-                                                @endif
+                                                    @endif
+                                                @endcan
                                             </div>
                                         </td>
                                     </tr>
