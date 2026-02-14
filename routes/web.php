@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DepartamentoController;
+use App\Http\Controllers\CentroController;
 
 // Ruta pública (página de inicio)
 Route::get('/', function () {
@@ -31,4 +32,7 @@ Route::middleware('auth')->group(function () {
 
     // CRUD de departamentos
     Route::resource('departamentos', DepartamentoController::class);
+
+    // CRUD de centros
+    Route::resource('centros', CentroController::class);
 });
