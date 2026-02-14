@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DepartamentoController;
 use App\Http\Controllers\CentroController;
+use App\Http\Controllers\RoleController;
 
 // Ruta pública (página de inicio)
 Route::get('/', function () {
@@ -25,14 +26,11 @@ Route::middleware('auth')->group(function () {
         return view('dashboard');
     })->name('dashboard');
 
-    // Rutas de usuarios (CRUD completo)
     Route::resource('users', UserController::class);
     Route::get('/api/centros-by-empresa', [UserController::class, 'getCentrosByEmpresa'])
         ->name('api.centros-by-empresa');
 
-    // CRUD de departamentos
     Route::resource('departamentos', DepartamentoController::class);
-
-    // CRUD de centros
     Route::resource('centros', CentroController::class);
+    Route::resource('roles', RoleController::class);
 });

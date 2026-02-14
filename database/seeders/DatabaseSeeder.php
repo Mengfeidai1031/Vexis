@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             EmpresaSeeder::class,
             DepartamentoSeeder::class,
             CentroSeeder::class,
+            RolePermissionSeeder::class,
             UserSeeder::class,
         ]);
     }
