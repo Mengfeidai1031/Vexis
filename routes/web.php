@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 
 // Ruta pública (página de inicio)
 Route::get('/', function () {
@@ -21,4 +22,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+
+    // Rutas de usuarios (CRUD completo)
+    Route::resource('users', UserController::class);
+    
+    // Ruta API para obtener centros por empresa
+    Route::get('/api/centros-by-empresa', [UserController::class, 'getCentrosByEmpresa'])
+        ->name('api.centros-by-empresa');
 });
