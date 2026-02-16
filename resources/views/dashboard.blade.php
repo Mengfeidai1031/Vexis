@@ -114,6 +114,17 @@
                             </div>
                         </div>
                     @endcan
+                    @can('ver ofertas')
+                        <div class="col-md-3 mb-3">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">Ofertas</h5>
+                                    <p class="card-text">Gestión de ofertas comerciales</p>
+                                    <a href="{{ route('ofertas.index') }}" class="btn btn-primary btn-sm">Acceder</a>
+                                </div>
+                            </div>
+                        </div>
+                    @endcan
                 </div>
             </div>
         </div>

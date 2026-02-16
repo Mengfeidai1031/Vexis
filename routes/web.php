@@ -8,6 +8,7 @@ use App\Http\Controllers\CentroController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\VehiculoController;
+use App\Http\Controllers\OfertaController;
 
 // Ruta pública (página de inicio)
 Route::get('/', function () {
@@ -155,5 +156,20 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['permission:eliminar vehículos'])->group(function () {
         Route::delete('/vehiculos/{vehiculo}', [VehiculoController::class, 'destroy'])->name('vehiculos.destroy');
+    });
+
+    // CRUD de ofertas - Solo con permisos
+    Route::middleware(['permission:ver ofertas'])->group(function () {
+        Route::get('/ofertas', [OfertaController::class, 'index'])->name('ofertas.index');
+        Route::get('/ofertas/{oferta}', [OfertaController::class, 'show'])->name('ofertas.show');
+    });
+
+    Route::middleware(['permission:crear ofertas'])->group(function () {
+        Route::get('/ofertas/create', [OfertaController::class, 'create'])->name('ofertas.create');
+        Route::post('/ofertas', [OfertaController::class, 'store'])->name('ofertas.store');
+    });
+
+    Route::middleware(['permission:eliminar ofertas'])->group(function () {
+        Route::delete('/ofertas/{oferta}', [OfertaController::class, 'destroy'])->name('ofertas.destroy');
     });
 });

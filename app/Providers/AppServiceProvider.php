@@ -15,6 +15,8 @@ use App\Repositories\Interfaces\ClienteRepositoryInterface;
 use App\Repositories\ClienteRepository;
 use App\Repositories\Interfaces\VehiculoRepositoryInterface;
 use App\Repositories\VehiculoRepository;
+use App\Repositories\Interfaces\OfertaRepositoryInterface;
+use App\Repositories\OfertaRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
         $this->app->bind(ClienteRepositoryInterface::class, ClienteRepository::class);
         $this->app->bind(VehiculoRepositoryInterface::class, VehiculoRepository::class);
+        $this->app->bind(OfertaRepositoryInterface::class, OfertaRepository::class);
     }
 
     public function boot(): void

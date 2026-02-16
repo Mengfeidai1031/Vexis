@@ -62,7 +62,13 @@
                                 <a class="nav-link" href="{{ route('vehiculos.index') }}">Vehículos</a>
                             </li>
                         @endcan
-                        
+
+                        @can('ver ofertas')
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('ofertas.index') }}">Ofertas</a>
+                            </li>
+                        @endcan
+                            
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                                 {{ Auth::user()->nombre }}
