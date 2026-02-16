@@ -50,6 +50,12 @@
                                 <a class="nav-link" href="{{ route('roles.index') }}">Roles y Permisos</a>
                             </li>
                         @endcan
+
+                        @can('ver clientes')
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('clientes.index') }}">Clientes</a>
+                            </li>
+                        @endcan
                         
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">

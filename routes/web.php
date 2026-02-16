@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DepartamentoController;
 use App\Http\Controllers\CentroController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\ClienteController;
 
 // Ruta pública (página de inicio)
 Route::get('/', function () {
@@ -111,5 +112,26 @@ Route::middleware('auth')->group(function () {
     
     Route::middleware(['permission:eliminar roles'])->group(function () {
         Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
+    });
+
+    // CRUD de clientes - Solo con permisos
+    Route::middleware(['permission:ver clientes'])->group(function () {
+        Route::get('/clientes', [ClienteController::class, 'index'])->name('clientes.index');
+        Route::get('/clientes/{cliente}', [ClienteController::class, 'show'])->name('clientes.show');
+    });
+
+    Route::middleware(['permission:crear clientes'])->group(function () {
+        Route::get('/clientes/create', [ClienteController::class, 'create'])->name('clientes.create');
+        Route::post('/clientes', [ClienteController::class, 'store'])->name('clientes.store');
+    });
+
+    Route::middleware(['permission:editar clientes'])->group(function () {
+        Route::get('/clientes/{cliente}/edit', [ClienteController::class, 'edit'])->name('clientes.edit');
+        Route::put('/clientes/{cliente}', [ClienteController::class, 'update'])->name('clientes.update');
+        Route::patch('/clientes/{cliente}', [ClienteController::class, 'update']);
+    });
+
+    Route::middleware(['permission:eliminar clientes'])->group(function () {
+        Route::delete('/clientes/{cliente}', [ClienteController::class, 'destroy'])->name('clientes.destroy');
     });
 });

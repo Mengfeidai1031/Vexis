@@ -11,6 +11,8 @@ use App\Repositories\Interfaces\CentroRepositoryInterface;
 use App\Repositories\CentroRepository;
 use App\Repositories\Interfaces\RoleRepositoryInterface;
 use App\Repositories\RoleRepository;
+use App\Repositories\Interfaces\ClienteRepositoryInterface;
+use App\Repositories\ClienteRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,6 +22,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(DepartamentoRepositoryInterface::class, DepartamentoRepository::class);
         $this->app->bind(CentroRepositoryInterface::class, CentroRepository::class);
         $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
+        $this->app->bind(ClienteRepositoryInterface::class, ClienteRepository::class);
     }
 
     public function boot(): void
