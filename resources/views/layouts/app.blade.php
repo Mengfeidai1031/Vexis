@@ -56,6 +56,12 @@
                                 <a class="nav-link" href="{{ route('clientes.index') }}">Clientes</a>
                             </li>
                         @endcan
+
+                        @can('ver vehículos')
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('vehiculos.index') }}">Vehículos</a>
+                            </li>
+                        @endcan
                         
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">

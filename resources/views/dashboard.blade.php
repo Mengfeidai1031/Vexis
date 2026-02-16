@@ -103,6 +103,17 @@
                             </div>
                         </div>
                     @endcan
+                    @can('ver vehículos')
+                        <div class="col-md-3 mb-3">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">Vehículos</h5>
+                                    <p class="card-text">Gestión de vehículos</p>
+                                    <a href="{{ route('vehiculos.index') }}" class="btn btn-primary btn-sm">Acceder</a>
+                                </div>
+                            </div>
+                        </div>
+                    @endcan
                 </div>
             </div>
         </div>

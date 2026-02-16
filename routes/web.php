@@ -7,6 +7,7 @@ use App\Http\Controllers\DepartamentoController;
 use App\Http\Controllers\CentroController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\VehiculoController;
 
 // Ruta pública (página de inicio)
 Route::get('/', function () {
@@ -133,5 +134,26 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['permission:eliminar clientes'])->group(function () {
         Route::delete('/clientes/{cliente}', [ClienteController::class, 'destroy'])->name('clientes.destroy');
+    });
+
+    // CRUD de vehículos - Solo con permisos
+    Route::middleware(['permission:ver vehículos'])->group(function () {
+        Route::get('/vehiculos', [VehiculoController::class, 'index'])->name('vehiculos.index');
+        Route::get('/vehiculos/{vehiculo}', [VehiculoController::class, 'show'])->name('vehiculos.show');
+    });
+
+    Route::middleware(['permission:crear vehículos'])->group(function () {
+        Route::get('/vehiculos/create', [VehiculoController::class, 'create'])->name('vehiculos.create');
+        Route::post('/vehiculos', [VehiculoController::class, 'store'])->name('vehiculos.store');
+    });
+
+    Route::middleware(['permission:editar vehículos'])->group(function () {
+        Route::get('/vehiculos/{vehiculo}/edit', [VehiculoController::class, 'edit'])->name('vehiculos.edit');
+        Route::put('/vehiculos/{vehiculo}', [VehiculoController::class, 'update'])->name('vehiculos.update');
+        Route::patch('/vehiculos/{vehiculo}', [VehiculoController::class, 'update']);
+    });
+
+    Route::middleware(['permission:eliminar vehículos'])->group(function () {
+        Route::delete('/vehiculos/{vehiculo}', [VehiculoController::class, 'destroy'])->name('vehiculos.destroy');
     });
 });
