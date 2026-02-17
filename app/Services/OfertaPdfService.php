@@ -48,18 +48,15 @@ class OfertaPdfService
 
     /**
      * Extraer datos del texto del PDF
-     * NOTA: Esta función debe adaptarse al formato específico de tus PDFs
+     * Personalizado para el formato de Grupo ARI
      */
     private function extraerDatosDeTexto($texto)
     {
         $lineas = [];
         $fecha = now();
         
-        // IMPORTANTE: Aquí debes personalizar según el formato de tus PDFs
-        // Este es un ejemplo básico que busca patrones comunes
-        
-        // Buscar fecha (ejemplo: 22/01/2025 o 22-01-2025)
-        if (preg_match('/(\d{2})[\/\-](\d{2})[\/\-](\d{4})/', $texto, $matches)) {
+        // Buscar fecha en formato "Fecha Pedido 20/06/2025" o "Fecha Pedido DD/MM/YYYY"
+        if (preg_match('/Fecha\s+Pedido\s+(\d{2})\/(\d{2})\/(\d{4})/i', $texto, $matches)) {
             try {
                 $fecha = Carbon::createFromFormat('d/m/Y', "{$matches[1]}/{$matches[2]}/{$matches[3]}");
             } catch (\Exception $e) {
@@ -73,21 +70,120 @@ class OfertaPdfService
         foreach ($lineasTexto as $lineaTexto) {
             $lineaTexto = trim($lineaTexto);
             
-            // Buscar líneas con precios (ejemplo: "Descripción 1,234.56 €" o "Descripción 1234.56")
-            if (preg_match('/(.+?)\s+([\d,\.]+)\s*€?/', $lineaTexto, $matches)) {
+            // Saltar líneas vacías o muy cortas
+            if (strlen($lineaTexto) < 5) {
+                continue;
+            }
+            
+            // PATRÓN 1: "Modelo de interés ... 27.271,21 €"
+            if (preg_match('/^Modelo\s+de\s+interés\s+(.+?)\s+([\d.,]+)\s*€/', $lineaTexto, $matches)) {
+                $lineas[] = [
+                    'tipo' => 'opciones',
+                    'descripcion' => 'Modelo: ' . trim($matches[1]),
+                    'precio' => $this->convertirPrecio($matches[2]),
+                ];
+                continue;
+            }
+            
+            // PATRÓN 2: "Nissan Assistance: 30,00 €" o similar
+            if (preg_match('/^([^:]+):\s+([\d.,]+)\s*€/', $lineaTexto, $matches)) {
                 $descripcion = trim($matches[1]);
-                $precio = str_replace(',', '.', str_replace('.', '', $matches[2])); // 1.234,56 -> 1234.56
-                $precio = floatval($precio);
+                $precio = $this->convertirPrecio($matches[2]);
                 
-                // Determinar el tipo basado en palabras clave
-                $tipo = $this->determinarTipo($descripcion);
+                $lineas[] = [
+                    'tipo' => $this->determinarTipo($descripcion),
+                    'descripcion' => $descripcion,
+                    'precio' => $precio,
+                ];
+                continue;
+            }
+            
+            // PATRÓN 3: "Opciones Pack Diseño 560,11 €"
+            if (preg_match('/^Opciones\s+(.+?)\s+([\d.,]+)\s*€/', $lineaTexto, $matches)) {
+                $lineas[] = [
+                    'tipo' => 'opciones',
+                    'descripcion' => trim($matches[1]),
+                    'precio' => $this->convertirPrecio($matches[2]),
+                ];
+                continue;
+            }
+            
+            // PATRÓN 4: "Pintura / Interior ... 305,61 €"
+            if (preg_match('/^Pintura\s*\/\s*Interior\s+(.+?)\s+([\d.,]+)\s*€/', $lineaTexto, $matches)) {
+                $lineas[] = [
+                    'tipo' => 'opciones',
+                    'descripcion' => 'Pintura/Interior: ' . trim($matches[1]),
+                    'precio' => $this->convertirPrecio($matches[2]),
+                ];
+                continue;
+            }
+            
+            // PATRÓN 5: "Oferta Promocional [099008] ... -3.007,00 €"
+            if (preg_match('/^Oferta\s+Promocional\s+\[[\w\d]+\]\s+(.+?)\s+(-?[\d.,]+)\s*€/', $lineaTexto, $matches)) {
+                $lineas[] = [
+                    'tipo' => 'descuento',
+                    'descripcion' => trim($matches[1]),
+                    'precio' => abs($this->convertirPrecio($matches[2])), // Guardamos como positivo
+                ];
+                continue;
+            }
+            
+            // PATRÓN 6: "Promociones: DTO ... -331,00 €" (Renault/Dacia)
+            if (preg_match('/^Promociones:\s+(.+?)\s+(-?[\d.,]+)\s*€/', $lineaTexto, $matches)) {
+                $lineas[] = [
+                    'tipo' => 'descuento',
+                    'descripcion' => trim($matches[1]),
+                    'precio' => abs($this->convertirPrecio($matches[2])),
+                ];
+                continue;
+            }
+            
+            // PATRÓN 7: "Transporte 353,00 €" o "Transporte: 270,00 €"
+            if (preg_match('/^Transporte:?\s+([\d.,]+)\s*€/', $lineaTexto, $matches)) {
+                $lineas[] = [
+                    'tipo' => 'opciones',
+                    'descripcion' => 'Transporte',
+                    'precio' => $this->convertirPrecio($matches[1]),
+                ];
+                continue;
+            }
+            
+            // PATRÓN 8: "Gastos Matriculación ... 890,00 €"
+            if (preg_match('/^Gastos\s+(.+?)\s+([\d.,]+)\s*€/', $lineaTexto, $matches) ||
+                preg_match('/^Gastos:\s+(.+?)\s+([\d.,]+)\s*€/', $lineaTexto, $matches)) {
+                $lineas[] = [
+                    'tipo' => 'accesorios',
+                    'descripcion' => trim($matches[1]),
+                    'precio' => $this->convertirPrecio($matches[2]),
+                ];
+                continue;
+            }
+            
+            // PATRÓN 9: "Color: ... 247,93 €"
+            if (preg_match('/^Color:\s+(.+?)\s+([\d.,]+)\s*€/', $lineaTexto, $matches)) {
+                $lineas[] = [
+                    'tipo' => 'opciones',
+                    'descripcion' => 'Color: ' . trim($matches[1]),
+                    'precio' => $this->convertirPrecio($matches[2]),
+                ];
+                continue;
+            }
+            
+            // PATRÓN 10: "pack look ... 347,11 €" o "cámara de visión trasera ... 181,82 €"
+            if (preg_match('/^([a-záéíóúñ\s]+?)\s+([\d.,]+)\s*€/i', $lineaTexto, $matches)) {
+                $descripcion = trim($matches[1]);
                 
-                // Solo agregar si tiene un precio válido
-                if ($precio > 0) {
+                // Saltar si es una línea de total o subtotal
+                if (preg_match('/^(base|total|subtotal|igic|impuesto)/i', $descripcion)) {
+                    continue;
+                }
+                
+                // Solo procesar si la descripción tiene al menos 5 caracteres
+                if (strlen($descripcion) >= 5) {
                     $lineas[] = [
-                        'tipo' => $tipo,
-                        'descripcion' => $descripcion,
-                        'precio' => $precio,
+                        'tipo' => $this->determinarTipo($descripcion),
+                        'descripcion' => ucfirst($descripcion),
+                        'precio' => $this->convertirPrecio($matches[2]),
                     ];
                 }
             }
@@ -100,24 +196,62 @@ class OfertaPdfService
     }
 
     /**
+     * Convertir precio del formato español (1.234,56) al formato decimal (1234.56)
+     */
+    private function convertirPrecio($precioTexto)
+    {
+        // Eliminar el signo negativo si existe (lo manejaremos después)
+        $esNegativo = strpos($precioTexto, '-') !== false;
+        $precioTexto = str_replace('-', '', $precioTexto);
+        
+        // Eliminar espacios
+        $precioTexto = str_replace(' ', '', $precioTexto);
+        
+        // Convertir formato español a decimal
+        // 1.234,56 → 1234.56
+        // 234,56 → 234.56
+        // 1234.56 → 1234.56 (ya está en formato correcto)
+        
+        if (strpos($precioTexto, ',') !== false) {
+            // Formato español: eliminar puntos y cambiar coma por punto
+            $precioTexto = str_replace('.', '', $precioTexto);
+            $precioTexto = str_replace(',', '.', $precioTexto);
+        }
+        
+        $precio = floatval($precioTexto);
+        
+        return $esNegativo ? -$precio : $precio;
+    }
+
+    /**
      * Determinar el tipo de línea basado en la descripción
      */
     private function determinarTipo($descripcion)
     {
         $descripcionLower = strtolower($descripcion);
         
+        // Descuentos
         if (strpos($descripcionLower, 'descuento') !== false || 
             strpos($descripcionLower, 'rebaja') !== false ||
-            strpos($descripcionLower, 'dto') !== false) {
+            strpos($descripcionLower, 'dto') !== false ||
+            strpos($descripcionLower, 'oferta') !== false ||
+            strpos($descripcionLower, 'promocion') !== false ||
+            strpos($descripcionLower, 'descto') !== false) {
             return 'descuento';
         }
         
+        // Accesorios y extras
         if (strpos($descripcionLower, 'accesorio') !== false || 
             strpos($descripcionLower, 'extra') !== false ||
-            strpos($descripcionLower, 'adicional') !== false) {
+            strpos($descripcionLower, 'adicional') !== false ||
+            strpos($descripcionLower, 'pack') !== false ||
+            strpos($descripcionLower, 'gastos') !== false ||
+            strpos($descripcionLower, 'matricula') !== false ||
+            strpos($descripcionLower, 'pre-entrega') !== false) {
             return 'accesorios';
         }
         
+        // Por defecto: opciones
         return 'opciones';
     }
 
