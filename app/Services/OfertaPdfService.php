@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\OfertaCabecera;
 use App\Models\OfertaLinea;
+use App\Models\Cliente;
+use App\Models\Vehiculo;
 use Spatie\PdfToText\Pdf;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
@@ -13,7 +15,7 @@ class OfertaPdfService
     /**
      * Procesar un archivo PDF de oferta
      */
-    public function procesarPdf($pdfFile, $clienteId, $vehiculoId)
+    public function procesarPdf($pdfFile)
     {
         // 1. Guardar el PDF
         $pdfPath = $pdfFile->store('ofertas/pdfs', 'public');
@@ -25,15 +27,32 @@ class OfertaPdfService
         // 3. Procesar el texto y extraer información
         $datosOferta = $this->extraerDatosDeTexto($texto);
         
-        // 4. Crear la oferta cabecera
+        // 4. Buscar o crear cliente
+        $clienteId = $this->buscarOCrearCliente($datosOferta['cliente']);
+        
+        // 5. Buscar o crear vehículo
+        $vehiculoId = $this->buscarOCrearVehiculo($datosOferta['vehiculo']);
+        
+        // 6. Calcular totales
+        $calculos = $this->calcularTotales($datosOferta['lineas']);
+        
+        // 7. Crear la oferta cabecera
         $ofertaCabecera = OfertaCabecera::create([
             'cliente_id' => $clienteId,
             'vehiculo_id' => $vehiculoId,
             'fecha' => $datosOferta['fecha'] ?? now(),
             'pdf_path' => $pdfPath,
+            'cliente_nombre_pdf' => $datosOferta['cliente']['nombre'] ?? null,
+            'cliente_dni_pdf' => $datosOferta['cliente']['dni'] ?? null,
+            'vehiculo_modelo_pdf' => $datosOferta['vehiculo']['modelo'] ?? null,
+            'vehiculo_chasis_pdf' => $datosOferta['vehiculo']['chasis'] ?? null,
+            'base_imponible' => $calculos['base_imponible'],
+            'impuestos' => $calculos['impuestos'],
+            'total_sin_impuestos' => $calculos['total_sin_impuestos'],
+            'total_con_impuestos' => $calculos['total_con_impuestos'],
         ]);
         
-        // 5. Crear las líneas de la oferta
+        // 8. Crear las líneas de la oferta
         foreach ($datosOferta['lineas'] as $lineaData) {
             OfertaLinea::create([
                 'oferta_cabecera_id' => $ofertaCabecera->id,
@@ -48,14 +67,15 @@ class OfertaPdfService
 
     /**
      * Extraer datos del texto del PDF
-     * Personalizado para el formato de Grupo ARI
      */
     private function extraerDatosDeTexto($texto)
     {
         $lineas = [];
         $fecha = now();
+        $cliente = [];
+        $vehiculo = [];
         
-        // Buscar fecha en formato "Fecha Pedido 20/06/2025" o "Fecha Pedido DD/MM/YYYY"
+        // Extraer fecha
         if (preg_match('/Fecha\s+Pedido\s+(\d{2})\/(\d{2})\/(\d{4})/i', $texto, $matches)) {
             try {
                 $fecha = Carbon::createFromFormat('d/m/Y', "{$matches[1]}/{$matches[2]}/{$matches[3]}");
@@ -64,13 +84,36 @@ class OfertaPdfService
             }
         }
         
-        // Dividir el texto en líneas
+        // Extraer datos del cliente
+        // Patrón: "Sr./Sra. Don/Doña NOMBRE APELLIDOS" seguido de DNI/NIF
+        if (preg_match('/(?:Sr\.|Sra\.)(?:\s+Do[ñn]a?)?\s+([A-Za-zÁÉÍÓÚáéíóúñÑ\s]+)/i', $texto, $matches)) {
+            $cliente['nombre'] = trim($matches[1]);
+        }
+        
+        // Buscar DNI/NIF
+        if (preg_match('/(?:DNI|NIF|N\.?I\.?F\.?):\s*([0-9]{8}[A-Z])/i', $texto, $matches)) {
+            $cliente['dni'] = trim($matches[1]);
+        }
+        
+        // Extraer datos del vehículo
+        // Buscar modelo (diferentes patrones según la marca)
+        if (preg_match('/Modelo\s+de\s+inter[eé]s\s+(.+?)(?=\n|\d{1,3}\.\d{3},|\d{1,3},)/is', $texto, $matches)) {
+            $vehiculo['modelo'] = trim(preg_replace('/\s+/', ' ', $matches[1]));
+        } elseif (preg_match('/Modelo:\s+(.+?)(?=\n|\d)/is', $texto, $matches)) {
+            $vehiculo['modelo'] = trim(preg_replace('/\s+/', ' ', $matches[1]));
+        }
+        
+        // Buscar chasis/bastidor
+        if (preg_match('/(?:Bastidor|Chasis|VIN)[\s:]+([A-Z0-9]{17})/i', $texto, $matches)) {
+            $vehiculo['chasis'] = trim($matches[1]);
+        }
+        
+        // Dividir el texto en líneas para procesar precios
         $lineasTexto = explode("\n", $texto);
         
         foreach ($lineasTexto as $lineaTexto) {
             $lineaTexto = trim($lineaTexto);
             
-            // Saltar líneas vacías o muy cortas
             if (strlen($lineaTexto) < 5) {
                 continue;
             }
@@ -85,7 +128,7 @@ class OfertaPdfService
                 continue;
             }
             
-            // PATRÓN 2: "Nissan Assistance: 30,00 €" o similar
+            // PATRÓN 2: "Nissan Assistance: 30,00 €"
             if (preg_match('/^([^:]+):\s+([\d.,]+)\s*€/', $lineaTexto, $matches)) {
                 $descripcion = trim($matches[1]);
                 $precio = $this->convertirPrecio($matches[2]);
@@ -123,12 +166,12 @@ class OfertaPdfService
                 $lineas[] = [
                     'tipo' => 'descuento',
                     'descripcion' => trim($matches[1]),
-                    'precio' => abs($this->convertirPrecio($matches[2])), // Guardamos como positivo
+                    'precio' => abs($this->convertirPrecio($matches[2])),
                 ];
                 continue;
             }
             
-            // PATRÓN 6: "Promociones: DTO ... -331,00 €" (Renault/Dacia)
+            // PATRÓN 6: "Promociones: DTO ... -331,00 €"
             if (preg_match('/^Promociones:\s+(.+?)\s+(-?[\d.,]+)\s*€/', $lineaTexto, $matches)) {
                 $lineas[] = [
                     'tipo' => 'descuento',
@@ -138,7 +181,7 @@ class OfertaPdfService
                 continue;
             }
             
-            // PATRÓN 7: "Transporte 353,00 €" o "Transporte: 270,00 €"
+            // PATRÓN 7: "Transporte 353,00 €"
             if (preg_match('/^Transporte:?\s+([\d.,]+)\s*€/', $lineaTexto, $matches)) {
                 $lineas[] = [
                     'tipo' => 'opciones',
@@ -169,16 +212,14 @@ class OfertaPdfService
                 continue;
             }
             
-            // PATRÓN 10: "pack look ... 347,11 €" o "cámara de visión trasera ... 181,82 €"
+            // PATRÓN 10: Genérico "descripción precio €"
             if (preg_match('/^([a-záéíóúñ\s]+?)\s+([\d.,]+)\s*€/i', $lineaTexto, $matches)) {
                 $descripcion = trim($matches[1]);
                 
-                // Saltar si es una línea de total o subtotal
-                if (preg_match('/^(base|total|subtotal|igic|impuesto)/i', $descripcion)) {
+                if (preg_match('/^(base|total|subtotal|igic|impuesto|iva)/i', $descripcion)) {
                     continue;
                 }
                 
-                // Solo procesar si la descripción tiene al menos 5 caracteres
                 if (strlen($descripcion) >= 5) {
                     $lineas[] = [
                         'tipo' => $this->determinarTipo($descripcion),
@@ -191,29 +232,118 @@ class OfertaPdfService
         
         return [
             'fecha' => $fecha,
+            'cliente' => $cliente,
+            'vehiculo' => $vehiculo,
             'lineas' => $lineas,
         ];
     }
 
     /**
-     * Convertir precio del formato español (1.234,56) al formato decimal (1234.56)
+     * Buscar o crear cliente basado en DNI
+     */
+    private function buscarOCrearCliente($datosCliente)
+    {
+        if (empty($datosCliente['dni'])) {
+            return null; // Permitir null si no se encuentra DNI
+        }
+
+        // Buscar cliente existente por DNI
+        $cliente = Cliente::where('dni', $datosCliente['dni'])->first();
+
+        if ($cliente) {
+            return $cliente->id;
+        }
+
+        // Si no existe, crear uno nuevo
+        $nombreCompleto = $datosCliente['nombre'] ?? 'Cliente Extraído PDF';
+        $partes = explode(' ', $nombreCompleto, 2);
+
+        $cliente = Cliente::create([
+            'nombre' => $partes[0] ?? 'Nombre',
+            'apellidos' => $partes[1] ?? 'Apellidos',
+            'empresa_id' => 1, // Empresa por defecto
+            'dni' => $datosCliente['dni'],
+            'domicilio' => 'Extraído de PDF',
+            'codigo_postal' => '00000',
+        ]);
+
+        return $cliente->id;
+    }
+
+    /**
+     * Buscar o crear vehículo basado en chasis
+     */
+    private function buscarOCrearVehiculo($datosVehiculo)
+    {
+        if (empty($datosVehiculo['chasis'])) {
+            return null; // Permitir null si no se encuentra chasis
+        }
+
+        // Buscar vehículo existente por chasis
+        $vehiculo = Vehiculo::where('chasis', $datosVehiculo['chasis'])->first();
+
+        if ($vehiculo) {
+            return $vehiculo->id;
+        }
+
+        // Si no existe, crear uno nuevo
+        $vehiculo = Vehiculo::create([
+            'chasis' => $datosVehiculo['chasis'],
+            'modelo' => $datosVehiculo['modelo'] ?? 'Modelo Extraído PDF',
+            'version' => 'Extraído de PDF',
+            'color_externo' => 'No especificado',
+            'color_interno' => 'No especificado',
+            'empresa_id' => 1, // Empresa por defecto
+        ]);
+
+        return $vehiculo->id;
+    }
+
+    /**
+     * Calcular totales de la oferta
+     */
+    private function calcularTotales($lineas)
+    {
+        $subtotalOpciones = 0;
+        $subtotalDescuentos = 0;
+        $subtotalAccesorios = 0;
+
+        foreach ($lineas as $linea) {
+            switch ($linea['tipo']) {
+                case 'opciones':
+                    $subtotalOpciones += $linea['precio'];
+                    break;
+                case 'descuento':
+                    $subtotalDescuentos += $linea['precio'];
+                    break;
+                case 'accesorios':
+                    $subtotalAccesorios += $linea['precio'];
+                    break;
+            }
+        }
+
+        $totalSinImpuestos = $subtotalOpciones - $subtotalDescuentos + $subtotalAccesorios;
+        $impuestos = $totalSinImpuestos * 0.095; // IGIC 9.5%
+        $totalConImpuestos = $totalSinImpuestos + $impuestos;
+
+        return [
+            'base_imponible' => $subtotalOpciones + $subtotalAccesorios,
+            'impuestos' => $impuestos,
+            'total_sin_impuestos' => $totalSinImpuestos,
+            'total_con_impuestos' => $totalConImpuestos,
+        ];
+    }
+
+    /**
+     * Convertir precio del formato español al decimal
      */
     private function convertirPrecio($precioTexto)
     {
-        // Eliminar el signo negativo si existe (lo manejaremos después)
         $esNegativo = strpos($precioTexto, '-') !== false;
         $precioTexto = str_replace('-', '', $precioTexto);
-        
-        // Eliminar espacios
         $precioTexto = str_replace(' ', '', $precioTexto);
         
-        // Convertir formato español a decimal
-        // 1.234,56 → 1234.56
-        // 234,56 → 234.56
-        // 1234.56 → 1234.56 (ya está en formato correcto)
-        
         if (strpos($precioTexto, ',') !== false) {
-            // Formato español: eliminar puntos y cambiar coma por punto
             $precioTexto = str_replace('.', '', $precioTexto);
             $precioTexto = str_replace(',', '.', $precioTexto);
         }
@@ -224,34 +354,28 @@ class OfertaPdfService
     }
 
     /**
-     * Determinar el tipo de línea basado en la descripción
+     * Determinar el tipo de línea
      */
     private function determinarTipo($descripcion)
     {
         $descripcionLower = strtolower($descripcion);
         
-        // Descuentos
         if (strpos($descripcionLower, 'descuento') !== false || 
             strpos($descripcionLower, 'rebaja') !== false ||
             strpos($descripcionLower, 'dto') !== false ||
             strpos($descripcionLower, 'oferta') !== false ||
-            strpos($descripcionLower, 'promocion') !== false ||
-            strpos($descripcionLower, 'descto') !== false) {
+            strpos($descripcionLower, 'promocion') !== false) {
             return 'descuento';
         }
         
-        // Accesorios y extras
         if (strpos($descripcionLower, 'accesorio') !== false || 
             strpos($descripcionLower, 'extra') !== false ||
-            strpos($descripcionLower, 'adicional') !== false ||
             strpos($descripcionLower, 'pack') !== false ||
             strpos($descripcionLower, 'gastos') !== false ||
-            strpos($descripcionLower, 'matricula') !== false ||
-            strpos($descripcionLower, 'pre-entrega') !== false) {
+            strpos($descripcionLower, 'matricula') !== false) {
             return 'accesorios';
         }
         
-        // Por defecto: opciones
         return 'opciones';
     }
 
@@ -260,12 +384,10 @@ class OfertaPdfService
      */
     public function eliminarOferta(OfertaCabecera $oferta)
     {
-        // Eliminar el PDF si existe
         if ($oferta->pdf_path && Storage::disk('public')->exists($oferta->pdf_path)) {
             Storage::disk('public')->delete($oferta->pdf_path);
         }
         
-        // Eliminar la oferta (las líneas se eliminan automáticamente por cascade)
         $oferta->delete();
     }
 }

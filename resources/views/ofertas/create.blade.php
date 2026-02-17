@@ -24,63 +24,23 @@
     <div class="col-md-8 offset-md-2">
         <!-- Información importante -->
         <div class="alert alert-info">
-            <h5 class="alert-heading"><i class="bi bi-info-circle"></i> Información Importante</h5>
-            <p>El sistema procesará automáticamente el PDF de la oferta comercial y extraerá:</p>
+            <h5 class="alert-heading"><i class="bi bi-info-circle"></i> Procesamiento Automático</h5>
+            <p>El sistema procesará automáticamente el PDF y extraerá:</p>
             <ul class="mb-0">
-                <li>Fecha de la oferta</li>
-                <li>Líneas de detalle (opciones, descuentos, accesorios)</li>
-                <li>Precios de cada línea</li>
+                <li><strong>Datos del cliente</strong> (nombre y DNI)</li>
+                <li><strong>Datos del vehículo</strong> (modelo y chasis)</li>
+                <li><strong>Fecha de la oferta</strong></li>
+                <li><strong>Líneas de detalle</strong> (opciones, descuentos, accesorios)</li>
+                <li><strong>Cálculos totales</strong> con impuestos</li>
             </ul>
             <hr>
-            <p class="mb-0"><strong>Nota:</strong> El formato del PDF puede variar. Si el sistema no extrae correctamente la información, puedes revisar y ajustar el servicio de procesamiento.</p>
+            <p class="mb-0"><strong>Nota:</strong> Si el cliente o vehículo no existen en la base de datos, se crearán automáticamente.</p>
         </div>
 
         <div class="card">
             <div class="card-body">
                 <form action="{{ route('ofertas.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-
-                    <!-- Cliente -->
-                    <div class="mb-3">
-                        <label for="cliente_id" class="form-label">Cliente <span class="text-danger">*</span></label>
-                        <select 
-                            class="form-select @error('cliente_id') is-invalid @enderror" 
-                            id="cliente_id" 
-                            name="cliente_id" 
-                            required
-                        >
-                            <option value="">Seleccione un cliente</option>
-                            @foreach($clientes as $cliente)
-                                <option value="{{ $cliente->id }}" {{ old('cliente_id') == $cliente->id ? 'selected' : '' }}>
-                                    {{ $cliente->nombre_completo }} - {{ $cliente->dni }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('cliente_id')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- Vehículo -->
-                    <div class="mb-3">
-                        <label for="vehiculo_id" class="form-label">Vehículo <span class="text-danger">*</span></label>
-                        <select 
-                            class="form-select @error('vehiculo_id') is-invalid @enderror" 
-                            id="vehiculo_id" 
-                            name="vehiculo_id" 
-                            required
-                        >
-                            <option value="">Seleccione un vehículo</option>
-                            @foreach($vehiculos as $vehiculo)
-                                <option value="{{ $vehiculo->id }}" {{ old('vehiculo_id') == $vehiculo->id ? 'selected' : '' }}>
-                                    {{ $vehiculo->modelo }} - {{ $vehiculo->version }} ({{ $vehiculo->chasis }})
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('vehiculo_id')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
 
                     <!-- Archivo PDF -->
                     <div class="mb-3">
@@ -123,7 +83,6 @@
 
 @push('scripts')
 <script>
-    // Mostrar información del archivo seleccionado
     document.getElementById('pdf_file').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {

@@ -33,19 +33,21 @@ class OfertaController extends Controller
 
     public function create()
     {
-        $clientes = $this->ofertaRepository->getClientes();
-        $vehiculos = $this->ofertaRepository->getVehiculos();
-        return view('ofertas.create', compact('clientes', 'vehiculos'));
+        return view('ofertas.create');
     }
 
-    public function store(StoreOfertaRequest $request)
+    public function store(Request $request)
     {
+        $request->validate([
+            'pdf_file' => 'required|file|mimes:pdf|max:10240',
+        ], [
+            'pdf_file.required' => 'Debe seleccionar un archivo PDF.',
+            'pdf_file.mimes' => 'El archivo debe ser un PDF.',
+            'pdf_file.max' => 'El archivo no puede superar los 10MB.',
+        ]);
+
         try {
-            $oferta = $this->pdfService->procesarPdf(
-                $request->file('pdf_file'),
-                $request->cliente_id,
-                $request->vehiculo_id
-            );
+            $oferta = $this->pdfService->procesarPdf($request->file('pdf_file'));
 
             return redirect()->route('ofertas.show', $oferta->id)
                 ->with('success', 'Oferta procesada exitosamente. Se encontraron ' . $oferta->lineas->count() . ' líneas.');

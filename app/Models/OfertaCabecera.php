@@ -15,10 +15,22 @@ class OfertaCabecera extends Model
         'vehiculo_id',
         'fecha',
         'pdf_path',
+        'cliente_nombre_pdf',
+        'cliente_dni_pdf',
+        'vehiculo_modelo_pdf',
+        'vehiculo_chasis_pdf',
+        'base_imponible',
+        'impuestos',
+        'total_sin_impuestos',
+        'total_con_impuestos',
     ];
 
     protected $casts = [
         'fecha' => 'datetime',
+        'base_imponible' => 'float',
+        'impuestos' => 'float',
+        'total_sin_impuestos' => 'float',
+        'total_con_impuestos' => 'float',
     ];
 
     /**
@@ -51,5 +63,29 @@ class OfertaCabecera extends Model
     public function getPrecioTotalAttribute(): float
     {
         return $this->lineas->sum('precio');
+    }
+
+    /**
+     * Obtener subtotal de opciones
+     */
+    public function getSubtotalOpcionesAttribute(): float
+    {
+        return $this->lineas()->where('tipo', 'opciones')->sum('precio');
+    }
+
+    /**
+     * Obtener subtotal de descuentos
+     */
+    public function getSubtotalDescuentosAttribute(): float
+    {
+        return $this->lineas()->where('tipo', 'descuento')->sum('precio');
+    }
+
+    /**
+     * Obtener subtotal de accesorios
+     */
+    public function getSubtotalAccesoriosAttribute(): float
+    {
+        return $this->lineas()->where('tipo', 'accesorios')->sum('precio');
     }
 }
