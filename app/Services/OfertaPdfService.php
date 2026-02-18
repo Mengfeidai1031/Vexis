@@ -533,38 +533,37 @@ final class OfertaPdfService
             'telefono' => '',
         ];
 
-        // RENAULT/DACIA: Buscar nombre de empresa
-        // Formato: "MOTOR ARI, S.A.(JUAN DOMINGUEZ PEREZ, 21)"
-        // El nombre completo incluye lo que está entre paréntesis
-        
-        if (preg_match('/([A-ZÁÉÍÓÚÑ][A-Za-záéíóúñÁÉÍÓÚÑ\s]+,\s*S\.?[AL]\.?)\s*\(([^)]+)\)/iu', $texto, $matches)) {
-            $nombreEmpresa = trim($matches[1]);
+        // RENAULT/DACIA: Buscar nombre de empresa después de "ESTABLECIMIENTO DE LA RED RENAULT"
+        // Formato: MOTOR ARI, S.A.(JUAN DOMINGUEZ PEREZ, 21)
+        if (preg_match('/ESTABLECIMIENTO\s+DE\s+LA\s+RED\s+RENAULT\s*\n\s*([A-Z][A-Z\s]+,\s*S\.?[AL]\.?)\s*\(([^)]+)\)/iu', $texto, $matches)) {
+            $nombreBase = trim($matches[1]);
             $direccionCorta = trim($matches[2]);
-            $datos['nombre'] = $nombreEmpresa . '(' . $direccionCorta . ')';
-            // Abreviatura: primera palabra del nombre
-            $palabras = explode(' ', $nombreEmpresa);
-            $datos['abreviatura'] = strtoupper(substr($palabras[0], 0, 5));
+            $datos['nombre'] = $nombreBase . '(' . $direccionCorta . ')';
+            // Abreviatura: primera palabra del nombre de empresa
+            $palabras = preg_split('/\s+/', $nombreBase);
+            $datos['abreviatura'] = strtoupper($palabras[0]);
         }
 
         // Buscar CIF (A + 8 números para S.A.)
-        if (preg_match('/\b([A]\d{8})\b/', $texto, $matches)) {
+        if (preg_match('/\b(A\d{8})\b/', $texto, $matches)) {
             $datos['cif'] = $matches[1];
         }
 
-        // Buscar teléfono de empresa (9 al principio)
-        // Buscar después de "Tel." o en el bloque de ESTABLECIMIENTO
-        if (preg_match('/Tel[.:\s]*(\d{9})/i', $texto, $matches)) {
-            $datos['telefono'] = $matches[1];
-        } elseif (preg_match('/\b(92\d{7})\b/', $texto, $matches)) {
-            // Teléfono que empieza con 92 (típico de Las Palmas)
+        // Buscar teléfono de empresa (después de Tel.:)
+        if (preg_match('/Tel\.?[:\s]*(\d{9})/i', $texto, $matches)) {
             $datos['telefono'] = $matches[1];
         }
 
-        // Buscar domicilio completo de empresa
-        // Formato: "JUAN DOMINGUEZ PEREZ, 21 Las Palmas De Gran Canaria, Las Palmas"
-        if (preg_match('/([A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑ\s]+,\s*\d+)\s+([A-Za-záéíóúñÁÉÍÓÚÑ\s,]+?)\s*\((\d{5})\)/iu', $texto, $matches)) {
+        // Buscar código postal de empresa (segundo CP - el de 35008)
+        if (preg_match_all('/\((\d{5})\)/', $texto, $matches)) {
+            if (count($matches[1]) >= 2) {
+                $datos['codigo_postal'] = $matches[1][1];
+            }
+        }
+
+        // Buscar domicilio completo de empresa: "JUAN DOMINGUEZ PEREZ, 21\nLas Palmas De Gran Canaria, Las Palmas"
+        if (preg_match('/([A-Z][A-Z\s]+PEREZ,\s*\d+)\s*\n\s*([A-Za-záéíóúñÁÉÍÓÚÑ\s]+,\s*[A-Za-záéíóúñÁÉÍÓÚÑ\s]+)\s*\(\d{5}\)/u', $texto, $matches)) {
             $datos['domicilio'] = trim($matches[1]) . ' ' . trim($matches[2]);
-            $datos['codigo_postal'] = $matches[3];
         }
 
         return $datos;
@@ -583,19 +582,32 @@ final class OfertaPdfService
             'codigo_postal' => '00000',
         ];
 
-        // RENAULT/DACIA: El nombre aparece después de "Sra./Sr."
-        // Formato: "Sra. Doña Asuncion Sosa" 
-        // donde "Doña" es el nombre y "Asuncion Sosa" son los apellidos
-        
-        if (preg_match('/Sra\.?\s+(Do[ñn]a)\s+([A-Za-záéíóúñÁÉÍÓÚÑ]+(?:\s+[A-Za-záéíóúñÁÉÍÓÚÑ]+)*)/iu', $texto, $matches)) {
-            $datos['nombre'] = trim($matches[1]); // Doña
-            $datos['apellidos'] = trim($matches[2]); // Asuncion Sosa
-            $datos['nombre_completo'] = $datos['nombre'] . ' ' . $datos['apellidos'];
+        // RENAULT/DACIA: Buscar "Sra. Doña Nombre Apellidos" 
+        // Doña = nombre, resto = apellidos
+        if (preg_match('/Sra\.?\s+Do[ñn]a\s+([A-Za-záéíóúñÁÉÍÓÚÑ\s]+?)(?=\s*\n)/iu', $texto, $matches)) {
+            $nombreCompleto = trim($matches[1]);
+            $datos['nombre'] = 'Doña';
+            $datos['apellidos'] = $nombreCompleto;
+            $datos['nombre_completo'] = 'Doña ' . $nombreCompleto;
+        }
+        // Patrón 2: "Sr. Don Nombre Apellido"
+        elseif (preg_match('/Sr\.?\s+Don\s+([A-Za-záéíóúñÁÉÍÓÚÑ\s]+?)(?=\s*\n)/iu', $texto, $matches)) {
+            $nombreCompleto = trim($matches[1]);
+            $datos['nombre'] = 'Don';
+            $datos['apellidos'] = $nombreCompleto;
+            $datos['nombre_completo'] = 'Don ' . $nombreCompleto;
         }
 
-        // Buscar email (primer email que aparece es del cliente)
-        if (preg_match('/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i', $texto, $matches)) {
-            $datos['email'] = strtolower(trim($matches[1]));
+        // Buscar domicilio del cliente: "Santa Maria De Guia De Gran C., Las Palmas (35450)"
+        if (preg_match('/(Santa\s+Maria[^(]+?)(,\s*Las\s+Palmas)?\s*\((\d{5})\)/iu', $texto, $matches)) {
+            $domicilio = trim($matches[1]);
+            if (!empty($matches[2])) {
+                $domicilio .= trim($matches[2]);
+            } else {
+                $domicilio .= ', Las Palmas';
+            }
+            $datos['domicilio'] = $domicilio;
+            $datos['codigo_postal'] = $matches[3];
         }
 
         // Buscar teléfono móvil del cliente (6 o 7 al principio)
@@ -603,11 +615,9 @@ final class OfertaPdfService
             $datos['telefono'] = $matches[1];
         }
 
-        // Buscar domicilio del cliente
-        // Formato: "Santa Maria De Guia De Gran C., Las Palmas"
-        if (preg_match('/(Santa\s+Maria[^,\(]+),\s*([A-Za-záéíóúñÁÉÍÓÚÑ\s]+?)\s*\((\d{5})\)/iu', $texto, $matches)) {
-            $datos['domicilio'] = trim($matches[1]) . ', ' . trim($matches[2]);
-            $datos['codigo_postal'] = $matches[3];
+        // Buscar email del cliente (gmail)
+        if (preg_match('/([a-zA-Z0-9._%+-]+@gmail\.com)/i', $texto, $matches)) {
+            $datos['email'] = strtolower(trim($matches[1]));
         }
 
         return $datos;
@@ -621,15 +631,8 @@ final class OfertaPdfService
         $texto = preg_replace('/[ \t]+/', ' ', $texto);
         $texto = str_replace("\r\n", "\n", $texto);
         
-        // DEBUG: Log del texto completo
-        \Illuminate\Support\Facades\Log::info('=== TEXTO PDF RENAULT/DACIA ===');
-        \Illuminate\Support\Facades\Log::info($texto);
-        \Illuminate\Support\Facades\Log::info('=== FIN TEXTO PDF ===');
-        
-        // RENAULT/DACIA: Extraer líneas según el PDF de ejemplo
-        
-        // 1. Modelo: "Modelo: DACIA SANDERO ... 13.325,04 €"
-        if (preg_match('/Modelo:\s*(.+?)\s+([\d.]+,\d{2})\s*€/iu', $texto, $match)) {
+        // 1. Modelo: "Modelo: DACIA SANDERO Stepway Expression Go 74kW (100CV) ECO-G SMVG MT 6WGS 13.325,04 €"
+        if (preg_match('/Modelo:\s*(.+?)\s+(\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
             $lineas[] = [
                 'tipo' => 'Modelo',
                 'descripcion' => trim($match[1]),
@@ -638,7 +641,7 @@ final class OfertaPdfService
         }
         
         // 2. Color: "Color: Negro Nacarado 676 0,00 €"
-        if (preg_match('/Color:\s*(.+?)\s+([\d.]+,\d{2})\s*€/iu', $texto, $match)) {
+        if (preg_match('/Color:\s*(.+?)\s+(\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
             $lineas[] = [
                 'tipo' => 'Color',
                 'descripcion' => trim($match[1]),
@@ -646,8 +649,8 @@ final class OfertaPdfService
             ];
         }
         
-        // 3. Tapicería: "Tapiceria: Tapiceria Stepway DRAP08 0,00 €"
-        if (preg_match('/Tapice[rí][ií]a:\s*(.+?)\s+([\d.]+,\d{2})\s*€/iu', $texto, $match)) {
+        // 3. Tapicería: "Tapicería: Tapicería Stepway DRAP08 0,00 €"
+        if (preg_match('/Tapicería:\s*(.+?)\s+(\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
             $lineas[] = [
                 'tipo' => 'Tapicería',
                 'descripcion' => 'Tapicería ' . trim($match[1]),
@@ -656,7 +659,7 @@ final class OfertaPdfService
         }
         
         // 4. Transporte: "Transporte: 270,00 €"
-        if (preg_match('/Transporte:\s*([\d.]+,\d{2})\s*€/iu', $texto, $match)) {
+        if (preg_match('/Transporte:\s*(\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
             $lineas[] = [
                 'tipo' => 'Transporte',
                 'descripcion' => 'sin descripcion',
@@ -664,22 +667,36 @@ final class OfertaPdfService
             ];
         }
         
-        // 5. Promociones - extraer TODAS (puede haber múltiples)
-        // "Promociones: DTO DACIA CREDITO -331,00 €"
-        // "Promociones: DIAS UNICOS DACIA -414,00 €"
-        // "Promociones: DTO MA EXTRA JUNIO CREDIT -200,00 €"
-        if (preg_match_all('/Promociones:\s*(.+?)\s+(-?[\d.]+,\d{2})\s*€/iu', $texto, $matches, PREG_SET_ORDER)) {
-            foreach ($matches as $match) {
-                $lineas[] = [
-                    'tipo' => 'Promociones',
-                    'descripcion' => trim($match[1]),
-                    'precio' => $this->convertirPrecio($match[2]),
-                ];
-            }
+        // 5. Promociones - buscar líneas individuales
+        // DTO DACIA CREDITO -331,00 €
+        if (preg_match('/DTO\s+DACIA\s+CREDITO\s+(-?\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
+            $lineas[] = [
+                'tipo' => 'Promociones',
+                'descripcion' => 'DTO DACIA CREDITO',
+                'precio' => $this->convertirPrecio($match[1]),
+            ];
         }
         
-        // 6. BASE IMPONIBLE: "BASE IMPONIBLE 12.650,04 €"
-        if (preg_match('/BASE\s+IMPONIBLE\s+([\d.]+,\d{2})\s*€/iu', $texto, $match)) {
+        // DIAS UNICOS DACIA -414,00 €
+        if (preg_match('/DIAS\s+UNICOS\s+DACIA\s+(-?\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
+            $lineas[] = [
+                'tipo' => 'Promociones',
+                'descripcion' => 'DIAS UNICOS DACIA',
+                'precio' => $this->convertirPrecio($match[1]),
+            ];
+        }
+        
+        // DTO MA EXTRA JUNIO CREDIT -200,00 €
+        if (preg_match('/DTO\s+MA\s+EXTRA\s+JUNIO\s+CREDIT\s+(-?\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
+            $lineas[] = [
+                'tipo' => 'Promociones',
+                'descripcion' => 'DTO MA EXTRA JUNIO CREDIT',
+                'precio' => $this->convertirPrecio($match[1]),
+            ];
+        }
+        
+        // 6. BASE IMPONIBLE 12.650,04 €
+        if (preg_match('/BASE\s+IMPONIBLE\s+(\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
             $lineas[] = [
                 'tipo' => 'BASE IMPONIBLE',
                 'descripcion' => 'sin descripcion',
@@ -687,8 +704,8 @@ final class OfertaPdfService
             ];
         }
         
-        // 7. Imp. Matriculación: "Imp. Matriculación Normal (0,00%) 0,00 €"
-        if (preg_match('/Imp\.\s*Matriculaci[oó]n\s+(.+?)\s+([\d.]+,\d{2})\s*€/iu', $texto, $match)) {
+        // 7. Imp. Matriculación Normal (0,00%) 0,00 €
+        if (preg_match('/Imp\.?\s*Matriculaci[oó]n\s+([^\d]+?)\s+(\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
             $lineas[] = [
                 'tipo' => 'Imp. Matriculación',
                 'descripcion' => trim($match[1]),
@@ -696,8 +713,8 @@ final class OfertaPdfService
             ];
         }
         
-        // 8. IGIC: "IGIC IGIC Normal (9,5%) 1.201,75 €"
-        if (preg_match('/IGIC\s+(.+?)\s+([\d.]+,\d{2})\s*€/iu', $texto, $match)) {
+        // 8. IGIC IGIC Normal (9,5%) 1.201,75 €
+        if (preg_match('/IGIC\s+(IGIC\s+[^\d]+?)\s+(\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
             $lineas[] = [
                 'tipo' => 'IGIC',
                 'descripcion' => trim($match[1]),
@@ -705,18 +722,17 @@ final class OfertaPdfService
             ];
         }
         
-        // 9. TOTAL IMPUESTOS INCLUIDOS: "TOTAL IMPUESTOS INCLUIDOS (Incluye un descuento...) 13.851,79 €"
-        if (preg_match('/TOTAL\s+IMPUESTOS\s+INCLUIDOS\s+\(([^)]+)\)\s+([\d.]+,\d{2})\s*€/iu', $texto, $match)) {
+        // 9. TOTAL IMPUESTOS INCLUIDOS (Incluye un descuento y/o bonificación total con impuestos de: 1.034,78 €) 13.851,79 €
+        if (preg_match('/TOTAL\s+IMPUESTOS\s+INCLUIDOS\s*(\([^)]+\))\s*(\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
             $lineas[] = [
                 'tipo' => 'TOTAL IMPUESTOS INCLUIDOS',
-                'descripcion' => '(' . trim($match[1]) . ')',
+                'descripcion' => trim($match[1]),
                 'precio' => $this->convertirPrecio($match[2]),
             ];
         }
         
-        // 10. Gastos - Primer gasto con "Gastos:"
-        // "Gastos: Matriculación y Pre-entrega 850,00 €"
-        if (preg_match('/Gastos:\s*Matriculaci[oó]n\s+y\s+Pre-?entrega\s+([\d.]+,\d{2})\s*€/iu', $texto, $match)) {
+        // 10. Gastos: Matriculación y Pre-entrega 850,00 €
+        if (preg_match('/Gastos:\s*Matriculaci[oó]n\s+y\s+Pre-?entrega\s+(\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
             $lineas[] = [
                 'tipo' => 'Gastos',
                 'descripcion' => 'Matriculación y Pre-entrega',
@@ -724,10 +740,8 @@ final class OfertaPdfService
             ];
         }
         
-        // 11. Gastos adicionales - SIN "Gastos:" precedente
-        // "DEFLECTORES + ANTENA TIB 237,17 €"
-        // Buscar después del primer gasto
-        if (preg_match('/Pre-?entrega\s+[\d.]+,\d{2}\s*€\s*\n?\s*(DEFLECTORES[^€]+?)\s+([\d.]+,\d{2})\s*€/iu', $texto, $match)) {
+        // 11. DEFLECTORES + ANTENA TIB 237,17 €
+        if (preg_match('/(DEFLECTORES\s*\+\s*ANTENA\s+TIB)\s+(\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
             $lineas[] = [
                 'tipo' => 'Gastos',
                 'descripcion' => trim($match[1]),
@@ -735,22 +749,14 @@ final class OfertaPdfService
             ];
         }
         
-        // 12. TOTAL VEHICULO + OTROS: "TOTAL VEHICULO + OTROS 14.938,96 €"
-        if (preg_match('/TOTAL\s+VEHICULO\s*\+\s*OTROS\s+([\d.]+,\d{2})\s*€/iu', $texto, $match)) {
+        // 12. TOTAL VEHICULO + OTROS 14.938,96 €
+        if (preg_match('/TOTAL\s+VEH[IÍ]CULO\s*\+\s*OTROS\s+(\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
             $lineas[] = [
                 'tipo' => 'TOTAL VEHICULO + OTROS',
                 'descripcion' => 'sin descripcion',
                 'precio' => $this->convertirPrecio($match[1]),
             ];
         }
-        
-        // DEBUG: Log de las líneas extraídas
-        \Illuminate\Support\Facades\Log::info('=== LÍNEAS EXTRAÍDAS ===');
-        \Illuminate\Support\Facades\Log::info('Total de líneas: ' . count($lineas));
-        foreach ($lineas as $i => $linea) {
-            \Illuminate\Support\Facades\Log::info(($i+1) . ". {$linea['tipo']} | {$linea['descripcion']} | {$linea['precio']}");
-        }
-        \Illuminate\Support\Facades\Log::info('=== FIN LÍNEAS ===');
         
         return $lineas;
     }
