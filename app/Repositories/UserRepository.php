@@ -17,6 +17,7 @@ class UserRepository implements UserRepositoryInterface
     public function all()
     {
         return User::with(['empresa', 'departamento', 'centro'])
+            ->withCount('restrictions')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
     }
@@ -27,6 +28,7 @@ class UserRepository implements UserRepositoryInterface
     public function search($searchTerm)
     {
         return User::with(['empresa', 'departamento', 'centro'])
+            ->withCount('restrictions')
             ->where(function($query) use ($searchTerm) {
                 $query->where('nombre', 'like', "%{$searchTerm}%")
                     ->orWhere('apellidos', 'like', "%{$searchTerm}%")
@@ -52,7 +54,7 @@ class UserRepository implements UserRepositoryInterface
      */
     public function find(int $id)
     {
-        return User::with(['empresa', 'departamento', 'centro'])->findOrFail($id);
+        return User::with(['empresa', 'departamento', 'centro', 'restrictions.restrictable'])->findOrFail($id);
     }
 
     /**
@@ -125,7 +127,7 @@ class UserRepository implements UserRepositoryInterface
     {
         return Centro::where('empresa_id', $empresaId)->get();
     }
-
+    
     /**
      * Obtener todos los roles para el formulario
      */

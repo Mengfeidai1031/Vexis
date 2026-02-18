@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
+
     use HasFactory, Notifiable, HasRoles;
 
     protected $fillable = [
@@ -59,6 +61,23 @@ class User extends Authenticatable
     public function centro(): BelongsTo
     {
         return $this->belongsTo(Centro::class);
+    }
+
+    /**
+     * Relación: Un usuario tiene muchas restricciones
+     */
+    public function restrictions(): HasMany
+    {
+        return $this->hasMany(UserRestriction::class);
+    }
+
+    /**
+     * Obtener restricciones de un tipo específico (polimórfico)
+     */
+    public function restrictionsOfType(string $modelClass): HasMany
+    {
+        return $this->hasMany(UserRestriction::class)
+            ->where('restrictable_type', $modelClass);
     }
 
     /**

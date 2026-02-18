@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCentroRequest;
 use App\Http\Requests\UpdateCentroRequest;
+use App\Models\Centro;
 use App\Repositories\Interfaces\CentroRepositoryInterface;
 use Illuminate\Http\Request;
 
@@ -35,6 +36,8 @@ class CentroController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Centro::class);
+        
         $empresas = $this->centroRepository->getEmpresas();
         return view('centros.create', compact('empresas'));
     }
@@ -44,6 +47,8 @@ class CentroController extends Controller
      */
     public function store(StoreCentroRequest $request)
     {
+        $this->authorize('create', Centro::class);
+        
         $this->centroRepository->create($request->validated());
 
         return redirect()->route('centros.index')
@@ -53,18 +58,20 @@ class CentroController extends Controller
     /**
      * Mostrar un centro específico
      */
-    public function show(int $id)
+    public function show(Centro $centro)
     {
-        $centro = $this->centroRepository->find($id);
+        $this->authorize('view', $centro);
+        
         return view('centros.show', compact('centro'));
     }
 
     /**
      * Mostrar formulario de edición
      */
-    public function edit(int $id)
+    public function edit(Centro $centro)
     {
-        $centro = $this->centroRepository->find($id);
+        $this->authorize('update', $centro);
+        
         $empresas = $this->centroRepository->getEmpresas();
         return view('centros.edit', compact('centro', 'empresas'));
     }
@@ -72,9 +79,11 @@ class CentroController extends Controller
     /**
      * Actualizar centro
      */
-    public function update(UpdateCentroRequest $request, int $id)
+    public function update(UpdateCentroRequest $request, Centro $centro)
     {
-        $this->centroRepository->update($id, $request->validated());
+        $this->authorize('update', $centro);
+        
+        $this->centroRepository->update($centro->id, $request->validated());
 
         return redirect()->route('centros.index')
             ->with('success', 'Centro actualizado exitosamente.');
@@ -83,10 +92,12 @@ class CentroController extends Controller
     /**
      * Eliminar centro
      */
-    public function destroy(int $id)
+    public function destroy(Centro $centro)
     {
+        $this->authorize('delete', $centro);
+        
         try {
-            $this->centroRepository->delete($id);
+            $this->centroRepository->delete($centro->id);
             return redirect()->route('centros.index')
                 ->with('success', 'Centro eliminado exitosamente.');
         } catch (\Exception $e) {

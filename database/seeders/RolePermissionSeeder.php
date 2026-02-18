@@ -14,63 +14,70 @@ class RolePermissionSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Crear permisos para Usuarios
-        Permission::create(['name' => 'ver usuarios']);
-        Permission::create(['name' => 'crear usuarios']);
-        Permission::create(['name' => 'editar usuarios']);
-        Permission::create(['name' => 'eliminar usuarios']);
+        Permission::firstOrCreate(['name' => 'ver usuarios']);
+        Permission::firstOrCreate(['name' => 'crear usuarios']);
+        Permission::firstOrCreate(['name' => 'editar usuarios']);
+        Permission::firstOrCreate(['name' => 'eliminar usuarios']);
 
         // Crear permisos para Departamentos
-        Permission::create(['name' => 'ver departamentos']);
-        Permission::create(['name' => 'crear departamentos']);
-        Permission::create(['name' => 'editar departamentos']);
-        Permission::create(['name' => 'eliminar departamentos']);
+        Permission::firstOrCreate(['name' => 'ver departamentos']);
+        Permission::firstOrCreate(['name' => 'crear departamentos']);
+        Permission::firstOrCreate(['name' => 'editar departamentos']);
+        Permission::firstOrCreate(['name' => 'eliminar departamentos']);
 
         // Crear permisos para Centros
-        Permission::create(['name' => 'ver centros']);
-        Permission::create(['name' => 'crear centros']);
-        Permission::create(['name' => 'editar centros']);
-        Permission::create(['name' => 'eliminar centros']);
+        Permission::firstOrCreate(['name' => 'ver centros']);
+        Permission::firstOrCreate(['name' => 'crear centros']);
+        Permission::firstOrCreate(['name' => 'editar centros']);
+        Permission::firstOrCreate(['name' => 'eliminar centros']);
 
         // Crear permisos para Clientes
-        Permission::create(['name' => 'ver clientes']);
-        Permission::create(['name' => 'crear clientes']);
-        Permission::create(['name' => 'editar clientes']);
-        Permission::create(['name' => 'eliminar clientes']);
+        Permission::firstOrCreate(['name' => 'ver clientes']);
+        Permission::firstOrCreate(['name' => 'crear clientes']);
+        Permission::firstOrCreate(['name' => 'editar clientes']);
+        Permission::firstOrCreate(['name' => 'eliminar clientes']);
 
         // Crear permisos para Vehículos
-        Permission::create(['name' => 'ver vehículos']);
-        Permission::create(['name' => 'crear vehículos']);
-        Permission::create(['name' => 'editar vehículos']);
-        Permission::create(['name' => 'eliminar vehículos']);
+        Permission::firstOrCreate(['name' => 'ver vehículos']);
+        Permission::firstOrCreate(['name' => 'crear vehículos']);
+        Permission::firstOrCreate(['name' => 'editar vehículos']);
+        Permission::firstOrCreate(['name' => 'eliminar vehículos']);
 
         // Crear permisos para Ofertas
-        Permission::create(['name' => 'ver ofertas']);
-        Permission::create(['name' => 'crear ofertas']);
-        Permission::create(['name' => 'editar ofertas']);
-        Permission::create(['name' => 'eliminar ofertas']);
+        Permission::firstOrCreate(['name' => 'ver ofertas']);
+        Permission::firstOrCreate(['name' => 'crear ofertas']);
+        Permission::firstOrCreate(['name' => 'editar ofertas']);
+        Permission::firstOrCreate(['name' => 'eliminar ofertas']);
 
         // Crear permisos para Roles
-        Permission::create(['name' => 'ver roles']);
-        Permission::create(['name' => 'crear roles']);
-        Permission::create(['name' => 'editar roles']);
-        Permission::create(['name' => 'eliminar roles']);
+        Permission::firstOrCreate(['name' => 'ver roles']);
+        Permission::firstOrCreate(['name' => 'crear roles']);
+        Permission::firstOrCreate(['name' => 'editar roles']);
+        Permission::firstOrCreate(['name' => 'eliminar roles']);
+
+        // Crear permisos para Restricciones
+        Permission::firstOrCreate(['name' => 'ver restricciones']);
+        Permission::firstOrCreate(['name' => 'crear restricciones']);
+        Permission::firstOrCreate(['name' => 'editar restricciones']);
+        Permission::firstOrCreate(['name' => 'eliminar restricciones']);
 
         // Crear rol de Super Admin (tiene todos los permisos)
-        $superAdminRole = Role::create(['name' => 'Super Admin']);
-        $superAdminRole->givePermissionTo(Permission::all());
+        $superAdminRole = Role::firstOrCreate(['name' => 'Super Admin']);
+        $superAdminRole->syncPermissions(Permission::all());
 
         // Crear rol de Administrador (gestión de usuarios y configuración)
-        $adminRole = Role::create(['name' => 'Administrador']);
-        $adminRole->givePermissionTo([
+        $adminRole = Role::firstOrCreate(['name' => 'Administrador']);
+        $adminRole->syncPermissions([
             'ver usuarios', 'crear usuarios', 'editar usuarios', 'eliminar usuarios',
             'ver departamentos', 'crear departamentos', 'editar departamentos', 'eliminar departamentos',
             'ver centros', 'crear centros', 'editar centros', 'eliminar centros',
             'ver roles', 'crear roles', 'editar roles',
+            'ver restricciones', 'crear restricciones', 'editar restricciones', 'eliminar restricciones',
         ]);
 
         // Crear rol de Gerente (puede ver y gestionar clientes, vehículos y ofertas)
-        $gerenteRole = Role::create(['name' => 'Gerente']);
-        $gerenteRole->givePermissionTo([
+        $gerenteRole = Role::firstOrCreate(['name' => 'Gerente']);
+        $gerenteRole->syncPermissions([
             'ver usuarios',
             'ver departamentos',
             'ver centros',
@@ -80,16 +87,16 @@ class RolePermissionSeeder extends Seeder
         ]);
 
         // Crear rol de Vendedor (gestión de clientes y ofertas)
-        $vendedorRole = Role::create(['name' => 'Vendedor']);
-        $vendedorRole->givePermissionTo([
+        $vendedorRole = Role::firstOrCreate(['name' => 'Vendedor']);
+        $vendedorRole->syncPermissions([
             'ver clientes', 'crear clientes', 'editar clientes',
             'ver vehículos',
             'ver ofertas', 'crear ofertas', 'editar ofertas',
         ]);
 
         // Crear rol de Consultor (solo lectura)
-        $consultorRole = Role::create(['name' => 'Consultor']);
-        $consultorRole->givePermissionTo([
+        $consultorRole = Role::firstOrCreate(['name' => 'Consultor']);
+        $consultorRole->syncPermissions([
             'ver usuarios',
             'ver departamentos',
             'ver centros',

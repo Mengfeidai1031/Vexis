@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreClienteRequest;
 use App\Http\Requests\UpdateClienteRequest;
+use App\Models\Cliente;
 use App\Repositories\Interfaces\ClienteRepositoryInterface;
 use Illuminate\Http\Request;
 
@@ -29,43 +30,53 @@ class ClienteController extends Controller
 
     public function create()
     {
+        $this->authorize('create', Cliente::class);
+        
         $empresas = $this->clienteRepository->getEmpresas();
         return view('clientes.create', compact('empresas'));
     }
 
     public function store(StoreClienteRequest $request)
     {
+        $this->authorize('create', Cliente::class);
+        
         $this->clienteRepository->create($request->validated());
 
         return redirect()->route('clientes.index')
             ->with('success', 'Cliente creado exitosamente.');
     }
 
-    public function show(int $id)
+    public function show(Cliente $cliente)
     {
-        $cliente = $this->clienteRepository->find($id);
+        $this->authorize('view', $cliente);
+        
         return view('clientes.show', compact('cliente'));
     }
 
-    public function edit(int $id)
+    public function edit(Cliente $cliente)
     {
-        $cliente = $this->clienteRepository->find($id);
+        $this->authorize('update', $cliente);
+        
         $empresas = $this->clienteRepository->getEmpresas();
         return view('clientes.edit', compact('cliente', 'empresas'));
     }
 
-    public function update(UpdateClienteRequest $request, int $id)
+    public function update(UpdateClienteRequest $request, Cliente $cliente)
     {
-        $this->clienteRepository->update($id, $request->validated());
+        $this->authorize('update', $cliente);
+        
+        $this->clienteRepository->update($cliente->id, $request->validated());
 
         return redirect()->route('clientes.index')
             ->with('success', 'Cliente actualizado exitosamente.');
     }
 
-    public function destroy(int $id)
+    public function destroy(Cliente $cliente)
     {
+        $this->authorize('delete', $cliente);
+        
         try {
-            $this->clienteRepository->delete($id);
+            $this->clienteRepository->delete($cliente->id);
             return redirect()->route('clientes.index')
                 ->with('success', 'Cliente eliminado exitosamente.');
         } catch (\Exception $e) {

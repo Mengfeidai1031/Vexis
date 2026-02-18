@@ -11,17 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('centros', function (Blueprint $table) {
+        Schema::create('departamentos', function (Blueprint $table) {
             $table->id();
             $table->string('nombre', 255);
-            $table->unsignedBigInteger('empresa_id');
-            $table->string('direccion', 255);
-            $table->string('provincia', 255);
-            $table->string('municipio', 255);
+            $table->string('abreviatura', 10);
             $table->timestamps();
-    
-            // Relación con empresas
-            $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');
         });
     }
 
@@ -30,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('centros');
+        Schema::dropIfExists('departamentos');
     }
 };

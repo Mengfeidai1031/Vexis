@@ -2,21 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\UserRestrictionHelper;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Models\User;
+use App\Repositories\Interfaces\RestriccionRepositoryInterface;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
     protected $userRepository;
+    protected $restriccionRepository;
 
     /**
      * Inyección del repositorio
      */
-    public function __construct(UserRepositoryInterface $userRepository)
-    {
+    public function __construct(
+        UserRepositoryInterface $userRepository,
+        RestriccionRepositoryInterface $restriccionRepository
+    ) {
         $this->userRepository = $userRepository;
+        $this->restriccionRepository = $restriccionRepository;
     }
 
     /**
@@ -39,12 +47,15 @@ class UserController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', User::class);
+        
         $empresas = $this->userRepository->getEmpresas();
         $departamentos = $this->userRepository->getDepartamentos();
         $centros = $this->userRepository->getCentros();
         $roles = $this->userRepository->getRoles();
+        $availableRestrictions = $this->restriccionRepository->getAvailableRestrictions();
 
-        return view('users.create', compact('empresas', 'departamentos', 'centros'));
+        return view('users.create', compact('empresas', 'departamentos', 'centros', 'roles', 'availableRestrictions'));
     }
 
     /**
@@ -52,11 +63,27 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
+        $this->authorize('create', User::class);
+        
         $user = $this->userRepository->create($request->validated());
 
         // Asignar roles si se proporcionaron
         if ($request->has('roles')) {
-            $user->syncRoles($request->roles);
+            // Convertir IDs a instancias de Role
+            $roles = Role::whereIn('id', $request->roles)->get();
+            $user->syncRoles($roles);
+        }
+
+        // Gestionar restricciones si se proporcionaron
+        if ($request->has('restrictions')) {
+            $restrictions = [
+                'empresas' => $request->input('restrictions.empresas', []),
+                'clientes' => $request->input('restrictions.clientes', []),
+                'vehiculos' => $request->input('restrictions.vehiculos', []),
+                'centros' => $request->input('restrictions.centros', []),
+                'departamentos' => $request->input('restrictions.departamentos', []),
+            ];
+            $this->restriccionRepository->syncUserRestrictions($user->id, $restrictions);
         }
 
         return redirect()->route('users.index')
@@ -66,39 +93,57 @@ class UserController extends Controller
     /**
      * Mostrar un usuario específico
      */
-    public function show(int $id)
+    public function show(User $user)
     {
-        $user = $this->userRepository->find($id);
+        $this->authorize('view', $user);
+        
         return view('users.show', compact('user'));
     }
 
     /**
      * Mostrar formulario de edición
      */
-    public function edit(int $id)
+    public function edit(User $user)
     {
-        $user = $this->userRepository->find($id);
+        $this->authorize('update', $user);
+        
         $empresas = $this->userRepository->getEmpresas();
         $departamentos = $this->userRepository->getDepartamentos();
         $centros = $this->userRepository->getCentros();
         $roles = $this->userRepository->getRoles();
+        $availableRestrictions = $this->restriccionRepository->getAvailableRestrictions();
+        $userRestrictions = $this->restriccionRepository->getUserRestrictions($user->id);
 
-        return view('users.edit', compact('user', 'empresas', 'departamentos', 'centros'));
+        return view('users.edit', compact('user', 'empresas', 'departamentos', 'centros', 'roles', 'availableRestrictions', 'userRestrictions'));
     }
 
     /**
      * Actualizar usuario
      */
-    public function update(UpdateUserRequest $request, int $id)
+    public function update(UpdateUserRequest $request, User $user)
     {
-        $user = $this->userRepository->update($id, $request->validated());
+        $this->authorize('update', $user);
+        
+        $user = $this->userRepository->update($user->id, $request->validated());
         
         // Sincronizar roles
         if ($request->has('roles')) {
-            $user->syncRoles($request->roles);
+            // Convertir IDs a instancias de Role
+            $roles = Role::whereIn('id', $request->roles)->get();
+            $user->syncRoles($roles);
         } else {
             $user->syncRoles([]);
         }
+
+        // Gestionar restricciones
+        $restrictions = [
+            'empresas' => $request->input('restrictions.empresas', []),
+            'clientes' => $request->input('restrictions.clientes', []),
+            'vehiculos' => $request->input('restrictions.vehiculos', []),
+            'centros' => $request->input('restrictions.centros', []),
+            'departamentos' => $request->input('restrictions.departamentos', []),
+        ];
+        $this->restriccionRepository->syncUserRestrictions($user->id, $restrictions);
     
         return redirect()->route('users.index')
             ->with('success', 'Usuario actualizado exitosamente.');
@@ -107,9 +152,11 @@ class UserController extends Controller
     /**
      * Eliminar usuario
      */
-    public function destroy(int $id)
+    public function destroy(User $user)
     {
-        $this->userRepository->delete($id);
+        $this->authorize('delete', $user);
+        
+        $this->userRepository->delete($user->id);
 
         return redirect()->route('users.index')
             ->with('success', 'Usuario eliminado exitosamente.');

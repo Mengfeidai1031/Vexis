@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('color_interno', 255);
             $table->unsignedBigInteger('empresa_id');
             $table->timestamps();
-    
+        
             // Relación con empresas
             $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');
         });

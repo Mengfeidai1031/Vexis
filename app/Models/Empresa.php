@@ -20,6 +20,7 @@ class Empresa extends Model
         'abreviatura',
         'cif',
         'domicilio',
+        'codigo_postal',
         'telefono',
     ];
 

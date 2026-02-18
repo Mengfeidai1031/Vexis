@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreDepartamentoRequest;
 use App\Http\Requests\UpdateDepartamentoRequest;
+use App\Models\Departamento;
 use App\Repositories\Interfaces\DepartamentoRepositoryInterface;
 use Illuminate\Http\Request;
 
@@ -35,6 +36,8 @@ class DepartamentoController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Departamento::class);
+        
         return view('departamentos.create');
     }
 
@@ -43,6 +46,8 @@ class DepartamentoController extends Controller
      */
     public function store(StoreDepartamentoRequest $request)
     {
+        $this->authorize('create', Departamento::class);
+        
         $this->departamentoRepository->create($request->validated());
 
         return redirect()->route('departamentos.index')
@@ -52,27 +57,31 @@ class DepartamentoController extends Controller
     /**
      * Mostrar un departamento específico
      */
-    public function show(int $id)
+    public function show(Departamento $departamento)
     {
-        $departamento = $this->departamentoRepository->find($id);
+        $this->authorize('view', $departamento);
+        
         return view('departamentos.show', compact('departamento'));
     }
 
     /**
      * Mostrar formulario de edición
      */
-    public function edit(int $id)
+    public function edit(Departamento $departamento)
     {
-        $departamento = $this->departamentoRepository->find($id);
+        $this->authorize('update', $departamento);
+        
         return view('departamentos.edit', compact('departamento'));
     }
 
     /**
      * Actualizar departamento
      */
-    public function update(UpdateDepartamentoRequest $request, int $id)
+    public function update(UpdateDepartamentoRequest $request, Departamento $departamento)
     {
-        $this->departamentoRepository->update($id, $request->validated());
+        $this->authorize('update', $departamento);
+        
+        $this->departamentoRepository->update($departamento->id, $request->validated());
 
         return redirect()->route('departamentos.index')
             ->with('success', 'Departamento actualizado exitosamente.');
@@ -81,10 +90,12 @@ class DepartamentoController extends Controller
     /**
      * Eliminar departamento
      */
-    public function destroy(int $id)
+    public function destroy(Departamento $departamento)
     {
+        $this->authorize('delete', $departamento);
+        
         try {
-            $this->departamentoRepository->delete($id);
+            $this->departamentoRepository->delete($departamento->id);
             return redirect()->route('departamentos.index')
                 ->with('success', 'Departamento eliminado exitosamente.');
         } catch (\Exception $e) {

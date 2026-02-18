@@ -10,4 +10,6 @@ interface OfertaRepositoryInterface
     public function delete(int $id);
     public function getClientes();
     public function getVehiculos();
+    public function getEmpresas();
+    public function filter(array $filters);
 }

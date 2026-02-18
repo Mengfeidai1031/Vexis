@@ -26,7 +26,16 @@ final class OfertaPdfService
         
         // 2. Extraer texto del PDF
         $pathCompleto = storage_path('app/public/' . $pdfPath);
-        $texto = Pdf::getText($pathCompleto);
+        
+        // Para Renault/Dacia usar -layout para mantener la estructura de la tabla (lectura línea por línea)
+        if ($marca === 'renault_dacia') {
+            $pdf = new Pdf();
+            $pdf->setPdf($pathCompleto);
+            $pdf->setOptions(['-layout']); // Mantiene el layout original, mejor para tablas
+            $texto = $pdf->text();
+        } else {
+            $texto = Pdf::getText($pathCompleto);
+        }
         
         // 3. Procesar según la marca
         return DB::transaction(function () use ($texto, $pdfPath, $marca) {
@@ -99,12 +108,14 @@ final class OfertaPdfService
      */
     private function procesarRenaultDacia(string $texto, string $pdfPath): OfertaCabecera
     {
-        // Extraer datos de empresa (derecha del PDF)
-        $datosEmpresa = $this->extraerEmpresaRenault($texto);
+        // Extraer datos de cliente primero (necesario para extraer empresa)
+        $datosCliente = $this->extraerClienteRenault($texto);
+        
+        // Extraer datos de empresa (derecha del PDF) - pasar nombre del cliente
+        $datosEmpresa = $this->extraerEmpresaRenault($texto, $datosCliente['nombre_completo'] ?? '');
         $empresa = $this->crearEmpresa($datosEmpresa);
         
-        // Extraer datos de cliente (izquierda del PDF)
-        $datosCliente = $this->extraerClienteRenault($texto);
+        // Crear cliente
         $cliente = $this->crearCliente($datosCliente, $empresa->id);
         
         // Extraer líneas de oferta
@@ -522,7 +533,7 @@ final class OfertaPdfService
 
     // ==================== EXTRACTORES RENAULT/DACIA ====================
 
-    private function extraerEmpresaRenault(string $texto): array
+    private function extraerEmpresaRenault(string $texto, string $nombreCliente = ''): array
     {
         $datos = [
             'nombre' => 'Empresa Renault',
@@ -533,23 +544,71 @@ final class OfertaPdfService
             'telefono' => '',
         ];
 
-        // RENAULT/DACIA: Buscar nombre de empresa después de "ESTABLECIMIENTO DE LA RED RENAULT"
-        // Formato: MOTOR ARI, S.A.(JUAN DOMINGUEZ PEREZ, 21)
-        if (preg_match('/ESTABLECIMIENTO\s+DE\s+LA\s+RED\s+RENAULT\s*\n\s*([A-Z][A-Z\s]+,\s*S\.?[AL]\.?)\s*\(([^)]+)\)/iu', $texto, $matches)) {
-            $nombreBase = trim($matches[1]);
-            $direccionCorta = trim($matches[2]);
-            $datos['nombre'] = $nombreBase . '(' . $direccionCorta . ')';
-            // Abreviatura: primera palabra del nombre de empresa
-            $palabras = preg_split('/\s+/', $nombreBase);
-            $datos['abreviatura'] = strtoupper($palabras[0]);
+        // Si tenemos el nombre del cliente, buscar solo lo que está después
+        if (!empty($nombreCliente)) {
+            // Buscar la posición del nombre del cliente en el texto
+            $posCliente = stripos($texto, $nombreCliente);
+            if ($posCliente !== false) {
+                // Buscar desde después del nombre del cliente
+                $textoDespuesCliente = substr($texto, $posCliente + strlen($nombreCliente));
+                
+                // Buscar nombre de empresa después del nombre del cliente
+                if (preg_match('/([A-ZÁÉÍÓÚÑ][A-Za-záéíóúñÁÉÍÓÚÑ\s]+,\s*S\.?[AL]\.?)\s*\(([^)]+)\)/iu', $textoDespuesCliente, $matches)) {
+                    $nombreBase = trim($matches[1]); // "MOTOR ARI, S.A."
+                    $contenidoParentesis = trim($matches[2]); // "JUAN DOMINGUEZ PEREZ, 21"
+                    // Guardar nombre sin paréntesis
+                    $datos['nombre'] = trim($nombreBase);
+                    // Guardar contenido entre paréntesis como domicilio (sin paréntesis)
+                    $datos['domicilio'] = $contenidoParentesis;
+                    // Abreviatura: primera palabra del nombre
+                    $palabras = explode(' ', $nombreBase);
+                    $datos['abreviatura'] = strtoupper(substr($palabras[0], 0, 5)); // "MOTOR"
+                }
+            }
+        }
+        
+        // Si no encontramos con el nombre del cliente, buscar con el patrón original
+        if ($datos['nombre'] === 'Empresa Renault') {
+            // RENAULT/DACIA: Buscar nombre de empresa después de "ESTABLECIMIENTO"
+            // Formato: "MOTOR ARI, S.A.(JUAN DOMINGUEZ PEREZ, 21)"
+            if (preg_match('/ESTABLECIMIENTO[^\n]*\n[^\n]*?([A-ZÁÉÍÓÚÑ][A-Za-záéíóúñÁÉÍÓÚÑ\s]+,\s*S\.?[AL]\.?)\s*\(([^)]+)\)/iu', $texto, $matches)) {
+                $nombreBase = trim($matches[1]); // "MOTOR ARI, S.A."
+                $contenidoParentesis = trim($matches[2]); // "JUAN DOMINGUEZ PEREZ, 21"
+                // Guardar nombre sin paréntesis
+                $datos['nombre'] = trim($nombreBase);
+                // Guardar contenido entre paréntesis como domicilio (sin paréntesis)
+                if (empty($datos['domicilio'])) {
+                    $datos['domicilio'] = $contenidoParentesis;
+                }
+                // Abreviatura: primera palabra del nombre
+                $palabras = explode(' ', $nombreBase);
+                $datos['abreviatura'] = strtoupper(substr($palabras[0], 0, 5)); // "MOTOR"
+            }
+            // Patrón alternativo sin "ESTABLECIMIENTO"
+            elseif (preg_match('/([A-ZÁÉÍÓÚÑ][A-Za-záéíóúñÁÉÍÓÚÑ\s]+,\s*S\.?[AL]\.?)\s*\(([^)]+)\)/iu', $texto, $matches)) {
+                $nombreBase = trim($matches[1]);
+                $contenidoParentesis = trim($matches[2]);
+                // Guardar nombre sin paréntesis
+                $datos['nombre'] = trim($nombreBase);
+                // Guardar contenido entre paréntesis como domicilio (sin paréntesis)
+                if (empty($datos['domicilio'])) {
+                    $datos['domicilio'] = $contenidoParentesis;
+                }
+                $palabras = explode(' ', $nombreBase);
+                $datos['abreviatura'] = strtoupper(substr($palabras[0], 0, 5));
+            }
         }
 
-        // Buscar CIF (A + 8 números para S.A.)
-        if (preg_match('/\b(A\d{8})\b/', $texto, $matches)) {
+        // Buscar CIF (A + 8 números) - después del nombre de empresa
+        // Ejemplo: "A35036243"
+        if (preg_match('/([A-ZÁÉÍÓÚÑ][A-Za-záéíóúñÁÉÍÓÚÑ\s]+,\s*S\.?[AL]\.?)\s*\([^)]+\)\s*\n\s*([A-Z]\d{8})/u', $texto, $matches)) {
+            $datos['cif'] = $matches[2];
+        } elseif (preg_match('/\b([A-Z]\d{8})\b/', $texto, $matches)) {
             $datos['cif'] = $matches[1];
         }
 
         // Buscar teléfono de empresa (después de Tel.:)
+        // Ejemplo: "Tel.: 928488950"
         if (preg_match('/Tel\.?[:\s]*(\d{9})/i', $texto, $matches)) {
             $datos['telefono'] = $matches[1];
         }
@@ -557,12 +616,18 @@ final class OfertaPdfService
         // Buscar código postal de empresa (segundo CP - el de 35008)
         if (preg_match_all('/\((\d{5})\)/', $texto, $matches)) {
             if (count($matches[1]) >= 2) {
-                $datos['codigo_postal'] = $matches[1][1];
+                $datos['codigo_postal'] = $matches[1][1]; // Segundo código postal
             }
         }
 
-        // Buscar domicilio completo de empresa: "JUAN DOMINGUEZ PEREZ, 21\nLas Palmas De Gran Canaria, Las Palmas"
-        if (preg_match('/([A-Z][A-Z\s]+PEREZ,\s*\d+)\s*\n\s*([A-Za-záéíóúñÁÉÍÓÚÑ\s]+,\s*[A-Za-záéíóúñÁÉÍÓÚÑ\s]+)\s*\(\d{5}\)/u', $texto, $matches)) {
+        // Buscar domicilio completo de empresa
+        // Formato: "JUAN DOMINGUEZ PEREZ, 21\nLas Palmas De Gran Canaria, Las Palmas (35008)"
+        // O: "JUAN DOMINGUEZ PEREZ, 21 Las Palmas De Gran Canaria, Las Palmas"
+        if (preg_match('/([A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑ\s]+,\s*\d+)\s*\n?\s*([A-Za-záéíóúñÁÉÍÓÚÑ\s]+,\s*[A-Za-záéíóúñÁÉÍÓÚÑ\s]+)\s*\((\d{5})\)/u', $texto, $matches)) {
+            if ($matches[3] === $datos['codigo_postal']) {
+                $datos['domicilio'] = trim($matches[1]) . ' ' . trim($matches[2]);
+            }
+        } elseif (preg_match('/([A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑ\s]+,\s*\d+)\s+([A-Za-záéíóúñÁÉÍÓÚÑ\s]+,\s*[A-Za-záéíóúñÁÉÍÓÚÑ\s]+)/u', $texto, $matches)) {
             $datos['domicilio'] = trim($matches[1]) . ' ' . trim($matches[2]);
         }
 
@@ -582,42 +647,140 @@ final class OfertaPdfService
             'codigo_postal' => '00000',
         ];
 
-        // RENAULT/DACIA: Buscar "Sra. Doña Nombre Apellidos" 
-        // Doña = nombre, resto = apellidos
-        if (preg_match('/Sra\.?\s+Do[ñn]a\s+([A-Za-záéíóúñÁÉÍÓÚÑ\s]+?)(?=\s*\n)/iu', $texto, $matches)) {
-            $nombreCompleto = trim($matches[1]);
-            $datos['nombre'] = 'Doña';
-            $datos['apellidos'] = $nombreCompleto;
-            $datos['nombre_completo'] = 'Doña ' . $nombreCompleto;
-        }
-        // Patrón 2: "Sr. Don Nombre Apellido"
-        elseif (preg_match('/Sr\.?\s+Don\s+([A-Za-záéíóúñÁÉÍÓÚÑ\s]+?)(?=\s*\n)/iu', $texto, $matches)) {
-            $nombreCompleto = trim($matches[1]);
-            $datos['nombre'] = 'Don';
-            $datos['apellidos'] = $nombreCompleto;
-            $datos['nombre_completo'] = 'Don ' . $nombreCompleto;
-        }
+        $nombreCompleto = '';
 
-        // Buscar domicilio del cliente: "Santa Maria De Guia De Gran C., Las Palmas (35450)"
-        if (preg_match('/(Santa\s+Maria[^(]+?)(,\s*Las\s+Palmas)?\s*\((\d{5})\)/iu', $texto, $matches)) {
-            $domicilio = trim($matches[1]);
-            if (!empty($matches[2])) {
-                $domicilio .= trim($matches[2]);
-            } else {
-                $domicilio .= ', Las Palmas';
+        // PRIORIDAD 1: Buscar "Sr. Don" seguido de nombre y múltiples espacios antes de empresa
+        // Este patrón tiene prioridad porque detecta el caso específico con múltiples espacios
+        // Ejemplo: "Sr. Don Jose Verdugo Rodriguez                                                             MOTOR ARI, S.A."
+        // Captura todas las palabras después de "Don" hasta encontrar 4 o más espacios seguidos de una palabra en mayúsculas
+        if (preg_match('/Sr\.?\s+Don\s+((?:[A-Za-záéíóúñÁÉÍÓÚÑ]+\s+){1,}[A-Za-záéíóúñÁÉÍÓÚÑ]+)\s{4,}[A-Z]{2,}/iu', $texto, $matches)) {
+            $nombreCapturado = trim($matches[1]);
+            \Illuminate\Support\Facades\Log::info('Renault - Captura inicial (patrón múltiples espacios): ' . $nombreCapturado);
+            
+            // Verificar que lo capturado tenga al menos 2 palabras y no contenga palabras todas en mayúsculas (que serían empresas)
+            $palabrasNombre = preg_split('/\s+/', $nombreCapturado);
+            $esNombreValido = true;
+            $palabrasLimpias = [];
+            
+            foreach ($palabrasNombre as $palabra) {
+                $palabraTrim = trim($palabra);
+                // Si una palabra es toda en mayúsculas y tiene más de 2 letras, probablemente es parte de una empresa
+                if (strlen($palabraTrim) > 2 && ctype_upper($palabraTrim)) {
+                    $esNombreValido = false;
+                    \Illuminate\Support\Facades\Log::info('Renault - Palabra descartada (mayúsculas): ' . $palabraTrim);
+                    break;
+                }
+                $palabrasLimpias[] = $palabraTrim;
             }
-            $datos['domicilio'] = $domicilio;
-            $datos['codigo_postal'] = $matches[3];
+            
+            if ($esNombreValido && count($palabrasLimpias) >= 2) {
+                $nombreCompleto = implode(' ', $palabrasLimpias);
+                \Illuminate\Support\Facades\Log::info('Renault - Nombre encontrado (patrón múltiples espacios + empresa): ' . $nombreCompleto);
+            } else {
+                \Illuminate\Support\Facades\Log::warning('Renault - Nombre descartado. Válido: ' . ($esNombreValido ? 'Sí' : 'No') . ', Palabras: ' . count($palabrasLimpias));
+            }
+        }
+        // PRIORIDAD 2: RENAULT/DACIA: "Sra. Doña Asuncion Sosa"
+        // Doña es tratamiento, NO parte del nombre. Nombre = Asuncion, Apellidos = Sosa
+        elseif (preg_match('/Sra\.?\s+Do[ñn]a\s+([A-Za-záéíóúñÁÉÍÓÚÑ]+)\s+([A-Za-záéíóúñÁÉÍÓÚÑ]+?)(?=\s*\n|Santa|Calle|C\/|\d{9}|,)/iu', $texto, $matches)) {
+            $nombreCompleto = trim($matches[1]) . ' ' . trim($matches[2]);
+            \Illuminate\Support\Facades\Log::info('Renault - Nombre encontrado (patrón Sra. Doña): ' . $nombreCompleto);
+        }
+        // PRIORIDAD 3: "Sr. Don Nombre Apellido" (sin múltiples espacios)
+        elseif (preg_match('/Sr\.?\s+Don\s+([A-Za-záéíóúñÁÉÍÓÚÑ]+)\s+([A-Za-záéíóúñÁÉÍÓÚÑ]+?)(?=\s*\n|Santa|Calle|C\/|\d{9}|,)/iu', $texto, $matches)) {
+            $nombreCompleto = trim($matches[1]) . ' ' . trim($matches[2]);
+            \Illuminate\Support\Facades\Log::info('Renault - Nombre encontrado (patrón Sr. Don): ' . $nombreCompleto);
+        }
+        // PRIORIDAD 4: Solo "Sr./Sra. Nombre Apellidos" (sin Don/Doña)
+        elseif (preg_match('/(?:Sra?\.?|Sr\.?)\s+([A-Za-záéíóúñÁÉÍÓÚÑ]+)\s+([A-Za-záéíóúñÁÉÍÓÚÑ\s]+?)(?=\s*\n|Santa|Calle|C\/|\d{9}|,)/iu', $texto, $matches)) {
+            $nombreCompleto = trim($matches[1]) . ' ' . trim($matches[2]);
+            \Illuminate\Support\Facades\Log::info('Renault - Nombre encontrado (patrón Sr./Sra.): ' . $nombreCompleto);
+        }
+        // PRIORIDAD 5: Patrón genérico - buscar cualquier línea que empiece con Sr./Sra. seguido de nombre
+        // Este patrón es más flexible y captura el nombre completo incluyendo tratamientos
+        elseif (preg_match('/(?:Sra?\.?|Sr\.?)\s+([A-Za-záéíóúñÁÉÍÓÚÑ\s]+?)(?=\s*\n|Santa|Calle|C\/|\d{9}|,|MOTOR|ESTABLECIMIENTO)/iu', $texto, $matches)) {
+            $nombreCompleto = trim($matches[1]);
+            \Illuminate\Support\Facades\Log::info('Renault - Nombre encontrado (patrón genérico): ' . $nombreCompleto);
+        }
+        
+        // Si no encontramos nada, log para debug
+        if (empty($nombreCompleto)) {
+            \Illuminate\Support\Facades\Log::warning('Renault - No se encontró nombre del cliente. Primeras 500 caracteres del texto: ' . substr($texto, 0, 500));
         }
 
-        // Buscar teléfono móvil del cliente (6 o 7 al principio)
+        // Si encontramos un nombre, limpiarlo y procesarlo
+        if (!empty($nombreCompleto)) {
+            // Eliminar tratamientos (Sr, Sra, Don, Doña) antes de guardar
+            $nombreCompleto = preg_replace('/\b(Sr|Sra|Don|Do[ñn]a)\.?\s*/iu', '', $nombreCompleto);
+            $nombreCompleto = trim($nombreCompleto);
+            
+            // Si después de limpiar tratamientos el nombre está vacío, intentar buscar de nuevo sin tratamientos
+            if (empty($nombreCompleto)) {
+                // Buscar nombre sin tratamientos al inicio
+                if (preg_match('/^[A-Za-záéíóúñÁÉÍÓÚÑ]+\s+[A-Za-záéíóúñÁÉÍÓÚÑ]+(?=\s*\n|Santa|Calle|C\/|\d{9}|,|MOTOR|ESTABLECIMIENTO)/iu', $texto, $matches)) {
+                    $nombreCompleto = trim($matches[0]);
+                }
+            }
+            
+            // Si aún tenemos nombre, procesarlo
+            if (!empty($nombreCompleto)) {
+                // Separar en nombre y apellidos según el número de palabras
+                $palabras = preg_split('/\s+/', $nombreCompleto);
+                $palabras = array_filter($palabras);
+                $palabras = array_values($palabras);
+                
+                $numPalabras = count($palabras);
+                
+                if ($numPalabras === 2) {
+                    // 2 palabras: 1 nombre y 1 apellido
+                    $datos['nombre'] = $palabras[0];
+                    $datos['apellidos'] = $palabras[1];
+                    $datos['nombre_completo'] = $nombreCompleto;
+                } elseif ($numPalabras === 3) {
+                    // 3 palabras: 1 nombre y 2 apellidos
+                    $datos['nombre'] = $palabras[0];
+                    $datos['apellidos'] = $palabras[1] . ' ' . $palabras[2];
+                    $datos['nombre_completo'] = $nombreCompleto;
+                } elseif ($numPalabras === 4) {
+                    // 4 palabras: 2 nombres y 2 apellidos
+                    $datos['nombre'] = $palabras[0] . ' ' . $palabras[1];
+                    $datos['apellidos'] = $palabras[2] . ' ' . $palabras[3];
+                    $datos['nombre_completo'] = $nombreCompleto;
+                } elseif ($numPalabras >= 5) {
+                    // 5 o más palabras: 2 nombres y el resto apellidos
+                    $datos['nombre'] = $palabras[0] . ' ' . $palabras[1];
+                    $datos['apellidos'] = implode(' ', array_slice($palabras, 2));
+                    $datos['nombre_completo'] = $nombreCompleto;
+                } elseif ($numPalabras === 1) {
+                    $datos['nombre'] = $palabras[0];
+                    $datos['apellidos'] = '';
+                    $datos['nombre_completo'] = $nombreCompleto;
+                }
+            }
+        }
+
+        // Buscar email del cliente (gmail, hotmail, etc. - correo personal)
+        if (preg_match('/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i', $texto, $matches)) {
+            $datos['email'] = strtolower(trim($matches[1]));
+        }
+
+        // Buscar teléfono móvil del cliente (6 o 7 al principio = móvil particular)
         if (preg_match('/\b([67]\d{8})\b/', $texto, $matches)) {
             $datos['telefono'] = $matches[1];
         }
 
-        // Buscar email del cliente (gmail)
-        if (preg_match('/([a-zA-Z0-9._%+-]+@gmail\.com)/i', $texto, $matches)) {
-            $datos['email'] = strtolower(trim($matches[1]));
+        // Buscar código postal del cliente (primer código postal entre paréntesis - 35450)
+        if (preg_match('/\((\d{5})\)/', $texto, $matches)) {
+            $datos['codigo_postal'] = $matches[1];
+        }
+
+        // Buscar domicilio del cliente: "Santa Maria De Guia De Gran C., Las Palmas"
+        if (preg_match('/(Santa\s+Maria[^(]+?),?\s*Las\s+Palmas\s*\((\d{5})\)/iu', $texto, $matches)) {
+            $datos['domicilio'] = trim($matches[1]) . ', Las Palmas';
+            $datos['codigo_postal'] = $matches[2];
+        } elseif (preg_match('/(Santa\s+Maria[^(]+?)\s*\((\d{5})\)/iu', $texto, $matches)) {
+            $datos['domicilio'] = trim(rtrim($matches[1], ','));
+            $datos['codigo_postal'] = $matches[2];
         }
 
         return $datos;
@@ -628,137 +791,215 @@ final class OfertaPdfService
         $lineas = [];
         
         // Normalizar texto
-        $texto = preg_replace('/[ \t]+/', ' ', $texto);
         $texto = str_replace("\r\n", "\n", $texto);
         
-        // 1. Modelo: "Modelo: DACIA SANDERO Stepway Expression Go 74kW (100CV) ECO-G SMVG MT 6WGS 13.325,04 €"
-        if (preg_match('/Modelo:\s*(.+?)\s+(\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
-            $lineas[] = [
-                'tipo' => 'Modelo',
-                'descripcion' => trim($match[1]),
-                'precio' => $this->convertirPrecio($match[2]),
-            ];
+        // Extraer bloque RESUMEN - buscar todo después de "RESUMEN" hasta "CONDICIONES" o fin
+        $bloqueResumen = '';
+        if (preg_match('/RESUMEN\s*\n(.*?)(?=\n\s*CONDICIONES|$)/is', $texto, $match)) {
+            $bloqueResumen = $match[1];
+            \Illuminate\Support\Facades\Log::info('Bloque RESUMEN encontrado (patrón 1)');
+        } else {
+            // Si no encuentra "RESUMEN", buscar desde "RESUMEN" hasta "TOTAL A PAGAR" o "CONDICIONES"
+            if (preg_match('/RESUMEN\s*\n(.*?)(?=\n\s*TOTAL\s+A\s+PAGAR|CONDICIONES|$)/is', $texto, $match)) {
+                $bloqueResumen = $match[1];
+                \Illuminate\Support\Facades\Log::info('Bloque RESUMEN encontrado (patrón 2)');
+            } else {
+                \Illuminate\Support\Facades\Log::warning('Bloque RESUMEN NO encontrado, usando todo el texto');
+            }
         }
         
-        // 2. Color: "Color: Negro Nacarado 676 0,00 €"
-        if (preg_match('/Color:\s*(.+?)\s+(\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
-            $lineas[] = [
-                'tipo' => 'Color',
-                'descripcion' => trim($match[1]),
-                'precio' => $this->convertirPrecio($match[2]),
-            ];
+        // Si no encontramos bloque RESUMEN, usar todo el texto
+        if (empty($bloqueResumen)) {
+            $bloqueResumen = $texto;
         }
         
-        // 3. Tapicería: "Tapicería: Tapicería Stepway DRAP08 0,00 €"
-        if (preg_match('/Tapicería:\s*(.+?)\s+(\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
-            $lineas[] = [
-                'tipo' => 'Tapicería',
-                'descripcion' => 'Tapicería ' . trim($match[1]),
-                'precio' => $this->convertirPrecio($match[2]),
-            ];
+        \Illuminate\Support\Facades\Log::info('Tamaño del bloque RESUMEN: ' . strlen($bloqueResumen) . ' caracteres');
+        \Illuminate\Support\Facades\Log::info('Primeros 500 caracteres del bloque: ' . substr($bloqueResumen, 0, 500));
+        
+        // Buscar todas las líneas que contengan precio con "€" después de RESUMEN
+        $lineasTexto = explode("\n", $bloqueResumen);
+        $tipoAnterior = '';
+        
+        // Log para debug
+        \Illuminate\Support\Facades\Log::info('=== INICIO EXTRACCIÓN LÍNEAS RENAULT ===');
+        \Illuminate\Support\Facades\Log::info('Total líneas en bloque RESUMEN: ' . count($lineasTexto));
+        
+        foreach ($lineasTexto as $indice => $lineaOriginal) {
+            // Verificar si la línea contiene precio con €
+            if (!preg_match('/€/iu', $lineaOriginal)) {
+                continue;
+            }
+            
+            // Contar espacios al principio de la línea
+            $espaciosInicio = 0;
+            if (preg_match('/^(\s+)/', $lineaOriginal, $match)) {
+                $espaciosInicio = strlen($match[1]);
+            }
+            
+            // Si tiene solo 1 espacio al principio → hay tipo
+            // Si tiene más de 2 espacios al principio → no hay tipo (usar el anterior)
+            $tieneTipo = ($espaciosInicio <= 1);
+            
+            $lineaTexto = trim($lineaOriginal);
+            
+            if (empty($lineaTexto)) {
+                continue;
+            }
+            
+            $tipo = '';
+            $descripcion = '';
+            $precio = '';
+            
+            // Extraer precio (siempre al final, antes de €)
+            if (preg_match('/(-?\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $lineaTexto, $precioMatch)) {
+                $precio = trim($precioMatch[1]);
+            }
+            
+            if (empty($precio)) {
+                continue;
+            }
+            
+            // Si la línea tiene tipo (1 espacio o menos al principio)
+            if ($tieneTipo) {
+                // Eliminar el precio de la línea para procesar tipo y descripción
+                $lineaSinPrecio = preg_replace('/\s+-?\d{1,3}(?:\.\d{3})*,\d{2}\s*€.*$/iu', '', $lineaTexto);
+                $lineaSinPrecio = trim($lineaSinPrecio);
+                
+                // Buscar tipo y descripción
+                // Patrón 1: Formato con pipes "Tipo | Descripción |"
+                if (preg_match('/^([^|]+?)\s*\|\s*(.+?)\s*\|/iu', $lineaSinPrecio, $match)) {
+                    $tipo = trim($match[1]);
+                    $descripcion = trim($match[2]);
+                }
+                // Patrón 2: Formato sin pipes - buscar si hay más de 3 espacios consecutivos
+                // Si hay más de 3 espacios, lo que está antes es tipo y lo que está después es descripción
+                elseif (preg_match('/^(.+?)\s{4,}(.+)$/u', $lineaSinPrecio, $match)) {
+                    $tipo = trim($match[1]);
+                    $descripcion = trim($match[2]);
+                }
+                // Patrón 3: Formato con dos puntos "Tipo: Descripción"
+                elseif (preg_match('/^([^:]+?):\s*(.+)$/iu', $lineaSinPrecio, $match)) {
+                    $tipo = trim($match[1]);
+                    $descripcion = trim($match[2]);
+                }
+                // Patrón 4: Solo tipo (sin descripción)
+                else {
+                    $tipo = $lineaSinPrecio;
+                    $descripcion = '';
+                }
+            } else {
+                // La línea tiene más de 2 espacios al principio, tipo está vacío (usar el anterior)
+                $tipo = $tipoAnterior;
+                
+                // Buscar descripción (eliminar el precio y los espacios iniciales)
+                $lineaSinPrecio = preg_replace('/\s+-?\d{1,3}(?:\.\d{3})*,\d{2}\s*€.*$/iu', '', $lineaTexto);
+                $lineaSinPrecio = trim($lineaSinPrecio);
+                
+                // Patrón 1: Formato con pipes "| Descripción |"
+                if (preg_match('/^\|\s*([^|]*?)\s*\|/iu', $lineaSinPrecio, $match)) {
+                    $descripcion = trim($match[1]);
+                }
+                // Patrón 2: Solo descripción
+                else {
+                    $descripcion = $lineaSinPrecio;
+                }
+            }
+            
+            // Procesar tipo
+            if (!empty($tipo)) {
+                // Limpiar el tipo: quitar ":" al final
+                $tipo = preg_replace('/:\s*$/', '', $tipo);
+                
+                // Eliminar todo desde el primer "(" hasta el final (incluso si no hay cierre)
+                // Esto maneja casos donde el texto está cortado y no se ve el paréntesis de cierre
+                $posApertura = strpos($tipo, '(');
+                if ($posApertura !== false) {
+                    // Eliminar desde el "(" hasta el final del string
+                    $tipo = substr($tipo, 0, $posApertura);
+                }
+                
+                // Limpiar espacios múltiples que puedan quedar
+                $tipo = preg_replace('/\s+/', ' ', $tipo);
+                // Cambiar "TOTAL A PAGAR" a "TOTAL"
+                $tipo = preg_replace('/^TOTAL\s+A\s+PAGAR$/iu', 'TOTAL', $tipo);
+                $tipo = trim($tipo);
+                
+                // Actualizar tipoAnterior solo si el tipo no está vacío
+                if (!empty($tipo)) {
+                    $tipoAnterior = $tipo;
+                }
+            } else {
+                // Si no hay tipo, usar el anterior
+                $tipo = $tipoAnterior;
+            }
+            
+            // Si la descripción está vacía, poner "Sin descripción"
+            if (empty($descripcion)) {
+                $descripcion = 'Sin descripción';
+            }
+            
+            // Limpiar descripción de Color (quitar código numérico al final)
+            if (stripos($tipo, 'Color') !== false) {
+                $descripcion = preg_replace('/\s+\d{3,4}\s*$/', '', $descripcion);
+            }
+            
+            // Limpiar descripción de Tapicería (quitar prefijo duplicado)
+            if (stripos($tipo, 'Tapicería') !== false) {
+                $descripcion = preg_replace('/^Tapicería\s+/i', '', $descripcion);
+            }
+            
+            // Log para debug
+            \Illuminate\Support\Facades\Log::info("Línea $indice - Tipo: '$tipo', Descripción: '$descripcion', Precio: '$precio'");
+            
+            // Solo agregar si tenemos un tipo válido
+            // Si no hay tipo pero hay precio, usar tipo por defecto "Sin tipo"
+            if (empty($tipo) && !empty($precio)) {
+                $tipo = 'Sin tipo';
+                \Illuminate\Support\Facades\Log::warning("Línea $indice sin tipo, usando 'Sin tipo' por defecto. Línea original: " . substr($lineaOriginal, 0, 100));
+            }
+            
+            if (!empty($tipo) && !empty($precio)) {
+                $lineas[] = [
+                    'tipo' => $tipo,
+                    'descripcion' => $descripcion,
+                    'precio' => $this->convertirPrecio($precio),
+                ];
+            } else {
+                \Illuminate\Support\Facades\Log::warning("Línea $indice descartada: tipo o precio vacío. Tipo: '$tipo', Precio: '$precio'. Línea original: " . substr($lineaOriginal, 0, 100));
+            }
         }
         
-        // 4. Transporte: "Transporte: 270,00 €"
-        if (preg_match('/Transporte:\s*(\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
-            $lineas[] = [
-                'tipo' => 'Transporte',
-                'descripcion' => 'sin descripcion',
-                'precio' => $this->convertirPrecio($match[1]),
-            ];
+        \Illuminate\Support\Facades\Log::info('Total líneas extraídas: ' . count($lineas));
+        \Illuminate\Support\Facades\Log::info('=== FIN EXTRACCIÓN LÍNEAS RENAULT ===');
+        
+        // Eliminar filas TOTAL duplicadas idénticas (mantener solo la primera)
+        $lineasFinales = [];
+        $totalAnterior = null;
+        foreach ($lineas as $linea) {
+            if ($linea['tipo'] === 'TOTAL') {
+                // Si es la primera vez que encontramos TOTAL, guardarlo
+                if ($totalAnterior === null) {
+                    $lineasFinales[] = $linea;
+                    $totalAnterior = $linea;
+                } else {
+                    // Si es idéntico al anterior (mismo tipo, descripción y precio), no agregarlo
+                    if ($linea['tipo'] === $totalAnterior['tipo'] && 
+                        $linea['descripcion'] === $totalAnterior['descripcion'] && 
+                        $linea['precio'] === $totalAnterior['precio']) {
+                        // Es un duplicado idéntico, no agregar
+                        continue;
+                    } else {
+                        // Es un TOTAL diferente, agregarlo
+                        $lineasFinales[] = $linea;
+                        $totalAnterior = $linea;
+                    }
+                }
+            } else {
+                $lineasFinales[] = $linea;
+            }
         }
         
-        // 5. Promociones - buscar líneas individuales
-        // DTO DACIA CREDITO -331,00 €
-        if (preg_match('/DTO\s+DACIA\s+CREDITO\s+(-?\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
-            $lineas[] = [
-                'tipo' => 'Promociones',
-                'descripcion' => 'DTO DACIA CREDITO',
-                'precio' => $this->convertirPrecio($match[1]),
-            ];
-        }
-        
-        // DIAS UNICOS DACIA -414,00 €
-        if (preg_match('/DIAS\s+UNICOS\s+DACIA\s+(-?\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
-            $lineas[] = [
-                'tipo' => 'Promociones',
-                'descripcion' => 'DIAS UNICOS DACIA',
-                'precio' => $this->convertirPrecio($match[1]),
-            ];
-        }
-        
-        // DTO MA EXTRA JUNIO CREDIT -200,00 €
-        if (preg_match('/DTO\s+MA\s+EXTRA\s+JUNIO\s+CREDIT\s+(-?\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
-            $lineas[] = [
-                'tipo' => 'Promociones',
-                'descripcion' => 'DTO MA EXTRA JUNIO CREDIT',
-                'precio' => $this->convertirPrecio($match[1]),
-            ];
-        }
-        
-        // 6. BASE IMPONIBLE 12.650,04 €
-        if (preg_match('/BASE\s+IMPONIBLE\s+(\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
-            $lineas[] = [
-                'tipo' => 'BASE IMPONIBLE',
-                'descripcion' => 'sin descripcion',
-                'precio' => $this->convertirPrecio($match[1]),
-            ];
-        }
-        
-        // 7. Imp. Matriculación Normal (0,00%) 0,00 €
-        if (preg_match('/Imp\.?\s*Matriculaci[oó]n\s+([^\d]+?)\s+(\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
-            $lineas[] = [
-                'tipo' => 'Imp. Matriculación',
-                'descripcion' => trim($match[1]),
-                'precio' => $this->convertirPrecio($match[2]),
-            ];
-        }
-        
-        // 8. IGIC IGIC Normal (9,5%) 1.201,75 €
-        if (preg_match('/IGIC\s+(IGIC\s+[^\d]+?)\s+(\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
-            $lineas[] = [
-                'tipo' => 'IGIC',
-                'descripcion' => trim($match[1]),
-                'precio' => $this->convertirPrecio($match[2]),
-            ];
-        }
-        
-        // 9. TOTAL IMPUESTOS INCLUIDOS (Incluye un descuento y/o bonificación total con impuestos de: 1.034,78 €) 13.851,79 €
-        if (preg_match('/TOTAL\s+IMPUESTOS\s+INCLUIDOS\s*(\([^)]+\))\s*(\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
-            $lineas[] = [
-                'tipo' => 'TOTAL IMPUESTOS INCLUIDOS',
-                'descripcion' => trim($match[1]),
-                'precio' => $this->convertirPrecio($match[2]),
-            ];
-        }
-        
-        // 10. Gastos: Matriculación y Pre-entrega 850,00 €
-        if (preg_match('/Gastos:\s*Matriculaci[oó]n\s+y\s+Pre-?entrega\s+(\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
-            $lineas[] = [
-                'tipo' => 'Gastos',
-                'descripcion' => 'Matriculación y Pre-entrega',
-                'precio' => $this->convertirPrecio($match[1]),
-            ];
-        }
-        
-        // 11. DEFLECTORES + ANTENA TIB 237,17 €
-        if (preg_match('/(DEFLECTORES\s*\+\s*ANTENA\s+TIB)\s+(\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
-            $lineas[] = [
-                'tipo' => 'Gastos',
-                'descripcion' => trim($match[1]),
-                'precio' => $this->convertirPrecio($match[2]),
-            ];
-        }
-        
-        // 12. TOTAL VEHICULO + OTROS 14.938,96 €
-        if (preg_match('/TOTAL\s+VEH[IÍ]CULO\s*\+\s*OTROS\s+(\d{1,3}(?:\.\d{3})*,\d{2})\s*€/iu', $texto, $match)) {
-            $lineas[] = [
-                'tipo' => 'TOTAL VEHICULO + OTROS',
-                'descripcion' => 'sin descripcion',
-                'precio' => $this->convertirPrecio($match[1]),
-            ];
-        }
-        
-        return $lineas;
+        return $lineasFinales;
     }
 
     private function extraerVehiculoRenault(array $lineas, string $chasis, int $empresaId): array
@@ -936,14 +1177,27 @@ final class OfertaPdfService
 
     private function crearLineasOferta(int $ofertaCabeceraId, array $lineas): void
     {
-        foreach ($lineas as $linea) {
-            OfertaLinea::create([
-                'oferta_cabecera_id' => $ofertaCabeceraId,
-                'tipo' => $linea['tipo'],
-                'descripcion' => $linea['descripcion'],
-                'precio' => $linea['precio'],
-            ]);
+        \Illuminate\Support\Facades\Log::info('=== CREAR LÍNEAS OFERTA ===');
+        \Illuminate\Support\Facades\Log::info('Oferta ID: ' . $ofertaCabeceraId);
+        \Illuminate\Support\Facades\Log::info('Total líneas a guardar: ' . count($lineas));
+        
+        foreach ($lineas as $indice => $linea) {
+            \Illuminate\Support\Facades\Log::info("Guardando línea $indice: " . json_encode($linea));
+            try {
+                OfertaLinea::create([
+                    'oferta_cabecera_id' => $ofertaCabeceraId,
+                    'tipo' => $linea['tipo'],
+                    'descripcion' => $linea['descripcion'],
+                    'precio' => $linea['precio'],
+                ]);
+                \Illuminate\Support\Facades\Log::info("Línea $indice guardada correctamente");
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error("Error al guardar línea $indice: " . $e->getMessage());
+                \Illuminate\Support\Facades\Log::error("Datos de la línea: " . json_encode($linea));
+            }
         }
+        
+        \Illuminate\Support\Facades\Log::info('=== FIN CREAR LÍNEAS OFERTA ===');
     }
 
     private function calcularYActualizarTotales(OfertaCabecera $oferta): void

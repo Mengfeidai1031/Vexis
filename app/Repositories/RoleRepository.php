@@ -33,7 +33,9 @@ class RoleRepository implements RoleRepositoryInterface
         $role = Role::create($data);
         
         if (!empty($permissions)) {
-            $role->syncPermissions($permissions);
+            // Convertir IDs a instancias de Permission
+            $permissionModels = Permission::whereIn('id', $permissions)->get();
+            $role->syncPermissions($permissionModels);
         }
         
         return $role;
@@ -45,7 +47,9 @@ class RoleRepository implements RoleRepositoryInterface
         $role->update($data);
         
         if (!empty($permissions)) {
-            $role->syncPermissions($permissions);
+            // Convertir IDs a instancias de Permission
+            $permissionModels = Permission::whereIn('id', $permissions)->get();
+            $role->syncPermissions($permissionModels);
         } else {
             $role->syncPermissions([]);
         }

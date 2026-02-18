@@ -18,7 +18,7 @@ return new class extends Migration
             $table->datetime('fecha');
             $table->string('pdf_path')->nullable(); // Ruta del PDF original
             $table->timestamps();
-    
+        
             // Relaciones
             $table->foreign('cliente_id')->references('id')->on('clientes')->onDelete('cascade');
             $table->foreign('vehiculo_id')->references('id')->on('vehiculos')->onDelete('cascade');

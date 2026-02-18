@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('domicilio', 255);
             $table->string('codigo_postal', 5);
             $table->timestamps();
-    
+        
             // Relación con empresas
             $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');
         });

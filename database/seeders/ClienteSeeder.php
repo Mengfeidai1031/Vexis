@@ -14,6 +14,8 @@ class ClienteSeeder extends Seeder
             'apellidos' => 'Rodríguez Pérez',
             'empresa_id' => 1,
             'dni' => '12345678A',
+            'email' => 'carlos.rodriguez@ejemplo.com',
+            'telefono' => '634001001',
             'domicilio' => 'Calle Luna 15, Las Palmas',
             'codigo_postal' => '35001',
         ]);
@@ -23,6 +25,8 @@ class ClienteSeeder extends Seeder
             'apellidos' => 'Martín González',
             'empresa_id' => 1,
             'dni' => '23456789B',
+            'email' => 'ana.martin@ejemplo.com',
+            'telefono' => '634002002',
             'domicilio' => 'Avenida Sol 42, Telde',
             'codigo_postal' => '35200',
         ]);
@@ -32,6 +36,8 @@ class ClienteSeeder extends Seeder
             'apellidos' => 'Fernández López',
             'empresa_id' => 2,
             'dni' => '34567890C',
+            'email' => 'luis.fernandez@ejemplo.com',
+            'telefono' => '634003003',
             'domicilio' => 'Calle Estrella 8, Santa Cruz',
             'codigo_postal' => '38001',
         ]);
@@ -41,6 +47,8 @@ class ClienteSeeder extends Seeder
             'apellidos' => 'Sánchez Ruiz',
             'empresa_id' => 1,
             'dni' => '45678901D',
+            'email' => 'carmen.sanchez@ejemplo.com',
+            'telefono' => '634004004',
             'domicilio' => 'Plaza Mayor 3, Las Palmas',
             'codigo_postal' => '35003',
         ]);
@@ -50,6 +58,8 @@ class ClienteSeeder extends Seeder
             'apellidos' => 'García Díaz',
             'empresa_id' => 2,
             'dni' => '56789012E',
+            'email' => 'miguel.garcia@ejemplo.com',
+            'telefono' => '634005005',
             'domicilio' => 'Calle Mar 25, La Laguna',
             'codigo_postal' => '38200',
         ]);
