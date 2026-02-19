@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Bienvenido - Grupo ARI')
+@section('title', 'Bienvenido - Vexis')
 
 @section('content')
 <div class="row justify-content-center align-items-center" style="min-height: 60vh;">
     <div class="col-md-8 col-lg-6">
         <div class="card shadow-lg border-0">
             <div class="card-body text-center p-5">
-                <!-- Logo Grupo ARI -->
+                <!-- Logo Vexis -->
                 <div class="mb-4">
-                    <h1 class="display-4 fw-bold text-primary mb-2">GRUPO ARI</h1>
+                    <h1 class="display-4 fw-bold text-primary mb-2">VEXIS</h1>
                     <div class="border-top border-primary border-3 mx-auto" style="width: 100px; margin-top: 10px;"></div>
                 </div>
                 

@@ -74,8 +74,8 @@
                     <strong>Usuarios de prueba:</strong><br>
                     Email: superadmin@grupoari.com (Super Administrador)<br>
                     Email: admin@grupoari.com (Gestiones Generales)<br>
-                    Email: multi-restricciones@test.com (Carlos, Grupo ARI S.L.)<br>
-                    Email: restringido@test.com (Grupo ARI S.L.)<br>
+                    Email: multi-restricciones@test.com (Carlos, Vexis)<br>
+                    Email: restringido@test.com (Vexis)<br>
                     <strong>Contraseña para todos:</strong> password
                 </small>
             </div>
