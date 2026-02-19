@@ -10,19 +10,30 @@ class EmpresaSeeder extends Seeder
     public function run(): void
     {
         Empresa::create([
-            'nombre' => 'Grupo ARI S.L.',
-            'abreviatura' => 'GARI',
-            'cif' => 'B12345678',
-            'domicilio' => 'Calle Principal 123, Las Palmas',
-            'telefono' => '928123456',
+            'nombre' => 'ARI Motor Gran Canaria S.L.',
+            'abreviatura' => 'ARIGC',
+            'cif' => 'B35678901',
+            'domicilio' => 'Calle Escritor Benito Pérez Galdós 8, Las Palmas de Gran Canaria',
+            'codigo_postal' => '35005',
+            'telefono' => '928301500',
         ]);
 
         Empresa::create([
-            'nombre' => 'ARI Canarias S.A.',
-            'abreviatura' => 'ARIC',
-            'cif' => 'A87654321',
-            'domicilio' => 'Avenida Marítima 456, Tenerife',
-            'telefono' => '922654321',
+            'nombre' => 'ARI Motor Tenerife S.L.',
+            'abreviatura' => 'ARITF',
+            'cif' => 'B38765432',
+            'domicilio' => 'Avenida de Bélgica 2, Santa Cruz de Tenerife',
+            'codigo_postal' => '38008',
+            'telefono' => '922653200',
+        ]);
+
+        Empresa::create([
+            'nombre' => 'ARI Motor Lanzarote S.L.',
+            'abreviatura' => 'ARILZ',
+            'cif' => 'B35543210',
+            'domicilio' => 'Calle Rubicón 15, Arrecife',
+            'codigo_postal' => '35500',
+            'telefono' => '928812300',
         ]);
     }
 }

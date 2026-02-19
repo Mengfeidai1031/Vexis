@@ -12,9 +12,13 @@ class DepartamentoSeeder extends Seeder
         $departamentos = [
             ['nombre' => 'Administración', 'abreviatura' => 'ADMIN'],
             ['nombre' => 'Ventas', 'abreviatura' => 'VENTAS'],
-            ['nombre' => 'Compras', 'abreviatura' => 'COMPRAS'],
+            ['nombre' => 'Posventa', 'abreviatura' => 'POSV'],
+            ['nombre' => 'Recambios', 'abreviatura' => 'RECAMB'],
+            ['nombre' => 'Taller', 'abreviatura' => 'TALLER'],
             ['nombre' => 'Recursos Humanos', 'abreviatura' => 'RRHH'],
             ['nombre' => 'Informática', 'abreviatura' => 'IT'],
+            ['nombre' => 'Dirección', 'abreviatura' => 'DIR'],
+            ['nombre' => 'Marketing', 'abreviatura' => 'MKT'],
         ];
 
         foreach ($departamentos as $departamento) {

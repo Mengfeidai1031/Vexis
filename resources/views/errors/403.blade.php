@@ -1,41 +1,24 @@
 @extends('layouts.app')
 
-@section('title', 'Acceso Denegado')
+@section('title', 'Acceso Denegado - VEXIS')
 
 @section('content')
-<div class="row justify-content-center mt-5">
-    <div class="col-md-6">
-        <div class="card border-danger">
-            <div class="card-header bg-danger text-white">
-                <h4 class="mb-0">
-                    <i class="bi bi-shield-x"></i> Acceso Denegado
-                </h4>
-            </div>
-            <div class="card-body text-center">
-                <div class="mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="currentColor" class="bi bi-exclamation-triangle text-danger" viewBox="0 0 16 16">
-                        <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.116.116 0 0 1-.066.017H1.146a.115.115 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z"/>
-                        <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"/>
-                    </svg>
-                </div>
-                
-                <h3 class="text-danger">Error 403 - Prohibido</h3>
-                <p class="lead">No tienes permisos para acceder a esta página.</p>
-                <p class="text-muted">
-                    Si crees que esto es un error, contacta con tu administrador del sistema.
-                </p>
-                
-                <hr>
-                
-                <div class="d-flex justify-content-center gap-2">
-                    <a href="{{ route('dashboard') }}" class="btn btn-primary">
-                        <i class="bi bi-house"></i> Ir al Dashboard
-                    </a>
-                    <a href="javascript:history.back()" class="btn btn-secondary">
-                        <i class="bi bi-arrow-left"></i> Volver Atrás
-                    </a>
-                </div>
-            </div>
+<div style="display: flex; align-items: center; justify-content: center; min-height: calc(100vh - var(--vx-navbar-height) - 120px);">
+    <div style="text-align: center; max-width: 440px;">
+        <div style="font-size: 64px; color: var(--vx-danger); margin-bottom: 16px;">
+            <i class="bi bi-shield-x"></i>
+        </div>
+        <h1 style="font-size: 24px; font-weight: 800; color: var(--vx-text); margin-bottom: 8px;">Acceso Denegado</h1>
+        <p style="font-size: 14px; color: var(--vx-text-secondary); margin-bottom: 24px; line-height: 1.6;">
+            No tienes permisos para acceder a esta página. Si crees que esto es un error, contacta con tu administrador del sistema.
+        </p>
+        <div style="display: flex; gap: 8px; justify-content: center;">
+            <a href="{{ route('dashboard') }}" class="vx-btn vx-btn-primary">
+                <i class="bi bi-grid-1x2"></i> Ir al Dashboard
+            </a>
+            <a href="javascript:history.back()" class="vx-btn vx-btn-secondary">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
         </div>
     </div>
 </div>

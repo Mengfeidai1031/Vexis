@@ -20,8 +20,6 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             ClienteSeeder::class,
             VehiculoSeeder::class,
-            UsuariosPruebaSeeder::class,
-            UserRestrictionsTestSeeder::class,
         ]);
     }
 }

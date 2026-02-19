@@ -10,72 +10,86 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Usuario Super Admin
+        // Super Admin - IT Gran Canaria
         $superAdmin = User::create([
-            'nombre' => 'Super',
-            'apellidos' => 'Administrador',
+            'nombre' => 'Meng Fei',
+            'apellidos' => 'Li Zhang',
             'empresa_id' => 1,
-            'departamento_id' => 5, // Informática
+            'departamento_id' => 7, // Informática
             'centro_id' => 1,
             'email' => 'superadmin@grupoari.com',
-            'telefono' => '928111111',
+            'telefono' => '928301501',
             'extension' => '100',
             'password' => Hash::make('password'),
         ]);
         $superAdmin->assignRole('Super Admin');
 
-        // Usuario Administrador
+        // Administrador - Administración Gran Canaria
         $admin = User::create([
-            'nombre' => 'Admin',
-            'apellidos' => 'Sistema',
+            'nombre' => 'Carmen',
+            'apellidos' => 'Santana Medina',
             'empresa_id' => 1,
-            'departamento_id' => 5, // Informática
+            'departamento_id' => 1, // Administración
             'centro_id' => 1,
             'email' => 'admin@grupoari.com',
-            'telefono' => '928111112',
+            'telefono' => '928301502',
             'extension' => '101',
             'password' => Hash::make('password'),
         ]);
         $admin->assignRole('Administrador');
 
-        // Usuario Gerente
+        // Gerente - Dirección Tenerife
         $gerente = User::create([
-            'nombre' => 'Juan',
-            'apellidos' => 'Pérez García',
-            'empresa_id' => 1,
-            'departamento_id' => 2, // Ventas
-            'centro_id' => 1,
-            'email' => 'juan@grupoari.com',
-            'telefono' => '928222222',
-            'extension' => '201',
+            'nombre' => 'Francisco',
+            'apellidos' => 'Hernández Pérez',
+            'empresa_id' => 2,
+            'departamento_id' => 8, // Dirección
+            'centro_id' => 4,
+            'email' => 'francisco@grupoari.com',
+            'telefono' => '922653201',
+            'extension' => '200',
             'password' => Hash::make('password'),
         ]);
         $gerente->assignRole('Gerente');
 
-        // Usuario Vendedor
+        // Vendedor - Ventas Gran Canaria Telde
         $vendedor = User::create([
-            'nombre' => 'María',
-            'apellidos' => 'González López',
-            'empresa_id' => 2,
+            'nombre' => 'María del Carmen',
+            'apellidos' => 'González Suárez',
+            'empresa_id' => 1,
             'departamento_id' => 2, // Ventas
-            'centro_id' => 3,
+            'centro_id' => 2,
             'email' => 'maria@grupoari.com',
-            'telefono' => '922333333',
+            'telefono' => '628445566',
             'extension' => '301',
             'password' => Hash::make('password'),
         ]);
         $vendedor->assignRole('Vendedor');
 
-        // Usuario Consultor
+        // Vendedor - Ventas Tenerife
+        $vendedor2 = User::create([
+            'nombre' => 'José Antonio',
+            'apellidos' => 'Rodríguez Dorta',
+            'empresa_id' => 2,
+            'departamento_id' => 2, // Ventas
+            'centro_id' => 5,
+            'email' => 'joseantonio@grupoari.com',
+            'telefono' => '622778899',
+            'extension' => '302',
+            'password' => Hash::make('password'),
+        ]);
+        $vendedor2->assignRole('Vendedor');
+
+        // Consultor - Lanzarote
         $consultor = User::create([
             'nombre' => 'Pedro',
-            'apellidos' => 'Martínez Ruiz',
-            'empresa_id' => 1,
+            'apellidos' => 'Cabrera Betancort',
+            'empresa_id' => 3,
             'departamento_id' => 1, // Administración
-            'centro_id' => 1,
+            'centro_id' => 7,
             'email' => 'pedro@grupoari.com',
-            'telefono' => '928444444',
-            'extension' => '401',
+            'telefono' => '928812301',
+            'extension' => '400',
             'password' => Hash::make('password'),
         ]);
         $consultor->assignRole('Consultor');
