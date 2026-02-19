@@ -78,6 +78,24 @@
                             </td>
                         </tr>
                         <tr>
+                            <th>Restricciones</th>
+                            <td>
+                                @php
+                                    $restrictionsCount = $user->restrictions->count();
+                                @endphp
+                                @if($restrictionsCount > 0)
+                                    <span class="badge bg-warning">{{ $restrictionsCount }} restricciones</span>
+                                @else
+                                    <span class="badge bg-success">Sin restricciones (ve todo)</span>
+                                @endif
+                                @can('editar restricciones')
+                                    <a href="{{ route('restricciones.edit', $user->id) }}" class="btn btn-sm btn-warning ms-2">
+                                        Gestionar
+                                    </a>
+                                @endcan
+                            </td>
+                        </tr>
+                        <tr>
                             <th>Fecha de Creación</th>
                             <td>{{ $user->created_at->format('d/m/Y H:i') }}</td>
                         </tr>

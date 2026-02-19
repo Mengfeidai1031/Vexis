@@ -190,6 +190,134 @@
                         @enderror
                     </div>
 
+                    <!-- Restricciones -->
+                    @can('editar restricciones')
+                    <div class="mb-4">
+                        <label class="form-label">Restricciones</label>
+                        <p class="text-muted small">Selecciona las restricciones para este usuario. Si no seleccionas ninguna restricción de un tipo, el usuario podrá ver todo de ese tipo.</p>
+                        
+                        <!-- Empresas -->
+                        <div class="mb-3">
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">
+                                        <input type="checkbox" class="form-check-input me-2 select-all-type" data-type="empresas" id="select-all-empresas">
+                                        <label for="select-all-empresas" class="mb-0">Empresas</label>
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        @foreach($availableRestrictions['empresas'] as $empresa)
+                                            <div class="col-md-6 mb-2">
+                                                <div class="form-check">
+                                                    <input class="form-check-input restriction-checkbox type-empresas" type="checkbox" name="restrictions[empresas][]" value="{{ $empresa->id }}" id="empresa-{{ $empresa->id }}" {{ in_array($empresa->id, old('restrictions.empresas', $userRestrictions['empresas'] ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="empresa-{{ $empresa->id }}">{{ $empresa->nombre }}@if($empresa->cif) <small class="text-muted">({{ $empresa->cif }})</small>@endif</label>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Clientes -->
+                        <div class="mb-3">
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">
+                                        <input type="checkbox" class="form-check-input me-2 select-all-type" data-type="clientes" id="select-all-clientes">
+                                        <label for="select-all-clientes" class="mb-0">Clientes</label>
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        @foreach($availableRestrictions['clientes'] as $cliente)
+                                            <div class="col-md-6 mb-2">
+                                                <div class="form-check">
+                                                    <input class="form-check-input restriction-checkbox type-clientes" type="checkbox" name="restrictions[clientes][]" value="{{ $cliente->id }}" id="cliente-{{ $cliente->id }}" {{ in_array($cliente->id, old('restrictions.clientes', $userRestrictions['clientes'] ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="cliente-{{ $cliente->id }}">{{ $cliente->nombre_completo }} <small class="text-muted">({{ $cliente->empresa->nombre }})</small></label>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vehículos -->
+                        <div class="mb-3">
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">
+                                        <input type="checkbox" class="form-check-input me-2 select-all-type" data-type="vehiculos" id="select-all-vehiculos">
+                                        <label for="select-all-vehiculos" class="mb-0">Vehículos</label>
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        @foreach($availableRestrictions['vehiculos'] as $vehiculo)
+                                            <div class="col-md-6 mb-2">
+                                                <div class="form-check">
+                                                    <input class="form-check-input restriction-checkbox type-vehiculos" type="checkbox" name="restrictions[vehiculos][]" value="{{ $vehiculo->id }}" id="vehiculo-{{ $vehiculo->id }}" {{ in_array($vehiculo->id, old('restrictions.vehiculos', $userRestrictions['vehiculos'] ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="vehiculo-{{ $vehiculo->id }}">{{ $vehiculo->modelo }} {{ $vehiculo->version }} <small class="text-muted">({{ $vehiculo->empresa->nombre }})</small></label>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Centros -->
+                        <div class="mb-3">
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">
+                                        <input type="checkbox" class="form-check-input me-2 select-all-type" data-type="centros" id="select-all-centros">
+                                        <label for="select-all-centros" class="mb-0">Centros</label>
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        @foreach($availableRestrictions['centros'] as $centro)
+                                            <div class="col-md-6 mb-2">
+                                                <div class="form-check">
+                                                    <input class="form-check-input restriction-checkbox type-centros" type="checkbox" name="restrictions[centros][]" value="{{ $centro->id }}" id="centro-{{ $centro->id }}" {{ in_array($centro->id, old('restrictions.centros', $userRestrictions['centros'] ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="centro-{{ $centro->id }}">{{ $centro->nombre }} <small class="text-muted">({{ $centro->empresa->nombre }})</small></label>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Departamentos -->
+                        <div class="mb-3">
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">
+                                        <input type="checkbox" class="form-check-input me-2 select-all-type" data-type="departamentos" id="select-all-departamentos">
+                                        <label for="select-all-departamentos" class="mb-0">Departamentos</label>
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        @foreach($availableRestrictions['departamentos'] as $departamento)
+                                            <div class="col-md-6 mb-2">
+                                                <div class="form-check">
+                                                    <input class="form-check-input restriction-checkbox type-departamentos" type="checkbox" name="restrictions[departamentos][]" value="{{ $departamento->id }}" id="departamento-{{ $departamento->id }}" {{ in_array($departamento->id, old('restrictions.departamentos', $userRestrictions['departamentos'] ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="departamento-{{ $departamento->id }}">{{ $departamento->nombre }}@if($departamento->abreviatura) <small class="text-muted">({{ $departamento->abreviatura }})</small>@endif</label>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endcan
+
                     <!-- Password (opcional) -->
                     <div class="mb-3">
                         <label for="password" class="form-label">Nueva Contraseña (dejar en blanco para no cambiar)</label>
@@ -256,6 +384,54 @@
         if (empresaSelect.value) {
             empresaSelect.dispatchEvent(new Event('change'));
         }
+    });
+
+    // Seleccionar/deseleccionar todos de un tipo de restricción
+    document.querySelectorAll('.select-all-type').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const type = this.dataset.type;
+            const typeCheckboxes = document.querySelectorAll('.type-' + type);
+            
+            typeCheckboxes.forEach(cb => {
+                cb.checked = this.checked;
+            });
+        });
+    });
+
+    // Actualizar el checkbox del tipo si se seleccionan/deseleccionan individuales
+    document.querySelectorAll('.restriction-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const classes = Array.from(this.classList);
+            const typeClass = classes.find(c => c.startsWith('type-'));
+            
+            if (typeClass) {
+                const type = typeClass.replace('type-', '');
+                const typeCheckboxes = document.querySelectorAll('.type-' + type);
+                const typeSelectAll = document.querySelector(`.select-all-type[data-type="${type}"]`);
+                
+                const allChecked = Array.from(typeCheckboxes).every(cb => cb.checked);
+                const someChecked = Array.from(typeCheckboxes).some(cb => cb.checked);
+                
+                if (typeSelectAll) {
+                    typeSelectAll.checked = allChecked;
+                    typeSelectAll.indeterminate = someChecked && !allChecked;
+                }
+            }
+        });
+    });
+
+    // Establecer estados iniciales de checkboxes
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.select-all-type').forEach(checkbox => {
+            const type = checkbox.dataset.type;
+            const typeCheckboxes = document.querySelectorAll('.type-' + type);
+            const allChecked = Array.from(typeCheckboxes).every(cb => cb.checked);
+            const someChecked = Array.from(typeCheckboxes).some(cb => cb.checked);
+            
+            if (someChecked && !allChecked) {
+                checkbox.indeterminate = true;
+            }
+        });
     });
 </script>
 @endpush

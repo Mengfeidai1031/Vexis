@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DepartamentoController;
 use App\Http\Controllers\CentroController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\RestriccionController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\VehiculoController;
 use App\Http\Controllers\OfertaController;
@@ -30,80 +31,111 @@ Route::middleware('auth')->group(function () {
     })->name('dashboard');
 
     // CRUD de usuarios - Solo con permisos
-    Route::middleware(['permission:ver usuarios'])->group(function () {
-        Route::get('/users', [UserController::class, 'index'])->name('users.index');
-        Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
-    });
-    
+    // IMPORTANTE: Las rutas específicas (/create) deben ir ANTES de las dinámicas (/{user})
     Route::middleware(['permission:crear usuarios'])->group(function () {
         Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
     });
+
+    Route::middleware(['permission:ver usuarios'])->group(function () {
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::get('/users/{user}', [UserController::class, 'show'])
+            ->middleware('can:view,user')
+            ->name('users.show');
+    });
     
     Route::middleware(['permission:editar usuarios'])->group(function () {
-        Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
-        Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
-        Route::patch('/users/{user}', [UserController::class, 'update']);
+        Route::get('/users/{user}/edit', [UserController::class, 'edit'])
+            ->middleware('can:update,user')
+            ->name('users.edit');
+        Route::put('/users/{user}', [UserController::class, 'update'])
+            ->middleware('can:update,user')
+            ->name('users.update');
+        Route::patch('/users/{user}', [UserController::class, 'update'])
+            ->middleware('can:update,user');
     });
     
     Route::middleware(['permission:eliminar usuarios'])->group(function () {
-        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])
+            ->middleware('can:delete,user')
+            ->name('users.destroy');
     });
 
     Route::get('/api/centros-by-empresa', [UserController::class, 'getCentrosByEmpresa'])
         ->name('api.centros-by-empresa');
 
     // CRUD de departamentos - Solo con permisos
-    Route::middleware(['permission:ver departamentos'])->group(function () {
-        Route::get('/departamentos', [DepartamentoController::class, 'index'])->name('departamentos.index');
-        Route::get('/departamentos/{departamento}', [DepartamentoController::class, 'show'])->name('departamentos.show');
-    });
-    
+    // IMPORTANTE: Las rutas específicas (/create) deben ir ANTES de las dinámicas (/{departamento})
     Route::middleware(['permission:crear departamentos'])->group(function () {
         Route::get('/departamentos/create', [DepartamentoController::class, 'create'])->name('departamentos.create');
         Route::post('/departamentos', [DepartamentoController::class, 'store'])->name('departamentos.store');
     });
+
+    Route::middleware(['permission:ver departamentos'])->group(function () {
+        Route::get('/departamentos', [DepartamentoController::class, 'index'])->name('departamentos.index');
+        Route::get('/departamentos/{departamento}', [DepartamentoController::class, 'show'])
+            ->middleware('can:view,departamento')
+            ->name('departamentos.show');
+    });
     
     Route::middleware(['permission:editar departamentos'])->group(function () {
-        Route::get('/departamentos/{departamento}/edit', [DepartamentoController::class, 'edit'])->name('departamentos.edit');
-        Route::put('/departamentos/{departamento}', [DepartamentoController::class, 'update'])->name('departamentos.update');
-        Route::patch('/departamentos/{departamento}', [DepartamentoController::class, 'update']);
+        Route::get('/departamentos/{departamento}/edit', [DepartamentoController::class, 'edit'])
+            ->middleware('can:update,departamento')
+            ->name('departamentos.edit');
+        Route::put('/departamentos/{departamento}', [DepartamentoController::class, 'update'])
+            ->middleware('can:update,departamento')
+            ->name('departamentos.update');
+        Route::patch('/departamentos/{departamento}', [DepartamentoController::class, 'update'])
+            ->middleware('can:update,departamento');
     });
     
     Route::middleware(['permission:eliminar departamentos'])->group(function () {
-        Route::delete('/departamentos/{departamento}', [DepartamentoController::class, 'destroy'])->name('departamentos.destroy');
+        Route::delete('/departamentos/{departamento}', [DepartamentoController::class, 'destroy'])
+            ->middleware('can:delete,departamento')
+            ->name('departamentos.destroy');
     });
 
     // CRUD de centros - Solo con permisos
-    Route::middleware(['permission:ver centros'])->group(function () {
-        Route::get('/centros', [CentroController::class, 'index'])->name('centros.index');
-        Route::get('/centros/{centro}', [CentroController::class, 'show'])->name('centros.show');
-    });
-    
+    // IMPORTANTE: Las rutas específicas (/create) deben ir ANTES de las dinámicas (/{centro})
     Route::middleware(['permission:crear centros'])->group(function () {
         Route::get('/centros/create', [CentroController::class, 'create'])->name('centros.create');
         Route::post('/centros', [CentroController::class, 'store'])->name('centros.store');
     });
+
+    Route::middleware(['permission:ver centros'])->group(function () {
+        Route::get('/centros', [CentroController::class, 'index'])->name('centros.index');
+        Route::get('/centros/{centro}', [CentroController::class, 'show'])
+            ->middleware('can:view,centro')
+            ->name('centros.show');
+    });
     
     Route::middleware(['permission:editar centros'])->group(function () {
-        Route::get('/centros/{centro}/edit', [CentroController::class, 'edit'])->name('centros.edit');
-        Route::put('/centros/{centro}', [CentroController::class, 'update'])->name('centros.update');
-        Route::patch('/centros/{centro}', [CentroController::class, 'update']);
+        Route::get('/centros/{centro}/edit', [CentroController::class, 'edit'])
+            ->middleware('can:update,centro')
+            ->name('centros.edit');
+        Route::put('/centros/{centro}', [CentroController::class, 'update'])
+            ->middleware('can:update,centro')
+            ->name('centros.update');
+        Route::patch('/centros/{centro}', [CentroController::class, 'update'])
+            ->middleware('can:update,centro');
     });
     
     Route::middleware(['permission:eliminar centros'])->group(function () {
-        Route::delete('/centros/{centro}', [CentroController::class, 'destroy'])->name('centros.destroy');
+        Route::delete('/centros/{centro}', [CentroController::class, 'destroy'])
+            ->middleware('can:delete,centro')
+            ->name('centros.destroy');
     });
 
     // CRUD de roles - Solo con permisos
-    Route::middleware(['permission:ver roles'])->group(function () {
-        Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
-        Route::get('/roles/{role}', [RoleController::class, 'show'])->name('roles.show');
-    });
-    
+    // IMPORTANTE: Las rutas específicas (/create) deben ir ANTES de las dinámicas (/{role})
     Route::middleware(['permission:crear roles'])->group(function () {
         Route::get('/roles/create', [RoleController::class, 'create'])->name('roles.create');
         Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
+    });
+
+    Route::middleware(['permission:ver roles'])->group(function () {
+        Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
+        Route::get('/roles/{role}', [RoleController::class, 'show'])->name('roles.show');
     });
     
     Route::middleware(['permission:editar roles'])->group(function () {
@@ -116,60 +148,119 @@ Route::middleware('auth')->group(function () {
         Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
     });
 
-    // CRUD de clientes - Solo con permisos
-    Route::middleware(['permission:ver clientes'])->group(function () {
-        Route::get('/clientes', [ClienteController::class, 'index'])->name('clientes.index');
-        Route::get('/clientes/{cliente}', [ClienteController::class, 'show'])->name('clientes.show');
+    // CRUD de restricciones - Solo con permisos
+    Route::middleware(['permission:crear restricciones'])->group(function () {
+        Route::get('/restricciones/create', [RestriccionController::class, 'create'])->name('restricciones.create');
+        Route::post('/restricciones', [RestriccionController::class, 'store'])->name('restricciones.store');
     });
 
+    Route::middleware(['permission:ver restricciones'])->group(function () {
+        Route::get('/restricciones', [RestriccionController::class, 'index'])->name('restricciones.index');
+        Route::get('/restricciones/{restriccion}', [RestriccionController::class, 'show'])
+            ->middleware('can:view,restriccion')
+            ->name('restricciones.show');
+    });
+    
+    Route::middleware(['permission:editar restricciones'])->group(function () {
+        Route::get('/restricciones/{restriccion}/edit', [RestriccionController::class, 'edit'])
+            ->middleware('can:update,restriccion')
+            ->name('restricciones.edit');
+        Route::put('/restricciones/{restriccion}', [RestriccionController::class, 'update'])
+            ->middleware('can:update,restriccion')
+            ->name('restricciones.update');
+        Route::patch('/restricciones/{restriccion}', [RestriccionController::class, 'update'])
+            ->middleware('can:update,restriccion');
+    });
+    
+    Route::middleware(['permission:eliminar restricciones'])->group(function () {
+        Route::delete('/restricciones/{restriccion}', [RestriccionController::class, 'destroy'])
+            ->middleware('can:delete,restriccion')
+            ->name('restricciones.destroy');
+    });
+
+    // CRUD de clientes - Solo con permisos
     Route::middleware(['permission:crear clientes'])->group(function () {
         Route::get('/clientes/create', [ClienteController::class, 'create'])->name('clientes.create');
         Route::post('/clientes', [ClienteController::class, 'store'])->name('clientes.store');
     });
+    
+    Route::middleware(['permission:ver clientes'])->group(function () {
+        Route::get('/clientes', [ClienteController::class, 'index'])->name('clientes.index');
+        Route::get('/clientes/{cliente}', [ClienteController::class, 'show'])
+            ->middleware('can:view,cliente')
+            ->name('clientes.show');
+    });
 
     Route::middleware(['permission:editar clientes'])->group(function () {
-        Route::get('/clientes/{cliente}/edit', [ClienteController::class, 'edit'])->name('clientes.edit');
-        Route::put('/clientes/{cliente}', [ClienteController::class, 'update'])->name('clientes.update');
-        Route::patch('/clientes/{cliente}', [ClienteController::class, 'update']);
+        Route::get('/clientes/{cliente}/edit', [ClienteController::class, 'edit'])
+            ->middleware('can:update,cliente')
+            ->name('clientes.edit');
+        Route::put('/clientes/{cliente}', [ClienteController::class, 'update'])
+            ->middleware('can:update,cliente')
+            ->name('clientes.update');
+        Route::patch('/clientes/{cliente}', [ClienteController::class, 'update'])
+            ->middleware('can:update,cliente');
     });
 
     Route::middleware(['permission:eliminar clientes'])->group(function () {
-        Route::delete('/clientes/{cliente}', [ClienteController::class, 'destroy'])->name('clientes.destroy');
+        Route::delete('/clientes/{cliente}', [ClienteController::class, 'destroy'])
+            ->middleware('can:delete,cliente')
+            ->name('clientes.destroy');
     });
 
     // CRUD de vehículos - Solo con permisos
-    Route::middleware(['permission:ver vehículos'])->group(function () {
-        Route::get('/vehiculos', [VehiculoController::class, 'index'])->name('vehiculos.index');
-        Route::get('/vehiculos/{vehiculo}', [VehiculoController::class, 'show'])->name('vehiculos.show');
-    });
-
     Route::middleware(['permission:crear vehículos'])->group(function () {
         Route::get('/vehiculos/create', [VehiculoController::class, 'create'])->name('vehiculos.create');
         Route::post('/vehiculos', [VehiculoController::class, 'store'])->name('vehiculos.store');
     });
 
+    Route::middleware(['permission:ver vehículos'])->group(function () {
+        Route::get('/vehiculos', [VehiculoController::class, 'index'])->name('vehiculos.index');
+        Route::get('/vehiculos/export/excel', [VehiculoController::class, 'export'])->name('vehiculos.export');
+        Route::get('/vehiculos/export/pdf', [VehiculoController::class, 'exportPdf'])->name('vehiculos.exportPdf');
+        Route::get('/vehiculos/{vehiculo}', [VehiculoController::class, 'show'])
+            ->middleware('can:view,vehiculo')
+            ->name('vehiculos.show');
+    });
+
     Route::middleware(['permission:editar vehículos'])->group(function () {
-        Route::get('/vehiculos/{vehiculo}/edit', [VehiculoController::class, 'edit'])->name('vehiculos.edit');
-        Route::put('/vehiculos/{vehiculo}', [VehiculoController::class, 'update'])->name('vehiculos.update');
-        Route::patch('/vehiculos/{vehiculo}', [VehiculoController::class, 'update']);
+        Route::get('/vehiculos/{vehiculo}/edit', [VehiculoController::class, 'edit'])
+            ->middleware('can:update,vehiculo')
+            ->name('vehiculos.edit');
+        Route::put('/vehiculos/{vehiculo}', [VehiculoController::class, 'update'])
+            ->middleware('can:update,vehiculo')
+            ->name('vehiculos.update');
+        Route::patch('/vehiculos/{vehiculo}', [VehiculoController::class, 'update'])
+            ->middleware('can:update,vehiculo');
     });
 
     Route::middleware(['permission:eliminar vehículos'])->group(function () {
-        Route::delete('/vehiculos/{vehiculo}', [VehiculoController::class, 'destroy'])->name('vehiculos.destroy');
+        Route::delete('/vehiculos/{vehiculo}', [VehiculoController::class, 'destroy'])
+            ->middleware('can:delete,vehiculo')
+            ->name('vehiculos.destroy');
     });
 
     // CRUD de ofertas - Solo con permisos
-    Route::middleware(['permission:ver ofertas'])->group(function () {
-        Route::get('/ofertas', [OfertaController::class, 'index'])->name('ofertas.index');
-        Route::get('/ofertas/{oferta}', [OfertaController::class, 'show'])->name('ofertas.show');
-    });
-
     Route::middleware(['permission:crear ofertas'])->group(function () {
         Route::get('/ofertas/create', [OfertaController::class, 'create'])->name('ofertas.create');
         Route::post('/ofertas', [OfertaController::class, 'store'])->name('ofertas.store');
     });
+    
+    Route::middleware(['permission:ver ofertas'])->group(function () {
+        Route::get('/ofertas', [OfertaController::class, 'index'])->name('ofertas.index');
+        Route::get('/ofertas/{oferta}', [OfertaController::class, 'show'])
+            ->middleware('can:view,oferta')
+            ->name('ofertas.show');
+    });
 
     Route::middleware(['permission:eliminar ofertas'])->group(function () {
-        Route::delete('/ofertas/{oferta}', [OfertaController::class, 'destroy'])->name('ofertas.destroy');
+        Route::delete('/ofertas/{oferta}', [OfertaController::class, 'destroy'])
+            ->middleware('can:delete,oferta')
+            ->name('ofertas.destroy');
     });
 });
+
+Route::get('/test', function () {
+    return view('test');
+});
+

@@ -9,7 +9,7 @@
             <h2>Gestión de Centros</h2>
             @can('crear centros')
                 <a href="{{ route('centros.create') }}" class="btn btn-primary">
-                    Nuevo Centro
+                    <i class="bi bi-plus-circle"></i> Nuevo Centro
                 </a>
             @endcan
         </div>
@@ -86,22 +86,22 @@
                                         <td>{{ $centro->provincia }}</td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                @can('ver centros')
-                                                    <a href="{{ route('centros.show', $centro->id) }}" 
+                                                @can('view', $centro)
+                                                    <a href="{{ route('centros.show', $centro) }}" 
                                                        class="btn btn-sm btn-info">
                                                         Ver
                                                     </a>
                                                 @endcan
                                                 
-                                                @can('editar centros')
-                                                    <a href="{{ route('centros.edit', $centro->id) }}" 
+                                                @can('update', $centro)
+                                                    <a href="{{ route('centros.edit', $centro) }}" 
                                                        class="btn btn-sm btn-warning">
                                                         Editar
                                                     </a>
                                                 @endcan
                                                 
-                                                @can('eliminar centros')
-                                                    <form action="{{ route('centros.destroy', $centro->id) }}" 
+                                                @can('delete', $centro)
+                                                    <form action="{{ route('centros.destroy', $centro) }}" 
                                                           method="POST" 
                                                           class="d-inline"
                                                           onsubmit="return confirm('¿Está seguro de eliminar este centro?');">
@@ -120,8 +120,8 @@
                         </table>
                     </div>
 
-                    <div class="mt-3">
-                        {{ $centros->links() }}
+                    <div class="mt-3 pagination-wrapper">
+                        {{ $centros->links('pagination::bootstrap-5') }}
                     </div>
                 @else
                     <div class="alert alert-info">

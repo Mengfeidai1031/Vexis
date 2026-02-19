@@ -8,8 +8,8 @@
         <div class="d-flex justify-content-between align-items-center">
             <h2>Detalle del Vehículo</h2>
             <div>
-                @can('editar vehículos')
-                    <a href="{{ route('vehiculos.edit', $vehiculo->id) }}" class="btn btn-warning">Editar</a>
+                @can('update', $vehiculo)
+                    <a href="{{ route('vehiculos.edit', $vehiculo) }}" class="btn btn-warning">Editar</a>
                 @endcan
                 <a href="{{ route('vehiculos.index') }}" class="btn btn-secondary">Volver</a>
             </div>

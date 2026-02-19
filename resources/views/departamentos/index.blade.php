@@ -9,7 +9,7 @@
             <h2>Gestión de Departamentos</h2>
             @can('crear departamentos')
                 <a href="{{ route('departamentos.create') }}" class="btn btn-primary">
-                    Nuevo Departamento
+                    <i class="bi bi-plus-circle"></i> Nuevo Departamento
                 </a>
             @endcan
         </div>
@@ -82,22 +82,22 @@
                                         <td>{{ $departamento->created_at->format('d/m/Y') }}</td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                @can('ver departamentos')
-                                                    <a href="{{ route('departamentos.show', $departamento->id) }}" 
+                                                @can('view', $departamento)
+                                                    <a href="{{ route('departamentos.show', $departamento) }}" 
                                                        class="btn btn-sm btn-info">
                                                         Ver
                                                     </a>
                                                 @endcan
                                                 
-                                                @can('editar departamentos')
-                                                    <a href="{{ route('departamentos.edit', $departamento->id) }}" 
+                                                @can('update', $departamento)
+                                                    <a href="{{ route('departamentos.edit', $departamento) }}" 
                                                        class="btn btn-sm btn-warning">
                                                         Editar
                                                     </a>
                                                 @endcan
                                                 
-                                                @can('eliminar departamentos')
-                                                    <form action="{{ route('departamentos.destroy', $departamento->id) }}" 
+                                                @can('delete', $departamento)
+                                                    <form action="{{ route('departamentos.destroy', $departamento) }}" 
                                                           method="POST" 
                                                           class="d-inline"
                                                           onsubmit="return confirm('¿Está seguro de eliminar este departamento?');">
@@ -116,8 +116,8 @@
                         </table>
                     </div>
 
-                    <div class="mt-3">
-                        {{ $departamentos->links() }}
+                    <div class="mt-3 pagination-wrapper">
+                        {{ $departamentos->links('pagination::bootstrap-5') }}
                     </div>
                 @else
                     <div class="alert alert-info">

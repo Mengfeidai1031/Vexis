@@ -92,6 +92,18 @@
                         </div>
                     @endcan
 
+                    @can('ver restricciones')
+                        <div class="col-md-3 mb-3">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">Restricciones</h5>
+                                    <p class="card-text">Gestión de restricciones</p>
+                                    <a href="{{ route('restricciones.index') }}" class="btn btn-primary btn-sm">Acceder</a>
+                                </div>
+                            </div>
+                        </div>
+                    @endcan
+
                     @can('ver clientes')
                         <div class="col-md-3 mb-3">
                             <div class="card text-center h-100">
@@ -103,6 +115,7 @@
                             </div>
                         </div>
                     @endcan
+
                     @can('ver vehículos')
                         <div class="col-md-3 mb-3">
                             <div class="card text-center h-100">

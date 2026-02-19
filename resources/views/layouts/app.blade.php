@@ -9,7 +9,80 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
     <!-- Estilos personalizados -->
+    <style>
+        /* Asegurar que el dropdown del usuario no se corte */
+        .navbar-nav .dropdown-menu {
+            right: 0;
+            left: auto;
+        }
+        
+        @media (max-width: 991.98px) {
+            .navbar-nav .dropdown-menu {
+                right: auto;
+                left: 0;
+            }
+        }
+        
+        /* Estilos para paginación Bootstrap */
+        .pagination {
+            display: flex;
+            padding-left: 0;
+            list-style: none;
+            justify-content: center;
+        }
+        
+        .pagination .page-item {
+            margin: 0 2px;
+        }
+        
+        .pagination .page-link {
+            position: relative;
+            display: block;
+            padding: 0.375rem 0.75rem;
+            color: #0d6efd;
+            text-decoration: none;
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+        }
+        
+        .pagination .page-link:hover {
+            z-index: 2;
+            color: #0a58ca;
+            background-color: #e9ecef;
+            border-color: #dee2e6;
+        }
+        
+        .pagination .page-item.active .page-link {
+            z-index: 3;
+            color: #fff;
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        
+        .pagination .page-item.disabled .page-link {
+            color: #6c757d;
+            pointer-events: none;
+            background-color: #fff;
+            border-color: #dee2e6;
+        }
+        
+        /* Ocultar elementos duplicados de paginación */
+        .pagination-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        
+        /* Asegurar que solo se muestre una paginación */
+        .pagination-wrapper > ul:not(:first-child) {
+            display: none;
+        }
+    </style>
     @stack('styles')
 </head>
 <body>
@@ -51,6 +124,12 @@
                             </li>
                         @endcan
 
+                        @can('ver restricciones')
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('restricciones.index') }}">Restricciones</a>
+                            </li>
+                        @endcan
+
                         @can('ver clientes')
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('clientes.index') }}">Clientes</a>
@@ -68,12 +147,12 @@
                                 <a class="nav-link" href="{{ route('ofertas.index') }}">Ofertas</a>
                             </li>
                         @endcan
-                            
+                        
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 {{ Auth::user()->nombre }}
                             </a>
-                            <ul class="dropdown-menu">
+                            <ul class="dropdown-menu dropdown-menu-end">
                                 <li>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf

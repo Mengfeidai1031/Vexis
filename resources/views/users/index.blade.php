@@ -66,6 +66,7 @@
                                     <th>Departamento</th>
                                     <th>Centro</th>
                                     <th>Teléfono</th>
+                                    <th>Restricciones</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -80,25 +81,32 @@
                                         <td>{{ $user->centro->nombre }}</td>
                                         <td>{{ $user->telefono ?? 'N/A' }}</td>
                                         <td>
+                                            @if($user->restrictions_count > 0)
+                                                <span class="badge bg-warning">{{ $user->restrictions_count }}</span>
+                                            @else
+                                                <span class="badge bg-success">Sin restricciones</span>
+                                            @endif
+                                        </td>
+                                        <td>
                                             <div class="btn-group" role="group">
-                                                @can('ver usuarios')
-                                                    <a href="{{ route('users.show', $user->id) }}" 
+                                                @can('view', $user)
+                                                    <a href="{{ route('users.show', $user) }}" 
                                                        class="btn btn-sm btn-info" 
                                                        title="Ver">
                                                         Ver
                                                     </a>
                                                 @endcan
                                                 
-                                                @can('editar usuarios')
-                                                    <a href="{{ route('users.edit', $user->id) }}" 
+                                                @can('update', $user)
+                                                    <a href="{{ route('users.edit', $user) }}" 
                                                        class="btn btn-sm btn-warning" 
                                                        title="Editar">
                                                         Editar
                                                     </a>
                                                 @endcan
                                                 
-                                                @can('eliminar usuarios')
-                                                    <form action="{{ route('users.destroy', $user->id) }}" 
+                                                @can('delete', $user)
+                                                    <form action="{{ route('users.destroy', $user) }}" 
                                                           method="POST" 
                                                           class="d-inline"
                                                           onsubmit="return confirm('¿Está seguro de eliminar este usuario?');">
@@ -120,8 +128,8 @@
                     </div>
 
                     <!-- Paginación -->
-                    <div class="mt-3">
-                        {{ $users->links() }}
+                    <div class="mt-3 pagination-wrapper">
+                        {{ $users->links('pagination::bootstrap-5') }}
                     </div>
                 @else
                     <div class="alert alert-info">

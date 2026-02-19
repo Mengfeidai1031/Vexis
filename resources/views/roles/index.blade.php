@@ -9,7 +9,7 @@
             <h2>Gestión de Roles y Permisos</h2>
             @can('crear roles')
                 <a href="{{ route('roles.create') }}" class="btn btn-primary">
-                    Nuevo Rol
+                    <i class="bi bi-plus-circle"></i> Nuevo Rol
                 </a>
             @endcan
         </div>
@@ -130,8 +130,8 @@
                         </table>
                     </div>
 
-                    <div class="mt-3">
-                        {{ $roles->links() }}
+                    <div class="mt-3 pagination-wrapper">
+                        {{ $roles->links('pagination::bootstrap-5') }}
                     </div>
                 @else
                     <div class="alert alert-info">

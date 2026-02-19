@@ -57,7 +57,7 @@
                     <div class="row">
                         <!-- DNI -->
                         <div class="col-md-6 mb-3">
-                            <label for="dni" class="form-label">DNI <span class="text-danger">*</span></label>
+                            <label for="dni" class="form-label">DNI</label>
                             <input 
                                 type="text" 
                                 class="form-control @error('dni') is-invalid @enderror" 
@@ -65,7 +65,7 @@
                                 name="dni" 
                                 value="{{ old('dni', $cliente->dni) }}" 
                                 maxlength="10"
-                                required
+                                placeholder="12345678A"
                             >
                             @error('dni')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -89,6 +89,43 @@
                                 @endforeach
                             </select>
                             @error('empresa_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Email -->
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Correo Electrónico <span class="text-danger">*</span></label>
+                            <input 
+                                type="email" 
+                                class="form-control @error('email') is-invalid @enderror" 
+                                id="email" 
+                                name="email" 
+                                value="{{ old('email', $cliente->email) }}" 
+                                placeholder="cliente@ejemplo.com"
+                                required
+                            >
+                            @error('email')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <!-- Teléfono -->
+                        <div class="col-md-6 mb-3">
+                            <label for="telefono" class="form-label">Teléfono <span class="text-danger">*</span></label>
+                            <input 
+                                type="text" 
+                                class="form-control @error('telefono') is-invalid @enderror" 
+                                id="telefono" 
+                                name="telefono" 
+                                value="{{ old('telefono', $cliente->telefono) }}" 
+                                placeholder="928123456"
+                                maxlength="20"
+                                required
+                            >
+                            @error('telefono')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>

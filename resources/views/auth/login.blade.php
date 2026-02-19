@@ -72,9 +72,10 @@
             <div class="card-body">
                 <small class="text-muted">
                     <strong>Usuarios de prueba:</strong><br>
-                    Email: admin@grupoari.com<br>
-                    Email: juan@grupoari.com<br>
-                    Email: maria@grupoari.com<br>
+                    Email: superadmin@grupoari.com (Super Administrador)<br>
+                    Email: admin@grupoari.com (Gestiones Generales)<br>
+                    Email: multi-restricciones@test.com (Carlos, Grupo ARI S.L.)<br>
+                    Email: restringido@test.com (Grupo ARI S.L.)<br>
                     <strong>Contraseña para todos:</strong> password
                 </small>
             </div>

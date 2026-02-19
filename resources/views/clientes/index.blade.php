@@ -9,7 +9,7 @@
             <h2>Gestión de Clientes</h2>
             @can('crear clientes')
                 <a href="{{ route('clientes.create') }}" class="btn btn-primary">
-                    Nuevo Cliente
+                    <i class="bi bi-plus-circle"></i> Nuevo Cliente
                 </a>
             @endcan
         </div>
@@ -86,22 +86,22 @@
                                         <td>{{ $cliente->codigo_postal }}</td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                @can('ver clientes')
-                                                    <a href="{{ route('clientes.show', $cliente->id) }}" 
+                                                @can('view', $cliente)
+                                                    <a href="{{ route('clientes.show', $cliente) }}" 
                                                        class="btn btn-sm btn-info">
                                                         Ver
                                                     </a>
                                                 @endcan
                                                 
-                                                @can('editar clientes')
-                                                    <a href="{{ route('clientes.edit', $cliente->id) }}" 
+                                                @can('update', $cliente)
+                                                    <a href="{{ route('clientes.edit', $cliente) }}" 
                                                        class="btn btn-sm btn-warning">
                                                         Editar
                                                     </a>
                                                 @endcan
                                                 
-                                                @can('eliminar clientes')
-                                                    <form action="{{ route('clientes.destroy', $cliente->id) }}" 
+                                                @can('delete', $cliente)
+                                                    <form action="{{ route('clientes.destroy', $cliente) }}" 
                                                           method="POST" 
                                                           class="d-inline"
                                                           onsubmit="return confirm('¿Está seguro de eliminar este cliente?');">
@@ -120,8 +120,8 @@
                         </table>
                     </div>
 
-                    <div class="mt-3">
-                        {{ $clientes->links() }}
+                    <div class="mt-3 pagination-wrapper">
+                        {{ $clientes->links('pagination::bootstrap-5') }}
                     </div>
                 @else
                     <div class="alert alert-info">

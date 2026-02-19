@@ -3,43 +3,27 @@
 @section('title', 'Bienvenido - Grupo ARI')
 
 @section('content')
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h3>Bienvenido al Sistema de Gestión Grupo ARI</h3>
-            </div>
-            <div class="card-body">
-                <p class="lead">Sistema de gestión de clientes, vehículos y ofertas comerciales.</p>
+<div class="row justify-content-center align-items-center" style="min-height: 60vh;">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-lg border-0">
+            <div class="card-body text-center p-5">
+                <!-- Logo Grupo ARI -->
+                <div class="mb-4">
+                    <h1 class="display-4 fw-bold text-primary mb-2">GRUPO ARI</h1>
+                    <div class="border-top border-primary border-3 mx-auto" style="width: 100px; margin-top: 10px;"></div>
+                </div>
                 
-                <div class="row mt-4">
-                    <div class="col-md-4">
-                        <div class="card text-center">
-                            <div class="card-body">
-                                <h5 class="card-title">Usuarios</h5>
-                                <p class="card-text">Gestión de usuarios del sistema</p>
-                                <a href="#" class="btn btn-primary">Acceder</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card text-center">
-                            <div class="card-body">
-                                <h5 class="card-title">Clientes</h5>
-                                <p class="card-text">Gestión de clientes</p>
-                                <a href="#" class="btn btn-primary">Acceder</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card text-center">
-                            <div class="card-body">
-                                <h5 class="card-title">Vehículos</h5>
-                                <p class="card-text">Gestión de vehículos</p>
-                                <a href="#" class="btn btn-primary">Acceder</a>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Descripción -->
+                <p class="lead text-muted mb-4">
+                    Sistema de gestión de clientes, vehículos y ofertas comerciales
+                </p>
+                
+                <!-- Botón de inicio de sesión -->
+                <div class="mt-5">
+                    <a href="{{ route('login') }}" class="btn btn-primary btn-lg px-5 py-3">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>
+                        Iniciar Sesión
+                    </a>
                 </div>
             </div>
         </div>

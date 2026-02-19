@@ -7,11 +7,21 @@
     <div class="col-12">
         <div class="d-flex justify-content-between align-items-center">
             <h2>Gestión de Vehículos</h2>
-            @can('crear vehículos')
-                <a href="{{ route('vehiculos.create') }}" class="btn btn-primary">
-                    Nuevo Vehículo
-                </a>
-            @endcan
+            <div class="d-flex gap-2">
+                @can('ver vehículos')
+                    <a href="{{ route('vehiculos.export') }}" class="btn btn-success">
+                        <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
+                    </a>
+                    <a href="{{ route('vehiculos.exportPdf') }}" class="btn btn-danger">
+                        <i class="bi bi-file-earmark-pdf"></i> Exportar a PDF
+                    </a>
+                @endcan
+                @can('crear vehículos')
+                    <a href="{{ route('vehiculos.create') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Nuevo Vehículo
+                    </a>
+                @endcan
+            </div>
         </div>
     </div>
 </div>
@@ -88,22 +98,22 @@
                                         <td>{{ $vehiculo->empresa->nombre }}</td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                @can('ver vehículos')
-                                                    <a href="{{ route('vehiculos.show', $vehiculo->id) }}" 
+                                                @can('view', $vehiculo)
+                                                    <a href="{{ route('vehiculos.show', $vehiculo) }}" 
                                                        class="btn btn-sm btn-info">
                                                         Ver
                                                     </a>
                                                 @endcan
                                                 
-                                                @can('editar vehículos')
-                                                    <a href="{{ route('vehiculos.edit', $vehiculo->id) }}" 
+                                                @can('update', $vehiculo)
+                                                    <a href="{{ route('vehiculos.edit', $vehiculo) }}" 
                                                        class="btn btn-sm btn-warning">
                                                         Editar
                                                     </a>
                                                 @endcan
                                                 
-                                                @can('eliminar vehículos')
-                                                    <form action="{{ route('vehiculos.destroy', $vehiculo->id) }}" 
+                                                @can('delete', $vehiculo)
+                                                    <form action="{{ route('vehiculos.destroy', $vehiculo) }}" 
                                                           method="POST" 
                                                           class="d-inline"
                                                           onsubmit="return confirm('¿Está seguro de eliminar este vehículo?');">
@@ -122,8 +132,8 @@
                         </table>
                     </div>
 
-                    <div class="mt-3">
-                        {{ $vehiculos->links() }}
+                    <div class="mt-3 pagination-wrapper">
+                        {{ $vehiculos->links('pagination::bootstrap-5') }}
                     </div>
                 @else
                     <div class="alert alert-info">

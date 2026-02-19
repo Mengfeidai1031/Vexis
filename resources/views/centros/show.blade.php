@@ -8,7 +8,9 @@
         <div class="d-flex justify-content-between align-items-center">
             <h2>Detalle del Centro</h2>
             <div>
-                <a href="{{ route('centros.edit', $centro->id) }}" class="btn btn-warning">Editar</a>
+                @can('update', $centro)
+                    <a href="{{ route('centros.edit', $centro) }}" class="btn btn-warning">Editar</a>
+                @endcan
                 <a href="{{ route('centros.index') }}" class="btn btn-secondary">Volver</a>
             </div>
         </div>
@@ -79,7 +81,9 @@
                                     <strong>{{ $user->nombre_completo }}</strong><br>
                                     <small class="text-muted">{{ $user->departamento->nombre }} - {{ $user->email }}</small>
                                 </div>
-                                <a href="{{ route('users.show', $user->id) }}" class="btn btn-sm btn-info">Ver</a>
+                                @can('view', $user)
+                                    <a href="{{ route('users.show', $user) }}" class="btn btn-sm btn-info">Ver</a>
+                                @endcan
                             </li>
                         @endforeach
                     </ul>
