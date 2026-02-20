@@ -1,355 +1,171 @@
 @extends('layouts.app')
-
-@section('title', 'Gestión de Ofertas Comerciales')
-
+@section('title', 'Ofertas Comerciales - VEXIS')
 @section('content')
-<div class="row mb-3">
-    <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center">
-            <h2>Gestión de Ofertas Comerciales</h2>
-            @can('crear ofertas')
-                <a href="{{ route('ofertas.create') }}" class="btn btn-primary">
-                    <i class="bi bi-file-earmark-pdf"></i> Nueva Oferta (Subir PDF)
-                </a>
-            @endcan
-        </div>
+<div class="vx-page-header">
+    <h1 class="vx-page-title">Ofertas Comerciales</h1>
+    <div class="vx-page-actions">
+        @can('crear ofertas')
+            <a href="{{ route('ofertas.create') }}" class="vx-btn vx-btn-primary"><i class="bi bi-file-earmark-pdf"></i> Nueva Oferta (PDF)</a>
+        @endcan
     </div>
 </div>
 
-<!-- Mensajes -->
-@if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-@endif
-
-@if(session('error'))
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        {{ session('error') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-@endif
-
-<!-- Búsqueda y Filtros -->
-<div class="row mb-3">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header bg-light">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class="bi bi-search"></i> Búsqueda y Filtros
-                    </h5>
-                    <button 
-                        class="btn btn-sm btn-outline-secondary" 
-                        type="button" 
-                        data-bs-toggle="collapse" 
-                        data-bs-target="#filtrosAvanzados"
-                        aria-expanded="false"
-                        aria-controls="filtrosAvanzados"
-                    >
-                        <i class="bi bi-funnel"></i> Filtros Avanzados
-                    </button>
-                </div>
-            </div>
-            <div class="card-body">
-                <form action="{{ route('ofertas.index') }}" method="GET" id="filtrosForm">
-                    <!-- Búsqueda General -->
-                    <div class="row mb-3">
-                        <div class="col-md-10">
-                            <label for="search" class="form-label">Búsqueda General</label>
-                            <input 
-                                type="text" 
-                                id="search"
-                                name="search" 
-                                class="form-control" 
-                                placeholder="Buscar por descripción, cliente (nombre, DNI, email), vehículo (modelo, versión, chasis)..."
-                                value="{{ $filters['search'] ?? '' }}"
-                            >
-                            <small class="form-text text-muted">
-                                Busca en descripciones de líneas, datos del cliente y del vehículo
-                            </small>
-                        </div>
-                        <div class="col-md-2 d-flex align-items-end">
-                            <button class="btn btn-primary w-100" type="submit">
-                                <i class="bi bi-search"></i> Buscar
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Filtros Avanzados (Colapsable) -->
-                    <div class="collapse {{ !empty(array_filter($filters ?? [], function($v) { return $v !== null && $v !== '' && $v !== 'search'; })) ? 'show' : '' }}" id="filtrosAvanzados">
-                        <hr>
-                        <h6 class="mb-3">Filtros Avanzados</h6>
-                        <div class="row g-3">
-                            <!-- Filtro por Fecha Desde -->
-                            <div class="col-md-3">
-                                <label for="fecha_desde" class="form-label">Fecha Desde</label>
-                                <input 
-                                    type="date" 
-                                    id="fecha_desde"
-                                    name="fecha_desde" 
-                                    class="form-control" 
-                                    value="{{ $filters['fecha_desde'] ?? '' }}"
-                                >
-                            </div>
-
-                            <!-- Filtro por Fecha Hasta -->
-                            <div class="col-md-3">
-                                <label for="fecha_hasta" class="form-label">Fecha Hasta</label>
-                                <input 
-                                    type="date" 
-                                    id="fecha_hasta"
-                                    name="fecha_hasta" 
-                                    class="form-control" 
-                                    value="{{ $filters['fecha_hasta'] ?? '' }}"
-                                >
-                            </div>
-
-                            <!-- Filtro por Cliente -->
-                            <div class="col-md-3">
-                                <label for="cliente_id" class="form-label">Cliente</label>
-                                <select 
-                                    id="cliente_id"
-                                    name="cliente_id" 
-                                    class="form-select"
-                                >
-                                    <option value="">Todos los clientes</option>
-                                    @foreach($clientes as $cliente)
-                                        <option 
-                                            value="{{ $cliente->id }}"
-                                            {{ ($filters['cliente_id'] ?? '') == $cliente->id ? 'selected' : '' }}
-                                        >
-                                            {{ $cliente->nombre_completo }}
-                                            @if($cliente->dni)
-                                                ({{ $cliente->dni }})
-                                            @endif
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <!-- Filtro por Vehículo -->
-                            <div class="col-md-3">
-                                <label for="vehiculo_id" class="form-label">Vehículo</label>
-                                <select 
-                                    id="vehiculo_id"
-                                    name="vehiculo_id" 
-                                    class="form-select"
-                                >
-                                    <option value="">Todos los vehículos</option>
-                                    @foreach($vehiculos as $vehiculo)
-                                        <option 
-                                            value="{{ $vehiculo->id }}"
-                                            {{ ($filters['vehiculo_id'] ?? '') == $vehiculo->id ? 'selected' : '' }}
-                                        >
-                                            {{ $vehiculo->modelo }}
-                                            @if($vehiculo->version)
-                                                - {{ $vehiculo->version }}
-                                            @endif
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <!-- Filtro por Empresa -->
-                            <div class="col-md-3">
-                                <label for="empresa_id" class="form-label">Empresa</label>
-                                <select 
-                                    id="empresa_id"
-                                    name="empresa_id" 
-                                    class="form-select"
-                                >
-                                    <option value="">Todas las empresas</option>
-                                    @foreach($empresas as $empresa)
-                                        <option 
-                                            value="{{ $empresa->id }}"
-                                            {{ ($filters['empresa_id'] ?? '') == $empresa->id ? 'selected' : '' }}
-                                        >
-                                            {{ $empresa->nombre }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Botones de Acción -->
-                    <div class="row mt-3">
-                        <div class="col-12">
-                            <div class="d-flex gap-2">
-                                <button class="btn btn-primary" type="submit">
-                                    <i class="bi bi-funnel-fill"></i> Aplicar Filtros
-                                </button>
-                                @if(!empty(array_filter($filters ?? [], function($v) { return $v !== null && $v !== ''; })))
-                                    <a href="{{ route('ofertas.index') }}" class="btn btn-secondary">
-                                        <i class="bi bi-x-circle"></i> Limpiar Filtros
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Indicador de Filtros Activos -->
-@if(!empty(array_filter($filters ?? [], function($v) { return $v !== null && $v !== ''; })))
-    <div class="row mb-3">
-        <div class="col-12">
-            <div class="alert alert-info d-flex justify-content-between align-items-center">
-                <div>
-                    <i class="bi bi-info-circle"></i> 
-                    <strong>Filtros activos:</strong>
-                    @if(!empty($filters['fecha_desde']))
-                        <span class="badge bg-primary">Desde: {{ \Carbon\Carbon::parse($filters['fecha_desde'])->format('d/m/Y') }}</span>
-                    @endif
-                    @if(!empty($filters['fecha_hasta']))
-                        <span class="badge bg-primary">Hasta: {{ \Carbon\Carbon::parse($filters['fecha_hasta'])->format('d/m/Y') }}</span>
-                    @endif
-                    @if(!empty($filters['cliente_id']))
-                        <span class="badge bg-primary">Cliente seleccionado</span>
-                    @endif
-                    @if(!empty($filters['vehiculo_id']))
-                        <span class="badge bg-primary">Vehículo seleccionado</span>
-                    @endif
-                    @if(!empty($filters['empresa_id']))
-                        <span class="badge bg-primary">Empresa seleccionada</span>
-                    @endif
-                    @if(!empty($filters['search']))
-                        <span class="badge bg-primary">Búsqueda: "{{ $filters['search'] }}"</span>
-                    @endif
-                </div>
-                <a href="{{ route('ofertas.index') }}" class="btn btn-sm btn-outline-info">
-                    <i class="bi bi-x-circle"></i> Limpiar
-                </a>
-            </div>
-        </div>
-    </div>
-@endif
-
-<!-- Tabla -->
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header bg-light">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class="bi bi-list-ul"></i> Ofertas 
-                        <span class="badge bg-secondary">{{ $ofertas->total() }}</span>
-                    </h5>
-                </div>
-            </div>
-            <div class="card-body">
-                @if($ofertas->count() > 0)
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Fecha</th>
-                                    <th>Cliente</th>
-                                    <th>Empresa</th>
-                                    <th>Vehículo</th>
-                                    <th>Líneas</th>
-                                    <th>Precio Total</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($ofertas as $oferta)
-                                    <tr>
-                                        <td>{{ $oferta->id }}</td>
-                                        <td>{{ $oferta->fecha->format('d/m/Y') }}</td>
-                                        <td>
-                                            <strong>{{ $oferta->cliente->nombre_completo }}</strong><br>
-                                            <small class="text-muted">{{ $oferta->cliente->dni }}</small>
-                                        </td>
-                                        <td>
-                                            @if($oferta->cliente->empresa)
-                                                <strong>{{ $oferta->cliente->empresa->nombre }}</strong><br>
-                                                <small class="text-muted">{{ $oferta->cliente->empresa->abreviatura }}</small>
-                                            @else
-                                                <span class="text-muted">Sin empresa</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if($oferta->vehiculo)
-                                            <strong>{{ $oferta->vehiculo->modelo }}</strong><br>
-                                            <small class="text-muted">{{ $oferta->vehiculo->version }}</small>
-                                            @else
-                                                <span class="text-muted">Sin vehículo</span><br>
-                                                <small class="badge bg-warning">Doc. Informativo</small>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-info">{{ $oferta->lineas->count() }} líneas</span>
-                                        </td>
-                                        <td>
-                                            @php
-                                                // Buscar el último Total de las líneas
-                                                $ultimoTotal = $oferta->lineas()
-                                                    ->where('tipo', 'Total')
-                                                    ->orderBy('id', 'desc')
-                                                    ->first();
-                                                $precioMostrar = $ultimoTotal ? $ultimoTotal->precio : 0;
-                                            @endphp
-                                            <strong class="text-success">{{ number_format($precioMostrar, 2, ',', '.') }} €</strong>
-                                        </td>
-                                        <td>
-                                            <div class="btn-group" role="group">
-                                                @can('view', $oferta)
-                                                    <a href="{{ route('ofertas.show', $oferta->id) }}" 
-                                                       class="btn btn-sm btn-info"
-                                                       title="Ver detalle">
-                                                        Ver
-                                                    </a>
-                                                @endcan
-                                                
-                                                @if($oferta->pdf_path)
-                                                    <a href="{{ asset('storage/' . $oferta->pdf_path) }}" 
-                                                       class="btn btn-sm btn-secondary" 
-                                                       target="_blank"
-                                                       title="Descargar PDF original">
-                                                        PDF
-                                                    </a>
-                                                @endif
-                                                
-                                                @can('delete', $oferta)
-                                                    <form action="{{ route('ofertas.destroy', $oferta) }}" 
-                                                          method="POST" 
-                                                          class="d-inline"
-                                                          onsubmit="return confirm('¿Está seguro de eliminar esta oferta?');">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-danger" title="Eliminar">
-                                                            Eliminar
-                                                        </button>
-                                                    </form>
-                                                @endcan
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="mt-3 pagination-wrapper">
-                        {{ $ofertas->links('pagination::bootstrap-5') }}
-                    </div>
-                @else
-                    <div class="alert alert-info">
-                        No se encontraron ofertas comerciales.
-                        @can('crear ofertas')
-                            <a href="{{ route('ofertas.create') }}">Sube tu primera oferta en PDF</a>
-                        @endcan
-                    </div>
+{{-- Búsqueda y Filtros --}}
+<div class="vx-card" style="margin-bottom: 16px;">
+    <div class="vx-card-body">
+        <form action="{{ route('ofertas.index') }}" method="GET">
+            <div class="vx-search-box" style="margin-bottom: 0;">
+                <input type="text" name="search" class="vx-input" placeholder="Buscar por descripción, cliente, vehículo..." value="{{ $filters['search'] ?? '' }}">
+                <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i> Buscar</button>
+                <button type="button" class="vx-btn vx-btn-secondary" onclick="document.getElementById('filtrosAvanzados').classList.toggle('vx-hidden')"><i class="bi bi-funnel"></i> Filtros</button>
+                @if(!empty(array_filter($filters ?? [], function($v) { return $v !== null && $v !== ''; })))
+                    <a href="{{ route('ofertas.index') }}" class="vx-btn vx-btn-ghost">Limpiar</a>
                 @endif
             </div>
-        </div>
+
+            <div id="filtrosAvanzados" class="{{ !empty(array_filter(array_diff_key($filters ?? [], ['search' => '']), function($v) { return $v !== null && $v !== ''; })) ? '' : 'vx-hidden' }}" style="margin-top: 12px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px 12px;">
+                    <div class="vx-form-group" style="margin-bottom: 0;">
+                        <label class="vx-label">Desde</label>
+                        <input type="date" name="fecha_desde" class="vx-input" value="{{ $filters['fecha_desde'] ?? '' }}">
+                    </div>
+                    <div class="vx-form-group" style="margin-bottom: 0;">
+                        <label class="vx-label">Hasta</label>
+                        <input type="date" name="fecha_hasta" class="vx-input" value="{{ $filters['fecha_hasta'] ?? '' }}">
+                    </div>
+                    <div class="vx-form-group" style="margin-bottom: 0;">
+                        <label class="vx-label">Cliente</label>
+                        <select name="cliente_id" class="vx-select">
+                            <option value="">Todos</option>
+                            @foreach($clientes as $cliente)
+                                <option value="{{ $cliente->id }}" {{ ($filters['cliente_id'] ?? '') == $cliente->id ? 'selected' : '' }}>{{ $cliente->nombre_completo }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="vx-form-group" style="margin-bottom: 0;">
+                        <label class="vx-label">Vehículo</label>
+                        <select name="vehiculo_id" class="vx-select">
+                            <option value="">Todos</option>
+                            @foreach($vehiculos as $vehiculo)
+                                <option value="{{ $vehiculo->id }}" {{ ($filters['vehiculo_id'] ?? '') == $vehiculo->id ? 'selected' : '' }}>{{ $vehiculo->modelo }} - {{ $vehiculo->version }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="vx-form-group" style="margin-bottom: 0;">
+                        <label class="vx-label">Empresa</label>
+                        <select name="empresa_id" class="vx-select">
+                            <option value="">Todas</option>
+                            @foreach($empresas as $empresa)
+                                <option value="{{ $empresa->id }}" {{ ($filters['empresa_id'] ?? '') == $empresa->id ? 'selected' : '' }}>{{ $empresa->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div style="margin-top: 10px;">
+                    <button type="submit" class="vx-btn vx-btn-primary vx-btn-sm"><i class="bi bi-funnel-fill"></i> Aplicar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{-- Filtros activos --}}
+@php $activeFilters = array_filter($filters ?? [], function($v) { return $v !== null && $v !== ''; }); @endphp
+@if(!empty($activeFilters))
+<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
+    <span style="font-size: 12px; color: var(--vx-text-muted);"><i class="bi bi-funnel-fill"></i> Filtros:</span>
+    @if(!empty($filters['search']))<span class="vx-badge vx-badge-primary">Búsqueda: "{{ $filters['search'] }}"</span>@endif
+    @if(!empty($filters['fecha_desde']))<span class="vx-badge vx-badge-info">Desde: {{ \Carbon\Carbon::parse($filters['fecha_desde'])->format('d/m/Y') }}</span>@endif
+    @if(!empty($filters['fecha_hasta']))<span class="vx-badge vx-badge-info">Hasta: {{ \Carbon\Carbon::parse($filters['fecha_hasta'])->format('d/m/Y') }}</span>@endif
+    @if(!empty($filters['cliente_id']))<span class="vx-badge vx-badge-info">Cliente</span>@endif
+    @if(!empty($filters['vehiculo_id']))<span class="vx-badge vx-badge-info">Vehículo</span>@endif
+    @if(!empty($filters['empresa_id']))<span class="vx-badge vx-badge-info">Empresa</span>@endif
+    <a href="{{ route('ofertas.index') }}" style="font-size: 12px; color: var(--vx-danger);">Limpiar todo</a>
+</div>
+@endif
+
+{{-- Tabla --}}
+<div class="vx-card">
+    <div class="vx-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <span>Ofertas <span class="vx-badge vx-badge-gray">{{ $ofertas->total() }}</span></span>
+    </div>
+    <div class="vx-card-body" style="padding: 0;">
+        @if($ofertas->count() > 0)
+            <div class="vx-table-wrapper">
+                <table class="vx-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Fecha</th>
+                            <th>Cliente</th>
+                            <th>Empresa</th>
+                            <th>Vehículo</th>
+                            <th>Líneas</th>
+                            <th>Total</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($ofertas as $oferta)
+                            <tr>
+                                <td style="color: var(--vx-text-muted);">{{ $oferta->id }}</td>
+                                <td>{{ $oferta->fecha->format('d/m/Y') }}</td>
+                                <td>
+                                    <div style="font-weight: 600;">{{ $oferta->cliente->nombre_completo }}</div>
+                                    <div style="font-size: 11px; color: var(--vx-text-muted);">{{ $oferta->cliente->dni }}</div>
+                                </td>
+                                <td>
+                                    @if($oferta->cliente->empresa)
+                                        <span class="vx-badge vx-badge-primary">{{ $oferta->cliente->empresa->abreviatura }}</span>
+                                    @else
+                                        <span style="color: var(--vx-text-muted);">—</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($oferta->vehiculo)
+                                        <div style="font-weight: 600;">{{ $oferta->vehiculo->modelo }}</div>
+                                        <div style="font-size: 11px; color: var(--vx-text-muted);">{{ $oferta->vehiculo->version }}</div>
+                                    @else
+                                        <span class="vx-badge vx-badge-warning">Doc. Informativo</span>
+                                    @endif
+                                </td>
+                                <td><span class="vx-badge vx-badge-info">{{ $oferta->lineas->count() }}</span></td>
+                                <td>
+                                    @php
+                                        $ultimoTotal = $oferta->lineas()->where('tipo', 'Total')->orderBy('id', 'desc')->first();
+                                        $precioMostrar = $ultimoTotal ? $ultimoTotal->precio : 0;
+                                    @endphp
+                                    <span style="font-weight: 700; color: var(--vx-success);">{{ number_format($precioMostrar, 2, ',', '.') }} €</span>
+                                </td>
+                                <td>
+                                    <div class="vx-btn-group">
+                                        @can('view', $oferta)
+                                            <a href="{{ route('ofertas.show', $oferta->id) }}" class="vx-btn vx-btn-info vx-btn-sm"><i class="bi bi-eye"></i></a>
+                                        @endcan
+                                        @if($oferta->pdf_path)
+                                            <a href="{{ asset('storage/' . $oferta->pdf_path) }}" class="vx-btn vx-btn-secondary vx-btn-sm" target="_blank" title="PDF"><i class="bi bi-file-pdf"></i></a>
+                                        @endif
+                                        @can('delete', $oferta)
+                                            <form action="{{ route('ofertas.destroy', $oferta) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar esta oferta?');">
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="vx-btn vx-btn-danger vx-btn-sm"><i class="bi bi-trash"></i></button>
+                                            </form>
+                                        @endcan
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <div style="padding: 16px 20px;">{{ $ofertas->links('pagination::bootstrap-5') }}</div>
+        @else
+            <div class="vx-empty">
+                <i class="bi bi-file-earmark-text"></i>
+                <p>No se encontraron ofertas.
+                @can('crear ofertas') <a href="{{ route('ofertas.create') }}">Sube tu primera oferta en PDF</a>@endcan</p>
+            </div>
+        @endif
     </div>
 </div>
 @endsection

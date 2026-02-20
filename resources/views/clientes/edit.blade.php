@@ -1,178 +1,71 @@
 @extends('layouts.app')
-
-@section('title', 'Editar Cliente')
-
+@section('title', 'Editar ' . $cliente->nombre_completo . ' - VEXIS')
 @section('content')
-<div class="row mb-3">
-    <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center">
-            <h2>Editar Cliente: {{ $cliente->nombre_completo }}</h2>
-            <a href="{{ route('clientes.index') }}" class="btn btn-secondary">Volver</a>
-        </div>
-    </div>
+<div class="vx-page-header">
+    <h1 class="vx-page-title">Editar: {{ $cliente->nombre_completo }}</h1>
+    <a href="{{ route('clientes.index') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
 </div>
-
-<div class="row">
-    <div class="col-md-8 offset-md-2">
-        <div class="card">
-            <div class="card-body">
-                <form action="{{ route('clientes.update', $cliente->id) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-
-                    <div class="row">
-                        <!-- Nombre -->
-                        <div class="col-md-6 mb-3">
-                            <label for="nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
-                            <input 
-                                type="text" 
-                                class="form-control @error('nombre') is-invalid @enderror" 
-                                id="nombre" 
-                                name="nombre" 
-                                value="{{ old('nombre', $cliente->nombre) }}" 
-                                required
-                            >
-                            @error('nombre')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Apellidos -->
-                        <div class="col-md-6 mb-3">
-                            <label for="apellidos" class="form-label">Apellidos <span class="text-danger">*</span></label>
-                            <input 
-                                type="text" 
-                                class="form-control @error('apellidos') is-invalid @enderror" 
-                                id="apellidos" 
-                                name="apellidos" 
-                                value="{{ old('apellidos', $cliente->apellidos) }}" 
-                                required
-                            >
-                            @error('apellidos')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <!-- DNI -->
-                        <div class="col-md-6 mb-3">
-                            <label for="dni" class="form-label">DNI</label>
-                            <input 
-                                type="text" 
-                                class="form-control @error('dni') is-invalid @enderror" 
-                                id="dni" 
-                                name="dni" 
-                                value="{{ old('dni', $cliente->dni) }}" 
-                                maxlength="10"
-                                placeholder="12345678A"
-                            >
-                            @error('dni')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Empresa -->
-                        <div class="col-md-6 mb-3">
-                            <label for="empresa_id" class="form-label">Empresa <span class="text-danger">*</span></label>
-                            <select 
-                                class="form-select @error('empresa_id') is-invalid @enderror" 
-                                id="empresa_id" 
-                                name="empresa_id" 
-                                required
-                            >
-                                <option value="">Seleccione una empresa</option>
-                                @foreach($empresas as $empresa)
-                                    <option value="{{ $empresa->id }}" {{ old('empresa_id', $cliente->empresa_id) == $empresa->id ? 'selected' : '' }}>
-                                        {{ $empresa->nombre }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('empresa_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <!-- Email -->
-                        <div class="col-md-6 mb-3">
-                            <label for="email" class="form-label">Correo Electrónico <span class="text-danger">*</span></label>
-                            <input 
-                                type="email" 
-                                class="form-control @error('email') is-invalid @enderror" 
-                                id="email" 
-                                name="email" 
-                                value="{{ old('email', $cliente->email) }}" 
-                                placeholder="cliente@ejemplo.com"
-                                required
-                            >
-                            @error('email')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Teléfono -->
-                        <div class="col-md-6 mb-3">
-                            <label for="telefono" class="form-label">Teléfono <span class="text-danger">*</span></label>
-                            <input 
-                                type="text" 
-                                class="form-control @error('telefono') is-invalid @enderror" 
-                                id="telefono" 
-                                name="telefono" 
-                                value="{{ old('telefono', $cliente->telefono) }}" 
-                                placeholder="928123456"
-                                maxlength="20"
-                                required
-                            >
-                            @error('telefono')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <!-- Domicilio -->
-                    <div class="mb-3">
-                        <label for="domicilio" class="form-label">Domicilio <span class="text-danger">*</span></label>
-                        <input 
-                            type="text" 
-                            class="form-control @error('domicilio') is-invalid @enderror" 
-                            id="domicilio" 
-                            name="domicilio" 
-                            value="{{ old('domicilio', $cliente->domicilio) }}" 
-                            required
-                        >
-                        @error('domicilio')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- Código Postal -->
-                    <div class="mb-3">
-                        <label for="codigo_postal" class="form-label">Código Postal <span class="text-danger">*</span></label>
-                        <input 
-                            type="text" 
-                            class="form-control @error('codigo_postal') is-invalid @enderror" 
-                            id="codigo_postal" 
-                            name="codigo_postal" 
-                            value="{{ old('codigo_postal', $cliente->codigo_postal) }}" 
-                            maxlength="5"
-                            required
-                        >
-                        @error('codigo_postal')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                        <small class="text-muted">Debe tener exactamente 5 dígitos</small>
-                    </div>
-
-                    <!-- Botones -->
-                    <div class="d-flex justify-content-end gap-2">
-                        <a href="{{ route('clientes.index') }}" class="btn btn-secondary">Cancelar</a>
-                        <button type="submit" class="btn btn-primary">Actualizar Cliente</button>
-                    </div>
-                </form>
+<div style="max-width: 750px;">
+    <div class="vx-card"><div class="vx-card-body">
+        <form action="{{ route('clientes.update', $cliente->id) }}" method="POST">
+            @csrf @method('PUT')
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px;">
+                <div class="vx-form-group">
+                    <label class="vx-label" for="nombre">Nombre <span class="required">*</span></label>
+                    <input type="text" class="vx-input @error('nombre') is-invalid @enderror" id="nombre" name="nombre" value="{{ old('nombre', $cliente->nombre) }}" required>
+                    @error('nombre')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="vx-form-group">
+                    <label class="vx-label" for="apellidos">Apellidos <span class="required">*</span></label>
+                    <input type="text" class="vx-input @error('apellidos') is-invalid @enderror" id="apellidos" name="apellidos" value="{{ old('apellidos', $cliente->apellidos) }}" required>
+                    @error('apellidos')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
+                </div>
             </div>
-        </div>
-    </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px;">
+                <div class="vx-form-group">
+                    <label class="vx-label" for="dni">DNI</label>
+                    <input type="text" class="vx-input @error('dni') is-invalid @enderror" id="dni" name="dni" value="{{ old('dni', $cliente->dni) }}" maxlength="10">
+                    @error('dni')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="vx-form-group">
+                    <label class="vx-label" for="empresa_id">Empresa <span class="required">*</span></label>
+                    <select class="vx-select @error('empresa_id') is-invalid @enderror" id="empresa_id" name="empresa_id" required>
+                        <option value="">Seleccione</option>
+                        @foreach($empresas as $empresa)
+                            <option value="{{ $empresa->id }}" {{ old('empresa_id', $cliente->empresa_id) == $empresa->id ? 'selected' : '' }}>{{ $empresa->nombre }}</option>
+                        @endforeach
+                    </select>
+                    @error('empresa_id')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px;">
+                <div class="vx-form-group">
+                    <label class="vx-label" for="email">Correo Electrónico <span class="required">*</span></label>
+                    <input type="email" class="vx-input @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email', $cliente->email) }}" required>
+                    @error('email')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="vx-form-group">
+                    <label class="vx-label" for="telefono">Teléfono <span class="required">*</span></label>
+                    <input type="text" class="vx-input @error('telefono') is-invalid @enderror" id="telefono" name="telefono" value="{{ old('telefono', $cliente->telefono) }}" maxlength="20" required>
+                    @error('telefono')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+            </div>
+            <div class="vx-form-group">
+                <label class="vx-label" for="domicilio">Domicilio <span class="required">*</span></label>
+                <input type="text" class="vx-input @error('domicilio') is-invalid @enderror" id="domicilio" name="domicilio" value="{{ old('domicilio', $cliente->domicilio) }}" required>
+                @error('domicilio')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
+            </div>
+            <div class="vx-form-group">
+                <label class="vx-label" for="codigo_postal">Código Postal <span class="required">*</span></label>
+                <input type="text" class="vx-input @error('codigo_postal') is-invalid @enderror" id="codigo_postal" name="codigo_postal" value="{{ old('codigo_postal', $cliente->codigo_postal) }}" maxlength="5" required style="max-width: 150px;">
+                @error('codigo_postal')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
+                <div class="vx-form-hint">Exactamente 5 dígitos</div>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                <a href="{{ route('clientes.index') }}" class="vx-btn vx-btn-secondary">Cancelar</a>
+                <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-check-lg"></i> Actualizar</button>
+            </div>
+        </form>
+    </div></div>
 </div>
 @endsection

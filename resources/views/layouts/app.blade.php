@@ -178,6 +178,8 @@
         [data-theme="dark"] .vx-alert-success { color: var(--vx-success); }
         .vx-alert-danger { background: rgba(231,76,60,0.08); border-color: rgba(231,76,60,0.2); color: #C0392B; }
         [data-theme="dark"] .vx-alert-danger { color: var(--vx-danger); }
+        .vx-alert-gray { background: var(--vx-gray-50); border-color: var(--vx-border); color: var(--vx-text-secondary); }
+        .vx-hidden { display: none !important; }
         .vx-alert-warning { background: rgba(243,156,18,0.08); border-color: rgba(243,156,18,0.2); color: #D68910; }
         [data-theme="dark"] .vx-alert-warning { color: var(--vx-warning); }
         .vx-alert-info { background: rgba(52,152,219,0.08); border-color: rgba(52,152,219,0.2); color: #2471A3; }

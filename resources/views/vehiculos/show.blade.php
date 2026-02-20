@@ -1,70 +1,30 @@
 @extends('layouts.app')
-
-@section('title', 'Detalle Vehículo')
-
+@section('title', $vehiculo->descripcion_completa . ' - VEXIS')
 @section('content')
-<div class="row mb-3">
-    <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center">
-            <h2>Detalle del Vehículo</h2>
-            <div>
-                @can('update', $vehiculo)
-                    <a href="{{ route('vehiculos.edit', $vehiculo) }}" class="btn btn-warning">Editar</a>
-                @endcan
-                <a href="{{ route('vehiculos.index') }}" class="btn btn-secondary">Volver</a>
-            </div>
-        </div>
+<div class="vx-page-header">
+    <h1 class="vx-page-title">Detalle del Vehículo</h1>
+    <div class="vx-page-actions">
+        @can('update', $vehiculo)
+            <a href="{{ route('vehiculos.edit', $vehiculo) }}" class="vx-btn vx-btn-warning"><i class="bi bi-pencil"></i> Editar</a>
+        @endcan
+        <a href="{{ route('vehiculos.index') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
     </div>
 </div>
-
-<div class="row">
-    <div class="col-md-8 offset-md-2">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">{{ $vehiculo->descripcion_completa }}</h4>
-            </div>
-            <div class="card-body">
-                <table class="table table-bordered">
-                    <tbody>
-                        <tr>
-                            <th width="30%">ID</th>
-                            <td>{{ $vehiculo->id }}</td>
-                        </tr>
-                        <tr>
-                            <th>Número de Chasis (VIN)</th>
-                            <td><span class="badge bg-dark">{{ $vehiculo->chasis }}</span></td>
-                        </tr>
-                        <tr>
-                            <th>Modelo</th>
-                            <td><strong>{{ $vehiculo->modelo }}</strong></td>
-                        </tr>
-                        <tr>
-                            <th>Versión</th>
-                            <td>{{ $vehiculo->version }}</td>
-                        </tr>
-                        <tr>
-                            <th>Color Externo</th>
-                            <td>{{ $vehiculo->color_externo }}</td>
-                        </tr>
-                        <tr>
-                            <th>Color Interno</th>
-                            <td>{{ $vehiculo->color_interno }}</td>
-                        </tr>
-                        <tr>
-                            <th>Empresa</th>
-                            <td>{{ $vehiculo->empresa->nombre }} ({{ $vehiculo->empresa->abreviatura }})</td>
-                        </tr>
-                        <tr>
-                            <th>Fecha de Creación</th>
-                            <td>{{ $vehiculo->created_at->format('d/m/Y H:i') }}</td>
-                        </tr>
-                        <tr>
-                            <th>Última Actualización</th>
-                            <td>{{ $vehiculo->updated_at->format('d/m/Y H:i') }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+<div style="max-width: 750px;">
+    <div class="vx-card">
+        <div class="vx-card-header">
+            <h3><i class="bi bi-truck" style="color: var(--vx-primary); margin-right: 8px;"></i>{{ $vehiculo->descripcion_completa }}</h3>
+        </div>
+        <div class="vx-card-body">
+            <div class="vx-info-row"><div class="vx-info-label">ID</div><div class="vx-info-value">{{ $vehiculo->id }}</div></div>
+            <div class="vx-info-row"><div class="vx-info-label">Chasis (VIN)</div><div class="vx-info-value"><span class="vx-badge vx-badge-gray" style="font-family: var(--vx-font-mono); letter-spacing: 0.5px;">{{ $vehiculo->chasis }}</span></div></div>
+            <div class="vx-info-row"><div class="vx-info-label">Modelo</div><div class="vx-info-value" style="font-weight: 600;">{{ $vehiculo->modelo }}</div></div>
+            <div class="vx-info-row"><div class="vx-info-label">Versión</div><div class="vx-info-value">{{ $vehiculo->version }}</div></div>
+            <div class="vx-info-row"><div class="vx-info-label">Color Externo</div><div class="vx-info-value">{{ $vehiculo->color_externo }}</div></div>
+            <div class="vx-info-row"><div class="vx-info-label">Color Interno</div><div class="vx-info-value">{{ $vehiculo->color_interno }}</div></div>
+            <div class="vx-info-row"><div class="vx-info-label">Empresa</div><div class="vx-info-value">{{ $vehiculo->empresa->nombre }} <span class="vx-badge vx-badge-gray">{{ $vehiculo->empresa->abreviatura }}</span></div></div>
+            <div class="vx-info-row"><div class="vx-info-label">Creado</div><div class="vx-info-value">{{ $vehiculo->created_at->format('d/m/Y H:i') }}</div></div>
+            <div class="vx-info-row"><div class="vx-info-label">Actualizado</div><div class="vx-info-value">{{ $vehiculo->updated_at->format('d/m/Y H:i') }}</div></div>
         </div>
     </div>
 </div>
