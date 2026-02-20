@@ -64,7 +64,7 @@
                     </tbody>
                 </table>
             </div>
-            <div style="padding: 16px 20px;">{{ $centros->links('pagination::bootstrap-5') }}</div>
+            <div style="padding: 16px 20px;">{{ $centros->links('vendor.pagination.vexis') }}</div>
         @else
             <div class="vx-empty"><i class="bi bi-geo-alt"></i><p>No se encontraron centros.</p></div>
         @endif

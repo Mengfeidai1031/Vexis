@@ -188,6 +188,14 @@
         .vx-alert-close:hover { opacity: 1; }
 
         /* Pagination */
+        .vx-pagination { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+        .vx-pagination-list { display: flex; align-items: center; gap: 4px; list-style: none; padding: 0; margin: 0; }
+        .vx-page-link { display: flex; align-items: center; justify-content: center; min-width: 32px; height: 32px; padding: 0 8px; border-radius: 6px; font-size: 13px; font-weight: 500; color: var(--vx-text-secondary); background: var(--vx-surface); border: 1px solid var(--vx-border); text-decoration: none; transition: all 0.15s; font-family: var(--vx-font); cursor: pointer; }
+        .vx-page-link:hover { color: var(--vx-primary); border-color: var(--vx-primary); background: rgba(51,170,221,0.05); }
+        .vx-page-item.active .vx-page-link { background: var(--vx-primary); color: white; border-color: var(--vx-primary); }
+        .vx-page-item.disabled .vx-page-link { opacity: 0.4; pointer-events: none; cursor: default; }
+        .vx-pagination-info { font-size: 12px; color: var(--vx-text-muted); }
+        /* Compat: old pagination from bootstrap-5 */
         .pagination { display: flex; align-items: center; justify-content: center; gap: 4px; list-style: none; padding: 0; margin-top: 20px; }
         .pagination .page-item .page-link { display: flex; align-items: center; justify-content: center; min-width: 32px; height: 32px; padding: 0 8px; border-radius: 6px; font-size: 13px; font-weight: 500; color: var(--vx-text-secondary); background: var(--vx-surface); border: 1px solid var(--vx-border); text-decoration: none; transition: all 0.15s; font-family: var(--vx-font); }
         .pagination .page-item .page-link:hover { color: var(--vx-primary); border-color: var(--vx-primary); background: rgba(51,170,221,0.05); }
@@ -262,6 +270,11 @@
             .vx-navbar { padding: 0 12px; }
             .vx-info-row { flex-direction: column; gap: 4px; }
             .vx-info-label { width: auto; }
+            [style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
+            [style*="grid-template-columns: repeat(auto-fill"] { grid-template-columns: 1fr !important; }
+            .vx-search-box { flex-direction: column; }
+            .vx-page-actions { flex-wrap: wrap; }
+            .vx-btn-group { gap: 4px; }
         }
 
         @media (max-width: 992px) and (min-width: 769px) {

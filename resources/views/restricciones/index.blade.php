@@ -89,7 +89,7 @@
                     </tbody>
                 </table>
             </div>
-            <div style="padding: 16px 20px;">{{ $restricciones->links('pagination::bootstrap-5') }}</div>
+            <div style="padding: 16px 20px;">{{ $restricciones->links('vendor.pagination.vexis') }}</div>
         @else
             <div class="vx-empty"><i class="bi bi-shield-lock"></i><p>No se encontraron restricciones.</p></div>
         @endif

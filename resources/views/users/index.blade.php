@@ -84,7 +84,7 @@
                 </table>
             </div>
             <div style="padding: 16px 20px;">
-                {{ $users->links('pagination::bootstrap-5') }}
+                {{ $users->links('vendor.pagination.vexis') }}
             </div>
         @else
             <div class="vx-empty">

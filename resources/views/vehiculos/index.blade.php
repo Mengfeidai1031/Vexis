@@ -70,7 +70,7 @@
                     </tbody>
                 </table>
             </div>
-            <div style="padding: 16px 20px;">{{ $vehiculos->links('pagination::bootstrap-5') }}</div>
+            <div style="padding: 16px 20px;">{{ $vehiculos->links('vendor.pagination.vexis') }}</div>
         @else
             <div class="vx-empty"><i class="bi bi-truck"></i><p>No se encontraron vehículos.</p></div>
         @endif

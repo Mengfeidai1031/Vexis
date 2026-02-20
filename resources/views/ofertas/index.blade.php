@@ -158,7 +158,7 @@
                     </tbody>
                 </table>
             </div>
-            <div style="padding: 16px 20px;">{{ $ofertas->links('pagination::bootstrap-5') }}</div>
+            <div style="padding: 16px 20px;">{{ $ofertas->links('vendor.pagination.vexis') }}</div>
         @else
             <div class="vx-empty">
                 <i class="bi bi-file-earmark-text"></i>

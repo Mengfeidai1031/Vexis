@@ -64,7 +64,7 @@
                     </tbody>
                 </table>
             </div>
-            <div style="padding: 16px 20px;">{{ $clientes->links('pagination::bootstrap-5') }}</div>
+            <div style="padding: 16px 20px;">{{ $clientes->links('vendor.pagination.vexis') }}</div>
         @else
             <div class="vx-empty"><i class="bi bi-person-lines-fill"></i><p>No se encontraron clientes.</p></div>
         @endif

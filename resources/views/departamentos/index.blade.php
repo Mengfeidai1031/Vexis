@@ -60,7 +60,7 @@
                     </tbody>
                 </table>
             </div>
-            <div style="padding: 16px 20px;">{{ $departamentos->links('pagination::bootstrap-5') }}</div>
+            <div style="padding: 16px 20px;">{{ $departamentos->links('vendor.pagination.vexis') }}</div>
         @else
             <div class="vx-empty"><i class="bi bi-diagram-3"></i><p>No se encontraron departamentos.</p></div>
         @endif

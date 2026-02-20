@@ -66,7 +66,7 @@
                     </tbody>
                 </table>
             </div>
-            <div style="padding: 16px 20px;">{{ $roles->links('pagination::bootstrap-5') }}</div>
+            <div style="padding: 16px 20px;">{{ $roles->links('vendor.pagination.vexis') }}</div>
         @else
             <div class="vx-empty"><i class="bi bi-shield-lock"></i><p>No se encontraron roles.</p></div>
         @endif
