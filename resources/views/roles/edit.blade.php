@@ -1,109 +1,64 @@
 @extends('layouts.app')
-
-@section('title', 'Editar Rol')
-
+@section('title', 'Editar ' . $role->name . ' - VEXIS')
 @section('content')
-<div class="row mb-3">
-    <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center">
-            <h2>Editar Rol: {{ $role->name }}</h2>
-            <a href="{{ route('roles.index') }}" class="btn btn-secondary">Volver</a>
-        </div>
-    </div>
+<div class="vx-page-header">
+    <h1 class="vx-page-title">Editar Rol: {{ $role->name }}</h1>
+    <a href="{{ route('roles.index') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
 </div>
 
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                <form action="{{ route('roles.update', $role->id) }}" method="POST">
-                    @csrf
-                    @method('PUT')
+<div style="max-width: 900px;">
+    <div class="vx-card">
+        <div class="vx-card-body">
+            <form action="{{ route('roles.update', $role->id) }}" method="POST">
+                @csrf @method('PUT')
+                <div class="vx-form-group">
+                    <label class="vx-label" for="name">Nombre del Rol <span class="required">*</span></label>
+                    <input type="text" class="vx-input @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $role->name) }}" required>
+                    @error('name')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
+                </div>
 
-                    <!-- Nombre del Rol -->
-                    <div class="mb-4">
-                        <label for="name" class="form-label">Nombre del Rol <span class="text-danger">*</span></label>
-                        <input 
-                            type="text" 
-                            class="form-control @error('name') is-invalid @enderror" 
-                            id="name" 
-                            name="name" 
-                            value="{{ old('name', $role->name) }}" 
-                            required
-                        >
-                        @error('name')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+                <div class="vx-form-group">
+                    <label class="vx-label">Permisos</label>
+                    <p class="vx-form-hint" style="margin-bottom: 12px;">Seleccione los permisos que tendrá este rol</p>
 
-                    <!-- Permisos -->
-                    <div class="mb-4">
-                        <label class="form-label">Permisos</label>
-                        <p class="text-muted">Seleccione los permisos que tendrá este rol</p>
-                        
-                        @php
-                            $rolePermissionIds = $role->permissions->pluck('id')->toArray();
-                        @endphp
-                        
-                        @if($permissions->count() > 0)
-                            <div class="row">
-                                @foreach($permissions as $module => $modulePermissions)
-                                    @php
-                                        $modulePermissionIds = $modulePermissions->pluck('id')->toArray();
-                                        $allChecked = !array_diff($modulePermissionIds, $rolePermissionIds);
-                                    @endphp
-                                    <div class="col-md-6 mb-4">
-                                        <div class="card">
-                                            <div class="card-header bg-light">
-                                                <h6 class="mb-0 text-capitalize">
-                                                    <input 
-                                                        type="checkbox" 
-                                                        class="form-check-input me-2 select-all-module" 
-                                                        data-module="{{ $module }}"
-                                                        {{ $allChecked ? 'checked' : '' }}
-                                                    >
-                                                    {{ ucfirst($module) }}
-                                                </h6>
-                                            </div>
-                                            <div class="card-body">
-                                                @foreach($modulePermissions as $permission)
-                                                    <div class="form-check mb-2">
-                                                        <input 
-                                                            class="form-check-input permission-checkbox module-{{ $module }}" 
-                                                            type="checkbox" 
-                                                            name="permissions[]" 
-                                                            value="{{ $permission->id }}" 
-                                                            id="permission-{{ $permission->id }}"
-                                                            {{ in_array($permission->id, old('permissions', $rolePermissionIds)) ? 'checked' : '' }}
-                                                        >
-                                                        <label class="form-check-label" for="permission-{{ $permission->id }}">
-                                                            {{ $permission->name }}
-                                                        </label>
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                        </div>
+                    @php $rolePermissionIds = $role->permissions->pluck('id')->toArray(); @endphp
+
+                    @if($permissions->count() > 0)
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px;">
+                            @foreach($permissions as $module => $modulePermissions)
+                                @php
+                                    $modulePermissionIds = $modulePermissions->pluck('id')->toArray();
+                                    $allChecked = !array_diff($modulePermissionIds, $rolePermissionIds);
+                                @endphp
+                                <div class="vx-section">
+                                    <div class="vx-section-header">
+                                        <label class="vx-checkbox" style="margin: 0; text-transform: capitalize;">
+                                            <input type="checkbox" class="select-all-module" data-module="{{ $module }}" {{ $allChecked ? 'checked' : '' }}>
+                                            <span>{{ ucfirst($module) }}</span>
+                                        </label>
                                     </div>
-                                @endforeach
-                            </div>
-                        @else
-                            <div class="alert alert-warning">
-                                No hay permisos disponibles.
-                            </div>
-                        @endif
-                        
-                        @error('permissions')
-                            <div class="text-danger">{{ $message }}</div>
-                        @enderror
-                    </div>
+                                    <div class="vx-section-body">
+                                        @foreach($modulePermissions as $permission)
+                                            <label class="vx-checkbox" style="padding: 3px 0;">
+                                                <input class="permission-checkbox module-{{ $module }}" type="checkbox" name="permissions[]" value="{{ $permission->id }}" {{ in_array($permission->id, old('permissions', $rolePermissionIds)) ? 'checked' : '' }}>
+                                                <span style="font-size: 12px;">{{ $permission->name }}</span>
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="vx-alert vx-alert-warning"><i class="bi bi-exclamation-triangle-fill"></i><span>No hay permisos disponibles.</span></div>
+                    @endif
+                    @error('permissions')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
+                </div>
 
-                    <!-- Botones -->
-                    <div class="d-flex justify-content-end gap-2">
-                        <a href="{{ route('roles.index') }}" class="btn btn-secondary">Cancelar</a>
-                        <button type="submit" class="btn btn-primary">Actualizar Rol</button>
-                    </div>
-                </form>
-            </div>
+                <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px;">
+                    <a href="{{ route('roles.index') }}" class="vx-btn vx-btn-secondary">Cancelar</a>
+                    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-check-lg"></i> Actualizar Rol</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -111,51 +66,32 @@
 
 @push('scripts')
 <script>
-    // Seleccionar/deseleccionar todos los permisos de un módulo
-    document.querySelectorAll('.select-all-module').forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            const module = this.dataset.module;
-            const moduleCheckboxes = document.querySelectorAll('.module-' + module);
-            
-            moduleCheckboxes.forEach(cb => {
-                cb.checked = this.checked;
-            });
+    document.querySelectorAll('.select-all-module').forEach(cb => {
+        cb.addEventListener('change', function() {
+            document.querySelectorAll('.module-' + this.dataset.module).forEach(c => c.checked = this.checked);
         });
     });
-
-    // Actualizar el checkbox del módulo si se seleccionan/deseleccionan permisos individuales
-    document.querySelectorAll('.permission-checkbox').forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            const classes = Array.from(this.classList);
-            const moduleClass = classes.find(c => c.startsWith('module-'));
-            
+    document.querySelectorAll('.permission-checkbox').forEach(cb => {
+        cb.addEventListener('change', function() {
+            const moduleClass = Array.from(this.classList).find(c => c.startsWith('module-'));
             if (moduleClass) {
                 const module = moduleClass.replace('module-', '');
-                const moduleCheckboxes = document.querySelectorAll('.module-' + module);
-                const moduleSelectAll = document.querySelector(`.select-all-module[data-module="${module}"]`);
-                
-                const allChecked = Array.from(moduleCheckboxes).every(cb => cb.checked);
-                const someChecked = Array.from(moduleCheckboxes).some(cb => cb.checked);
-                
-                if (moduleSelectAll) {
-                    moduleSelectAll.checked = allChecked;
-                    moduleSelectAll.indeterminate = someChecked && !allChecked;
+                const all = document.querySelectorAll('.module-' + module);
+                const selectAll = document.querySelector(`.select-all-module[data-module="${module}"]`);
+                if (selectAll) {
+                    selectAll.checked = Array.from(all).every(c => c.checked);
+                    selectAll.indeterminate = Array.from(all).some(c => c.checked) && !selectAll.checked;
                 }
             }
         });
     });
-
-    // Ejecutar al cargar para establecer estados indeterminados
     document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.select-all-module').forEach(checkbox => {
-            const module = checkbox.dataset.module;
-            const moduleCheckboxes = document.querySelectorAll('.module-' + module);
-            const allChecked = Array.from(moduleCheckboxes).every(cb => cb.checked);
-            const someChecked = Array.from(moduleCheckboxes).some(cb => cb.checked);
-            
-            if (someChecked && !allChecked) {
-                checkbox.indeterminate = true;
-            }
+        document.querySelectorAll('.select-all-module').forEach(cb => {
+            const all = document.querySelectorAll('.module-' + cb.dataset.module);
+            const allChecked = Array.from(all).every(c => c.checked);
+            const someChecked = Array.from(all).some(c => c.checked);
+            cb.checked = allChecked;
+            cb.indeterminate = someChecked && !allChecked;
         });
     });
 </script>

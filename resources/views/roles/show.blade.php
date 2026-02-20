@@ -1,125 +1,89 @@
 @extends('layouts.app')
-
-@section('title', 'Detalle Rol')
-
+@section('title', $role->name . ' - VEXIS')
 @section('content')
-<div class="row mb-3">
-    <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center">
-            <h2>Detalle del Rol</h2>
-            <div>
-                <a href="{{ route('roles.edit', $role->id) }}" class="btn btn-warning">Editar</a>
-                <a href="{{ route('roles.index') }}" class="btn btn-secondary">Volver</a>
-            </div>
-        </div>
+<div class="vx-page-header">
+    <h1 class="vx-page-title">Detalle del Rol</h1>
+    <div class="vx-page-actions">
+        @can('editar roles')
+            <a href="{{ route('roles.edit', $role->id) }}" class="vx-btn vx-btn-warning"><i class="bi bi-pencil"></i> Editar</a>
+        @endcan
+        <a href="{{ route('roles.index') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-8 offset-md-2">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">{{ $role->name }}</h4>
+<div style="max-width: 900px;">
+    <div class="vx-card" style="margin-bottom: 20px;">
+        <div class="vx-card-header">
+            <h3><i class="bi bi-shield-lock" style="color: var(--vx-primary); margin-right: 8px;"></i>{{ $role->name }}</h3>
+        </div>
+        <div class="vx-card-body">
+            <div class="vx-info-row"><div class="vx-info-label">ID</div><div class="vx-info-value">{{ $role->id }}</div></div>
+            <div class="vx-info-row"><div class="vx-info-label">Nombre</div><div class="vx-info-value" style="font-weight: 600;">{{ $role->name }}</div></div>
+            <div class="vx-info-row"><div class="vx-info-label">Permisos</div><div class="vx-info-value"><span class="vx-badge vx-badge-info">{{ $role->permissions->count() }}</span></div></div>
+            <div class="vx-info-row"><div class="vx-info-label">Usuarios</div><div class="vx-info-value"><span class="vx-badge vx-badge-gray">{{ $role->users->count() }}</span></div></div>
+            <div class="vx-info-row"><div class="vx-info-label">Creado</div><div class="vx-info-value">{{ $role->created_at->format('d/m/Y H:i') }}</div></div>
+            <div class="vx-info-row"><div class="vx-info-label">Actualizado</div><div class="vx-info-value">{{ $role->updated_at->format('d/m/Y H:i') }}</div></div>
+        </div>
+    </div>
+
+    {{-- Permisos agrupados --}}
+    @if($role->permissions->count() > 0)
+    <div class="vx-card" style="margin-bottom: 20px;">
+        <div class="vx-card-header"><h4>Permisos Asignados</h4></div>
+        <div class="vx-card-body">
+            @php
+                $groupedPermissions = $role->permissions->groupBy(function($permission) {
+                    return explode(' ', $permission->name)[1] ?? 'otros';
+                });
+            @endphp
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px;">
+                @foreach($groupedPermissions as $module => $permissions)
+                    <div class="vx-section">
+                        <div class="vx-section-header" style="text-transform: capitalize;">{{ ucfirst($module) }}</div>
+                        <div class="vx-section-body">
+                            @foreach($permissions as $permission)
+                                <div style="display: flex; align-items: center; gap: 6px; padding: 3px 0; font-size: 12px;">
+                                    <i class="bi bi-check-circle-fill" style="color: var(--vx-success); font-size: 14px;"></i>
+                                    {{ $permission->name }}
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endforeach
             </div>
-            <div class="card-body">
-                <table class="table table-bordered">
+        </div>
+    </div>
+    @else
+    <div class="vx-alert vx-alert-warning" style="margin-bottom: 20px;">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span>Este rol no tiene permisos asignados.</span>
+    </div>
+    @endif
+
+    {{-- Usuarios con este rol --}}
+    @if($role->users->count() > 0)
+    <div class="vx-card">
+        <div class="vx-card-header"><h4>Usuarios con este Rol</h4></div>
+        <div class="vx-card-body" style="padding: 0;">
+            <div class="vx-table-wrapper">
+                <table class="vx-table">
+                    <thead><tr><th>Nombre</th><th>Email</th><th>Departamento</th><th></th></tr></thead>
                     <tbody>
+                        @foreach($role->users as $user)
                         <tr>
-                            <th width="30%">ID</th>
-                            <td>{{ $role->id }}</td>
+                            <td style="font-weight: 600;">{{ $user->nombre_completo }}</td>
+                            <td style="font-size: 12px; color: var(--vx-text-secondary);">{{ $user->email }}</td>
+                            <td>{{ $user->departamento->nombre }}</td>
+                            <td>
+                                <a href="{{ route('users.show', $user->id) }}" class="vx-btn vx-btn-info vx-btn-sm"><i class="bi bi-eye"></i></a>
+                            </td>
                         </tr>
-                        <tr>
-                            <th>Nombre del Rol</th>
-                            <td>{{ $role->name }}</td>
-                        </tr>
-                        <tr>
-                            <th>Cantidad de Permisos</th>
-                            <td><span class="badge bg-info">{{ $role->permissions->count() }} permisos</span></td>
-                        </tr>
-                        <tr>
-                            <th>Usuarios con este Rol</th>
-                            <td><span class="badge bg-secondary">{{ $role->users->count() }} usuarios</span></td>
-                        </tr>
-                        <tr>
-                            <th>Fecha de Creación</th>
-                            <td>{{ $role->created_at->format('d/m/Y H:i') }}</td>
-                        </tr>
-                        <tr>
-                            <th>Última Actualización</th>
-                            <td>{{ $role->updated_at->format('d/m/Y H:i') }}</td>
-                        </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
         </div>
-
-        <!-- Permisos asignados -->
-        @if($role->permissions->count() > 0)
-            <div class="card mt-3">
-                <div class="card-header">
-                    <h5 class="mb-0">Permisos Asignados</h5>
-                </div>
-                <div class="card-body">
-                    @php
-                        $groupedPermissions = $role->permissions->groupBy(function($permission) {
-                            return explode(' ', $permission->name)[1] ?? 'otros';
-                        });
-                    @endphp
-
-                    <div class="row">
-                        @foreach($groupedPermissions as $module => $permissions)
-                            <div class="col-md-6 mb-3">
-                                <div class="card">
-                                    <div class="card-header bg-light">
-                                        <h6 class="mb-0 text-capitalize">{{ ucfirst($module) }}</h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <ul class="list-unstyled mb-0">
-                                            @foreach($permissions as $permission)
-                                                <li class="mb-1">
-                                                    <i class="bi bi-check-circle-fill text-success"></i>
-                                                    {{ $permission->name }}
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        @else
-            <div class="card mt-3">
-                <div class="card-body">
-                    <div class="alert alert-warning mb-0">
-                        Este rol no tiene permisos asignados.
-                    </div>
-                </div>
-            </div>
-        @endif
-
-        <!-- Usuarios con este rol -->
-        @if($role->users->count() > 0)
-            <div class="card mt-3">
-                <div class="card-header">
-                    <h5 class="mb-0">Usuarios con este Rol</h5>
-                </div>
-                <div class="card-body">
-                    <ul class="list-group">
-                        @foreach($role->users as $user)
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong>{{ $user->nombre_completo }}</strong><br>
-                                    <small class="text-muted">{{ $user->email }} - {{ $user->departamento->nombre }}</small>
-                                </div>
-                                <a href="{{ route('users.show', $user->id) }}" class="btn btn-sm btn-info">Ver</a>
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
-            </div>
-        @endif
     </div>
+    @endif
 </div>
 @endsection

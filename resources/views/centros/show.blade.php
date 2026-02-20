@@ -1,95 +1,59 @@
 @extends('layouts.app')
-
-@section('title', 'Detalle Centro')
-
+@section('title', $centro->nombre . ' - VEXIS')
 @section('content')
-<div class="row mb-3">
-    <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center">
-            <h2>Detalle del Centro</h2>
-            <div>
-                @can('update', $centro)
-                    <a href="{{ route('centros.edit', $centro) }}" class="btn btn-warning">Editar</a>
-                @endcan
-                <a href="{{ route('centros.index') }}" class="btn btn-secondary">Volver</a>
-            </div>
-        </div>
+<div class="vx-page-header">
+    <h1 class="vx-page-title">Detalle del Centro</h1>
+    <div class="vx-page-actions">
+        @can('update', $centro)
+            <a href="{{ route('centros.edit', $centro) }}" class="vx-btn vx-btn-warning"><i class="bi bi-pencil"></i> Editar</a>
+        @endcan
+        <a href="{{ route('centros.index') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-8 offset-md-2">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">{{ $centro->nombre }}</h4>
-            </div>
-            <div class="card-body">
-                <table class="table table-bordered">
+<div style="max-width: 800px;">
+    <div class="vx-card" style="margin-bottom: 20px;">
+        <div class="vx-card-header">
+            <h3><i class="bi bi-geo-alt" style="color: var(--vx-primary); margin-right: 8px;"></i>{{ $centro->nombre }}</h3>
+        </div>
+        <div class="vx-card-body">
+            <div class="vx-info-row"><div class="vx-info-label">ID</div><div class="vx-info-value">{{ $centro->id }}</div></div>
+            <div class="vx-info-row"><div class="vx-info-label">Nombre</div><div class="vx-info-value">{{ $centro->nombre }}</div></div>
+            <div class="vx-info-row"><div class="vx-info-label">Empresa</div><div class="vx-info-value">{{ $centro->empresa->nombre }} <span class="vx-badge vx-badge-gray">{{ $centro->empresa->abreviatura }}</span></div></div>
+            <div class="vx-info-row"><div class="vx-info-label">Dirección</div><div class="vx-info-value">{{ $centro->direccion }}</div></div>
+            <div class="vx-info-row"><div class="vx-info-label">Municipio</div><div class="vx-info-value">{{ $centro->municipio }}</div></div>
+            <div class="vx-info-row"><div class="vx-info-label">Provincia</div><div class="vx-info-value">{{ $centro->provincia }}</div></div>
+            <div class="vx-info-row"><div class="vx-info-label">Usuarios</div><div class="vx-info-value"><span class="vx-badge vx-badge-info">{{ $centro->users->count() }}</span></div></div>
+            <div class="vx-info-row"><div class="vx-info-label">Creado</div><div class="vx-info-value">{{ $centro->created_at->format('d/m/Y H:i') }}</div></div>
+            <div class="vx-info-row"><div class="vx-info-label">Actualizado</div><div class="vx-info-value">{{ $centro->updated_at->format('d/m/Y H:i') }}</div></div>
+        </div>
+    </div>
+
+    @if($centro->users->count() > 0)
+    <div class="vx-card">
+        <div class="vx-card-header"><h4>Usuarios en este Centro</h4></div>
+        <div class="vx-card-body" style="padding: 0;">
+            <div class="vx-table-wrapper">
+                <table class="vx-table">
+                    <thead><tr><th>Nombre</th><th>Departamento</th><th>Email</th><th></th></tr></thead>
                     <tbody>
+                        @foreach($centro->users as $user)
                         <tr>
-                            <th width="30%">ID</th>
-                            <td>{{ $centro->id }}</td>
+                            <td style="font-weight: 600;">{{ $user->nombre_completo }}</td>
+                            <td>{{ $user->departamento->nombre }}</td>
+                            <td style="font-size: 12px; color: var(--vx-text-secondary);">{{ $user->email }}</td>
+                            <td>
+                                @can('view', $user)
+                                    <a href="{{ route('users.show', $user) }}" class="vx-btn vx-btn-info vx-btn-sm"><i class="bi bi-eye"></i></a>
+                                @endcan
+                            </td>
                         </tr>
-                        <tr>
-                            <th>Nombre</th>
-                            <td>{{ $centro->nombre }}</td>
-                        </tr>
-                        <tr>
-                            <th>Empresa</th>
-                            <td>{{ $centro->empresa->nombre }} ({{ $centro->empresa->abreviatura }})</td>
-                        </tr>
-                        <tr>
-                            <th>Dirección</th>
-                            <td>{{ $centro->direccion }}</td>
-                        </tr>
-                        <tr>
-                            <th>Municipio</th>
-                            <td>{{ $centro->municipio }}</td>
-                        </tr>
-                        <tr>
-                            <th>Provincia</th>
-                            <td>{{ $centro->provincia }}</td>
-                        </tr>
-                        <tr>
-                            <th>Usuarios Asociados</th>
-                            <td>{{ $centro->users->count() }}</td>
-                        </tr>
-                        <tr>
-                            <th>Fecha de Creación</th>
-                            <td>{{ $centro->created_at->format('d/m/Y H:i') }}</td>
-                        </tr>
-                        <tr>
-                            <th>Última Actualización</th>
-                            <td>{{ $centro->updated_at->format('d/m/Y H:i') }}</td>
-                        </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
         </div>
-
-        <!-- Lista de usuarios del centro -->
-        @if($centro->users->count() > 0)
-            <div class="card mt-3">
-                <div class="card-header">
-                    <h5 class="mb-0">Usuarios en este Centro</h5>
-                </div>
-                <div class="card-body">
-                    <ul class="list-group">
-                        @foreach($centro->users as $user)
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong>{{ $user->nombre_completo }}</strong><br>
-                                    <small class="text-muted">{{ $user->departamento->nombre }} - {{ $user->email }}</small>
-                                </div>
-                                @can('view', $user)
-                                    <a href="{{ route('users.show', $user) }}" class="btn btn-sm btn-info">Ver</a>
-                                @endcan
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
-            </div>
-        @endif
     </div>
+    @endif
 </div>
 @endsection
