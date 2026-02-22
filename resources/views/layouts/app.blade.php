@@ -383,7 +383,7 @@
             {{-- Módulo GESTIÓN --}}
             @canany(['ver usuarios', 'ver departamentos', 'ver centros', 'ver roles', 'ver restricciones', 'ver clientes'])
             <li class="vx-nav-item">
-                <button class="vx-nav-link {{ request()->is('gestion*','users*','clientes*','departamentos*','centros*','roles*','restricciones*') ? 'active' : '' }}">
+                <button class="vx-nav-link {{ request()->is('gestion*','users*','clientes*','departamentos*','centros*','roles*','restricciones*','empresas*') ? 'active' : '' }}">
                     <i class="bi bi-building"></i> Gestión <i class="bi bi-chevron-down" style="font-size:10px;"></i>
                 </button>
                 <div class="vx-dropdown vx-dropdown-mega">
@@ -400,19 +400,25 @@
                         <div class="vx-dropdown-header">Seguridad</div>
                         @can('ver roles')
                         <a href="{{ route('roles.index') }}" class="vx-dropdown-item"><i class="bi bi-shield-lock"></i> Roles</a>
+                        <a href="{{ route('gestion.permisos') }}" class="vx-dropdown-item"><i class="bi bi-key"></i> Permisos</a>
                         @endcan
                         @can('ver restricciones')
                         <a href="{{ route('restricciones.index') }}" class="vx-dropdown-item"><i class="bi bi-lock"></i> Restricciones</a>
                         @endcan
+                        <a href="{{ route('gestion.politica') }}" class="vx-dropdown-item"><i class="bi bi-file-earmark-lock"></i> Política</a>
                     </div>
                     <div class="vx-mega-col">
                         <div class="vx-dropdown-header">Mantenimiento</div>
+                        @can('ver empresas')
+                        <a href="{{ route('empresas.index') }}" class="vx-dropdown-item"><i class="bi bi-building"></i> Empresas</a>
+                        @endcan
                         @can('ver departamentos')
                         <a href="{{ route('departamentos.index') }}" class="vx-dropdown-item"><i class="bi bi-diagram-3"></i> Departamentos</a>
                         @endcan
                         @can('ver centros')
                         <a href="{{ route('centros.index') }}" class="vx-dropdown-item"><i class="bi bi-geo-alt"></i> Centros</a>
                         @endcan
+                        <a href="{{ route('gestion.marcas') }}" class="vx-dropdown-item"><i class="bi bi-tags"></i> Marcas</a>
                     </div>
                 </div>
             </li>

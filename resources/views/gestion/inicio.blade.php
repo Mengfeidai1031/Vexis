@@ -37,9 +37,9 @@
         </a>
         @endcan
         @can('ver roles')
-        <a href="{{ route('roles.index') }}" class="vx-module-card">
+        <a href="{{ route('gestion.permisos') }}" class="vx-module-card">
             <div class="vx-module-icon" style="background: rgba(52,152,219,0.1); color: var(--vx-info);"><i class="bi bi-key"></i></div>
-            <div class="vx-module-info"><h4>Permisos</h4><p>Permisos asignados a roles</p></div>
+            <div class="vx-module-info"><h4>Permisos</h4><p>Matriz de permisos por rol</p></div>
         </a>
         @endcan
         @can('ver restricciones')
@@ -48,6 +48,10 @@
             <div class="vx-module-info"><h4>Restricciones</h4><p>Restricciones de acceso por entidad</p></div>
         </a>
         @endcan
+        <a href="{{ route('gestion.politica') }}" class="vx-module-card">
+            <div class="vx-module-icon" style="background: rgba(46,204,113,0.1); color: var(--vx-success);"><i class="bi bi-file-earmark-lock"></i></div>
+            <div class="vx-module-info"><h4>Política</h4><p>Política de seguridad del sistema</p></div>
+        </a>
     </div>
 </div>
 @endcanany
@@ -57,6 +61,12 @@
 <div class="vx-module-section">
     <h3 class="vx-module-section-title"><i class="bi bi-gear"></i> Mantenimiento</h3>
     <div class="vx-module-grid">
+        @can('ver empresas')
+        <a href="{{ route('empresas.index') }}" class="vx-module-card">
+            <div class="vx-module-icon" style="background: rgba(51,170,221,0.1); color: var(--vx-primary);"><i class="bi bi-building"></i></div>
+            <div class="vx-module-info"><h4>Empresas</h4><p>Empresas del grupo</p></div>
+        </a>
+        @endcan
         @can('ver departamentos')
         <a href="{{ route('departamentos.index') }}" class="vx-module-card">
             <div class="vx-module-icon" style="background: rgba(243,156,18,0.1); color: var(--vx-warning);"><i class="bi bi-diagram-3"></i></div>
@@ -69,6 +79,10 @@
             <div class="vx-module-info"><h4>Centros</h4><p>Centros de trabajo y ubicaciones</p></div>
         </a>
         @endcan
+        <a href="{{ route('gestion.marcas') }}" class="vx-module-card">
+            <div class="vx-module-icon" style="background: rgba(100,107,82,0.1); color: #646B52;"><i class="bi bi-tags"></i></div>
+            <div class="vx-module-info"><h4>Marcas</h4><p>Marcas de vehículos gestionadas</p></div>
+        </a>
     </div>
 </div>
 @endcanany
@@ -90,11 +104,6 @@
         <div class="vx-module-card vx-module-card-disabled">
             <div class="vx-module-icon" style="background: var(--vx-gray-100); color: var(--vx-gray-500);"><i class="bi bi-megaphone"></i></div>
             <div class="vx-module-info"><h4>Campañas</h4><p>Gestión de campañas de marketing</p></div>
-            <span class="vx-module-soon">Próximamente</span>
-        </div>
-        <div class="vx-module-card vx-module-card-disabled">
-            <div class="vx-module-icon" style="background: var(--vx-gray-100); color: var(--vx-gray-500);"><i class="bi bi-tags"></i></div>
-            <div class="vx-module-info"><h4>Marcas</h4><p>Marcas de vehículos gestionadas</p></div>
             <span class="vx-module-soon">Próximamente</span>
         </div>
         <div class="vx-module-card vx-module-card-disabled">

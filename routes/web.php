@@ -11,6 +11,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\VehiculoController;
 use App\Http\Controllers\OfertaController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\EmpresaController;
 
 // Ruta pública (página de inicio)
 Route::get('/', function () {
@@ -36,6 +37,40 @@ Route::middleware('auth')->group(function () {
     // Módulos - Inicio
     Route::get('/gestion', function () { return view('gestion.inicio'); })->name('gestion.inicio');
     Route::get('/comercial', function () { return view('comercial.inicio'); })->name('comercial.inicio');
+
+    // Gestión - Seguridad
+    Route::get('/gestion/permisos', function () {
+        $roles = \Spatie\Permission\Models\Role::orderBy('id')->get();
+        $permissions = \Spatie\Permission\Models\Permission::orderBy('name')->get();
+        return view('gestion.permisos', compact('roles', 'permissions'));
+    })->name('gestion.permisos')->middleware('permission:ver roles');
+
+    Route::get('/gestion/politica', function () {
+        return view('gestion.politica');
+    })->name('gestion.politica');
+
+    // Gestión - Mantenimiento: Marcas
+    Route::get('/gestion/marcas', function () {
+        $marcas = \App\Models\Marca::orderBy('nombre')->get();
+        return view('gestion.marcas', compact('marcas'));
+    })->name('gestion.marcas');
+
+    // CRUD de Empresas
+    Route::middleware(['permission:crear empresas'])->group(function () {
+        Route::get('/empresas/create', [EmpresaController::class, 'create'])->name('empresas.create');
+        Route::post('/empresas', [EmpresaController::class, 'store'])->name('empresas.store');
+    });
+    Route::middleware(['permission:ver empresas'])->group(function () {
+        Route::get('/empresas', [EmpresaController::class, 'index'])->name('empresas.index');
+        Route::get('/empresas/{empresa}', [EmpresaController::class, 'show'])->name('empresas.show');
+    });
+    Route::middleware(['permission:editar empresas'])->group(function () {
+        Route::get('/empresas/{empresa}/edit', [EmpresaController::class, 'edit'])->name('empresas.edit');
+        Route::put('/empresas/{empresa}', [EmpresaController::class, 'update'])->name('empresas.update');
+    });
+    Route::middleware(['permission:eliminar empresas'])->group(function () {
+        Route::delete('/empresas/{empresa}', [EmpresaController::class, 'destroy'])->name('empresas.destroy');
+    });
 
     // Perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             ClienteSeeder::class,
             VehiculoSeeder::class,
+            MarcaSeeder::class,
         ]);
     }
 }
