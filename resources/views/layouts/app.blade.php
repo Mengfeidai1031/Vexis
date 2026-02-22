@@ -102,6 +102,13 @@
         .vx-dropdown-divider { height: 1px; background: var(--vx-border); margin: 4px 8px; }
         .vx-dropdown-header { padding: 6px 12px 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--vx-text-muted); }
         .vx-nav-right { display: flex; align-items: center; gap: 4px; margin-left: auto; }
+
+        /* Mega dropdown for modules */
+        .vx-dropdown-mega { display: flex; gap: 0; min-width: 420px; padding: 8px 0; }
+        .vx-mega-col { flex: 1; padding: 0; min-width: 140px; }
+        .vx-mega-col:not(:last-child) { border-right: 1px solid var(--vx-border); }
+        .vx-mega-col .vx-dropdown-item { padding: 7px 16px; }
+        .vx-mega-col .vx-dropdown-header { padding: 8px 16px 4px; }
         .vx-icon-btn { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--vx-text-secondary); background: none; border: none; cursor: pointer; transition: all 0.2s; font-size: 17px; position: relative; }
         .vx-icon-btn:hover { background: var(--vx-surface-hover); color: var(--vx-primary); }
         .vx-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--vx-primary), var(--vx-primary-dark)); color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; cursor: pointer; transition: box-shadow 0.2s; }
@@ -261,6 +268,8 @@
             .vx-nav.open { display: flex; }
             .vx-nav-item:hover > .vx-dropdown { position: static; box-shadow: none; border: none; opacity: 1; visibility: visible; transform: none; padding-left: 20px; background: var(--vx-gray-50); border-radius: var(--vx-radius); }
             .vx-dropdown { min-width: 100%; }
+            .vx-dropdown-mega { flex-direction: column; min-width: 100%; }
+            .vx-mega-col:not(:last-child) { border-right: none; border-bottom: 1px solid var(--vx-border); padding-bottom: 4px; margin-bottom: 4px; }
         }
 
         @media (max-width: 768px) {
@@ -371,52 +380,52 @@
 
         @auth
         <ul class="vx-nav">
+            {{-- Módulo GESTIÓN --}}
             @canany(['ver usuarios', 'ver departamentos', 'ver centros', 'ver roles', 'ver restricciones', 'ver clientes'])
             <li class="vx-nav-item">
-                <button class="vx-nav-link {{ request()->is('users*','clientes*','departamentos*','centros*','roles*','restricciones*') ? 'active' : '' }}">
+                <button class="vx-nav-link {{ request()->is('gestion*','users*','clientes*','departamentos*','centros*','roles*','restricciones*') ? 'active' : '' }}">
                     <i class="bi bi-building"></i> Gestión <i class="bi bi-chevron-down" style="font-size:10px;"></i>
                 </button>
-                <div class="vx-dropdown">
-                    @can('ver usuarios')
-                    <a href="{{ route('users.index') }}" class="vx-dropdown-item"><i class="bi bi-people"></i> Usuarios</a>
-                    @endcan
-                    @can('ver clientes')
-                    <a href="{{ route('clientes.index') }}" class="vx-dropdown-item"><i class="bi bi-person-lines-fill"></i> Clientes</a>
-                    @endcan
-                    <div class="vx-dropdown-divider"></div>
-                    <div class="vx-dropdown-header">Seguridad</div>
-                    @can('ver roles')
-                    <a href="{{ route('roles.index') }}" class="vx-dropdown-item"><i class="bi bi-shield-lock"></i> Roles y Permisos</a>
-                    @endcan
-                    @can('ver restricciones')
-                    <a href="{{ route('restricciones.index') }}" class="vx-dropdown-item"><i class="bi bi-lock"></i> Restricciones</a>
-                    @endcan
+                <div class="vx-dropdown vx-dropdown-mega">
+                    <div class="vx-mega-col">
+                        <a href="{{ route('gestion.inicio') }}" class="vx-dropdown-item"><i class="bi bi-house-door"></i> Inicio</a>
+                        @can('ver usuarios')
+                        <a href="{{ route('users.index') }}" class="vx-dropdown-item"><i class="bi bi-people"></i> Usuarios</a>
+                        @endcan
+                        @can('ver clientes')
+                        <a href="{{ route('clientes.index') }}" class="vx-dropdown-item"><i class="bi bi-person-lines-fill"></i> Clientes</a>
+                        @endcan
+                    </div>
+                    <div class="vx-mega-col">
+                        <div class="vx-dropdown-header">Seguridad</div>
+                        @can('ver roles')
+                        <a href="{{ route('roles.index') }}" class="vx-dropdown-item"><i class="bi bi-shield-lock"></i> Roles</a>
+                        @endcan
+                        @can('ver restricciones')
+                        <a href="{{ route('restricciones.index') }}" class="vx-dropdown-item"><i class="bi bi-lock"></i> Restricciones</a>
+                        @endcan
+                    </div>
+                    <div class="vx-mega-col">
+                        <div class="vx-dropdown-header">Mantenimiento</div>
+                        @can('ver departamentos')
+                        <a href="{{ route('departamentos.index') }}" class="vx-dropdown-item"><i class="bi bi-diagram-3"></i> Departamentos</a>
+                        @endcan
+                        @can('ver centros')
+                        <a href="{{ route('centros.index') }}" class="vx-dropdown-item"><i class="bi bi-geo-alt"></i> Centros</a>
+                        @endcan
+                    </div>
                 </div>
             </li>
             @endcanany
 
-            @canany(['ver departamentos', 'ver centros'])
-            <li class="vx-nav-item">
-                <button class="vx-nav-link {{ request()->is('departamentos*','centros*') ? 'active' : '' }}">
-                    <i class="bi bi-gear"></i> Mantenimiento <i class="bi bi-chevron-down" style="font-size:10px;"></i>
-                </button>
-                <div class="vx-dropdown">
-                    @can('ver departamentos')
-                    <a href="{{ route('departamentos.index') }}" class="vx-dropdown-item"><i class="bi bi-diagram-3"></i> Departamentos</a>
-                    @endcan
-                    @can('ver centros')
-                    <a href="{{ route('centros.index') }}" class="vx-dropdown-item"><i class="bi bi-geo-alt"></i> Centros</a>
-                    @endcan
-                </div>
-            </li>
-            @endcanany
-
+            {{-- Módulo COMERCIAL --}}
             @canany(['ver vehículos', 'ver ofertas'])
             <li class="vx-nav-item">
-                <button class="vx-nav-link {{ request()->is('ofertas*','vehiculos*') ? 'active' : '' }}">
+                <button class="vx-nav-link {{ request()->is('comercial*','ofertas*','vehiculos*') ? 'active' : '' }}">
                     <i class="bi bi-car-front"></i> Comercial <i class="bi bi-chevron-down" style="font-size:10px;"></i>
                 </button>
                 <div class="vx-dropdown">
+                    <a href="{{ route('comercial.inicio') }}" class="vx-dropdown-item"><i class="bi bi-house-door"></i> Inicio</a>
                     @can('ver ofertas')
                     <a href="{{ route('ofertas.index') }}" class="vx-dropdown-item"><i class="bi bi-file-earmark-text"></i> Ofertas</a>
                     @endcan

@@ -33,6 +33,10 @@ Route::middleware('auth')->group(function () {
         return view('dashboard');
     })->name('dashboard');
 
+    // Módulos - Inicio
+    Route::get('/gestion', function () { return view('gestion.inicio'); })->name('gestion.inicio');
+    Route::get('/comercial', function () { return view('comercial.inicio'); })->name('comercial.inicio');
+
     // Perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
