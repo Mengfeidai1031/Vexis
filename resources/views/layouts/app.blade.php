@@ -383,7 +383,7 @@
             {{-- Módulo GESTIÓN --}}
             @canany(['ver usuarios', 'ver departamentos', 'ver centros', 'ver roles', 'ver restricciones', 'ver clientes'])
             <li class="vx-nav-item">
-                <button class="vx-nav-link {{ request()->is('gestion*','users*','clientes*','departamentos*','centros*','roles*','restricciones*','empresas*') ? 'active' : '' }}">
+                <button class="vx-nav-link {{ request()->is('gestion*','users*','clientes*','departamentos*','centros*','roles*','restricciones*','empresas*','noticias*','campanias*','naming-pcs*') ? 'active' : '' }}">
                     <i class="bi bi-building"></i> Gestión <i class="bi bi-chevron-down" style="font-size:10px;"></i>
                 </button>
                 <div class="vx-dropdown vx-dropdown-mega">
@@ -395,8 +395,6 @@
                         @can('ver clientes')
                         <a href="{{ route('clientes.index') }}" class="vx-dropdown-item"><i class="bi bi-person-lines-fill"></i> Clientes</a>
                         @endcan
-                    </div>
-                    <div class="vx-mega-col">
                         <div class="vx-dropdown-header">Seguridad</div>
                         @can('ver roles')
                         <a href="{{ route('roles.index') }}" class="vx-dropdown-item"><i class="bi bi-shield-lock"></i> Roles</a>
@@ -408,6 +406,13 @@
                         <a href="{{ route('gestion.politica') }}" class="vx-dropdown-item"><i class="bi bi-file-earmark-lock"></i> Política</a>
                     </div>
                     <div class="vx-mega-col">
+                        <div class="vx-dropdown-header">Marketing</div>
+                        @can('ver noticias')
+                        <a href="{{ route('noticias.index') }}" class="vx-dropdown-item"><i class="bi bi-newspaper"></i> Noticias</a>
+                        @endcan
+                        @can('ver campanias')
+                        <a href="{{ route('campanias.index') }}" class="vx-dropdown-item"><i class="bi bi-megaphone"></i> Campañas</a>
+                        @endcan
                         <div class="vx-dropdown-header">Mantenimiento</div>
                         @can('ver empresas')
                         <a href="{{ route('empresas.index') }}" class="vx-dropdown-item"><i class="bi bi-building"></i> Empresas</a>
@@ -419,6 +424,9 @@
                         <a href="{{ route('centros.index') }}" class="vx-dropdown-item"><i class="bi bi-geo-alt"></i> Centros</a>
                         @endcan
                         <a href="{{ route('gestion.marcas') }}" class="vx-dropdown-item"><i class="bi bi-tags"></i> Marcas</a>
+                        @can('ver naming-pcs')
+                        <a href="{{ route('naming-pcs.index') }}" class="vx-dropdown-item"><i class="bi bi-pc-display"></i> Naming PCs</a>
+                        @endcan
                     </div>
                 </div>
             </li>

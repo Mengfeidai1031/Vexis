@@ -67,6 +67,24 @@ class RolePermissionSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'editar restricciones']);
         Permission::firstOrCreate(['name' => 'eliminar restricciones']);
 
+        // Crear permisos para Noticias
+        Permission::firstOrCreate(['name' => 'ver noticias']);
+        Permission::firstOrCreate(['name' => 'crear noticias']);
+        Permission::firstOrCreate(['name' => 'editar noticias']);
+        Permission::firstOrCreate(['name' => 'eliminar noticias']);
+
+        // Crear permisos para Campañas
+        Permission::firstOrCreate(['name' => 'ver campanias']);
+        Permission::firstOrCreate(['name' => 'crear campanias']);
+        Permission::firstOrCreate(['name' => 'editar campanias']);
+        Permission::firstOrCreate(['name' => 'eliminar campanias']);
+
+        // Crear permisos para Naming PCs
+        Permission::firstOrCreate(['name' => 'ver naming-pcs']);
+        Permission::firstOrCreate(['name' => 'crear naming-pcs']);
+        Permission::firstOrCreate(['name' => 'editar naming-pcs']);
+        Permission::firstOrCreate(['name' => 'eliminar naming-pcs']);
+
         // Crear rol de Super Admin (tiene todos los permisos)
         $superAdminRole = Role::firstOrCreate(['name' => 'Super Admin']);
         $superAdminRole->syncPermissions(Permission::all());
@@ -80,6 +98,9 @@ class RolePermissionSeeder extends Seeder
             'ver empresas', 'crear empresas', 'editar empresas', 'eliminar empresas',
             'ver roles', 'crear roles', 'editar roles',
             'ver restricciones', 'crear restricciones', 'editar restricciones', 'eliminar restricciones',
+            'ver noticias', 'crear noticias', 'editar noticias', 'eliminar noticias',
+            'ver campanias', 'crear campanias', 'editar campanias', 'eliminar campanias',
+            'ver naming-pcs', 'crear naming-pcs', 'editar naming-pcs', 'eliminar naming-pcs',
         ]);
 
         // Crear rol de Gerente (puede ver y gestionar clientes, vehículos y ofertas)
@@ -110,6 +131,8 @@ class RolePermissionSeeder extends Seeder
             'ver clientes',
             'ver vehículos',
             'ver ofertas',
+            'ver noticias',
+            'ver campanias',
         ]);
     }
 }

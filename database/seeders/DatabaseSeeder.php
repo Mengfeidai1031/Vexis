@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             ClienteSeeder::class,
             VehiculoSeeder::class,
             MarcaSeeder::class,
+            NoticiaSeeder::class,
         ]);
     }
 }

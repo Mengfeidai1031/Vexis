@@ -12,6 +12,9 @@ use App\Http\Controllers\VehiculoController;
 use App\Http\Controllers\OfertaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EmpresaController;
+use App\Http\Controllers\NoticiaController;
+use App\Http\Controllers\CampaniaController;
+use App\Http\Controllers\NamingPcController;
 
 // Ruta pública (página de inicio)
 Route::get('/', function () {
@@ -70,6 +73,58 @@ Route::middleware('auth')->group(function () {
     });
     Route::middleware(['permission:eliminar empresas'])->group(function () {
         Route::delete('/empresas/{empresa}', [EmpresaController::class, 'destroy'])->name('empresas.destroy');
+    });
+
+    // CRUD de Noticias
+    Route::middleware(['permission:crear noticias'])->group(function () {
+        Route::get('/noticias/create', [NoticiaController::class, 'create'])->name('noticias.create');
+        Route::post('/noticias', [NoticiaController::class, 'store'])->name('noticias.store');
+    });
+    Route::middleware(['permission:ver noticias'])->group(function () {
+        Route::get('/noticias', [NoticiaController::class, 'index'])->name('noticias.index');
+        Route::get('/noticias/{noticia}', [NoticiaController::class, 'show'])->name('noticias.show');
+    });
+    Route::middleware(['permission:editar noticias'])->group(function () {
+        Route::get('/noticias/{noticia}/edit', [NoticiaController::class, 'edit'])->name('noticias.edit');
+        Route::put('/noticias/{noticia}', [NoticiaController::class, 'update'])->name('noticias.update');
+    });
+    Route::middleware(['permission:eliminar noticias'])->group(function () {
+        Route::delete('/noticias/{noticia}', [NoticiaController::class, 'destroy'])->name('noticias.destroy');
+    });
+
+    // CRUD de Campañas
+    Route::middleware(['permission:crear campanias'])->group(function () {
+        Route::get('/campanias/create', [CampaniaController::class, 'create'])->name('campanias.create');
+        Route::post('/campanias', [CampaniaController::class, 'store'])->name('campanias.store');
+    });
+    Route::middleware(['permission:ver campanias'])->group(function () {
+        Route::get('/campanias', [CampaniaController::class, 'index'])->name('campanias.index');
+        Route::get('/campanias/{campania}', [CampaniaController::class, 'show'])->name('campanias.show');
+    });
+    Route::middleware(['permission:editar campanias'])->group(function () {
+        Route::get('/campanias/{campania}/edit', [CampaniaController::class, 'edit'])->name('campanias.edit');
+        Route::put('/campanias/{campania}', [CampaniaController::class, 'update'])->name('campanias.update');
+    });
+    Route::middleware(['permission:eliminar campanias'])->group(function () {
+        Route::delete('/campanias/{campania}', [CampaniaController::class, 'destroy'])->name('campanias.destroy');
+        Route::delete('/campanias/fotos/{foto}', [CampaniaController::class, 'destroyFoto'])->name('campanias.fotos.destroy');
+    });
+
+    // CRUD de Naming PCs
+    Route::middleware(['permission:crear naming-pcs'])->group(function () {
+        Route::get('/naming-pcs/create', [NamingPcController::class, 'create'])->name('naming-pcs.create');
+        Route::post('/naming-pcs', [NamingPcController::class, 'store'])->name('naming-pcs.store');
+    });
+    Route::middleware(['permission:ver naming-pcs'])->group(function () {
+        Route::get('/naming-pcs', [NamingPcController::class, 'index'])->name('naming-pcs.index');
+        Route::get('/naming-pcs/{namingPc}', [NamingPcController::class, 'show'])->name('naming-pcs.show');
+    });
+    Route::middleware(['permission:editar naming-pcs'])->group(function () {
+        Route::get('/naming-pcs/{namingPc}/edit', [NamingPcController::class, 'edit'])->name('naming-pcs.edit');
+        Route::put('/naming-pcs/{namingPc}', [NamingPcController::class, 'update'])->name('naming-pcs.update');
+    });
+    Route::middleware(['permission:eliminar naming-pcs'])->group(function () {
+        Route::delete('/naming-pcs/{namingPc}', [NamingPcController::class, 'destroy'])->name('naming-pcs.destroy');
     });
 
     // Perfil

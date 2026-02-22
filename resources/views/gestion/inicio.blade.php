@@ -56,6 +56,25 @@
 </div>
 @endcanany
 
+{{-- Sección Marketing --}}
+<div class="vx-module-section">
+    <h3 class="vx-module-section-title"><i class="bi bi-megaphone"></i> Marketing</h3>
+    <div class="vx-module-grid">
+        @can('ver noticias')
+        <a href="{{ route('noticias.index') }}" class="vx-module-card">
+            <div class="vx-module-icon" style="background: rgba(52,152,219,0.1); color: var(--vx-info);"><i class="bi bi-newspaper"></i></div>
+            <div class="vx-module-info"><h4>Noticias</h4><p>Noticias y comunicados internos</p></div>
+        </a>
+        @endcan
+        @can('ver campanias')
+        <a href="{{ route('campanias.index') }}" class="vx-module-card">
+            <div class="vx-module-icon" style="background: rgba(155,89,182,0.1); color: #9B59B6;"><i class="bi bi-megaphone"></i></div>
+            <div class="vx-module-info"><h4>Campañas</h4><p>Gestión de campañas publicitarias</p></div>
+        </a>
+        @endcan
+    </div>
+</div>
+
 {{-- Sección Mantenimiento --}}
 @canany(['ver departamentos', 'ver centros'])
 <div class="vx-module-section">
@@ -83,6 +102,12 @@
             <div class="vx-module-icon" style="background: rgba(100,107,82,0.1); color: #646B52;"><i class="bi bi-tags"></i></div>
             <div class="vx-module-info"><h4>Marcas</h4><p>Marcas de vehículos gestionadas</p></div>
         </a>
+        @can('ver naming-pcs')
+        <a href="{{ route('naming-pcs.index') }}" class="vx-module-card">
+            <div class="vx-module-icon" style="background: rgba(52,73,94,0.1); color: #34495E;"><i class="bi bi-pc-display"></i></div>
+            <div class="vx-module-info"><h4>Naming PCs</h4><p>Nomenclatura de equipos informáticos</p></div>
+        </a>
+        @endcan
     </div>
 </div>
 @endcanany
@@ -94,21 +119,6 @@
         <div class="vx-module-card vx-module-card-disabled">
             <div class="vx-module-icon" style="background: var(--vx-gray-100); color: var(--vx-gray-500);"><i class="bi bi-calendar-check"></i></div>
             <div class="vx-module-info"><h4>Vacaciones</h4><p>Solicitud y calendario de vacaciones</p></div>
-            <span class="vx-module-soon">Próximamente</span>
-        </div>
-        <div class="vx-module-card vx-module-card-disabled">
-            <div class="vx-module-icon" style="background: var(--vx-gray-100); color: var(--vx-gray-500);"><i class="bi bi-newspaper"></i></div>
-            <div class="vx-module-info"><h4>Noticias</h4><p>Noticias y comunicados internos</p></div>
-            <span class="vx-module-soon">Próximamente</span>
-        </div>
-        <div class="vx-module-card vx-module-card-disabled">
-            <div class="vx-module-icon" style="background: var(--vx-gray-100); color: var(--vx-gray-500);"><i class="bi bi-megaphone"></i></div>
-            <div class="vx-module-info"><h4>Campañas</h4><p>Gestión de campañas de marketing</p></div>
-            <span class="vx-module-soon">Próximamente</span>
-        </div>
-        <div class="vx-module-card vx-module-card-disabled">
-            <div class="vx-module-icon" style="background: var(--vx-gray-100); color: var(--vx-gray-500);"><i class="bi bi-pc-display"></i></div>
-            <div class="vx-module-info"><h4>Naming PCs</h4><p>Nomenclatura de equipos</p></div>
             <span class="vx-module-soon">Próximamente</span>
         </div>
         <div class="vx-module-card vx-module-card-disabled">
