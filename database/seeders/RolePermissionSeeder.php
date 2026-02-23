@@ -109,6 +109,30 @@ class RolePermissionSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'editar repartos']);
         Permission::firstOrCreate(['name' => 'eliminar repartos']);
 
+        // Crear permisos para Talleres
+        Permission::firstOrCreate(['name' => 'ver talleres']);
+        Permission::firstOrCreate(['name' => 'crear talleres']);
+        Permission::firstOrCreate(['name' => 'editar talleres']);
+        Permission::firstOrCreate(['name' => 'eliminar talleres']);
+
+        // Crear permisos para Mecánicos
+        Permission::firstOrCreate(['name' => 'ver mecanicos']);
+        Permission::firstOrCreate(['name' => 'crear mecanicos']);
+        Permission::firstOrCreate(['name' => 'editar mecanicos']);
+        Permission::firstOrCreate(['name' => 'eliminar mecanicos']);
+
+        // Crear permisos para Citas Taller
+        Permission::firstOrCreate(['name' => 'ver citas']);
+        Permission::firstOrCreate(['name' => 'crear citas']);
+        Permission::firstOrCreate(['name' => 'editar citas']);
+        Permission::firstOrCreate(['name' => 'eliminar citas']);
+
+        // Crear permisos para Coches Sustitución
+        Permission::firstOrCreate(['name' => 'ver coches-sustitucion']);
+        Permission::firstOrCreate(['name' => 'crear coches-sustitucion']);
+        Permission::firstOrCreate(['name' => 'editar coches-sustitucion']);
+        Permission::firstOrCreate(['name' => 'eliminar coches-sustitucion']);
+
         // Crear rol de Super Admin (tiene todos los permisos)
         $superAdminRole = Role::firstOrCreate(['name' => 'Super Admin']);
         $superAdminRole->syncPermissions(Permission::all());
@@ -129,6 +153,10 @@ class RolePermissionSeeder extends Seeder
             'ver almacenes', 'crear almacenes', 'editar almacenes', 'eliminar almacenes',
             'ver stocks', 'crear stocks', 'editar stocks', 'eliminar stocks',
             'ver repartos', 'crear repartos', 'editar repartos', 'eliminar repartos',
+            'ver talleres', 'crear talleres', 'editar talleres', 'eliminar talleres',
+            'ver mecanicos', 'crear mecanicos', 'editar mecanicos', 'eliminar mecanicos',
+            'ver citas', 'crear citas', 'editar citas', 'eliminar citas',
+            'ver coches-sustitucion', 'crear coches-sustitucion', 'editar coches-sustitucion', 'eliminar coches-sustitucion',
         ]);
 
         // Crear rol de Gerente (puede ver y gestionar clientes, vehículos y ofertas)

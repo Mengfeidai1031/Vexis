@@ -19,6 +19,10 @@ use App\Http\Controllers\VacacionController;
 use App\Http\Controllers\FestivoController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\RepartoController;
+use App\Http\Controllers\TallerController;
+use App\Http\Controllers\MecanicoController;
+use App\Http\Controllers\CitaTallerController;
+use App\Http\Controllers\CocheSustitucionController;
 use App\Http\Controllers\AlmacenController;
 
 // Ruta pública (página de inicio)
@@ -208,6 +212,76 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['permission:eliminar repartos'])->group(function () {
         Route::delete('/repartos/{reparto}', [RepartoController::class, 'destroy'])->name('repartos.destroy');
     });
+
+    // === MÓDULO TALLERES ===
+    Route::get('/talleres-modulo', function () { return view('talleres.inicio'); })->name('talleres.inicio');
+
+    // CRUD Talleres
+    Route::middleware(['permission:crear talleres'])->group(function () {
+        Route::get('/talleres/create', [TallerController::class, 'create'])->name('talleres.create');
+        Route::post('/talleres', [TallerController::class, 'store'])->name('talleres.store');
+    });
+    Route::middleware(['permission:ver talleres'])->group(function () {
+        Route::get('/talleres', [TallerController::class, 'index'])->name('talleres.index');
+        Route::get('/talleres/{taller}', [TallerController::class, 'show'])->name('talleres.show');
+    });
+    Route::middleware(['permission:editar talleres'])->group(function () {
+        Route::get('/talleres/{taller}/edit', [TallerController::class, 'edit'])->name('talleres.edit');
+        Route::put('/talleres/{taller}', [TallerController::class, 'update'])->name('talleres.update');
+    });
+    Route::middleware(['permission:eliminar talleres'])->group(function () {
+        Route::delete('/talleres/{taller}', [TallerController::class, 'destroy'])->name('talleres.destroy');
+    });
+
+    // CRUD Mecánicos
+    Route::middleware(['permission:crear mecanicos'])->group(function () {
+        Route::get('/mecanicos/create', [MecanicoController::class, 'create'])->name('mecanicos.create');
+        Route::post('/mecanicos', [MecanicoController::class, 'store'])->name('mecanicos.store');
+    });
+    Route::middleware(['permission:ver mecanicos'])->group(function () {
+        Route::get('/mecanicos', [MecanicoController::class, 'index'])->name('mecanicos.index');
+    });
+    Route::middleware(['permission:editar mecanicos'])->group(function () {
+        Route::get('/mecanicos/{mecanico}/edit', [MecanicoController::class, 'edit'])->name('mecanicos.edit');
+        Route::put('/mecanicos/{mecanico}', [MecanicoController::class, 'update'])->name('mecanicos.update');
+    });
+    Route::middleware(['permission:eliminar mecanicos'])->group(function () {
+        Route::delete('/mecanicos/{mecanico}', [MecanicoController::class, 'destroy'])->name('mecanicos.destroy');
+    });
+
+    // CRUD Citas Taller
+    Route::middleware(['permission:crear citas'])->group(function () {
+        Route::get('/citas/create', [CitaTallerController::class, 'create'])->name('citas.create');
+        Route::post('/citas', [CitaTallerController::class, 'store'])->name('citas.store');
+    });
+    Route::middleware(['permission:ver citas'])->group(function () {
+        Route::get('/citas', [CitaTallerController::class, 'index'])->name('citas.index');
+    });
+    Route::middleware(['permission:editar citas'])->group(function () {
+        Route::get('/citas/{cita}/edit', [CitaTallerController::class, 'edit'])->name('citas.edit');
+        Route::put('/citas/{cita}', [CitaTallerController::class, 'update'])->name('citas.update');
+    });
+    Route::middleware(['permission:eliminar citas'])->group(function () {
+        Route::delete('/citas/{cita}', [CitaTallerController::class, 'destroy'])->name('citas.destroy');
+    });
+
+    // CRUD Coches Sustitución
+    Route::middleware(['permission:crear coches-sustitucion'])->group(function () {
+        Route::get('/coches-sustitucion/create', [CocheSustitucionController::class, 'create'])->name('coches-sustitucion.create');
+        Route::post('/coches-sustitucion', [CocheSustitucionController::class, 'store'])->name('coches-sustitucion.store');
+    });
+    Route::middleware(['permission:ver coches-sustitucion'])->group(function () {
+        Route::get('/coches-sustitucion', [CocheSustitucionController::class, 'index'])->name('coches-sustitucion.index');
+        Route::get('/coches-sustitucion/{coches_sustitucion}', [CocheSustitucionController::class, 'show'])->name('coches-sustitucion.show');
+    });
+    Route::middleware(['permission:editar coches-sustitucion'])->group(function () {
+        Route::get('/coches-sustitucion/{coches_sustitucion}/edit', [CocheSustitucionController::class, 'edit'])->name('coches-sustitucion.edit');
+        Route::put('/coches-sustitucion/{coches_sustitucion}', [CocheSustitucionController::class, 'update'])->name('coches-sustitucion.update');
+    });
+    Route::middleware(['permission:eliminar coches-sustitucion'])->group(function () {
+        Route::delete('/coches-sustitucion/{coches_sustitucion}', [CocheSustitucionController::class, 'destroy'])->name('coches-sustitucion.destroy');
+    });
+    Route::post('/coches-sustitucion/{coche}/reservar', [CocheSustitucionController::class, 'reservar'])->name('coches-sustitucion.reservar');
 
     // Perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

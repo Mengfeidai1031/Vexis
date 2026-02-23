@@ -457,6 +457,22 @@
             </li>
             @endcanany
 
+            {{-- Módulo TALLERES --}}
+            @canany(['ver talleres', 'ver mecanicos', 'ver citas', 'ver coches-sustitucion'])
+            <li class="vx-nav-item">
+                <button class="vx-nav-link {{ request()->is('talleres*','mecanicos*','citas*','coches-sustitucion*') ? 'active' : '' }}">
+                    <i class="bi bi-wrench-adjustable"></i> Talleres <i class="bi bi-chevron-down" style="font-size:10px;"></i>
+                </button>
+                <div class="vx-dropdown">
+                    <a href="{{ route('talleres.inicio') }}" class="vx-dropdown-item"><i class="bi bi-house-door"></i> Inicio</a>
+                    @can('ver talleres')<a href="{{ route('talleres.index') }}" class="vx-dropdown-item"><i class="bi bi-tools"></i> Talleres</a>@endcan
+                    @can('ver mecanicos')<a href="{{ route('mecanicos.index') }}" class="vx-dropdown-item"><i class="bi bi-person-gear"></i> Mecánicos</a>@endcan
+                    @can('ver citas')<a href="{{ route('citas.index') }}" class="vx-dropdown-item"><i class="bi bi-calendar-check"></i> Citas</a>@endcan
+                    @can('ver coches-sustitucion')<a href="{{ route('coches-sustitucion.index') }}" class="vx-dropdown-item"><i class="bi bi-car-front"></i> Coches Sustitución</a>@endcan
+                </div>
+            </li>
+            @endcanany
+
             {{-- Módulo COMERCIAL --}}
             @canany(['ver vehículos', 'ver ofertas'])
             <li class="vx-nav-item">

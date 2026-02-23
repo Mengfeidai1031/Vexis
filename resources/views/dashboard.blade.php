@@ -80,14 +80,15 @@
     </a>
     @endcan
 
-    <div class="vx-dash-module vx-dash-module-disabled">
-        <div class="vx-dash-module-icon" style="background: linear-gradient(135deg, #95A5A6, #7F8C8D);"><i class="bi bi-wrench-adjustable"></i></div>
+    @canany(['ver talleres', 'ver citas', 'ver coches-sustitucion'])
+    <a href="{{ route('talleres.inicio') }}" class="vx-dash-module">
+        <div class="vx-dash-module-icon" style="background: linear-gradient(135deg, #8E44AD, #9B59B6);"><i class="bi bi-wrench-adjustable"></i></div>
         <div class="vx-dash-module-info">
             <h4>Talleres</h4>
             <p>Talleres, Citas, Coches de sustitución</p>
         </div>
-        <span class="vx-module-soon">Próximamente</span>
-    </div>
+    </a>
+    @endcanany
 
     <div class="vx-dash-module vx-dash-module-disabled">
         <div class="vx-dash-module-icon" style="background: linear-gradient(135deg, #95A5A6, #7F8C8D);"><i class="bi bi-person-heart"></i></div>
