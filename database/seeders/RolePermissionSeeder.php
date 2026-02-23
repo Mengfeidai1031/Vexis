@@ -85,6 +85,12 @@ class RolePermissionSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'editar naming-pcs']);
         Permission::firstOrCreate(['name' => 'eliminar naming-pcs']);
 
+        // Crear permisos para Festivos
+        Permission::firstOrCreate(['name' => 'ver festivos']);
+        Permission::firstOrCreate(['name' => 'crear festivos']);
+        Permission::firstOrCreate(['name' => 'editar festivos']);
+        Permission::firstOrCreate(['name' => 'eliminar festivos']);
+
         // Crear rol de Super Admin (tiene todos los permisos)
         $superAdminRole = Role::firstOrCreate(['name' => 'Super Admin']);
         $superAdminRole->syncPermissions(Permission::all());
@@ -101,6 +107,7 @@ class RolePermissionSeeder extends Seeder
             'ver noticias', 'crear noticias', 'editar noticias', 'eliminar noticias',
             'ver campanias', 'crear campanias', 'editar campanias', 'eliminar campanias',
             'ver naming-pcs', 'crear naming-pcs', 'editar naming-pcs', 'eliminar naming-pcs',
+            'ver festivos', 'crear festivos', 'editar festivos', 'eliminar festivos',
         ]);
 
         // Crear rol de Gerente (puede ver y gestionar clientes, vehículos y ofertas)
@@ -133,6 +140,7 @@ class RolePermissionSeeder extends Seeder
             'ver ofertas',
             'ver noticias',
             'ver campanias',
+            'ver festivos',
         ]);
     }
 }

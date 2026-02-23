@@ -22,6 +22,10 @@
             <div class="vx-module-info"><h4>Clientes</h4><p>Base de datos de clientes</p></div>
         </a>
         @endcan
+        <a href="{{ route('vacaciones.index') }}" class="vx-module-card">
+            <div class="vx-module-icon" style="background: rgba(230,126,34,0.1); color: #E67E22;"><i class="bi bi-calendar-check"></i></div>
+            <div class="vx-module-info"><h4>Vacaciones</h4><p>Solicitud y calendario de vacaciones</p></div>
+        </a>
     </div>
 </div>
 
@@ -108,26 +112,15 @@
             <div class="vx-module-info"><h4>Naming PCs</h4><p>Nomenclatura de equipos informáticos</p></div>
         </a>
         @endcan
+        @can('ver festivos')
+        <a href="{{ route('festivos.index') }}" class="vx-module-card">
+            <div class="vx-module-icon" style="background: rgba(231,76,60,0.1); color: var(--vx-danger);"><i class="bi bi-calendar-event"></i></div>
+            <div class="vx-module-info"><h4>Festivos</h4><p>Calendario de festivos por municipio</p></div>
+        </a>
+        @endcan
     </div>
 </div>
 @endcanany
-
-{{-- Secciones futuras (próximamente) --}}
-<div class="vx-module-section">
-    <h3 class="vx-module-section-title"><i class="bi bi-clock-history"></i> Próximamente</h3>
-    <div class="vx-module-grid">
-        <div class="vx-module-card vx-module-card-disabled">
-            <div class="vx-module-icon" style="background: var(--vx-gray-100); color: var(--vx-gray-500);"><i class="bi bi-calendar-check"></i></div>
-            <div class="vx-module-info"><h4>Vacaciones</h4><p>Solicitud y calendario de vacaciones</p></div>
-            <span class="vx-module-soon">Próximamente</span>
-        </div>
-        <div class="vx-module-card vx-module-card-disabled">
-            <div class="vx-module-icon" style="background: var(--vx-gray-100); color: var(--vx-gray-500);"><i class="bi bi-calendar-event"></i></div>
-            <div class="vx-module-info"><h4>Festivos</h4><p>Calendario de festivos por municipio</p></div>
-            <span class="vx-module-soon">Próximamente</span>
-        </div>
-    </div>
-</div>
 
 @push('styles')
 <style>

@@ -15,6 +15,9 @@ use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\NoticiaController;
 use App\Http\Controllers\CampaniaController;
 use App\Http\Controllers\NamingPcController;
+use App\Http\Controllers\VacacionController;
+use App\Http\Controllers\FestivoController;
+use App\Http\Controllers\AlmacenController;
 
 // Ruta pública (página de inicio)
 Route::get('/', function () {
@@ -125,6 +128,29 @@ Route::middleware('auth')->group(function () {
     });
     Route::middleware(['permission:eliminar naming-pcs'])->group(function () {
         Route::delete('/naming-pcs/{namingPc}', [NamingPcController::class, 'destroy'])->name('naming-pcs.destroy');
+    });
+
+    // Vacaciones
+    Route::get('/vacaciones', [VacacionController::class, 'index'])->name('vacaciones.index');
+    Route::get('/vacaciones/create', [VacacionController::class, 'create'])->name('vacaciones.create');
+    Route::post('/vacaciones', [VacacionController::class, 'store'])->name('vacaciones.store');
+    Route::patch('/vacaciones/{vacacion}/gestionar', [VacacionController::class, 'gestionar'])->name('vacaciones.gestionar');
+    Route::delete('/vacaciones/{vacacion}', [VacacionController::class, 'destroy'])->name('vacaciones.destroy');
+
+    // CRUD de Festivos
+    Route::middleware(['permission:crear festivos'])->group(function () {
+        Route::get('/festivos/create', [FestivoController::class, 'create'])->name('festivos.create');
+        Route::post('/festivos', [FestivoController::class, 'store'])->name('festivos.store');
+    });
+    Route::middleware(['permission:ver festivos'])->group(function () {
+        Route::get('/festivos', [FestivoController::class, 'index'])->name('festivos.index');
+    });
+    Route::middleware(['permission:editar festivos'])->group(function () {
+        Route::get('/festivos/{festivo}/edit', [FestivoController::class, 'edit'])->name('festivos.edit');
+        Route::put('/festivos/{festivo}', [FestivoController::class, 'update'])->name('festivos.update');
+    });
+    Route::middleware(['permission:eliminar festivos'])->group(function () {
+        Route::delete('/festivos/{festivo}', [FestivoController::class, 'destroy'])->name('festivos.destroy');
     });
 
     // Perfil

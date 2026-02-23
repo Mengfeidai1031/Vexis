@@ -383,7 +383,7 @@
             {{-- Módulo GESTIÓN --}}
             @canany(['ver usuarios', 'ver departamentos', 'ver centros', 'ver roles', 'ver restricciones', 'ver clientes'])
             <li class="vx-nav-item">
-                <button class="vx-nav-link {{ request()->is('gestion*','users*','clientes*','departamentos*','centros*','roles*','restricciones*','empresas*','noticias*','campanias*','naming-pcs*') ? 'active' : '' }}">
+                <button class="vx-nav-link {{ request()->is('gestion*','users*','clientes*','departamentos*','centros*','roles*','restricciones*','empresas*','noticias*','campanias*','naming-pcs*','vacaciones*','festivos*') ? 'active' : '' }}">
                     <i class="bi bi-building"></i> Gestión <i class="bi bi-chevron-down" style="font-size:10px;"></i>
                 </button>
                 <div class="vx-dropdown vx-dropdown-mega">
@@ -395,6 +395,7 @@
                         @can('ver clientes')
                         <a href="{{ route('clientes.index') }}" class="vx-dropdown-item"><i class="bi bi-person-lines-fill"></i> Clientes</a>
                         @endcan
+                        <a href="{{ route('vacaciones.index') }}" class="vx-dropdown-item"><i class="bi bi-calendar-check"></i> Vacaciones</a>
                         <div class="vx-dropdown-header">Seguridad</div>
                         @can('ver roles')
                         <a href="{{ route('roles.index') }}" class="vx-dropdown-item"><i class="bi bi-shield-lock"></i> Roles</a>
@@ -426,6 +427,9 @@
                         <a href="{{ route('gestion.marcas') }}" class="vx-dropdown-item"><i class="bi bi-tags"></i> Marcas</a>
                         @can('ver naming-pcs')
                         <a href="{{ route('naming-pcs.index') }}" class="vx-dropdown-item"><i class="bi bi-pc-display"></i> Naming PCs</a>
+                        @endcan
+                        @can('ver festivos')
+                        <a href="{{ route('festivos.index') }}" class="vx-dropdown-item"><i class="bi bi-calendar-event"></i> Festivos</a>
                         @endcan
                     </div>
                 </div>
