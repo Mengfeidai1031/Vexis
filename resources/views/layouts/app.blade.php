@@ -474,9 +474,9 @@
             @endcanany
 
             {{-- Módulo COMERCIAL --}}
-            @canany(['ver vehículos', 'ver ofertas'])
+            @canany(['ver vehículos', 'ver ofertas', 'ver ventas', 'ver tasaciones', 'ver catalogo-precios'])
             <li class="vx-nav-item">
-                <button class="vx-nav-link {{ request()->is('comercial*','ofertas*','vehiculos*') ? 'active' : '' }}">
+                <button class="vx-nav-link {{ request()->is('comercial*','ofertas*','vehiculos*','ventas*','tasaciones*','catalogo-precios*') ? 'active' : '' }}">
                     <i class="bi bi-car-front"></i> Comercial <i class="bi bi-chevron-down" style="font-size:10px;"></i>
                 </button>
                 <div class="vx-dropdown">
@@ -486,6 +486,15 @@
                     @endcan
                     @can('ver vehículos')
                     <a href="{{ route('vehiculos.index') }}" class="vx-dropdown-item"><i class="bi bi-truck"></i> Vehículos</a>
+                    @endcan
+                    @can('ver ventas')
+                    <a href="{{ route('ventas.index') }}" class="vx-dropdown-item"><i class="bi bi-cart-check"></i> Ventas</a>
+                    @endcan
+                    @can('ver tasaciones')
+                    <a href="{{ route('tasaciones.index') }}" class="vx-dropdown-item"><i class="bi bi-calculator"></i> Tasaciones</a>
+                    @endcan
+                    @can('ver catalogo-precios')
+                    <a href="{{ route('catalogo-precios.index') }}" class="vx-dropdown-item"><i class="bi bi-currency-euro"></i> Catálogo Precios</a>
                     @endcan
                 </div>
             </li>

@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             NoticiaSeeder::class,
             FestivoSeeder::class,
             TallerSeeder::class,
+            CatalogoPrecioSeeder::class,
             AlmacenSeeder::class,
         ]);
     }

@@ -23,6 +23,9 @@ use App\Http\Controllers\TallerController;
 use App\Http\Controllers\MecanicoController;
 use App\Http\Controllers\CitaTallerController;
 use App\Http\Controllers\CocheSustitucionController;
+use App\Http\Controllers\VentaController;
+use App\Http\Controllers\TasacionController;
+use App\Http\Controllers\CatalogoPrecioController;
 use App\Http\Controllers\AlmacenController;
 
 // Ruta pública (página de inicio)
@@ -282,6 +285,56 @@ Route::middleware('auth')->group(function () {
         Route::delete('/coches-sustitucion/{coches_sustitucion}', [CocheSustitucionController::class, 'destroy'])->name('coches-sustitucion.destroy');
     });
     Route::post('/coches-sustitucion/{coche}/reservar', [CocheSustitucionController::class, 'reservar'])->name('coches-sustitucion.reservar');
+
+    // === MÓDULO COMERCIAL: Ventas ===
+    Route::middleware(['permission:crear ventas'])->group(function () {
+        Route::get('/ventas/create', [VentaController::class, 'create'])->name('ventas.create');
+        Route::post('/ventas', [VentaController::class, 'store'])->name('ventas.store');
+    });
+    Route::middleware(['permission:ver ventas'])->group(function () {
+        Route::get('/ventas', [VentaController::class, 'index'])->name('ventas.index');
+        Route::get('/ventas/{venta}', [VentaController::class, 'show'])->name('ventas.show');
+    });
+    Route::middleware(['permission:editar ventas'])->group(function () {
+        Route::get('/ventas/{venta}/edit', [VentaController::class, 'edit'])->name('ventas.edit');
+        Route::put('/ventas/{venta}', [VentaController::class, 'update'])->name('ventas.update');
+    });
+    Route::middleware(['permission:eliminar ventas'])->group(function () {
+        Route::delete('/ventas/{venta}', [VentaController::class, 'destroy'])->name('ventas.destroy');
+    });
+
+    // Tasaciones
+    Route::middleware(['permission:crear tasaciones'])->group(function () {
+        Route::get('/tasaciones/create', [TasacionController::class, 'create'])->name('tasaciones.create');
+        Route::post('/tasaciones', [TasacionController::class, 'store'])->name('tasaciones.store');
+    });
+    Route::middleware(['permission:ver tasaciones'])->group(function () {
+        Route::get('/tasaciones', [TasacionController::class, 'index'])->name('tasaciones.index');
+        Route::get('/tasaciones/{tasacion}', [TasacionController::class, 'show'])->name('tasaciones.show');
+    });
+    Route::middleware(['permission:editar tasaciones'])->group(function () {
+        Route::get('/tasaciones/{tasacion}/edit', [TasacionController::class, 'edit'])->name('tasaciones.edit');
+        Route::put('/tasaciones/{tasacion}', [TasacionController::class, 'update'])->name('tasaciones.update');
+    });
+    Route::middleware(['permission:eliminar tasaciones'])->group(function () {
+        Route::delete('/tasaciones/{tasacion}', [TasacionController::class, 'destroy'])->name('tasaciones.destroy');
+    });
+
+    // Catálogo de Precios
+    Route::middleware(['permission:crear catalogo-precios'])->group(function () {
+        Route::get('/catalogo-precios/create', [CatalogoPrecioController::class, 'create'])->name('catalogo-precios.create');
+        Route::post('/catalogo-precios', [CatalogoPrecioController::class, 'store'])->name('catalogo-precios.store');
+    });
+    Route::middleware(['permission:ver catalogo-precios'])->group(function () {
+        Route::get('/catalogo-precios', [CatalogoPrecioController::class, 'index'])->name('catalogo-precios.index');
+    });
+    Route::middleware(['permission:editar catalogo-precios'])->group(function () {
+        Route::get('/catalogo-precios/{catalogo_precio}/edit', [CatalogoPrecioController::class, 'edit'])->name('catalogo-precios.edit');
+        Route::put('/catalogo-precios/{catalogo_precio}', [CatalogoPrecioController::class, 'update'])->name('catalogo-precios.update');
+    });
+    Route::middleware(['permission:eliminar catalogo-precios'])->group(function () {
+        Route::delete('/catalogo-precios/{catalogo_precio}', [CatalogoPrecioController::class, 'destroy'])->name('catalogo-precios.destroy');
+    });
 
     // Perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

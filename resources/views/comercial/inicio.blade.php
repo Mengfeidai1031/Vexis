@@ -21,27 +21,24 @@
             <div class="vx-module-info"><h4>Vehículos</h4><p>Inventario de vehículos con exportación</p></div>
         </a>
         @endcan
-    </div>
-</div>
-
-<div class="vx-module-section">
-    <h3 class="vx-module-section-title"><i class="bi bi-clock-history"></i> Próximamente</h3>
-    <div class="vx-module-grid">
-        <div class="vx-module-card vx-module-card-disabled">
-            <div class="vx-module-icon" style="background: var(--vx-gray-100); color: var(--vx-gray-500);"><i class="bi bi-cart-check"></i></div>
+        @can('ver ventas')
+        <a href="{{ route('ventas.index') }}" class="vx-module-card">
+            <div class="vx-module-icon" style="background: rgba(46,204,113,0.1); color: var(--vx-success);"><i class="bi bi-cart-check"></i></div>
             <div class="vx-module-info"><h4>Ventas</h4><p>Registro y seguimiento de ventas</p></div>
-            <span class="vx-module-soon">Próximamente</span>
-        </div>
-        <div class="vx-module-card vx-module-card-disabled">
-            <div class="vx-module-icon" style="background: var(--vx-gray-100); color: var(--vx-gray-500);"><i class="bi bi-calculator"></i></div>
+        </a>
+        @endcan
+        @can('ver tasaciones')
+        <a href="{{ route('tasaciones.index') }}" class="vx-module-card">
+            <div class="vx-module-icon" style="background: rgba(155,89,182,0.1); color: #9B59B6;"><i class="bi bi-calculator"></i></div>
             <div class="vx-module-info"><h4>Tasaciones</h4><p>Tasaciones de vehículos</p></div>
-            <span class="vx-module-soon">Próximamente</span>
-        </div>
-        <div class="vx-module-card vx-module-card-disabled">
-            <div class="vx-module-icon" style="background: var(--vx-gray-100); color: var(--vx-gray-500);"><i class="bi bi-currency-euro"></i></div>
+        </a>
+        @endcan
+        @can('ver catalogo-precios')
+        <a href="{{ route('catalogo-precios.index') }}" class="vx-module-card">
+            <div class="vx-module-icon" style="background: rgba(231,76,60,0.1); color: var(--vx-danger);"><i class="bi bi-currency-euro"></i></div>
             <div class="vx-module-info"><h4>Catálogo de Precios</h4><p>Gestión de precios por vehículo y marca</p></div>
-            <span class="vx-module-soon">Próximamente</span>
-        </div>
+        </a>
+        @endcan
     </div>
 </div>
 
