@@ -91,6 +91,24 @@ class RolePermissionSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'editar festivos']);
         Permission::firstOrCreate(['name' => 'eliminar festivos']);
 
+        // Crear permisos para Almacenes
+        Permission::firstOrCreate(['name' => 'ver almacenes']);
+        Permission::firstOrCreate(['name' => 'crear almacenes']);
+        Permission::firstOrCreate(['name' => 'editar almacenes']);
+        Permission::firstOrCreate(['name' => 'eliminar almacenes']);
+
+        // Crear permisos para Stocks
+        Permission::firstOrCreate(['name' => 'ver stocks']);
+        Permission::firstOrCreate(['name' => 'crear stocks']);
+        Permission::firstOrCreate(['name' => 'editar stocks']);
+        Permission::firstOrCreate(['name' => 'eliminar stocks']);
+
+        // Crear permisos para Repartos
+        Permission::firstOrCreate(['name' => 'ver repartos']);
+        Permission::firstOrCreate(['name' => 'crear repartos']);
+        Permission::firstOrCreate(['name' => 'editar repartos']);
+        Permission::firstOrCreate(['name' => 'eliminar repartos']);
+
         // Crear rol de Super Admin (tiene todos los permisos)
         $superAdminRole = Role::firstOrCreate(['name' => 'Super Admin']);
         $superAdminRole->syncPermissions(Permission::all());
@@ -108,6 +126,9 @@ class RolePermissionSeeder extends Seeder
             'ver campanias', 'crear campanias', 'editar campanias', 'eliminar campanias',
             'ver naming-pcs', 'crear naming-pcs', 'editar naming-pcs', 'eliminar naming-pcs',
             'ver festivos', 'crear festivos', 'editar festivos', 'eliminar festivos',
+            'ver almacenes', 'crear almacenes', 'editar almacenes', 'eliminar almacenes',
+            'ver stocks', 'crear stocks', 'editar stocks', 'eliminar stocks',
+            'ver repartos', 'crear repartos', 'editar repartos', 'eliminar repartos',
         ]);
 
         // Crear rol de Gerente (puede ver y gestionar clientes, vehículos y ofertas)

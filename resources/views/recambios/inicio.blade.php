@@ -15,22 +15,18 @@
             <div class="vx-module-info"><h4>Almacenes</h4><p>Gestión de almacenes por isla</p></div>
         </a>
         @endcan
-    </div>
-</div>
-
-<div class="vx-module-section">
-    <h3 class="vx-module-section-title"><i class="bi bi-clock-history"></i> Próximamente</h3>
-    <div class="vx-module-grid">
-        <div class="vx-module-card vx-module-card-disabled">
-            <div class="vx-module-icon" style="background: var(--vx-gray-100); color: var(--vx-gray-500);"><i class="bi bi-box2"></i></div>
+        @can('ver stocks')
+        <a href="{{ route('stocks.index') }}" class="vx-module-card">
+            <div class="vx-module-icon" style="background: rgba(46,204,113,0.1); color: var(--vx-success);"><i class="bi bi-box2"></i></div>
             <div class="vx-module-info"><h4>Stock</h4><p>Inventario de recambios por almacén</p></div>
-            <span class="vx-module-soon">Próximamente</span>
-        </div>
-        <div class="vx-module-card vx-module-card-disabled">
-            <div class="vx-module-icon" style="background: var(--vx-gray-100); color: var(--vx-gray-500);"><i class="bi bi-truck"></i></div>
+        </a>
+        @endcan
+        @can('ver repartos')
+        <a href="{{ route('repartos.index') }}" class="vx-module-card">
+            <div class="vx-module-icon" style="background: rgba(243,156,18,0.1); color: var(--vx-warning);"><i class="bi bi-truck"></i></div>
             <div class="vx-module-info"><h4>Repartos</h4><p>Gestión de repartos entre almacenes</p></div>
-            <span class="vx-module-soon">Próximamente</span>
-        </div>
+        </a>
+        @endcan
     </div>
 </div>
 

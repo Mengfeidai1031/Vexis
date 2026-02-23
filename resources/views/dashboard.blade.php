@@ -69,14 +69,16 @@
     </a>
     @endcanany
 
-    <div class="vx-dash-module vx-dash-module-disabled">
-        <div class="vx-dash-module-icon" style="background: linear-gradient(135deg, #95A5A6, #7F8C8D);"><i class="bi bi-box-seam"></i></div>
+    @can('ver almacenes')
+    <a href="{{ route('recambios.inicio') }}" class="vx-dash-module">
+        <div class="vx-dash-module-icon" style="background: linear-gradient(135deg, #1ABC9C, #16A085);"><i class="bi bi-box-seam"></i></div>
         <div class="vx-dash-module-info">
             <h4>Recambios</h4>
             <p>Almacenes, Stock, Repartos</p>
         </div>
-        <span class="vx-module-soon">Próximamente</span>
-    </div>
+        <i class="bi bi-chevron-right" style="color: var(--vx-text-muted); margin-left: auto;"></i>
+    </a>
+    @endcan
 
     <div class="vx-dash-module vx-dash-module-disabled">
         <div class="vx-dash-module-icon" style="background: linear-gradient(135deg, #95A5A6, #7F8C8D);"><i class="bi bi-wrench-adjustable"></i></div>

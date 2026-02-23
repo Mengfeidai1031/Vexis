@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             MarcaSeeder::class,
             NoticiaSeeder::class,
             FestivoSeeder::class,
+            AlmacenSeeder::class,
         ]);
     }
 }

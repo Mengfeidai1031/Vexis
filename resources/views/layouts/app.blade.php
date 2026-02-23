@@ -436,6 +436,27 @@
             </li>
             @endcanany
 
+            {{-- Módulo RECAMBIOS --}}
+            @canany(['ver almacenes', 'ver stocks', 'ver repartos'])
+            <li class="vx-nav-item">
+                <button class="vx-nav-link {{ request()->is('recambios*','almacenes*','stocks*','repartos*') ? 'active' : '' }}">
+                    <i class="bi bi-box-seam"></i> Recambios <i class="bi bi-chevron-down" style="font-size:10px;"></i>
+                </button>
+                <div class="vx-dropdown">
+                    <a href="{{ route('recambios.inicio') }}" class="vx-dropdown-item"><i class="bi bi-house-door"></i> Inicio</a>
+                    @can('ver almacenes')
+                    <a href="{{ route('almacenes.index') }}" class="vx-dropdown-item"><i class="bi bi-warehouse"></i> Almacenes</a>
+                    @endcan
+                    @can('ver stocks')
+                    <a href="{{ route('stocks.index') }}" class="vx-dropdown-item"><i class="bi bi-box2"></i> Stock</a>
+                    @endcan
+                    @can('ver repartos')
+                    <a href="{{ route('repartos.index') }}" class="vx-dropdown-item"><i class="bi bi-truck"></i> Repartos</a>
+                    @endcan
+                </div>
+            </li>
+            @endcanany
+
             {{-- Módulo COMERCIAL --}}
             @canany(['ver vehículos', 'ver ofertas'])
             <li class="vx-nav-item">

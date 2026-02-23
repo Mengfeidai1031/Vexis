@@ -17,6 +17,8 @@ use App\Http\Controllers\CampaniaController;
 use App\Http\Controllers\NamingPcController;
 use App\Http\Controllers\VacacionController;
 use App\Http\Controllers\FestivoController;
+use App\Http\Controllers\StockController;
+use App\Http\Controllers\RepartoController;
 use App\Http\Controllers\AlmacenController;
 
 // Ruta pública (página de inicio)
@@ -151,6 +153,60 @@ Route::middleware('auth')->group(function () {
     });
     Route::middleware(['permission:eliminar festivos'])->group(function () {
         Route::delete('/festivos/{festivo}', [FestivoController::class, 'destroy'])->name('festivos.destroy');
+    });
+
+    // Módulo Recambios - Inicio
+    Route::get('/recambios', function () { return view('recambios.inicio'); })->name('recambios.inicio');
+
+    // CRUD de Almacenes
+    Route::middleware(['permission:crear almacenes'])->group(function () {
+        Route::get('/almacenes/create', [AlmacenController::class, 'create'])->name('almacenes.create');
+        Route::post('/almacenes', [AlmacenController::class, 'store'])->name('almacenes.store');
+    });
+    Route::middleware(['permission:ver almacenes'])->group(function () {
+        Route::get('/almacenes', [AlmacenController::class, 'index'])->name('almacenes.index');
+        Route::get('/almacenes/{almacen}', [AlmacenController::class, 'show'])->name('almacenes.show');
+    });
+    Route::middleware(['permission:editar almacenes'])->group(function () {
+        Route::get('/almacenes/{almacen}/edit', [AlmacenController::class, 'edit'])->name('almacenes.edit');
+        Route::put('/almacenes/{almacen}', [AlmacenController::class, 'update'])->name('almacenes.update');
+    });
+    Route::middleware(['permission:eliminar almacenes'])->group(function () {
+        Route::delete('/almacenes/{almacen}', [AlmacenController::class, 'destroy'])->name('almacenes.destroy');
+    });
+
+    // CRUD de Stock
+    Route::middleware(['permission:crear stocks'])->group(function () {
+        Route::get('/stocks/create', [StockController::class, 'create'])->name('stocks.create');
+        Route::post('/stocks', [StockController::class, 'store'])->name('stocks.store');
+    });
+    Route::middleware(['permission:ver stocks'])->group(function () {
+        Route::get('/stocks', [StockController::class, 'index'])->name('stocks.index');
+        Route::get('/stocks/{stock}', [StockController::class, 'show'])->name('stocks.show');
+    });
+    Route::middleware(['permission:editar stocks'])->group(function () {
+        Route::get('/stocks/{stock}/edit', [StockController::class, 'edit'])->name('stocks.edit');
+        Route::put('/stocks/{stock}', [StockController::class, 'update'])->name('stocks.update');
+    });
+    Route::middleware(['permission:eliminar stocks'])->group(function () {
+        Route::delete('/stocks/{stock}', [StockController::class, 'destroy'])->name('stocks.destroy');
+    });
+
+    // CRUD de Repartos
+    Route::middleware(['permission:crear repartos'])->group(function () {
+        Route::get('/repartos/create', [RepartoController::class, 'create'])->name('repartos.create');
+        Route::post('/repartos', [RepartoController::class, 'store'])->name('repartos.store');
+    });
+    Route::middleware(['permission:ver repartos'])->group(function () {
+        Route::get('/repartos', [RepartoController::class, 'index'])->name('repartos.index');
+        Route::get('/repartos/{reparto}', [RepartoController::class, 'show'])->name('repartos.show');
+    });
+    Route::middleware(['permission:editar repartos'])->group(function () {
+        Route::get('/repartos/{reparto}/edit', [RepartoController::class, 'edit'])->name('repartos.edit');
+        Route::put('/repartos/{reparto}', [RepartoController::class, 'update'])->name('repartos.update');
+    });
+    Route::middleware(['permission:eliminar repartos'])->group(function () {
+        Route::delete('/repartos/{reparto}', [RepartoController::class, 'destroy'])->name('repartos.destroy');
     });
 
     // Perfil
