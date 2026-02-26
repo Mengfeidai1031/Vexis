@@ -90,14 +90,13 @@
     </a>
     @endcanany
 
-    <div class="vx-dash-module vx-dash-module-disabled">
-        <div class="vx-dash-module-icon" style="background: linear-gradient(135deg, #95A5A6, #7F8C8D);"><i class="bi bi-person-heart"></i></div>
+    <a href="{{ route('cliente.inicio') }}" class="vx-dash-module">
+        <div class="vx-dash-module-icon" style="background: linear-gradient(135deg, #E74C3C, #C0392B);"><i class="bi bi-person-heart"></i></div>
         <div class="vx-dash-module-info">
             <h4>Cliente</h4>
-            <p>Chatbot IA, Tasación, Catálogo 360°</p>
+            <p>Chatbot IA, Pretasación, Configurador</p>
         </div>
-        <span class="vx-module-soon">Próximamente</span>
-    </div>
+    </a>
 </div>
 
 {{-- Accesos Rápidos --}}

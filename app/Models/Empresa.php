@@ -39,4 +39,16 @@ class Empresa extends Model
     {
         return $this->hasMany(User::class);
     }
+
+    public function talleres(): HasMany
+    {
+        return $this->hasMany(\App\Models\Taller::class);
+    }
+
+    public function marcas()
+    {
+        return \App\Models\Marca::whereIn('id',
+            \App\Models\Taller::where('empresa_id', $this->id)->whereNotNull('marca_id')->distinct()->pluck('marca_id')
+        )->get();
+    }
 }

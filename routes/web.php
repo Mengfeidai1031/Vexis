@@ -26,6 +26,7 @@ use App\Http\Controllers\CocheSustitucionController;
 use App\Http\Controllers\VentaController;
 use App\Http\Controllers\TasacionController;
 use App\Http\Controllers\CatalogoPrecioController;
+use App\Http\Controllers\ClienteModuloController;
 use App\Http\Controllers\AlmacenController;
 
 // Ruta pública (página de inicio)
@@ -335,6 +336,17 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['permission:eliminar catalogo-precios'])->group(function () {
         Route::delete('/catalogo-precios/{catalogo_precio}', [CatalogoPrecioController::class, 'destroy'])->name('catalogo-precios.destroy');
     });
+
+    // === MÓDULO CLIENTE ===
+    Route::get('/cliente', [ClienteModuloController::class, 'inicio'])->name('cliente.inicio');
+    Route::get('/cliente/chatbot', [ClienteModuloController::class, 'chatbot'])->name('cliente.chatbot');
+    Route::post('/cliente/chatbot/query', [ClienteModuloController::class, 'chatbotQuery'])->name('cliente.chatbot.query');
+    Route::get('/cliente/pretasacion', [ClienteModuloController::class, 'pretasacion'])->name('cliente.pretasacion');
+    Route::post('/cliente/pretasacion/query', [ClienteModuloController::class, 'pretasacionQuery'])->name('cliente.pretasacion.query');
+    Route::get('/cliente/campanias', [ClienteModuloController::class, 'campanias'])->name('cliente.campanias');
+    Route::get('/cliente/concesionarios', [ClienteModuloController::class, 'concesionarios'])->name('cliente.concesionarios');
+    Route::get('/cliente/precios', [ClienteModuloController::class, 'precios'])->name('cliente.precios');
+    Route::get('/cliente/configurador', [ClienteModuloController::class, 'configurador'])->name('cliente.configurador');
 
     // Perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

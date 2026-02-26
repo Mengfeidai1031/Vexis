@@ -499,6 +499,22 @@
                 </div>
             </li>
             @endcanany
+
+            {{-- Módulo CLIENTE --}}
+            <li class="vx-nav-item">
+                <button class="vx-nav-link {{ request()->is('cliente*') ? 'active' : '' }}">
+                    <i class="bi bi-person-heart"></i> Cliente <i class="bi bi-chevron-down" style="font-size:10px;"></i>
+                </button>
+                <div class="vx-dropdown">
+                    <a href="{{ route('cliente.inicio') }}" class="vx-dropdown-item"><i class="bi bi-house-door"></i> Inicio</a>
+                    <a href="{{ route('cliente.chatbot') }}" class="vx-dropdown-item"><i class="bi bi-robot"></i> Chatbot IA</a>
+                    <a href="{{ route('cliente.pretasacion') }}" class="vx-dropdown-item"><i class="bi bi-calculator"></i> Pretasación IA</a>
+                    <a href="{{ route('cliente.configurador') }}" class="vx-dropdown-item"><i class="bi bi-palette"></i> Configurador</a>
+                    <a href="{{ route('cliente.precios') }}" class="vx-dropdown-item"><i class="bi bi-currency-euro"></i> Precios</a>
+                    <a href="{{ route('cliente.campanias') }}" class="vx-dropdown-item"><i class="bi bi-megaphone"></i> Campañas</a>
+                    <a href="{{ route('cliente.concesionarios') }}" class="vx-dropdown-item"><i class="bi bi-building"></i> Concesionarios</a>
+                </div>
+            </li>
         </ul>
         @endauth
 
