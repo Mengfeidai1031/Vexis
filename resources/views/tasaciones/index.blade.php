@@ -23,11 +23,11 @@
             <td style="font-family:var(--vx-font-mono);font-weight:700;">{{ $t->valor_estimado ? number_format($t->valor_estimado, 2).'€' : '—' }}</td>
             <td>@switch($t->estado) @case('pendiente')<span class="vx-badge vx-badge-warning">Pendiente</span>@break @case('valorada')<span class="vx-badge vx-badge-info">Valorada</span>@break @case('aceptada')<span class="vx-badge vx-badge-success">Aceptada</span>@break @case('rechazada')<span class="vx-badge vx-badge-danger">Rechazada</span>@break @endswitch</td>
             <td style="font-size:12px;">{{ $t->fecha_tasacion->format('d/m/Y') }}</td>
-            <td><div class="vx-btn-group">
-                <a href="{{ route('tasaciones.show', $t) }}" class="vx-btn vx-btn-info vx-btn-sm"><i class="bi bi-eye"></i></a>
-                @can('editar tasaciones')<a href="{{ route('tasaciones.edit', $t) }}" class="vx-btn vx-btn-warning vx-btn-sm"><i class="bi bi-pencil"></i></a>@endcan
-                @can('eliminar tasaciones')<form action="{{ route('tasaciones.destroy', $t) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar?');">@csrf @method('DELETE')<button type="submit" class="vx-btn vx-btn-danger vx-btn-sm"><i class="bi bi-trash"></i></button></form>@endcan
-            </div></td>
+            <td><div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+                <a href="{{ route('tasaciones.show', $t) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
+                @can('editar tasaciones')<a href="{{ route('tasaciones.edit', $t) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>@endcan
+                @can('eliminar tasaciones')<form action="{{ route('tasaciones.destroy', $t) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar?');">@csrf @method('DELETE')<button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button></form>@endcan
+            </div></div></td>
         </tr>@endforeach</tbody>
     </table></div>
     <div style="padding:16px 20px;">{{ $tasaciones->links('vendor.pagination.vexis') }}</div>

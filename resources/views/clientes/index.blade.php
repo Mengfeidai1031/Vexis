@@ -44,20 +44,20 @@
                                 <td style="font-size: 12px;">{{ $cliente->domicilio }}</td>
                                 <td>{{ $cliente->codigo_postal }}</td>
                                 <td>
-                                    <div class="vx-btn-group">
+                                    <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
                                         @can('view', $cliente)
-                                            <a href="{{ route('clientes.show', $cliente) }}" class="vx-btn vx-btn-info vx-btn-sm"><i class="bi bi-eye"></i></a>
+                                            <a href="{{ route('clientes.show', $cliente) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
                                         @endcan
                                         @can('update', $cliente)
-                                            <a href="{{ route('clientes.edit', $cliente) }}" class="vx-btn vx-btn-warning vx-btn-sm"><i class="bi bi-pencil"></i></a>
+                                            <a href="{{ route('clientes.edit', $cliente) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>
                                         @endcan
                                         @can('delete', $cliente)
                                             <form action="{{ route('clientes.destroy', $cliente) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar este cliente?');">
                                                 @csrf @method('DELETE')
-                                                <button type="submit" class="vx-btn vx-btn-danger vx-btn-sm"><i class="bi bi-trash"></i></button>
+                                                <button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button>
                                             </form>
                                         @endcan
-                                    </div>
+                                    </div></div>
                                 </td>
                             </tr>
                         @endforeach

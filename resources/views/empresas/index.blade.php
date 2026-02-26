@@ -31,16 +31,16 @@
                         <td>{{ $empresa->codigo_postal }}</td>
                         <td>{{ $empresa->telefono }}</td>
                         <td>
-                            <div class="vx-btn-group">
-                                @can('ver empresas')<a href="{{ route('empresas.show', $empresa) }}" class="vx-btn vx-btn-info vx-btn-sm"><i class="bi bi-eye"></i></a>@endcan
-                                @can('editar empresas')<a href="{{ route('empresas.edit', $empresa) }}" class="vx-btn vx-btn-warning vx-btn-sm"><i class="bi bi-pencil"></i></a>@endcan
+                            <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+                                @can('ver empresas')<a href="{{ route('empresas.show', $empresa) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>@endcan
+                                @can('editar empresas')<a href="{{ route('empresas.edit', $empresa) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>@endcan
                                 @can('eliminar empresas')
                                 <form action="{{ route('empresas.destroy', $empresa) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar?');">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="vx-btn vx-btn-danger vx-btn-sm"><i class="bi bi-trash"></i></button>
+                                    <button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button>
                                 </form>
                                 @endcan
-                            </div>
+                            </div></div>
                         </td>
                     </tr>
                     @endforeach

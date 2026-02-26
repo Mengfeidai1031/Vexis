@@ -2,7 +2,7 @@
 @section('title', 'Almacenes - VEXIS')
 @section('content')
 <div class="vx-page-header">
-    <h1 class="vx-page-title">Almacenes</h1>
+    <h1 class="vx-page-title"><i class="bi bi-warehouse" style="color:var(--vx-primary);margin-right:6px;"></i>Almacenes</h1>
     <div class="vx-page-actions">
         @can('crear almacenes')
             <a href="{{ route('almacenes.create') }}" class="vx-btn vx-btn-primary"><i class="bi bi-plus-circle"></i> Nuevo Almacén</a>
@@ -43,16 +43,16 @@
                         <td style="font-size:12px;">{{ $almacen->centro->nombre ?? '—' }}</td>
                         <td>@if($almacen->activo)<span class="vx-badge vx-badge-success">Activo</span>@else<span class="vx-badge vx-badge-gray">Inactivo</span>@endif</td>
                         <td>
-                            <div class="vx-btn-group">
-                                @can('ver almacenes')<a href="{{ route('almacenes.show', $almacen) }}" class="vx-btn vx-btn-info vx-btn-sm"><i class="bi bi-eye"></i></a>@endcan
-                                @can('editar almacenes')<a href="{{ route('almacenes.edit', $almacen) }}" class="vx-btn vx-btn-warning vx-btn-sm"><i class="bi bi-pencil"></i></a>@endcan
+                            <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+                                @can('ver almacenes')<a href="{{ route('almacenes.show', $almacen) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>@endcan
+                                @can('editar almacenes')<a href="{{ route('almacenes.edit', $almacen) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>@endcan
                                 @can('eliminar almacenes')
                                 <form action="{{ route('almacenes.destroy', $almacen) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar?');">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="vx-btn vx-btn-danger vx-btn-sm"><i class="bi bi-trash"></i></button>
+                                    <button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button>
                                 </form>
                                 @endcan
-                            </div>
+                            </div></div>
                         </td>
                     </tr>
                     @endforeach

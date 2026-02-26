@@ -47,16 +47,16 @@
                             @else<span class="vx-badge vx-badge-gray">Inactivo</span>@endif
                         </td>
                         <td>
-                            <div class="vx-btn-group">
-                                <a href="{{ route('naming-pcs.show', $pc) }}" class="vx-btn vx-btn-info vx-btn-sm"><i class="bi bi-eye"></i></a>
-                                @can('editar naming-pcs')<a href="{{ route('naming-pcs.edit', $pc) }}" class="vx-btn vx-btn-warning vx-btn-sm"><i class="bi bi-pencil"></i></a>@endcan
+                            <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+                                <a href="{{ route('naming-pcs.show', $pc) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
+                                @can('editar naming-pcs')<a href="{{ route('naming-pcs.edit', $pc) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>@endcan
                                 @can('eliminar naming-pcs')
                                 <form action="{{ route('naming-pcs.destroy', $pc) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar?');">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="vx-btn vx-btn-danger vx-btn-sm"><i class="bi bi-trash"></i></button>
+                                    <button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button>
                                 </form>
                                 @endcan
-                            </div>
+                            </div></div>
                         </td>
                     </tr>
                     @endforeach

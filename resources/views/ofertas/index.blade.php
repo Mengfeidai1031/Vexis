@@ -138,9 +138,9 @@
                                     <span style="font-weight: 700; color: var(--vx-success);">{{ number_format($precioMostrar, 2, ',', '.') }} €</span>
                                 </td>
                                 <td>
-                                    <div class="vx-btn-group">
+                                    <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
                                         @can('view', $oferta)
-                                            <a href="{{ route('ofertas.show', $oferta->id) }}" class="vx-btn vx-btn-info vx-btn-sm"><i class="bi bi-eye"></i></a>
+                                            <a href="{{ route('ofertas.show', $oferta->id) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
                                         @endcan
                                         @if($oferta->pdf_path)
                                             <a href="{{ asset('storage/' . $oferta->pdf_path) }}" class="vx-btn vx-btn-secondary vx-btn-sm" target="_blank" title="PDF"><i class="bi bi-file-pdf"></i></a>
@@ -148,10 +148,10 @@
                                         @can('delete', $oferta)
                                             <form action="{{ route('ofertas.destroy', $oferta) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar esta oferta?');">
                                                 @csrf @method('DELETE')
-                                                <button type="submit" class="vx-btn vx-btn-danger vx-btn-sm"><i class="bi bi-trash"></i></button>
+                                                <button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button>
                                             </form>
                                         @endcan
-                                    </div>
+                                    </div></div>
                                 </td>
                             </tr>
                         @endforeach

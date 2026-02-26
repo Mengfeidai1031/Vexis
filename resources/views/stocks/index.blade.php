@@ -40,13 +40,13 @@
                 <td style="font-size:12px;">{{ $s->almacen->nombre ?? '—' }}</td>
                 <td style="font-size:12px;">{{ $s->empresa->abreviatura ?? '—' }}</td>
                 <td>
-                    <div class="vx-btn-group">
-                        <a href="{{ route('stocks.show', $s) }}" class="vx-btn vx-btn-info vx-btn-sm"><i class="bi bi-eye"></i></a>
-                        @can('editar stocks')<a href="{{ route('stocks.edit', $s) }}" class="vx-btn vx-btn-warning vx-btn-sm"><i class="bi bi-pencil"></i></a>@endcan
+                    <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+                        <a href="{{ route('stocks.show', $s) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
+                        @can('editar stocks')<a href="{{ route('stocks.edit', $s) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>@endcan
                         @can('eliminar stocks')
-                        <form action="{{ route('stocks.destroy', $s) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar?');">@csrf @method('DELETE')<button type="submit" class="vx-btn vx-btn-danger vx-btn-sm"><i class="bi bi-trash"></i></button></form>
+                        <form action="{{ route('stocks.destroy', $s) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar?');">@csrf @method('DELETE')<button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button></form>
                         @endcan
-                    </div>
+                    </div></div>
                 </td>
             </tr>
             @endforeach

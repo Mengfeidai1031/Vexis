@@ -42,8 +42,7 @@
                                 <td><span class="vx-badge vx-badge-gray">{{ $role->users_count }} usuarios</span></td>
                                 <td>{{ $role->created_at->format('d/m/Y') }}</td>
                                 <td>
-                                    <div class="vx-btn-group">
-                                        @can('ver roles')
+                                    <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">@can('ver roles')
                                             <a href="{{ route('roles.show', $role->id) }}" class="vx-btn vx-btn-info vx-btn-sm" title="Ver"><i class="bi bi-eye"></i></a>
                                         @endcan
                                         @can('editar roles')
@@ -58,8 +57,7 @@
                                             @else
                                                 <button class="vx-btn vx-btn-danger vx-btn-sm" disabled title="Tiene usuarios asignados"><i class="bi bi-trash"></i></button>
                                             @endif
-                                        @endcan
-                                    </div>
+                                        @endcan</div></div>
                                 </td>
                             </tr>
                         @endforeach

@@ -79,8 +79,7 @@
                         </td>
                         <td style="font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ $v->motivo ?? '—' }}</td>
                         <td>
-                            <div class="vx-btn-group">
-                                @if($isSuperAdmin && $v->estado === 'pendiente')
+                            <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">@if($isSuperAdmin && $v->estado === 'pendiente')
                                 <form action="{{ route('vacaciones.gestionar', $v) }}" method="POST" style="display:inline;">
                                     @csrf @method('PATCH')
                                     <input type="hidden" name="estado" value="aprobada">
@@ -97,8 +96,7 @@
                                     @csrf @method('DELETE')
                                     <button type="submit" class="vx-btn vx-btn-secondary vx-btn-sm"><i class="bi bi-trash"></i></button>
                                 </form>
-                                @endif
-                            </div>
+                                @endif</div></div>
                         </td>
                     </tr>
                     @endforeach

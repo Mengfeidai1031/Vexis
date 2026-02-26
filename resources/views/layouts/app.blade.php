@@ -49,7 +49,7 @@
             --vx-border: var(--vx-gray-200);
             --vx-text: var(--vx-gray-900);
             --vx-text-secondary: var(--vx-gray-600);
-            --vx-text-muted: var(--vx-gray-500);
+            --vx-text-muted: #8590A2;
             --vx-shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
             --vx-shadow: 0 2px 8px rgba(0,0,0,0.08);
             --vx-shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
@@ -109,6 +109,12 @@
         .vx-mega-col:not(:last-child) { border-right: 1px solid var(--vx-border); }
         .vx-mega-col .vx-dropdown-item { padding: 7px 16px; }
         .vx-mega-col .vx-dropdown-header { padding: 8px 16px 4px; }
+        .vx-dropdown-sub { min-width: 200px; }
+        .vx-submenu-parent { position: relative; }
+        .vx-submenu-trigger { cursor: default; display: flex; align-items: center; }
+        .vx-submenu-trigger:hover { background: var(--vx-surface-hover); }
+        .vx-submenu { position: absolute; left: 100%; top: -4px; min-width: 190px; background: var(--vx-surface); border: 1px solid var(--vx-border); border-radius: 8px; box-shadow: var(--vx-shadow-lg); padding: 4px; display: none; z-index: 1200; }
+        .vx-submenu-parent:hover > .vx-submenu { display: block; }
         .vx-icon-btn { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--vx-text-secondary); background: none; border: none; cursor: pointer; transition: all 0.2s; font-size: 17px; position: relative; }
         .vx-icon-btn:hover { background: var(--vx-surface-hover); color: var(--vx-primary); }
         .vx-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--vx-primary), var(--vx-primary-dark)); color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; cursor: pointer; transition: box-shadow 0.2s; }
@@ -155,6 +161,16 @@
         .vx-btn-sm i { font-size: 13px; }
         .vx-btn-lg { padding: 12px 24px; font-size: 15px; }
         .vx-btn-group { display: inline-flex; gap: 6px; }
+        .vx-actions { position: relative; display: inline-block; }
+        .vx-actions-toggle { width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--vx-border); background: var(--vx-surface); color: var(--vx-text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; font-size: 14px; }
+        .vx-actions-toggle:hover { background: var(--vx-surface-hover); color: var(--vx-text); border-color: var(--vx-primary); }
+        .vx-actions-menu { position: absolute; right: 0; top: 100%; margin-top: 4px; min-width: 150px; background: var(--vx-surface); border: 1px solid var(--vx-border); border-radius: 8px; box-shadow: var(--vx-shadow-lg); z-index: 50; padding: 4px; display: none; }
+        .vx-actions.open .vx-actions-menu { display: block; }
+        .vx-actions-menu a, .vx-actions-menu button { display: flex; align-items: center; gap: 8px; width: 100%; padding: 7px 10px; border: none; background: none; border-radius: 5px; font-size: 12px; color: var(--vx-text); text-decoration: none; cursor: pointer; transition: background 0.1s; font-family: var(--vx-font); }
+        .vx-actions-menu a:hover, .vx-actions-menu button:hover { background: var(--vx-surface-hover); }
+        .vx-actions-menu .act-danger { color: var(--vx-danger); }
+        .vx-actions-menu .act-danger:hover { background: rgba(231,76,60,0.08); }
+        .vx-actions-menu form { margin: 0; }
 
         /* Forms */
         .vx-form-group { margin-bottom: 16px; }
@@ -270,6 +286,9 @@
             .vx-dropdown { min-width: 100%; }
             .vx-dropdown-mega { flex-direction: column; min-width: 100%; }
             .vx-mega-col:not(:last-child) { border-right: none; border-bottom: 1px solid var(--vx-border); padding-bottom: 4px; margin-bottom: 4px; }
+            .vx-submenu { position: static; border: none; box-shadow: none; padding-left: 16px; display: none; }
+            .vx-submenu-parent:hover > .vx-submenu { display: block; }
+            .vx-submenu-trigger .bi-chevron-right { transform: rotate(90deg); }
         }
 
         @media (max-width: 768px) {
@@ -332,6 +351,9 @@
         .vx-notif-icon.danger { background: rgba(231,76,60,0.12); color: var(--vx-danger); }
         .vx-notif-icon.info { background: rgba(52,152,219,0.12); color: var(--vx-info); }
         .vx-notif-body { flex: 1; min-width: 0; }
+        .vx-notif-close { width: 22px; height: 22px; border-radius: 4px; border: none; background: none; color: var(--vx-text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; transition: all 0.15s; opacity: 0; }
+        .vx-notif-item:hover .vx-notif-close { opacity: 1; }
+        .vx-notif-close:hover { background: rgba(231,76,60,0.1); color: var(--vx-danger); }
         .vx-notif-text { font-size: 12px; color: var(--vx-text); line-height: 1.4; }
         .vx-notif-time { font-size: 11px; color: var(--vx-text-muted); margin-top: 2px; }
         .vx-notif-empty { padding: 32px 16px; text-align: center; color: var(--vx-text-muted); font-size: 13px; }
@@ -386,51 +408,62 @@
                 <button class="vx-nav-link {{ request()->is('gestion*','users*','clientes*','departamentos*','centros*','roles*','restricciones*','empresas*','noticias*','campanias*','naming-pcs*','vacaciones*','festivos*') ? 'active' : '' }}">
                     <i class="bi bi-building"></i> Gestión <i class="bi bi-chevron-down" style="font-size:10px;"></i>
                 </button>
-                <div class="vx-dropdown vx-dropdown-mega">
-                    <div class="vx-mega-col">
-                        <a href="{{ route('gestion.inicio') }}" class="vx-dropdown-item"><i class="bi bi-house-door"></i> Inicio</a>
-                        @can('ver usuarios')
-                        <a href="{{ route('users.index') }}" class="vx-dropdown-item"><i class="bi bi-people"></i> Usuarios</a>
-                        @endcan
-                        @can('ver clientes')
-                        <a href="{{ route('clientes.index') }}" class="vx-dropdown-item"><i class="bi bi-person-lines-fill"></i> Clientes</a>
-                        @endcan
-                        <a href="{{ route('vacaciones.index') }}" class="vx-dropdown-item"><i class="bi bi-calendar-check"></i> Vacaciones</a>
-                        <div class="vx-dropdown-header">Seguridad</div>
-                        @can('ver roles')
-                        <a href="{{ route('roles.index') }}" class="vx-dropdown-item"><i class="bi bi-shield-lock"></i> Roles</a>
-                        <a href="{{ route('gestion.permisos') }}" class="vx-dropdown-item"><i class="bi bi-key"></i> Permisos</a>
-                        @endcan
-                        @can('ver restricciones')
-                        <a href="{{ route('restricciones.index') }}" class="vx-dropdown-item"><i class="bi bi-lock"></i> Restricciones</a>
-                        @endcan
-                        <a href="{{ route('gestion.politica') }}" class="vx-dropdown-item"><i class="bi bi-file-earmark-lock"></i> Política</a>
+                <div class="vx-dropdown vx-dropdown-sub">
+                    <a href="{{ route('gestion.inicio') }}" class="vx-dropdown-item"><i class="bi bi-house-door"></i> Inicio</a>
+                    @can('ver usuarios')
+                    <a href="{{ route('users.index') }}" class="vx-dropdown-item"><i class="bi bi-people"></i> Usuarios</a>
+                    @endcan
+                    @can('ver clientes')
+                    <a href="{{ route('clientes.index') }}" class="vx-dropdown-item"><i class="bi bi-person-lines-fill"></i> Clientes</a>
+                    @endcan
+                    <a href="{{ route('vacaciones.index') }}" class="vx-dropdown-item"><i class="bi bi-calendar-check"></i> Vacaciones</a>
+                    {{-- Seguridad con submenú --}}
+                    <div class="vx-submenu-parent">
+                        <div class="vx-dropdown-item vx-submenu-trigger"><i class="bi bi-shield-lock"></i> Seguridad <i class="bi bi-chevron-right" style="margin-left:auto;font-size:10px;"></i></div>
+                        <div class="vx-submenu">
+                            @can('ver roles')
+                            <a href="{{ route('roles.index') }}" class="vx-dropdown-item"><i class="bi bi-shield-lock"></i> Roles</a>
+                            <a href="{{ route('gestion.permisos') }}" class="vx-dropdown-item"><i class="bi bi-key"></i> Permisos</a>
+                            @endcan
+                            @can('ver restricciones')
+                            <a href="{{ route('restricciones.index') }}" class="vx-dropdown-item"><i class="bi bi-lock"></i> Restricciones</a>
+                            @endcan
+                            <a href="{{ route('gestion.politica') }}" class="vx-dropdown-item"><i class="bi bi-file-earmark-lock"></i> Política</a>
+                        </div>
                     </div>
-                    <div class="vx-mega-col">
-                        <div class="vx-dropdown-header">Marketing</div>
-                        @can('ver noticias')
-                        <a href="{{ route('noticias.index') }}" class="vx-dropdown-item"><i class="bi bi-newspaper"></i> Noticias</a>
-                        @endcan
-                        @can('ver campanias')
-                        <a href="{{ route('campanias.index') }}" class="vx-dropdown-item"><i class="bi bi-megaphone"></i> Campañas</a>
-                        @endcan
-                        <div class="vx-dropdown-header">Mantenimiento</div>
-                        @can('ver empresas')
-                        <a href="{{ route('empresas.index') }}" class="vx-dropdown-item"><i class="bi bi-building"></i> Empresas</a>
-                        @endcan
-                        @can('ver departamentos')
-                        <a href="{{ route('departamentos.index') }}" class="vx-dropdown-item"><i class="bi bi-diagram-3"></i> Departamentos</a>
-                        @endcan
-                        @can('ver centros')
-                        <a href="{{ route('centros.index') }}" class="vx-dropdown-item"><i class="bi bi-geo-alt"></i> Centros</a>
-                        @endcan
-                        <a href="{{ route('gestion.marcas') }}" class="vx-dropdown-item"><i class="bi bi-tags"></i> Marcas</a>
-                        @can('ver naming-pcs')
-                        <a href="{{ route('naming-pcs.index') }}" class="vx-dropdown-item"><i class="bi bi-pc-display"></i> Naming PCs</a>
-                        @endcan
-                        @can('ver festivos')
-                        <a href="{{ route('festivos.index') }}" class="vx-dropdown-item"><i class="bi bi-calendar-event"></i> Festivos</a>
-                        @endcan
+                    {{-- Marketing con submenú --}}
+                    <div class="vx-submenu-parent">
+                        <div class="vx-dropdown-item vx-submenu-trigger"><i class="bi bi-megaphone"></i> Marketing <i class="bi bi-chevron-right" style="margin-left:auto;font-size:10px;"></i></div>
+                        <div class="vx-submenu">
+                            @can('ver noticias')
+                            <a href="{{ route('noticias.index') }}" class="vx-dropdown-item"><i class="bi bi-newspaper"></i> Noticias</a>
+                            @endcan
+                            @can('ver campanias')
+                            <a href="{{ route('campanias.index') }}" class="vx-dropdown-item"><i class="bi bi-megaphone"></i> Campañas</a>
+                            @endcan
+                        </div>
+                    </div>
+                    {{-- Mantenimiento con submenú --}}
+                    <div class="vx-submenu-parent">
+                        <div class="vx-dropdown-item vx-submenu-trigger"><i class="bi bi-gear"></i> Mantenimiento <i class="bi bi-chevron-right" style="margin-left:auto;font-size:10px;"></i></div>
+                        <div class="vx-submenu">
+                            @can('ver empresas')
+                            <a href="{{ route('empresas.index') }}" class="vx-dropdown-item"><i class="bi bi-building"></i> Empresas</a>
+                            @endcan
+                            @can('ver departamentos')
+                            <a href="{{ route('departamentos.index') }}" class="vx-dropdown-item"><i class="bi bi-diagram-3"></i> Departamentos</a>
+                            @endcan
+                            @can('ver centros')
+                            <a href="{{ route('centros.index') }}" class="vx-dropdown-item"><i class="bi bi-geo-alt"></i> Centros</a>
+                            @endcan
+                            <a href="{{ route('gestion.marcas') }}" class="vx-dropdown-item"><i class="bi bi-tags"></i> Marcas</a>
+                            @can('ver naming-pcs')
+                            <a href="{{ route('naming-pcs.index') }}" class="vx-dropdown-item"><i class="bi bi-pc-display"></i> Naming PCs</a>
+                            @endcan
+                            @can('ver festivos')
+                            <a href="{{ route('festivos.index') }}" class="vx-dropdown-item"><i class="bi bi-calendar-event"></i> Festivos</a>
+                            @endcan
+                        </div>
                     </div>
                 </div>
             </li>
@@ -674,13 +707,14 @@
                 list.innerHTML = '<div class="vx-notif-empty"><i class="bi bi-bell-slash" style="font-size:24px;display:block;margin-bottom:8px;"></i>Sin notificaciones</div>';
                 return;
             }
-            list.innerHTML = notifications.slice(0, 20).map(n => {
+            list.innerHTML = notifications.slice(0, 20).map((n, i) => {
                 const iconMap = { create: 'success', update: 'warning', delete: 'danger' };
                 const iconClass = iconMap[n.type] || 'info';
                 const icons = { create: 'bi-plus-circle', update: 'bi-pencil', delete: 'bi-trash' };
                 return `<div class="vx-notif-item ${n.read ? '' : 'unread'}">
                     <div class="vx-notif-icon ${iconClass}"><i class="bi ${icons[n.type] || 'bi-info-circle'}"></i></div>
                     <div class="vx-notif-body"><div class="vx-notif-text">${n.message}</div><div class="vx-notif-time">${n.time}</div></div>
+                    <button class="vx-notif-close" onclick="removeNotif(${i})" title="Eliminar"><i class="bi bi-x"></i></button>
                 </div>`;
             }).join('');
         }
@@ -706,6 +740,12 @@
             renderNotifications();
         }
 
+        function removeNotif(index) {
+            notifications.splice(index, 1);
+            localStorage.setItem('vexis-notifs', JSON.stringify(notifications));
+            renderNotifications();
+        }
+
         renderNotifications();
 
         @if(session('success'))
@@ -717,6 +757,20 @@
             @endphp
             addNotification('{{ $type }}', @json($msg));
         @endif
+    </script>
+    <script>
+    // Actions dropdown toggle
+    document.addEventListener('click', function(e) {
+        const toggle = e.target.closest('.vx-actions-toggle');
+        if (toggle) {
+            e.stopPropagation();
+            const parent = toggle.closest('.vx-actions');
+            document.querySelectorAll('.vx-actions.open').forEach(el => { if (el !== parent) el.classList.remove('open'); });
+            parent.classList.toggle('open');
+        } else {
+            document.querySelectorAll('.vx-actions.open').forEach(el => el.classList.remove('open'));
+        }
+    });
     </script>
     @stack('scripts')
 </body>

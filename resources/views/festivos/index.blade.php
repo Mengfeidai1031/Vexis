@@ -62,15 +62,15 @@
                         </td>
                         <td style="font-size:12px;">{{ $f->municipio ?? 'Todos' }}</td>
                         <td>
-                            <div class="vx-btn-group">
-                                @can('editar festivos')<a href="{{ route('festivos.edit', $f) }}" class="vx-btn vx-btn-warning vx-btn-sm"><i class="bi bi-pencil"></i></a>@endcan
+                            <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+                                @can('editar festivos')<a href="{{ route('festivos.edit', $f) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>@endcan
                                 @can('eliminar festivos')
                                 <form action="{{ route('festivos.destroy', $f) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar?');">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="vx-btn vx-btn-danger vx-btn-sm"><i class="bi bi-trash"></i></button>
+                                    <button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button>
                                 </form>
                                 @endcan
-                            </div>
+                            </div></div>
                         </td>
                     </tr>
                     @endforeach

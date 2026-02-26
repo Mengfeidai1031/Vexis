@@ -40,8 +40,7 @@
                                 <td><span class="vx-badge vx-badge-gray">{{ $departamento->abreviatura }}</span></td>
                                 <td>{{ $departamento->created_at->format('d/m/Y') }}</td>
                                 <td>
-                                    <div class="vx-btn-group">
-                                        @can('view', $departamento)
+                                    <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">@can('view', $departamento)
                                             <a href="{{ route('departamentos.show', $departamento) }}" class="vx-btn vx-btn-info vx-btn-sm" title="Ver"><i class="bi bi-eye"></i></a>
                                         @endcan
                                         @can('update', $departamento)
@@ -52,8 +51,7 @@
                                                 @csrf @method('DELETE')
                                                 <button type="submit" class="vx-btn vx-btn-danger vx-btn-sm" title="Eliminar"><i class="bi bi-trash"></i></button>
                                             </form>
-                                        @endcan
-                                    </div>
+                                        @endcan</div></div>
                                 </td>
                             </tr>
                         @endforeach

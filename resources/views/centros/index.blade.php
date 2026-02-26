@@ -44,8 +44,7 @@
                                 <td>{{ $centro->municipio }}</td>
                                 <td>{{ $centro->provincia }}</td>
                                 <td>
-                                    <div class="vx-btn-group">
-                                        @can('view', $centro)
+                                    <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">@can('view', $centro)
                                             <a href="{{ route('centros.show', $centro) }}" class="vx-btn vx-btn-info vx-btn-sm" title="Ver"><i class="bi bi-eye"></i></a>
                                         @endcan
                                         @can('update', $centro)
@@ -56,8 +55,7 @@
                                                 @csrf @method('DELETE')
                                                 <button type="submit" class="vx-btn vx-btn-danger vx-btn-sm" title="Eliminar"><i class="bi bi-trash"></i></button>
                                             </form>
-                                        @endcan
-                                    </div>
+                                        @endcan</div></div>
                                 </td>
                             </tr>
                         @endforeach

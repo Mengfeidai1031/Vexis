@@ -77,10 +77,10 @@
             <td style="font-size:12px;">{{ $c->mecanico->nombre_completo ?? '—' }}</td>
             <td style="font-size:12px;">{{ $c->taller->nombre ?? '—' }}</td>
             <td>@switch($c->estado) @case('pendiente')<span class="vx-badge vx-badge-warning">Pendiente</span>@break @case('confirmada')<span class="vx-badge vx-badge-success">Confirmada</span>@break @case('en_curso')<span class="vx-badge vx-badge-info">En Curso</span>@break @case('completada')<span class="vx-badge vx-badge-gray">Completada</span>@break @case('cancelada')<span class="vx-badge vx-badge-danger">Cancelada</span>@break @endswitch</td>
-            <td><div class="vx-btn-group">
-                @can('editar citas')<a href="{{ route('citas.edit', $c) }}" class="vx-btn vx-btn-warning vx-btn-sm"><i class="bi bi-pencil"></i></a>@endcan
-                @can('eliminar citas')<form action="{{ route('citas.destroy', $c) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar?');">@csrf @method('DELETE')<button type="submit" class="vx-btn vx-btn-danger vx-btn-sm"><i class="bi bi-trash"></i></button></form>@endcan
-            </div></td>
+            <td><div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+                @can('editar citas')<a href="{{ route('citas.edit', $c) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>@endcan
+                @can('eliminar citas')<form action="{{ route('citas.destroy', $c) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar?');">@csrf @method('DELETE')<button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button></form>@endcan
+            </div></div></td>
         </tr>@endforeach</tbody>
     </table></div>
     <div style="padding:16px 20px;">{{ $citas->links('vendor.pagination.vexis') }}</div>

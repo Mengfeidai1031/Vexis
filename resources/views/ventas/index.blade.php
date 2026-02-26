@@ -23,11 +23,11 @@
             <td style="font-size:11px;">{{ \App\Models\Venta::$formasPago[$v->forma_pago] ?? $v->forma_pago }}</td>
             <td>@switch($v->estado) @case('reservada')<span class="vx-badge vx-badge-warning">Reservada</span>@break @case('pendiente_entrega')<span class="vx-badge vx-badge-info">Pte. Entrega</span>@break @case('entregada')<span class="vx-badge vx-badge-success">Entregada</span>@break @case('cancelada')<span class="vx-badge vx-badge-danger">Cancelada</span>@break @endswitch</td>
             <td style="font-size:12px;">{{ $v->fecha_venta->format('d/m/Y') }}</td>
-            <td><div class="vx-btn-group">
-                <a href="{{ route('ventas.show', $v) }}" class="vx-btn vx-btn-info vx-btn-sm"><i class="bi bi-eye"></i></a>
-                @can('editar ventas')<a href="{{ route('ventas.edit', $v) }}" class="vx-btn vx-btn-warning vx-btn-sm"><i class="bi bi-pencil"></i></a>@endcan
-                @can('eliminar ventas')<form action="{{ route('ventas.destroy', $v) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar?');">@csrf @method('DELETE')<button type="submit" class="vx-btn vx-btn-danger vx-btn-sm"><i class="bi bi-trash"></i></button></form>@endcan
-            </div></td>
+            <td><div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+                <a href="{{ route('ventas.show', $v) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
+                @can('editar ventas')<a href="{{ route('ventas.edit', $v) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>@endcan
+                @can('eliminar ventas')<form action="{{ route('ventas.destroy', $v) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar?');">@csrf @method('DELETE')<button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button></form>@endcan
+            </div></div></td>
         </tr>@endforeach</tbody>
     </table></div>
     <div style="padding:16px 20px;">{{ $ventas->links('vendor.pagination.vexis') }}</div>
