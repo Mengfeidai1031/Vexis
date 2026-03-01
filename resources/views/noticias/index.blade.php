@@ -9,58 +9,86 @@
         @endcan
     </div>
 </div>
-<form action="{{ route('noticias.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar por título o contenido..." value="{{ request('search') }}" style="flex:1;">
-    <select name="categoria" class="vx-select" style="width:auto;">
-        <option value="">Todas las categorías</option>
-        @foreach(\App\Models\Noticia::$categorias as $k => $v)
-            <option value="{{ $k }}" {{ request('categoria') == $k ? 'selected' : '' }}>{{ $v }}</option>
-        @endforeach
-    </select>
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i></button>
-    @if(request()->anyFilled(['search','categoria']))<a href="{{ route('noticias.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>@endif
-</form>
-<div class="vx-card">
-    <div class="vx-card-body" style="padding:0;">
-        @if($noticias->count() > 0)
-        <div class="vx-table-wrapper">
-            <table class="vx-table">
-                <thead><tr><th>Título</th><th>Categoría</th><th>Autor</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
-                <tbody>
-                    @foreach($noticias as $noticia)
-                    <tr>
-                        <td>
-                            <div style="font-weight:600;">{{ Str::limit($noticia->titulo, 50) }}</div>
-                            @if($noticia->destacada)<span class="vx-badge vx-badge-warning" style="font-size:10px;">⭐ Destacada</span>@endif
-                        </td>
-                        <td><span class="vx-badge vx-badge-info">{{ \App\Models\Noticia::$categorias[$noticia->categoria] ?? $noticia->categoria }}</span></td>
-                        <td style="font-size:12px;">{{ $noticia->autor->nombre ?? '—' }}</td>
-                        <td style="font-size:12px;">{{ $noticia->fecha_publicacion->format('d/m/Y') }}</td>
-                        <td>
-                            @if($noticia->publicada)<span class="vx-badge vx-badge-success">Publicada</span>
-                            @else<span class="vx-badge vx-badge-gray">Borrador</span>@endif
-                        </td>
-                        <td>
-                            <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
-                                <a href="{{ route('noticias.show', $noticia) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
-                                @can('editar noticias')<a href="{{ route('noticias.edit', $noticia) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>@endcan
-                                @can('eliminar noticias')
-                                <form action="{{ route('noticias.destroy', $noticia) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar?');">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button>
-                                </form>
-                                @endcan
-                            </div></div>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+
+{{-- Carrusel de noticias --}}
+@if($noticias->count() > 0)
+<div class="vx-card" style="margin-bottom:20px;overflow:hidden;">
+    <div style="position:relative;">
+        <div id="newsCarousel" style="overflow:hidden;">
+            <div id="newsTrack" style="display:flex;transition:transform 0.4s ease;">
+                @foreach($noticias as $i => $noticia)
+                <div class="news-slide" style="min-width:100%;padding:28px 32px;box-sizing:border-box;">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;">
+                        <div style="flex:1;">
+                            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                                <span class="vx-badge vx-badge-info">{{ \App\Models\Noticia::$categorias[$noticia->categoria] ?? $noticia->categoria }}</span>
+                                @if($noticia->destacada)<span class="vx-badge vx-badge-warning" style="font-size:10px;">Destacada</span>@endif
+                                @if($noticia->publicada)<span class="vx-badge vx-badge-success">Publicada</span>@else<span class="vx-badge vx-badge-gray">Borrador</span>@endif
+                            </div>
+                            <h3 style="font-size:20px;font-weight:800;margin:0 0 8px;">{{ $noticia->titulo }}</h3>
+                            <p style="font-size:13px;color:var(--vx-text-muted);line-height:1.6;margin:0 0 12px;">{{ Str::limit($noticia->contenido, 200) }}</p>
+                            <div style="display:flex;align-items:center;gap:16px;font-size:12px;color:var(--vx-text-muted);">
+                                <span><i class="bi bi-person"></i> {{ $noticia->autor->nombre ?? '—' }}</span>
+                                <span><i class="bi bi-calendar"></i> {{ $noticia->fecha_publicacion->format('d/m/Y') }}</span>
+                            </div>
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+                            <a href="{{ route('noticias.show', $noticia) }}" class="vx-btn vx-btn-info vx-btn-sm"><i class="bi bi-eye"></i> Ver</a>
+                            @can('editar noticias')<a href="{{ route('noticias.edit', $noticia) }}" class="vx-btn vx-btn-warning vx-btn-sm"><i class="bi bi-pencil"></i> Editar</a>@endcan
+                            @can('eliminar noticias')
+                            <form action="{{ route('noticias.destroy', $noticia) }}" method="POST" onsubmit="return confirm('¿Eliminar?');">@csrf @method('DELETE')
+                                <button type="submit" class="vx-btn vx-btn-danger vx-btn-sm" style="width:100%;"><i class="bi bi-trash"></i> Eliminar</button>
+                            </form>
+                            @endcan
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
         </div>
-        <div style="padding:16px 20px;">{{ $noticias->links('vendor.pagination.vexis') }}</div>
-        @else
-        <div class="vx-empty"><i class="bi bi-newspaper"></i><p>No se encontraron noticias.</p></div>
-        @endif
+        {{-- Controles --}}
+        <button class="news-arrow news-prev" onclick="moveSlide(-1)"><i class="bi bi-chevron-left"></i></button>
+        <button class="news-arrow news-next" onclick="moveSlide(1)"><i class="bi bi-chevron-right"></i></button>
+        {{-- Indicadores --}}
+        <div style="display:flex;justify-content:center;gap:6px;padding:12px 0 16px;" id="newsDots">
+            @foreach($noticias as $i => $n)
+            <button class="news-dot {{ $i === 0 ? 'active' : '' }}" onclick="goSlide({{ $i }})"></button>
+            @endforeach
+        </div>
     </div>
 </div>
+@else
+<div class="vx-card"><div class="vx-card-body"><div class="vx-empty"><i class="bi bi-newspaper"></i><p>No se encontraron noticias.</p></div></div></div>
+@endif
+
+@push('styles')
+<style>
+.news-arrow { position:absolute; top:50%; transform:translateY(-50%); width:36px; height:36px; border-radius:50%; border:1px solid var(--vx-border); background:var(--vx-surface); color:var(--vx-text); display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:5; transition:all 0.15s; box-shadow:var(--vx-shadow-sm); }
+.news-arrow:hover { background:var(--vx-primary); color:white; border-color:var(--vx-primary); }
+.news-prev { left:8px; }
+.news-next { right:8px; }
+.news-dot { width:8px; height:8px; border-radius:50%; border:none; background:var(--vx-gray-300); cursor:pointer; transition:all 0.2s; padding:0; }
+.news-dot.active { background:var(--vx-primary); width:20px; border-radius:4px; }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+let currentSlide = 0;
+const total = {{ $noticias->count() }};
+let autoplay;
+
+function goSlide(n) {
+    currentSlide = n;
+    if (currentSlide < 0) currentSlide = total - 1;
+    if (currentSlide >= total) currentSlide = 0;
+    document.getElementById('newsTrack').style.transform = `translateX(-${currentSlide * 100}%)`;
+    document.querySelectorAll('.news-dot').forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+    resetAutoplay();
+}
+function moveSlide(dir) { goSlide(currentSlide + dir); }
+function resetAutoplay() { clearInterval(autoplay); autoplay = setInterval(() => moveSlide(1), 6000); }
+resetAutoplay();
+</script>
+@endpush
 @endsection

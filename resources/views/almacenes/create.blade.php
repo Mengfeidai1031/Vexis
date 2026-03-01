@@ -51,7 +51,7 @@
                     <select class="vx-select @error('empresa_id') is-invalid @enderror" id="empresa_id" name="empresa_id" required>
                         <option value="">Seleccionar...</option>
                         @foreach($empresas as $e)<option value="{{ $e->id }}" {{ old('empresa_id') == $e->id ? 'selected' : '' }}>{{ $e->nombre }}</option>@endforeach
-                    </select>
+                    </select><a href="{{ route('empresas.create') }}" class="vx-select-create" target="_blank"><i class="bi bi-plus-circle"></i> Crear nueva</a>
                     @error('empresa_id')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="vx-form-group">
@@ -59,7 +59,7 @@
                     <select class="vx-select @error('centro_id') is-invalid @enderror" id="centro_id" name="centro_id" required>
                         <option value="">Seleccionar...</option>
                         @foreach($centros as $c)<option value="{{ $c->id }}" {{ old('centro_id') == $c->id ? 'selected' : '' }}>{{ $c->nombre }}</option>@endforeach
-                    </select>
+                    </select><a href="{{ route('centros.create') }}" class="vx-select-create" target="_blank"><i class="bi bi-plus-circle"></i> Crear nuevo</a>
                     @error('centro_id')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="vx-form-group">

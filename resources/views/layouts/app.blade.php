@@ -180,6 +180,8 @@
         .vx-input:focus, .vx-select:focus, .vx-textarea:focus { border-color: var(--vx-primary); box-shadow: 0 0 0 3px rgba(51, 170, 221, 0.15); }
         .vx-input.is-invalid, .vx-select.is-invalid { border-color: var(--vx-danger); }
         .vx-input.is-invalid:focus, .vx-select.is-invalid:focus { box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15); }
+        .vx-select-create { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--vx-primary); text-decoration: none; margin-top: 4px; padding: 2px 0; transition: color 0.15s; }
+        .vx-select-create:hover { color: var(--vx-primary-dark); text-decoration: underline; }
         .vx-invalid-feedback { font-size: 12px; color: var(--vx-danger); margin-top: 4px; }
         .vx-form-hint { font-size: 12px; color: var(--vx-text-muted); margin-top: 4px; }
         .vx-checkbox { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; }

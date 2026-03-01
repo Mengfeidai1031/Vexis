@@ -34,7 +34,7 @@
                         @foreach($empresas as $empresa)
                             <option value="{{ $empresa->id }}" {{ old('empresa_id', $cliente->empresa_id) == $empresa->id ? 'selected' : '' }}>{{ $empresa->nombre }}</option>
                         @endforeach
-                    </select>
+                    </select><a href="{{ route('empresas.create') }}" class="vx-select-create" target="_blank"><i class="bi bi-plus-circle"></i> Crear nueva</a>
                     @error('empresa_id')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
                 </div>
             </div>

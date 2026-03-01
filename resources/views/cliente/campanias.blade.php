@@ -9,7 +9,7 @@
     <div class="vx-card" style="overflow:hidden;">
         @if($c->fotos->count() > 0)
         <div style="position:relative;height:200px;overflow:hidden;">
-            <img src="{{ asset('storage/' . $c->fotos->first()->ruta) }}" alt="{{ $c->titulo }}" style="width:100%;height:100%;object-fit:cover;">
+            <img src="{{ asset('storage/' . $c->fotos->first()->ruta) }}" alt="{{ $c->nombre }}" style="width:100%;height:100%;object-fit:cover;">
             @if($c->fotos->count() > 1)
             <span style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.6);color:white;padding:2px 8px;border-radius:12px;font-size:11px;"><i class="bi bi-images"></i> {{ $c->fotos->count() }}</span>
             @endif
@@ -17,7 +17,7 @@
         @endif
         <div style="padding:16px 20px;">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
-                <h3 style="font-size:16px;font-weight:800;margin:0;">{{ $c->titulo }}</h3>
+                <h3 style="font-size:16px;font-weight:800;margin:0;">{{ $c->nombre }}</h3>
                 @if($c->marca)<span class="vx-badge" style="background:{{ $c->marca->color }}20;color:{{ $c->marca->color }};font-size:10px;">{{ $c->marca->nombre }}</span>@endif
             </div>
             @if($c->descripcion)<p style="font-size:13px;color:var(--vx-text-muted);margin:0 0 12px;line-height:1.5;">{{ Str::limit($c->descripcion, 150) }}</p>@endif

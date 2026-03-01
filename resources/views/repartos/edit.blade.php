@@ -22,15 +22,15 @@
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px;">
             <div class="vx-form-group"><label class="vx-label">Almacén Origen <span class="required">*</span></label>
-                <select class="vx-select" name="almacen_origen_id" required>@foreach($almacenes as $a)<option value="{{ $a->id }}" {{ old('almacen_origen_id', $reparto->almacen_origen_id) == $a->id ? 'selected' : '' }}>{{ $a->nombre }}</option>@endforeach</select>
+                <select class="vx-select" name="almacen_origen_id" required>@foreach($almacenes as $a)<option value="{{ $a->id }}" {{ old('almacen_origen_id', $reparto->almacen_origen_id) == $a->id ? 'selected' : '' }}>{{ $a->nombre }}</option>@endforeach</select><a href="{{ route('almacenes.create') }}" class="vx-select-create" target="_blank"><i class="bi bi-plus-circle"></i> Crear nuevo</a>
             </div>
             <div class="vx-form-group"><label class="vx-label">Almacén Destino</label>
-                <select class="vx-select" name="almacen_destino_id"><option value="">Externo</option>@foreach($almacenes as $a)<option value="{{ $a->id }}" {{ old('almacen_destino_id', $reparto->almacen_destino_id) == $a->id ? 'selected' : '' }}>{{ $a->nombre }}</option>@endforeach</select>
+                <select class="vx-select" name="almacen_destino_id"><option value="">Externo</option>@foreach($almacenes as $a)<option value="{{ $a->id }}" {{ old('almacen_destino_id', $reparto->almacen_destino_id) == $a->id ? 'selected' : '' }}>{{ $a->nombre }}</option>@endforeach</select><a href="{{ route('almacenes.create') }}" class="vx-select-create" target="_blank"><i class="bi bi-plus-circle"></i> Crear nuevo</a>
             </div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 16px;">
-            <div class="vx-form-group"><label class="vx-label">Empresa <span class="required">*</span></label><select class="vx-select" name="empresa_id" required>@foreach($empresas as $e)<option value="{{ $e->id }}" {{ old('empresa_id', $reparto->empresa_id) == $e->id ? 'selected' : '' }}>{{ $e->nombre }}</option>@endforeach</select></div>
-            <div class="vx-form-group"><label class="vx-label">Centro <span class="required">*</span></label><select class="vx-select" name="centro_id" required>@foreach($centros as $c)<option value="{{ $c->id }}" {{ old('centro_id', $reparto->centro_id) == $c->id ? 'selected' : '' }}>{{ $c->nombre }}</option>@endforeach</select></div>
+            <div class="vx-form-group"><label class="vx-label">Empresa <span class="required">*</span></label><select class="vx-select" name="empresa_id" required>@foreach($empresas as $e)<option value="{{ $e->id }}" {{ old('empresa_id', $reparto->empresa_id) == $e->id ? 'selected' : '' }}>{{ $e->nombre }}</option>@endforeach</select><a href="{{ route('empresas.create') }}" class="vx-select-create" target="_blank"><i class="bi bi-plus-circle"></i> Crear nuevo</a></div>
+            <div class="vx-form-group"><label class="vx-label">Centro <span class="required">*</span></label><select class="vx-select" name="centro_id" required>@foreach($centros as $c)<option value="{{ $c->id }}" {{ old('centro_id', $reparto->centro_id) == $c->id ? 'selected' : '' }}>{{ $c->nombre }}</option>@endforeach</select><a href="{{ route('centros.create') }}" class="vx-select-create" target="_blank"><i class="bi bi-plus-circle"></i> Crear nuevo</a></div>
             <div class="vx-form-group"><label class="vx-label">Fecha solicitud <span class="required">*</span></label><input type="date" class="vx-input" name="fecha_solicitud" value="{{ old('fecha_solicitud', $reparto->fecha_solicitud->format('Y-m-d')) }}" required></div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px;">

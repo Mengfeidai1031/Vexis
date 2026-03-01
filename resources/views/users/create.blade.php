@@ -36,7 +36,7 @@
                             @foreach($empresas as $empresa)
                                 <option value="{{ $empresa->id }}" {{ old('empresa_id') == $empresa->id ? 'selected' : '' }}>{{ $empresa->nombre }}</option>
                             @endforeach
-                        </select>
+                        </select><a href="{{ route('empresas.create') }}" class="vx-select-create" target="_blank"><i class="bi bi-plus-circle"></i> Crear nueva</a>
                         @error('empresa_id')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
                     </div>
 
@@ -47,7 +47,7 @@
                             @foreach($departamentos as $departamento)
                                 <option value="{{ $departamento->id }}" {{ old('departamento_id') == $departamento->id ? 'selected' : '' }}>{{ $departamento->nombre }}</option>
                             @endforeach
-                        </select>
+                        </select><a href="{{ route('departamentos.create') }}" class="vx-select-create" target="_blank"><i class="bi bi-plus-circle"></i> Crear nuevo</a>
                         @error('departamento_id')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                 </div>
@@ -59,7 +59,7 @@
                         @foreach($centros as $centro)
                             <option value="{{ $centro->id }}" data-empresa="{{ $centro->empresa_id }}" {{ old('centro_id') == $centro->id ? 'selected' : '' }}>{{ $centro->nombre }} ({{ $centro->empresa->nombre }})</option>
                         @endforeach
-                    </select>
+                    </select><a href="{{ route('centros.create') }}" class="vx-select-create" target="_blank"><i class="bi bi-plus-circle"></i> Crear nuevo</a>
                     @error('centro_id')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 
