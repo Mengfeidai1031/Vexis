@@ -27,6 +27,7 @@ use App\Http\Controllers\VentaController;
 use App\Http\Controllers\TasacionController;
 use App\Http\Controllers\CatalogoPrecioController;
 use App\Http\Controllers\ClienteModuloController;
+use App\Http\Controllers\DatAxisController;
 use App\Http\Controllers\AlmacenController;
 
 // Ruta pública (página de inicio)
@@ -338,6 +339,13 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['permission:eliminar catalogo-precios'])->group(function () {
         Route::delete('/catalogo-precios/{catalogo_precio}', [CatalogoPrecioController::class, 'destroy'])->name('catalogo-precios.destroy');
     });
+
+    // === DATAXIS (Análisis de datos) ===
+    Route::get('/dataxis', [DatAxisController::class, 'inicio'])->name('dataxis.inicio');
+    Route::get('/dataxis/general', [DatAxisController::class, 'general'])->name('dataxis.general');
+    Route::get('/dataxis/ventas', [DatAxisController::class, 'ventas'])->name('dataxis.ventas');
+    Route::get('/dataxis/stock', [DatAxisController::class, 'stock'])->name('dataxis.stock');
+    Route::get('/dataxis/taller', [DatAxisController::class, 'taller'])->name('dataxis.taller');
 
     // === MÓDULO CLIENTE ===
     Route::get('/cliente', [ClienteModuloController::class, 'inicio'])->name('cliente.inicio');

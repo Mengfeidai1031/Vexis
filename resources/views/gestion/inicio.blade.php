@@ -122,6 +122,16 @@
 </div>
 @endcanany
 
+<div class="vx-module-section">
+    <h3 class="vx-module-section-title"><i class="bi bi-graph-up"></i> Dataxis</h3>
+    <div class="vx-module-grid">
+        <a href="{{ route('dataxis.inicio') }}" class="vx-module-card">
+            <div class="vx-module-icon" style="background:rgba(51,170,221,0.1);color:var(--vx-primary);"><i class="bi bi-graph-up"></i></div>
+            <div class="vx-module-info"><h4>Dataxis</h4><p>Análisis, estadísticas y gráficas de datos</p></div>
+        </a>
+    </div>
+</div>
+
 @push('styles')
 <style>
 .vx-module-section { margin-bottom: 28px; }
