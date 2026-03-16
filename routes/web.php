@@ -190,6 +190,8 @@ Route::middleware('auth')->group(function () {
     });
     Route::middleware(['permission:ver stocks'])->group(function () {
         Route::get('/stocks', [StockController::class, 'index'])->name('stocks.index');
+        Route::get('/stocks/export/excel', [StockController::class, 'export'])->name('stocks.export');
+        Route::get('/stocks/export/pdf', [StockController::class, 'exportPdf'])->name('stocks.exportPdf');
         Route::get('/stocks/{stock}', [StockController::class, 'show'])->name('stocks.show');
     });
     Route::middleware(['permission:editar stocks'])->group(function () {

@@ -11,6 +11,7 @@ use App\Models\Vehiculo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class ClienteModuloController extends Controller
 {
@@ -57,17 +58,27 @@ class ClienteModuloController extends Controller
         $contexto .= "Responde siempre en español, de forma amable y profesional. Si te preguntan por vehículos, busca en los datos proporcionados. Da información precisa sobre stock, precios y disponibilidad. Si no tienes la información, sugiere que contacten con el concesionario.";
 
         try {
-            $response = Http::timeout(30)->post('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' . config('services.gemini.api_key'), [
+            $apiKey = config('services.gemini.api_key');
+            if (empty($apiKey)) {
+                return response()->json(['respuesta' => 'Error: API key de Gemini no configurada. Añade GEMINI_API_KEY en el archivo .env']);
+            }
+
+            $response = Http::withoutVerifying()->timeout(30)->post('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' . $apiKey, [
                 'contents' => [
                     ['role' => 'user', 'parts' => [['text' => $contexto . "\n\nPregunta del cliente: " . $mensaje]]]
                 ],
                 'generationConfig' => ['temperature' => 0.7, 'maxOutputTokens' => 800],
             ]);
 
+            if ($response->failed()) {
+                $error = $response->json('error.message') ?? $response->body();
+                return response()->json(['respuesta' => 'Error de la API: ' . Str::limit($error, 200)]);
+            }
+
             $data = $response->json();
             $respuesta = $data['candidates'][0]['content']['parts'][0]['text'] ?? 'Lo siento, no pude procesar tu consulta. Inténtalo de nuevo.';
         } catch (\Exception $e) {
-            $respuesta = 'Error al conectar con el asistente. Por favor, inténtalo más tarde.';
+            $respuesta = 'Error al conectar con el asistente: ' . Str::limit($e->getMessage(), 150);
         }
 
         return response()->json(['respuesta' => $respuesta]);
@@ -98,15 +109,25 @@ class ClienteModuloController extends Controller
         $prompt .= "\nDa una estimación de precio en euros con un rango (mínimo-máximo). Explica brevemente los factores que afectan al valor. Responde en español, de forma profesional. Aclara que es una estimación orientativa y que para una tasación precisa deben acudir al concesionario Grupo ARI.";
 
         try {
-            $response = Http::timeout(30)->post('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' . config('services.gemini.api_key'), [
+            $apiKey = config('services.gemini.api_key');
+            if (empty($apiKey)) {
+                return response()->json(['respuesta' => 'Error: API key de Gemini no configurada. Añade GEMINI_API_KEY en el archivo .env']);
+            }
+
+            $response = Http::withoutVerifying()->timeout(30)->post('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' . $apiKey, [
                 'contents' => [['role' => 'user', 'parts' => [['text' => $prompt]]]],
                 'generationConfig' => ['temperature' => 0.5, 'maxOutputTokens' => 600],
             ]);
 
+            if ($response->failed()) {
+                $error = $response->json('error.message') ?? $response->body();
+                return response()->json(['respuesta' => 'Error de la API: ' . Str::limit($error, 200)]);
+            }
+
             $data = $response->json();
             $respuesta = $data['candidates'][0]['content']['parts'][0]['text'] ?? 'No se pudo generar la pretasación.';
         } catch (\Exception $e) {
-            $respuesta = 'Error al conectar con el servicio de tasación.';
+            $respuesta = 'Error al conectar con el servicio de tasación: ' . Str::limit($e->getMessage(), 150);
         }
 
         return response()->json(['respuesta' => $respuesta]);

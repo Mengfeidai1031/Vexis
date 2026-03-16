@@ -4,6 +4,8 @@
 <div class="vx-page-header">
     <h1 class="vx-page-title">Stock de Recambios</h1>
     <div class="vx-page-actions">
+        <a href="{{ route('stocks.export') }}" class="vx-btn vx-btn-success"><i class="bi bi-file-earmark-excel"></i> Excel</a>
+        <a href="{{ route('stocks.exportPdf') }}" class="vx-btn vx-btn-danger"><i class="bi bi-file-earmark-pdf"></i> PDF</a>
         @can('crear stocks')<a href="{{ route('stocks.create') }}" class="vx-btn vx-btn-primary"><i class="bi bi-plus-circle"></i> Nuevo Registro</a>@endcan
     </div>
 </div>

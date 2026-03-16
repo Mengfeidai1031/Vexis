@@ -6,7 +6,10 @@ use App\Models\Stock;
 use App\Models\Almacen;
 use App\Models\Empresa;
 use App\Models\Centro;
+use App\Exports\StocksExport;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class StockController extends Controller
 {
@@ -95,5 +98,19 @@ class StockController extends Controller
     {
         $stock->delete();
         return redirect()->route('stocks.index')->with('success', 'Stock eliminado correctamente.');
+    }
+
+    public function export()
+    {
+        $fileName = 'stock_' . date('Y-m-d_His') . '.xlsx';
+        return Excel::download(new StocksExport(), $fileName);
+    }
+
+    public function exportPdf()
+    {
+        $stocks = Stock::with(['almacen', 'empresa', 'centro'])->orderBy('nombre_pieza')->get();
+        $pdf = Pdf::loadView('stocks.pdf', compact('stocks'));
+        $fileName = 'stock_' . date('Y-m-d_His') . '.pdf';
+        return $pdf->download($fileName);
     }
 }
