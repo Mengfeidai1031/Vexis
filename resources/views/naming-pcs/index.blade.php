@@ -10,7 +10,7 @@
     </div>
 </div>
 <form action="{{ route('naming-pcs.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar por nombre, IP, usuario o ubicación..." value="{{ request('search') }}" style="flex:1;">
+    <input type="text" name="search" class="vx-input" placeholder="Buscar por nombre, IP o ubicación..." value="{{ request('search') }}" style="flex:1;">
     <select name="tipo" class="vx-select" style="width:auto;">
         <option value="">Todos los tipos</option>
         @foreach(\App\Models\NamingPc::$tipos as $t)
@@ -31,7 +31,7 @@
         @if($namingPcs->count() > 0)
         <div class="vx-table-wrapper">
             <table class="vx-table">
-                <thead><tr><th>Nombre</th><th>Tipo</th><th>IP</th><th>Empresa</th><th>Centro</th><th>Usuario</th><th>SO</th><th>Estado</th><th>Acciones</th></tr></thead>
+                <thead><tr><th>Nombre</th><th>Tipo</th><th>IP</th><th>Empresa</th><th>Centro</th><th>SO</th><th>Versión</th><th>Estado</th><th>Acciones</th></tr></thead>
                 <tbody>
                     @foreach($namingPcs as $pc)
                     <tr>
@@ -40,8 +40,9 @@
                         <td style="font-family:var(--vx-font-mono);font-size:12px;">{{ $pc->direccion_ip ?? '—' }}</td>
                         <td style="font-size:12px;">{{ $pc->empresa->abreviatura ?? '—' }}</td>
                         <td style="font-size:12px;">{{ $pc->centro->nombre ?? '—' }}</td>
-                        <td style="font-size:12px;">{{ $pc->usuario_asignado ?? '—' }}</td>
+                        
                         <td style="font-size:11px;">{{ $pc->sistema_operativo ?? '—' }}</td>
+                        <td style="font-size:11px;">{{ $pc->version_so ?? '—' }}</td>
                         <td>
                             @if($pc->activo)<span class="vx-badge vx-badge-success">Activo</span>
                             @else<span class="vx-badge vx-badge-gray">Inactivo</span>@endif

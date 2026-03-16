@@ -17,16 +17,11 @@ class NamingPcController extends Controller
             $query->where(function ($q) use ($s) {
                 $q->where('nombre_equipo', 'like', "%$s%")
                   ->orWhere('direccion_ip', 'like', "%$s%")
-                  ->orWhere('usuario_asignado', 'like', "%$s%")
                   ->orWhere('ubicacion', 'like', "%$s%");
             });
         }
-        if ($request->filled('tipo')) {
-            $query->where('tipo', $request->tipo);
-        }
-        if ($request->filled('empresa_id')) {
-            $query->where('empresa_id', $request->empresa_id);
-        }
+        if ($request->filled('tipo')) $query->where('tipo', $request->tipo);
+        if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
         $namingPcs = $query->orderBy('nombre_equipo')->paginate(15)->withQueryString();
         $empresas = Empresa::orderBy('nombre')->get();
         return view('naming-pcs.index', compact('namingPcs', 'empresas'));
@@ -44,16 +39,11 @@ class NamingPcController extends Controller
         $request->validate([
             'nombre_equipo' => 'required|string|max:100',
             'tipo' => 'required|string|max:50',
-            'ubicacion' => 'nullable|string|max:255',
-            'centro_id' => 'nullable|exists:centros,id',
-            'empresa_id' => 'nullable|exists:empresas,id',
-            'usuario_asignado' => 'nullable|string|max:255',
+            'sistema_operativo' => 'nullable|string|max:100',
+            'version_so' => 'nullable|string|max:10',
             'direccion_ip' => 'nullable|string|max:45',
             'direccion_mac' => 'nullable|string|max:17',
-            'sistema_operativo' => 'nullable|string|max:100',
-            'observaciones' => 'nullable|string',
         ]);
-
         NamingPc::create($request->all());
         return redirect()->route('naming-pcs.index')->with('success', 'Equipo registrado correctamente.');
     }
@@ -76,16 +66,11 @@ class NamingPcController extends Controller
         $request->validate([
             'nombre_equipo' => 'required|string|max:100',
             'tipo' => 'required|string|max:50',
-            'ubicacion' => 'nullable|string|max:255',
-            'centro_id' => 'nullable|exists:centros,id',
-            'empresa_id' => 'nullable|exists:empresas,id',
-            'usuario_asignado' => 'nullable|string|max:255',
+            'sistema_operativo' => 'nullable|string|max:100',
+            'version_so' => 'nullable|string|max:10',
             'direccion_ip' => 'nullable|string|max:45',
             'direccion_mac' => 'nullable|string|max:17',
-            'sistema_operativo' => 'nullable|string|max:100',
-            'observaciones' => 'nullable|string',
         ]);
-
         $namingPc->update([...$request->all(), 'activo' => $request->boolean('activo', true)]);
         return redirect()->route('naming-pcs.index')->with('success', 'Equipo actualizado correctamente.');
     }

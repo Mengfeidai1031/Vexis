@@ -11,8 +11,8 @@ class NamingPc extends Model
 
     protected $fillable = [
         'nombre_equipo', 'tipo', 'ubicacion', 'centro_id', 'empresa_id',
-        'usuario_asignado', 'direccion_ip', 'direccion_mac',
-        'sistema_operativo', 'observaciones', 'activo',
+        'direccion_ip', 'direccion_mac',
+        'sistema_operativo', 'version_so', 'observaciones', 'activo',
     ];
 
     protected $casts = [
@@ -29,5 +29,14 @@ class NamingPc extends Model
         return $this->belongsTo(Empresa::class);
     }
 
-    public static $tipos = ['PC', 'Portátil', 'Servidor', 'Impresora', 'Otro'];
+    public static $tipos = ['Portátil', 'Sobremesa'];
+
+    public static $sistemasOperativos = [
+        'Windows 11', 'Windows 10', 'Windows Server 2025', 'Windows Server 2022',
+        'macOS Sonoma', 'macOS Sequoia', 'macOS Ventura',
+        'Ubuntu 24.04 LTS', 'Ubuntu 22.04 LTS', 'Debian 12', 'Fedora 41',
+        'Linux Mint 22', 'Red Hat Enterprise Linux 9', 'Chrome OS',
+    ];
+
+    public static $versionesSo = ['PRO', 'HOME'];
 }
