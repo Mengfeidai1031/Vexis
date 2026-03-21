@@ -10,7 +10,7 @@
 </div>
 <div style="max-width:700px;">
     <div class="vx-card">
-        <div class="vx-card-header"><h3><i class="bi bi-warehouse" style="color:var(--vx-primary);margin-right:8px;"></i>{{ $almacen->nombre }} <span class="vx-badge vx-badge-primary" style="font-family:var(--vx-font-mono);">{{ $almacen->codigo }}</span></h3></div>
+        <div class="vx-card-header"><h3><i class="bi bi-shop" style="color:var(--vx-primary);margin-right:8px;"></i>{{ $almacen->nombre }} <span class="vx-badge vx-badge-primary" style="font-family:var(--vx-font-mono);">{{ $almacen->codigo }}</span></h3></div>
         <div class="vx-card-body">
             <div class="vx-info-row"><div class="vx-info-label">Código</div><div class="vx-info-value"><span class="vx-badge vx-badge-primary" style="font-family:var(--vx-font-mono);">{{ $almacen->codigo }}</span></div></div>
             <div class="vx-info-row"><div class="vx-info-label">Estado</div><div class="vx-info-value">@if($almacen->activo)<span class="vx-badge vx-badge-success">Activo</span>@else<span class="vx-badge vx-badge-gray">Inactivo</span>@endif</div></div>

@@ -136,12 +136,8 @@ class ClienteModuloController extends Controller
     // === CONCESIONARIOS ===
     public function concesionarios()
     {
-        $empresas = Empresa::orderBy('nombre')->get();
-        // Cargar marcas manualmente para cada empresa
-        foreach ($empresas as $e) {
-            $e->setAttribute('marcas_list', $e->marcas());
-        }
-        return view('cliente.concesionarios', compact('empresas'));
+        $centros = \App\Models\Centro::with('empresa')->orderBy('nombre')->get();
+        return view('cliente.concesionarios', compact('centros'));
     }
 
     // === LISTA DE PRECIOS ===

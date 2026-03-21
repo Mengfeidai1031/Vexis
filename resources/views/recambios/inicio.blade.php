@@ -11,7 +11,7 @@
     <div class="vx-module-grid">
         @can('ver almacenes')
         <a href="{{ route('almacenes.index') }}" class="vx-module-card">
-            <div class="vx-module-icon" style="background: rgba(51,170,221,0.1); color: var(--vx-primary);"><i class="bi bi-warehouse"></i></div>
+            <div class="vx-module-icon" style="background: rgba(51,170,221,0.1); color: var(--vx-primary);"><i class="bi bi-shop"></i></div>
             <div class="vx-module-info"><h4>Almacenes</h4><p>Gestión de almacenes por isla</p></div>
         </a>
         @endcan

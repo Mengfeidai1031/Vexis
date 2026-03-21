@@ -123,6 +123,12 @@
 
         /* Main Content */
         .vx-main { flex: 1; padding: 24px; max-width: 1400px; width: 100%; margin: 0 auto; }
+        .vx-modules-bar { background: var(--vx-surface); border-bottom: 1px solid var(--vx-border); padding: 0; position: sticky; top: var(--vx-navbar-height); z-index: 999; }
+        .vx-modules-inner { display: flex; align-items: center; gap: 2px; max-width: 1400px; margin: 0 auto; padding: 0 24px; overflow-x: auto; }
+        .vx-mod-link { display: flex; align-items: center; gap: 6px; padding: 10px 16px; font-size: 12px; font-weight: 600; color: var(--vx-text-muted); text-decoration: none; border-bottom: 2px solid transparent; transition: all 0.15s; white-space: nowrap; }
+        .vx-mod-link:hover { color: var(--vx-primary); }
+        .vx-mod-link.active { color: var(--vx-primary); border-bottom-color: var(--vx-primary); }
+        .vx-mod-link i { font-size: 14px; }
 
         /* Cards */
         .vx-card { background: var(--vx-surface); border: 1px solid var(--vx-border); border-radius: var(--vx-radius-lg); box-shadow: var(--vx-shadow-sm); transition: all 0.3s ease; overflow: hidden; }
@@ -164,7 +170,7 @@
         .vx-actions { position: relative; display: inline-block; }
         .vx-actions-toggle { width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--vx-border); background: var(--vx-surface); color: var(--vx-text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; font-size: 14px; }
         .vx-actions-toggle:hover { background: var(--vx-surface-hover); color: var(--vx-text); border-color: var(--vx-primary); }
-        .vx-actions-menu { position: absolute; right: 0; top: 100%; margin-top: 4px; min-width: 150px; background: var(--vx-surface); border: 1px solid var(--vx-border); border-radius: 8px; box-shadow: var(--vx-shadow-lg); z-index: 50; padding: 4px; display: none; }
+        .vx-actions-menu { position: absolute; left: 0; top: 100%; margin-top: 4px; min-width: 150px; background: var(--vx-surface); border: 1px solid var(--vx-border); border-radius: 8px; box-shadow: var(--vx-shadow-lg); z-index: 50; padding: 4px; display: none; }
         .vx-actions.open .vx-actions-menu { display: block; }
         .vx-actions-menu a, .vx-actions-menu button { display: flex; align-items: center; gap: 8px; width: 100%; padding: 7px 10px; border: none; background: none; border-radius: 5px; font-size: 12px; color: var(--vx-text); text-decoration: none; cursor: pointer; transition: background 0.1s; font-family: var(--vx-font); }
         .vx-actions-menu a:hover, .vx-actions-menu button:hover { background: var(--vx-surface-hover); }
@@ -296,6 +302,8 @@
         @media (max-width: 768px) {
             .vx-grid-2, .vx-grid-3, .vx-grid-4 { grid-template-columns: 1fr; }
             .vx-main { padding: 16px; }
+            .vx-modules-inner { padding: 0 12px; }
+            .vx-mod-link { padding: 8px 12px; font-size: 11px; }
             .vx-page-header { flex-direction: column; align-items: flex-start; }
             .vx-navbar { padding: 0 12px; }
             .vx-info-row { flex-direction: column; gap: 4px; }
@@ -407,7 +415,7 @@
             {{-- Módulo GESTIÓN --}}
             @canany(['ver usuarios', 'ver departamentos', 'ver centros', 'ver roles', 'ver restricciones', 'ver clientes'])
             <li class="vx-nav-item">
-                <button class="vx-nav-link {{ request()->is('gestion*','users*','clientes*','departamentos*','centros*','roles*','restricciones*','empresas*','noticias*','campanias*','naming-pcs*','vacaciones*','festivos*','dataxis*') ? 'active' : '' }}">
+                <button class="vx-nav-link {{ request()->is('gestion*','users*','clientes*','departamentos*','centros*','roles*','restricciones*','empresas*','noticias*','campanias*','naming-pcs*','vacaciones*','festivos*') ? 'active' : '' }}">
                     <i class="bi bi-building"></i> Gestión <i class="bi bi-chevron-down" style="font-size:10px;"></i>
                 </button>
                 <div class="vx-dropdown vx-dropdown-sub">
@@ -419,17 +427,6 @@
                     <a href="{{ route('clientes.index') }}" class="vx-dropdown-item"><i class="bi bi-person-lines-fill"></i> Clientes</a>
                     @endcan
                     <a href="{{ route('vacaciones.index') }}" class="vx-dropdown-item"><i class="bi bi-calendar-check"></i> Vacaciones</a>
-                    {{-- Dataxis --}}
-                    <div class="vx-submenu-parent">
-                        <div class="vx-dropdown-item vx-submenu-trigger"><i class="bi bi-graph-up"></i> Dataxis <i class="bi bi-chevron-right" style="margin-left:auto;font-size:10px;"></i></div>
-                        <div class="vx-submenu">
-                            <a href="{{ route('dataxis.inicio') }}" class="vx-dropdown-item"><i class="bi bi-house-door"></i> Inicio</a>
-                            <a href="{{ route('dataxis.general') }}" class="vx-dropdown-item"><i class="bi bi-speedometer2"></i> General</a>
-                            <a href="{{ route('dataxis.ventas') }}" class="vx-dropdown-item"><i class="bi bi-currency-euro"></i> Ventas</a>
-                            <a href="{{ route('dataxis.stock') }}" class="vx-dropdown-item"><i class="bi bi-box-seam"></i> Stock</a>
-                            <a href="{{ route('dataxis.taller') }}" class="vx-dropdown-item"><i class="bi bi-wrench-adjustable"></i> Taller</a>
-                        </div>
-                    </div>
                     {{-- Seguridad con submenú --}}
                     <div class="vx-submenu-parent">
                         <div class="vx-dropdown-item vx-submenu-trigger"><i class="bi bi-shield-lock"></i> Seguridad <i class="bi bi-chevron-right" style="margin-left:auto;font-size:10px;"></i></div>
@@ -491,7 +488,7 @@
                 <div class="vx-dropdown">
                     <a href="{{ route('recambios.inicio') }}" class="vx-dropdown-item"><i class="bi bi-house-door"></i> Inicio</a>
                     @can('ver almacenes')
-                    <a href="{{ route('almacenes.index') }}" class="vx-dropdown-item"><i class="bi bi-warehouse"></i> Almacenes</a>
+                    <a href="{{ route('almacenes.index') }}" class="vx-dropdown-item"><i class="bi bi-shop"></i> Almacenes</a>
                     @endcan
                     @can('ver stocks')
                     <a href="{{ route('stocks.index') }}" class="vx-dropdown-item"><i class="bi bi-box2"></i> Stock</a>
@@ -545,6 +542,20 @@
                 </div>
             </li>
             @endcanany
+
+            {{-- Módulo DATAXIS --}}
+            <li class="vx-nav-item">
+                <button class="vx-nav-link {{ request()->is('dataxis*') ? 'active' : '' }}">
+                    <i class="bi bi-graph-up"></i> Dataxis <i class="bi bi-chevron-down" style="font-size:10px;"></i>
+                </button>
+                <div class="vx-dropdown">
+                    <a href="{{ route('dataxis.inicio') }}" class="vx-dropdown-item"><i class="bi bi-house-door"></i> Inicio</a>
+                    <a href="{{ route('dataxis.general') }}" class="vx-dropdown-item"><i class="bi bi-speedometer2"></i> General</a>
+                    <a href="{{ route('dataxis.ventas') }}" class="vx-dropdown-item"><i class="bi bi-currency-euro"></i> Ventas</a>
+                    <a href="{{ route('dataxis.stock') }}" class="vx-dropdown-item"><i class="bi bi-box-seam"></i> Stock</a>
+                    <a href="{{ route('dataxis.taller') }}" class="vx-dropdown-item"><i class="bi bi-wrench-adjustable"></i> Taller</a>
+                </div>
+            </li>
 
             {{-- Módulo CLIENTE --}}
             <li class="vx-nav-item">
@@ -624,6 +635,20 @@
             @endauth
         </div>
     </nav>
+
+    {{-- Barra de módulos --}}
+    @auth
+    <div class="vx-modules-bar">
+        <div class="vx-modules-inner">
+            <a href="{{ route('gestion.inicio') }}" class="vx-mod-link {{ request()->is('gestion*','users*','clientes*','departamentos*','centros*','roles*','restricciones*','empresas*','noticias*','campanias*','naming-pcs*','vacaciones*','festivos*') ? 'active' : '' }}"><i class="bi bi-building"></i> Gestión</a>
+            <a href="{{ route('recambios.inicio') }}" class="vx-mod-link {{ request()->is('recambios*','almacenes*','stocks*','repartos*') ? 'active' : '' }}"><i class="bi bi-box-seam"></i> Recambios</a>
+            <a href="{{ route('talleres.inicio') }}" class="vx-mod-link {{ request()->is('talleres*','mecanicos*','citas*','coches-sustitucion*') ? 'active' : '' }}"><i class="bi bi-wrench-adjustable"></i> Talleres</a>
+            <a href="{{ route('comercial.inicio') }}" class="vx-mod-link {{ request()->is('comercial*','ofertas*','vehiculos*','ventas*','tasaciones*','catalogo-precios*') ? 'active' : '' }}"><i class="bi bi-car-front"></i> Comercial</a>
+            <a href="{{ route('dataxis.inicio') }}" class="vx-mod-link {{ request()->is('dataxis*') ? 'active' : '' }}"><i class="bi bi-graph-up"></i> Dataxis</a>
+            <a href="{{ route('cliente.inicio') }}" class="vx-mod-link {{ request()->is('cliente*') ? 'active' : '' }}"><i class="bi bi-person-heart"></i> Cliente</a>
+        </div>
+    </div>
+    @endauth
 
     <!-- Main Content -->
     <main class="vx-main vx-fade-in">

@@ -10,14 +10,14 @@
     </div>
 </div>
 
-{{-- Carrusel de noticias --}}
 @if($noticias->count() > 0)
-<div class="vx-card" style="margin-bottom:20px;overflow:hidden;">
-    <div style="position:relative;">
+<div class="news-carousel-wrapper">
+    <button class="news-arrow news-prev" onclick="moveSlide(-1)"><i class="bi bi-chevron-left"></i></button>
+    <div class="vx-card" style="flex:1;overflow:hidden;margin:0;">
         <div id="newsCarousel" style="overflow:hidden;">
             <div id="newsTrack" style="display:flex;transition:transform 0.4s ease;">
                 @foreach($noticias as $i => $noticia)
-                <div class="news-slide" style="min-width:100%;padding:28px 32px;box-sizing:border-box;">
+                <div class="news-slide" style="min-width:100%;padding:24px 28px;box-sizing:border-box;">
                     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;">
                         <div style="flex:1;">
                             <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
@@ -46,16 +46,13 @@
                 @endforeach
             </div>
         </div>
-        {{-- Controles --}}
-        <button class="news-arrow news-prev" onclick="moveSlide(-1)"><i class="bi bi-chevron-left"></i></button>
-        <button class="news-arrow news-next" onclick="moveSlide(1)"><i class="bi bi-chevron-right"></i></button>
-        {{-- Indicadores --}}
-        <div style="display:flex;justify-content:center;gap:6px;padding:12px 0 16px;" id="newsDots">
-            @foreach($noticias as $i => $n)
-            <button class="news-dot {{ $i === 0 ? 'active' : '' }}" onclick="goSlide({{ $i }})"></button>
-            @endforeach
-        </div>
     </div>
+    <button class="news-arrow news-next" onclick="moveSlide(1)"><i class="bi bi-chevron-right"></i></button>
+</div>
+<div style="display:flex;justify-content:center;gap:6px;padding:12px 0;" id="newsDots">
+    @foreach($noticias as $i => $n)
+    <button class="news-dot {{ $i === 0 ? 'active' : '' }}" onclick="goSlide({{ $i }})"></button>
+    @endforeach
 </div>
 @else
 <div class="vx-card"><div class="vx-card-body"><div class="vx-empty"><i class="bi bi-newspaper"></i><p>No se encontraron noticias.</p></div></div></div>
@@ -63,10 +60,9 @@
 
 @push('styles')
 <style>
-.news-arrow { position:absolute; top:50%; transform:translateY(-50%); width:36px; height:36px; border-radius:50%; border:1px solid var(--vx-border); background:var(--vx-surface); color:var(--vx-text); display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:5; transition:all 0.15s; box-shadow:var(--vx-shadow-sm); }
+.news-carousel-wrapper { display:flex; align-items:center; gap:12px; margin-bottom:0; }
+.news-arrow { width:40px; height:40px; border-radius:50%; border:1px solid var(--vx-border); background:var(--vx-surface); color:var(--vx-text); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.15s; box-shadow:var(--vx-shadow-sm); flex-shrink:0; }
 .news-arrow:hover { background:var(--vx-primary); color:white; border-color:var(--vx-primary); }
-.news-prev { left:8px; }
-.news-next { right:8px; }
 .news-dot { width:8px; height:8px; border-radius:50%; border:none; background:var(--vx-gray-300); cursor:pointer; transition:all 0.2s; padding:0; }
 .news-dot.active { background:var(--vx-primary); width:20px; border-radius:4px; }
 </style>
@@ -77,7 +73,6 @@
 let currentSlide = 0;
 const total = {{ $noticias->count() }};
 let autoplay;
-
 function goSlide(n) {
     currentSlide = n;
     if (currentSlide < 0) currentSlide = total - 1;
