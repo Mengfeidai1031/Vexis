@@ -14,7 +14,11 @@
         </a>
         <a href="{{ route('cliente.pretasacion') }}" class="vx-module-card">
             <div class="vx-module-icon" style="background:rgba(155,89,182,0.1);color:#9B59B6;"><i class="bi bi-calculator"></i></div>
-            <div class="vx-module-info"><h4>Pretasación IA</h4><p>Obtén una valoración orientativa de tu vehículo</p></div>
+            <div class="vx-module-info"><h4>Pretasación IA</h4><p>Valoración orientativa con inteligencia artificial</p></div>
+        </a>
+        <a href="{{ route('cliente.tasacion.form') }}" class="vx-module-card">
+            <div class="vx-module-icon" style="background:rgba(46,204,113,0.1);color:var(--vx-success);"><i class="bi bi-clipboard-check"></i></div>
+            <div class="vx-module-info"><h4>Solicitar Tasación</h4><p>Tasación formal por nuestros expertos</p></div>
         </a>
         <a href="{{ route('cliente.configurador') }}" class="vx-module-card">
             <div class="vx-module-icon" style="background:rgba(46,204,113,0.1);color:var(--vx-success);"><i class="bi bi-palette"></i></div>

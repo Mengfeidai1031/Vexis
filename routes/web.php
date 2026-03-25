@@ -353,6 +353,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/cliente/chatbot/query', [ClienteModuloController::class, 'chatbotQuery'])->name('cliente.chatbot.query');
     Route::get('/cliente/pretasacion', [ClienteModuloController::class, 'pretasacion'])->name('cliente.pretasacion');
     Route::post('/cliente/pretasacion/query', [ClienteModuloController::class, 'pretasacionQuery'])->name('cliente.pretasacion.query');
+    Route::get('/cliente/tasacion', [ClienteModuloController::class, 'tasacionForm'])->name('cliente.tasacion.form');
+    Route::post('/cliente/tasacion', [ClienteModuloController::class, 'tasacionStore'])->name('cliente.tasacion.store');
     Route::get('/cliente/campanias', [ClienteModuloController::class, 'campanias'])->name('cliente.campanias');
     Route::get('/cliente/concesionarios', [ClienteModuloController::class, 'concesionarios'])->name('cliente.concesionarios');
     Route::get('/cliente/precios', [ClienteModuloController::class, 'precios'])->name('cliente.precios');

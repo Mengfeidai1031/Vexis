@@ -574,6 +574,7 @@
                     <a href="{{ route('cliente.inicio') }}" class="vx-dropdown-item"><i class="bi bi-house-door"></i> Inicio</a>
                     <a href="{{ route('cliente.chatbot') }}" class="vx-dropdown-item"><i class="bi bi-robot"></i> Chatbot IA</a>
                     <a href="{{ route('cliente.pretasacion') }}" class="vx-dropdown-item"><i class="bi bi-calculator"></i> Pretasación IA</a>
+                    <a href="{{ route('cliente.tasacion.form') }}" class="vx-dropdown-item"><i class="bi bi-clipboard-check"></i> Solicitar Tasación</a>
                     <a href="{{ route('cliente.configurador') }}" class="vx-dropdown-item"><i class="bi bi-palette"></i> Configurador</a>
                     <a href="{{ route('cliente.precios') }}" class="vx-dropdown-item"><i class="bi bi-currency-euro"></i> Precios</a>
                     <a href="{{ route('cliente.campanias') }}" class="vx-dropdown-item"><i class="bi bi-megaphone"></i> Campañas</a>
