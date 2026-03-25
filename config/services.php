@@ -37,6 +37,8 @@ return [
 
     'gemini' => [
         'api_key' => env('GEMINI_API_KEY'),
+        'model' => env('GEMINI_MODEL', null), // Ejemplo: 'gemini-1.5-flash'
+        'api_version' => env('GEMINI_API_VERSION', null), // Ejemplo: 'v1beta' o 'v1'
     ],
 
 ];
