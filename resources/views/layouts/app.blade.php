@@ -129,6 +129,14 @@
         .vx-mod-link:hover { color: var(--vx-primary); }
         .vx-mod-link.active { color: var(--vx-primary); border-bottom-color: var(--vx-primary); }
         .vx-mod-link i { font-size: 14px; }
+        .vx-toggle-group { display: flex; align-items: center; gap: 4px; }
+        .vx-toggle-label { font-size: 14px; color: var(--vx-text-muted); width: 18px; text-align: center; }
+        .vx-switch { position: relative; display: inline-block; width: 32px; height: 18px; }
+        .vx-switch input { opacity: 0; width: 0; height: 0; }
+        .vx-switch-slider { position: absolute; cursor: pointer; inset: 0; background: var(--vx-gray-300); border-radius: 18px; transition: 0.2s; }
+        .vx-switch-slider::before { content: ''; position: absolute; height: 14px; width: 14px; left: 2px; bottom: 2px; background: white; border-radius: 50%; transition: 0.2s; }
+        .vx-switch input:checked + .vx-switch-slider { background: var(--vx-primary); }
+        .vx-switch input:checked + .vx-switch-slider::before { transform: translateX(14px); }
 
         /* Cards */
         .vx-card { background: var(--vx-surface); border: 1px solid var(--vx-border); border-radius: var(--vx-radius-lg); box-shadow: var(--vx-shadow-sm); transition: all 0.3s ease; overflow: hidden; }
@@ -587,6 +595,23 @@
             </button>
 
             @auth
+            <!-- Toggle Responsive -->
+            <div class="vx-toggle-group" title="Vista móvil / escritorio">
+                <label class="vx-switch">
+                    <input type="checkbox" id="toggleResponsive" onchange="toggleResponsiveView()">
+                    <span class="vx-switch-slider"></span>
+                </label>
+                <span class="vx-toggle-label" id="responsiveLabel"><i class="bi bi-display"></i></span>
+            </div>
+
+            <!-- Toggle Vista -->
+            <div class="vx-toggle-group" title="Vista desarrollador / cliente">
+                <label class="vx-switch">
+                    <input type="checkbox" id="toggleClientView" onchange="toggleClienteView()">
+                    <span class="vx-switch-slider"></span>
+                </label>
+                <span class="vx-toggle-label" id="clientViewLabel"><i class="bi bi-code-slash"></i></span>
+            </div>
             <!-- Notifications -->
             <div class="vx-nav-item" style="position:relative;">
                 <button class="vx-icon-btn" onclick="toggleNotifications()" title="Notificaciones" style="position:relative;">
@@ -809,6 +834,72 @@
             document.querySelectorAll('.vx-actions.open').forEach(el => el.classList.remove('open'));
         }
     });
+
+    // === Toggle Responsive (móvil/escritorio) ===
+    function toggleResponsiveView() {
+        const on = document.getElementById('toggleResponsive').checked;
+        const label = document.getElementById('responsiveLabel');
+        if (on) {
+            document.body.style.maxWidth = '390px';
+            document.body.style.margin = '0 auto';
+            document.body.style.boxShadow = '0 0 30px rgba(0,0,0,0.15)';
+            document.body.style.minHeight = '100vh';
+            label.innerHTML = '<i class="bi bi-phone"></i>';
+        } else {
+            document.body.style.maxWidth = '';
+            document.body.style.margin = '';
+            document.body.style.boxShadow = '';
+            label.innerHTML = '<i class="bi bi-display"></i>';
+        }
+        localStorage.setItem('vx-responsive', on ? '1' : '0');
+    }
+    if (localStorage.getItem('vx-responsive') === '1') {
+        document.getElementById('toggleResponsive').checked = true;
+        toggleResponsiveView();
+    }
+
+    // === Toggle Vista Cliente/Desarrollador ===
+    function toggleClienteView() {
+        const on = document.getElementById('toggleClientView').checked;
+        const label = document.getElementById('clientViewLabel');
+        const modulesBar = document.querySelector('.vx-modules-bar');
+        const navItems = document.querySelectorAll('.vx-nav > li');
+        if (on) {
+            label.innerHTML = '<i class="bi bi-person"></i>';
+            if (modulesBar) {
+                modulesBar.querySelectorAll('.vx-mod-link').forEach(l => {
+                    if (l.href && l.href.includes('cliente')) {
+                        l.style.display = '';
+                        l.innerHTML = '<i class="bi bi-list"></i> Menú';
+                    } else {
+                        l.style.display = 'none';
+                    }
+                });
+            }
+            navItems.forEach(li => {
+                const btn = li.querySelector('.vx-nav-link');
+                if (btn && !btn.textContent.includes('Cliente')) {
+                    li.style.display = 'none';
+                }
+            });
+        } else {
+            label.innerHTML = '<i class="bi bi-code-slash"></i>';
+            if (modulesBar) {
+                const names = ['Gestión','Recambios','Talleres','Comercial','Dataxis','Cliente'];
+                const icons = ['bi-building','bi-box-seam','bi-wrench-adjustable','bi-car-front','bi-graph-up','bi-person-heart'];
+                modulesBar.querySelectorAll('.vx-mod-link').forEach((l, i) => {
+                    l.style.display = '';
+                    if (names[i]) l.innerHTML = '<i class="bi ' + icons[i] + '"></i> ' + names[i];
+                });
+            }
+            navItems.forEach(li => li.style.display = '');
+        }
+        localStorage.setItem('vx-client-view', on ? '1' : '0');
+    }
+    if (localStorage.getItem('vx-client-view') === '1') {
+        document.getElementById('toggleClientView').checked = true;
+        toggleClienteView();
+    }
     </script>
     @stack('scripts')
 </body>
