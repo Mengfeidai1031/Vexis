@@ -52,7 +52,7 @@ class TasacionController extends Controller
 
     public function update(Request $request, Tasacion $tasacion)
     {
-        $request->validate(['vehiculo_marca'=>'required|max:100','vehiculo_modelo'=>'required|max:150','vehiculo_anio'=>'required|integer','kilometraje'=>'required|integer|min:0','empresa_id'=>'required|exists:empresas,id','estado_vehiculo'=>'nullable|in:excelente,bueno,regular,malo','estado'=>'required|in:pendiente,valorada,aceptada,rechazada','fecha_tasacion'=>'required|date']);
+        $request->validate(['vehiculo_marca'=>'required|max:100','vehiculo_modelo'=>'required|max:150','vehiculo_anio'=>'required|integer','kilometraje'=>'required|integer|min:0','empresa_id'=>'required|exists:empresas,id','estado'=>'required|in:pendiente,valorada,aceptada,rechazada','fecha_tasacion'=>'required|date']);
         $tasacion->update($request->all());
         return redirect()->route('tasaciones.index')->with('success', 'Tasación actualizada correctamente.');
     }

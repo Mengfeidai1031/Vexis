@@ -106,7 +106,7 @@ class DatosEjemploSeeder extends Seeder
         $empresa = Empresa::first();
         $centro = Centro::first();
 
-        $estados = ['solicitado','preparando','en_transito','entregado'];
+        $estados = ['pendiente','en_transito','entregado','cancelado'];
         for ($i = 1; $i <= 6; $i++) {
             Reparto::firstOrCreate(
                 ['codigo_reparto' => 'REP-' . date('Ym') . '-' . str_pad($i, 4, '0', STR_PAD_LEFT)],

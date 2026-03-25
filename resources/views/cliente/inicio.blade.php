@@ -14,11 +14,11 @@
         </a>
         <a href="{{ route('cliente.pretasacion') }}" class="vx-module-card">
             <div class="vx-module-icon" style="background:rgba(155,89,182,0.1);color:#9B59B6;"><i class="bi bi-calculator"></i></div>
-            <div class="vx-module-info"><h4>Pretasación IA</h4><p>Valoración orientativa con inteligencia artificial</p></div>
+            <div class="vx-module-info"><h4>Pretasación IA</h4><p>Obtén una valoración orientativa de tu vehículo</p></div>
         </a>
-        <a href="{{ route('cliente.tasacion.form') }}" class="vx-module-card">
-            <div class="vx-module-icon" style="background:rgba(46,204,113,0.1);color:var(--vx-success);"><i class="bi bi-clipboard-check"></i></div>
-            <div class="vx-module-info"><h4>Solicitar Tasación</h4><p>Tasación formal por nuestros expertos</p></div>
+        <a href="{{ route('cliente.tasacion') }}" class="vx-module-card">
+            <div class="vx-module-icon" style="background:rgba(241,196,15,0.1);color:#F1C40F;"><i class="bi bi-clipboard-check"></i></div>
+            <div class="vx-module-info"><h4>Tasación Formal</h4><p>Solicita una tasación oficial y consulta su estado</p></div>
         </a>
         <a href="{{ route('cliente.configurador') }}" class="vx-module-card">
             <div class="vx-module-icon" style="background:rgba(46,204,113,0.1);color:var(--vx-success);"><i class="bi bi-palette"></i></div>

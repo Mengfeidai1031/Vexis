@@ -21,42 +21,52 @@
     @if(request()->anyFilled(['search','marca_id']))<a href="{{ route('campanias.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>@endif
 </form>
 @if($campanias->count() > 0)
-    @foreach($campanias as $ci => $campania)
+    @foreach($campanias as $campania)
     <div class="vx-card" style="margin-bottom:16px;">
         <div class="vx-card-header" style="display:flex;justify-content:space-between;align-items:center;">
             <div>
                 <h4 style="margin:0;">{{ $campania->nombre }}</h4>
                 <div style="font-size:12px;color:var(--vx-text-muted);margin-top:2px;">
-                    @if($campania->marca)<span class="vx-badge" style="background:{{ $campania->marca->color }}20;color:{{ $campania->marca->color }};">{{ $campania->marca->nombre }}</span>@endif
+                    <span class="vx-badge" style="background:{{ $campania->marca->color }}20;color:{{ $campania->marca->color }};">{{ $campania->marca->nombre }}</span>
                     @if($campania->fecha_inicio) {{ $campania->fecha_inicio->format('d/m/Y') }} @endif
                     @if($campania->fecha_fin) — {{ $campania->fecha_fin->format('d/m/Y') }} @endif
                     @if($campania->activa)<span class="vx-badge vx-badge-success">Activa</span>@else<span class="vx-badge vx-badge-gray">Inactiva</span>@endif
+                    · {{ $campania->fotos->count() }} foto(s)
                 </div>
             </div>
             <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
                 <a href="{{ route('campanias.show', $campania) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
                 @can('editar campanias')<a href="{{ route('campanias.edit', $campania) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>@endcan
                 @can('eliminar campanias')
-                <form action="{{ route('campanias.destroy', $campania) }}" method="POST" onsubmit="return confirm('¿Eliminar campaña y todas sus fotos?');">@csrf @method('DELETE')
+                <form action="{{ route('campanias.destroy', $campania) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar campaña y todas sus fotos?');">
+                    @csrf @method('DELETE')
                     <button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button>
                 </form>
                 @endcan
             </div></div>
         </div>
         @if($campania->fotos->count() > 0)
-        <div class="vx-card-body" style="padding:0;">
-            <div class="camp-carousel" data-id="{{ $ci }}">
-                <div class="camp-track" id="campTrack{{ $ci }}" style="display:flex;transition:transform 0.3s ease;">
+        <div class="vx-card-body" style="padding:12px;">
+            <div class="cmp-carousel" data-cmp-carousel="{{ $campania->id }}">
+                <div class="cmp-track" id="cmpTrack{{ $campania->id }}">
                     @foreach($campania->fotos as $foto)
-                    <div style="min-width:100%;display:flex;align-items:center;justify-content:center;background:var(--vx-bg);padding:12px;">
-                        <img src="{{ asset('storage/' . $foto->ruta) }}" alt="{{ $foto->nombre_original }}" style="max-height:240px;max-width:100%;object-fit:contain;border-radius:8px;">
+                    <div class="cmp-slide">
+                        <img src="{{ \Illuminate\Support\Facades\Storage::url($foto->ruta) }}" alt="{{ $foto->nombre_original }}" class="cmp-image">
                     </div>
                     @endforeach
                 </div>
                 @if($campania->fotos->count() > 1)
-                <button class="camp-arr camp-prev" onclick="moveCamp({{ $ci }},-1)"><i class="bi bi-chevron-left"></i></button>
-                <button class="camp-arr camp-next" onclick="moveCamp({{ $ci }},1)"><i class="bi bi-chevron-right"></i></button>
-                <div class="camp-counter" id="campCounter{{ $ci }}">1 / {{ $campania->fotos->count() }}</div>
+                <button class="cmp-arrow cmp-prev" type="button" onclick="moveCampaniaSlide({{ $campania->id }}, -1)" aria-label="Foto anterior">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <button class="cmp-arrow cmp-next" type="button" onclick="moveCampaniaSlide({{ $campania->id }}, 1)" aria-label="Siguiente foto">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+                <div class="cmp-dots" id="cmpDots{{ $campania->id }}">
+                    @foreach($campania->fotos as $foto)
+                    <button class="cmp-dot {{ $loop->first ? 'active' : '' }}" type="button" onclick="goCampaniaSlide({{ $campania->id }}, {{ $loop->index }})"></button>
+                    @endforeach
+                </div>
                 @endif
             </div>
         </div>
@@ -67,31 +77,47 @@
 @else
     <div class="vx-card"><div class="vx-card-body"><div class="vx-empty"><i class="bi bi-megaphone"></i><p>No se encontraron campañas.</p></div></div></div>
 @endif
-
 @push('styles')
 <style>
-.camp-carousel { position:relative; overflow:hidden; }
-.camp-arr { position:absolute; top:50%; transform:translateY(-50%); width:32px; height:32px; border-radius:50%; border:1px solid var(--vx-border); background:var(--vx-surface); color:var(--vx-text); display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:5; transition:all 0.15s; box-shadow:var(--vx-shadow-sm); opacity:0.8; }
-.camp-arr:hover { background:var(--vx-primary); color:white; border-color:var(--vx-primary); opacity:1; }
-.camp-prev { left:8px; }
-.camp-next { right:8px; }
-.camp-counter { position:absolute; bottom:8px; right:12px; font-size:11px; background:rgba(0,0,0,0.5); color:white; padding:2px 8px; border-radius:10px; }
+.cmp-carousel { position: relative; overflow: hidden; border-radius: 8px; background: var(--vx-gray-100); }
+.cmp-track { display: flex; transition: transform 0.35s ease; }
+.cmp-slide { min-width: 100%; height: 180px; display: flex; align-items: center; justify-content: center; }
+.cmp-image { width: 100%; height: 100%; object-fit: cover; }
+.cmp-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.7); background: rgba(0,0,0,0.45); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2; }
+.cmp-prev { left: 10px; }
+.cmp-next { right: 10px; }
+.cmp-arrow:hover { background: rgba(0,0,0,0.62); }
+.cmp-dots { position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); display: flex; gap: 6px; }
+.cmp-dot { width: 7px; height: 7px; border-radius: 50%; border: none; background: rgba(255,255,255,0.55); cursor: pointer; padding: 0; }
+.cmp-dot.active { width: 18px; border-radius: 4px; background: #fff; }
 </style>
 @endpush
-
 @push('scripts')
 <script>
-const campSlides = {};
-function moveCamp(id, dir) {
-    if (!campSlides[id]) campSlides[id] = { current: 0 };
-    const track = document.getElementById('campTrack' + id);
-    const total = track.children.length;
-    campSlides[id].current += dir;
-    if (campSlides[id].current < 0) campSlides[id].current = total - 1;
-    if (campSlides[id].current >= total) campSlides[id].current = 0;
-    track.style.transform = `translateX(-${campSlides[id].current * 100}%)`;
-    const counter = document.getElementById('campCounter' + id);
-    if (counter) counter.textContent = (campSlides[id].current + 1) + ' / ' + total;
+const campaniaSlides = {};
+
+function updateCampaniaSlide(campaniaId) {
+    const track = document.getElementById(`cmpTrack${campaniaId}`);
+    if (!track) return;
+
+    const index = campaniaSlides[campaniaId] ?? 0;
+    track.style.transform = `translateX(-${index * 100}%)`;
+
+    const dots = document.querySelectorAll(`#cmpDots${campaniaId} .cmp-dot`);
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+}
+
+function goCampaniaSlide(campaniaId, index) {
+    const total = document.querySelectorAll(`#cmpTrack${campaniaId} .cmp-slide`).length;
+    if (!total) return;
+
+    campaniaSlides[campaniaId] = ((index % total) + total) % total;
+    updateCampaniaSlide(campaniaId);
+}
+
+function moveCampaniaSlide(campaniaId, step) {
+    const current = campaniaSlides[campaniaId] ?? 0;
+    goCampaniaSlide(campaniaId, current + step);
 }
 </script>
 @endpush

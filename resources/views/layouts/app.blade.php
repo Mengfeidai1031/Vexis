@@ -120,46 +120,64 @@
         .vx-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--vx-primary), var(--vx-primary-dark)); color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; cursor: pointer; transition: box-shadow 0.2s; }
         .vx-avatar:hover { box-shadow: 0 0 0 3px rgba(51, 170, 221, 0.25); }
         .vx-user-dropdown { right: 0; left: auto; }
+        .vx-navbar-modes { display: flex; align-items: center; gap: 10px; margin-left: 8px; }
+        .vx-mode-toggle { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--vx-border); background: var(--vx-surface); color: var(--vx-text-secondary); border-radius: 999px; padding: 3px; min-height: 34px; }
+        .vx-mode-toggle button { border: none; background: transparent; color: inherit; font-size: 11px; font-weight: 700; border-radius: 999px; padding: 5px 10px; cursor: pointer; transition: all 0.15s; font-family: var(--vx-font); }
+        .vx-mode-toggle button.active { background: var(--vx-primary); color: #fff; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08); }
+        .vx-mode-toggle button:not(.active):hover { color: var(--vx-text); background: var(--vx-surface-hover); }
+        .vx-navbar-mobile-tools { display: none; position: relative; margin-left: 8px; }
+        .vx-mobile-tools-btn { height: 34px; border-radius: 8px; border: 1px solid var(--vx-border); background: var(--vx-surface); color: var(--vx-text-secondary); padding: 0 12px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+        .vx-mobile-tools-btn:hover { background: var(--vx-surface-hover); color: var(--vx-text); }
+        .vx-mobile-tools-menu { position: absolute; top: calc(100% + 6px); right: 0; min-width: 220px; background: var(--vx-surface); border: 1px solid var(--vx-border); border-radius: 10px; box-shadow: var(--vx-shadow-lg); padding: 6px; display: none; z-index: 1300; }
+        .vx-navbar-mobile-tools.open .vx-mobile-tools-menu { display: block; }
+        .vx-mobile-tools-menu button, .vx-mobile-tools-menu a { width: 100%; border: none; background: none; color: var(--vx-text); border-radius: 7px; padding: 8px 10px; display: flex; align-items: center; gap: 9px; text-decoration: none; font-size: 12px; cursor: pointer; text-align: left; font-family: var(--vx-font); }
+        .vx-mobile-tools-menu form { margin: 0; }
+        .vx-mobile-tools-menu button:hover, .vx-mobile-tools-menu a:hover { background: var(--vx-surface-hover); }
+        .vx-mobile-tools-menu .danger { color: var(--vx-danger); }
+        .vx-modulebar { background: linear-gradient(90deg, #1F7FC6, #226FC2); border-bottom: 1px solid rgba(255,255,255,0.18); position: sticky; top: var(--vx-navbar-height); z-index: 990; box-shadow: 0 3px 10px rgba(18, 54, 97, 0.22); }
+        .vx-modulebar-inner { max-width: 1200px; width: 100%; margin: 0 auto; padding: 8px 24px; }
+        .vx-modules-toggle { display: none; align-items: center; gap: 8px; border: 1px solid rgba(255,255,255,0.28); color: #fff; background: rgba(255,255,255,0.12); border-radius: 8px; padding: 7px 12px; font-size: 12px; font-weight: 700; cursor: pointer; }
+        .vx-modules-toggle:hover { background: rgba(255,255,255,0.2); }
+        .vx-module-panel { margin-top: 8px; padding: 0; border-radius: 10px; background: transparent; border: none; display: block; }
+        .vx-module-panel.open { display: block; }
+        .vx-module-nav { display: flex; align-items: center; gap: 6px; list-style: none; width: 100%; margin: 0; padding: 0; overflow: visible; flex-wrap: wrap; }
+        .vx-module-nav .vx-nav-link { color: rgba(255,255,255,0.92); background: transparent; }
+        .vx-module-nav .vx-nav-link:hover, .vx-module-nav .vx-nav-link.active { color: #FFFFFF; background: rgba(255,255,255,0.18); }
+        .vx-module-nav .vx-nav-link i { color: rgba(255,255,255,0.92); }
+        .vx-module-nav .vx-dropdown { top: calc(100% + 8px); }
+        .vx-module-label-client { display: none; }
+        .vx-client-mode .vx-module-item-dev { display: none !important; }
+        .vx-client-mode .vx-module-label-default { display: none; }
+        .vx-client-mode .vx-module-label-client { display: inline; }
+        .vx-preview-stage { width: 100%; }
+        .vx-preview-device { width: 100%; }
+        .vx-force-mobile { background: #10151f; }
+        .vx-force-mobile .vx-preview-stage { min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; padding: 14px; overflow: auto; }
+        .vx-force-mobile .vx-preview-device { width: 390px; max-width: 390px; background: var(--vx-bg); border-radius: 22px; border: 8px solid #0b0f17; box-shadow: 0 20px 50px rgba(0,0,0,0.45); overflow: hidden; transform-origin: top center; transform: scale(var(--vx-mobile-preview-scale, 1)); }
+        .vx-force-mobile .vx-navbar { padding: 8px 10px 4px; min-height: calc(var(--vx-navbar-height) + 12px); height: auto; align-items: center; }
+        .vx-force-mobile .vx-navbar-modes { display: none; }
+        .vx-force-mobile .vx-nav-right { display: none; }
+        .vx-force-mobile .vx-navbar-mobile-tools { display: block; margin-left: auto; }
+        .vx-force-mobile .vx-main { width: 100%; padding: 14px; max-width: none; }
+        .vx-force-mobile .vx-modulebar-inner { padding: 8px 10px; }
+        .vx-force-mobile .vx-modules-toggle { display: inline-flex; }
+        .vx-force-mobile .vx-module-panel { margin-top: 6px; padding: 8px; border-radius: 10px; background: rgba(9, 39, 78, 0.22); border: 1px solid rgba(255,255,255,0.14); display: none; }
+        .vx-force-mobile .vx-module-panel.open { display: block; }
+        .vx-force-mobile .vx-module-nav { flex-direction: column; align-items: stretch; }
+        .vx-force-mobile .vx-module-nav .vx-nav-item { width: 100%; }
+        .vx-force-mobile .vx-module-nav .vx-nav-link { width: 100%; justify-content: space-between; }
 
         /* Main Content */
-        .vx-main { flex: 1; padding: 24px; max-width: 1400px; width: 100%; margin: 0 auto; }
-        .vx-modules-bar { background: linear-gradient(135deg, #1a3a5c, #1e4d7b); border-bottom: 1px solid rgba(255,255,255,0.1); padding: 0; position: sticky; top: var(--vx-navbar-height); z-index: 999; }
-        .vx-modules-inner { display: flex; align-items: center; gap: 0; max-width: 1400px; margin: 0 auto; padding: 0 16px; overflow-x: auto; }
-        .vx-mod-item { position: relative; }
-        .vx-mod-btn { display: flex; align-items: center; gap: 6px; padding: 10px 16px; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.15s; white-space: nowrap; font-family: var(--vx-font); }
-        .vx-mod-btn:hover { color: white; }
-        .vx-mod-btn.active { color: white; border-bottom-color: white; }
-        .vx-mod-btn i { font-size: 14px; }
-        .vx-mod-btn .bi-chevron-down { font-size: 9px; opacity: 0.6; }
-        .vx-mod-drop { position: absolute; left: 0; top: 100%; min-width: 200px; background: var(--vx-surface); border: 1px solid var(--vx-border); border-radius: 0 0 8px 8px; box-shadow: var(--vx-shadow-lg); z-index: 1100; padding: 4px; display: none; }
-        .vx-mod-item:hover > .vx-mod-drop { display: block; }
-        .vx-mod-drop .vx-dropdown-item { padding: 8px 14px; }
-        /* Mobile preview mode */
-        .vx-mobile-preview .vx-modules-bar { overflow-x: auto; }
-        .vx-mobile-preview .vx-modules-inner { padding: 0 4px; }
-        .vx-mobile-preview .vx-mod-btn { padding: 8px 8px; font-size: 10px; gap: 3px; }
-        .vx-mobile-preview .vx-mod-btn .bi-chevron-down { display: none; }
-        .vx-mobile-preview .vx-main { padding: 12px; }
-        .vx-mobile-preview .vx-page-header { flex-direction: column; align-items: flex-start; gap: 8px; }
-        .vx-mobile-preview .vx-module-grid { grid-template-columns: 1fr !important; }
-        .vx-mobile-preview .vx-grid-2, .vx-mobile-preview .vx-grid-3 { grid-template-columns: 1fr !important; }
-        .vx-toggle-group { display: flex; align-items: center; gap: 4px; }
-        .vx-toggle-label { font-size: 14px; color: var(--vx-text-muted); width: 18px; text-align: center; }
-        .vx-switch { position: relative; display: inline-block; width: 32px; height: 18px; }
-        .vx-switch input { opacity: 0; width: 0; height: 0; }
-        .vx-switch-slider { position: absolute; cursor: pointer; inset: 0; background: var(--vx-gray-300); border-radius: 18px; transition: 0.2s; }
-        .vx-switch-slider::before { content: ''; position: absolute; height: 14px; width: 14px; left: 2px; bottom: 2px; background: white; border-radius: 50%; transition: 0.2s; }
-        .vx-switch input:checked + .vx-switch-slider { background: var(--vx-primary); }
-        .vx-switch input:checked + .vx-switch-slider::before { transform: translateX(14px); }
+        .vx-main { flex: 1; padding: 24px; max-width: 1200px; width: 100%; margin: 0 auto; }
 
         /* Cards */
-        .vx-card { background: var(--vx-surface); border: 1px solid var(--vx-border); border-radius: var(--vx-radius-lg); box-shadow: var(--vx-shadow-sm); transition: all 0.3s ease; overflow: hidden; }
+        .vx-card { background: var(--vx-surface); border: 1px solid var(--vx-border); border-radius: var(--vx-radius-lg); box-shadow: var(--vx-shadow-sm); transition: all 0.3s ease; overflow: visible; }
         .vx-card-header { padding: 16px 20px; border-bottom: 1px solid var(--vx-border); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
         .vx-card-header h2, .vx-card-header h3, .vx-card-header h4 { font-size: 16px; font-weight: 700; margin: 0; color: var(--vx-text); }
         .vx-card-body { padding: 20px; }
 
         /* Tables */
-        .vx-table-wrapper { overflow-x: auto; overflow-y: visible; -webkit-overflow-scrolling: touch; position: relative; }
+        .vx-table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
         .vx-table { width: 100%; border-collapse: separate; border-spacing: 0; }
         .vx-table thead th { padding: 10px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--vx-text-muted); background: var(--vx-gray-50); border-bottom: 2px solid var(--vx-border); white-space: nowrap; text-align: left; }
         [data-theme="dark"] .vx-table thead th { background: var(--vx-gray-100); }
@@ -192,10 +210,22 @@
         .vx-actions { position: relative; display: inline-block; }
         .vx-actions-toggle { width: 30px; height: 30px; border-radius: 6px; border: 1px solid var(--vx-border); background: var(--vx-surface); color: var(--vx-text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; font-size: 14px; }
         .vx-actions-toggle:hover { background: var(--vx-surface-hover); color: var(--vx-text); border-color: var(--vx-primary); }
-        .vx-actions-menu { position: absolute; right: 0; top: 100%; margin-top: 4px; min-width: 160px; background: var(--vx-surface); border: 1px solid var(--vx-border); border-radius: 8px; box-shadow: var(--vx-shadow-lg); z-index: 100; padding: 4px; display: none; }
+        .vx-actions-menu { position: fixed; left: -9999px; top: -9999px; min-width: 170px; background: var(--vx-surface); border: 1px solid var(--vx-border); border-radius: 8px; box-shadow: var(--vx-shadow-lg); z-index: 99999; padding: 4px; display: none; }
         .vx-actions.open .vx-actions-menu { display: block; }
-        .vx-actions-menu a, .vx-actions-menu button { display: flex; align-items: center; gap: 8px; width: 100%; padding: 7px 10px; border: none; background: none; border-radius: 5px; font-size: 12px; color: var(--vx-text); text-decoration: none; cursor: pointer; transition: background 0.1s; font-family: var(--vx-font); }
+        .vx-actions-menu a, .vx-actions-menu button { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 10px; border: none; background: none; border-radius: 5px; font-size: 12px; color: var(--vx-text); text-decoration: none; cursor: pointer; transition: background 0.1s; font-family: var(--vx-font); white-space: nowrap; text-align: left; }
+        .vx-actions-menu i { width: 14px; flex-shrink: 0; text-align: center; }
         .vx-actions-menu a:hover, .vx-actions-menu button:hover { background: var(--vx-surface-hover); }
+        .vx-actions-menu .vx-btn { justify-content: flex-start; font-weight: 500; border: none; background: transparent; color: var(--vx-text); width: 100%; padding: 8px 10px; }
+        .vx-actions-menu .act-view i { color: var(--vx-info) !important; }
+        .vx-actions-menu .act-edit i { color: var(--vx-warning) !important; }
+        .vx-actions-menu .act-approve i { color: var(--vx-success) !important; }
+        .vx-actions-menu .act-reject i { color: var(--vx-danger) !important; }
+        .vx-actions-menu .act-delete, .vx-actions-menu .act-danger { color: var(--vx-danger); }
+        .vx-actions-menu .act-delete i, .vx-actions-menu .act-danger i { color: var(--vx-danger) !important; }
+        .vx-actions-menu .act-view:hover { background: rgba(52,152,219,0.12); }
+        .vx-actions-menu .act-edit:hover { background: rgba(243,156,18,0.12); }
+        .vx-actions-menu .act-approve:hover { background: rgba(46,204,113,0.12); }
+        .vx-actions-menu .act-reject:hover, .vx-actions-menu .act-delete:hover, .vx-actions-menu .act-danger:hover { background: rgba(231,76,60,0.12); }
         .vx-actions-menu .act-danger { color: var(--vx-danger); }
         .vx-actions-menu .act-danger:hover { background: rgba(231,76,60,0.08); }
         .vx-actions-menu form { margin: 0; }
@@ -289,7 +319,7 @@
         /* Info Row (for show views) */
         .vx-info-row { display: flex; padding: 12px 0; border-bottom: 1px solid var(--vx-border); }
         .vx-info-row:last-child { border-bottom: none; }
-        .vx-info-label { width: 180px; flex-shrink: 0; font-size: 13px; font-weight: 600; color: var(--vx-text-secondary); }
+        .vx-info-label { width: 150px; flex-shrink: 0; font-size: 13px; font-weight: 600; color: var(--vx-text-secondary); }
         .vx-info-value { font-size: 13px; color: var(--vx-text); flex: 1; }
 
         /* Section within form (for restriction blocks etc) */
@@ -324,10 +354,13 @@
         @media (max-width: 768px) {
             .vx-grid-2, .vx-grid-3, .vx-grid-4 { grid-template-columns: 1fr; }
             .vx-main { padding: 16px; }
-            .vx-modules-inner { padding: 0 8px; }
-            .vx-mod-btn { padding: 8px 10px; font-size: 11px; }
             .vx-page-header { flex-direction: column; align-items: flex-start; }
             .vx-navbar { padding: 0 12px; }
+            .vx-navbar-modes { display: none; }
+            .vx-modulebar-inner { padding: 8px 12px; }
+            .vx-module-nav { flex-direction: column; align-items: stretch; }
+            .vx-module-nav .vx-nav-item { width: 100%; }
+            .vx-module-nav .vx-nav-link { width: 100%; justify-content: space-between; }
             .vx-info-row { flex-direction: column; gap: 4px; }
             .vx-info-label { width: auto; }
             [style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
@@ -419,6 +452,8 @@
         </div>
     </div>
 
+    <div class="vx-preview-stage" id="vxPreviewStage">
+    <div class="vx-preview-device" id="vxPreviewDevice">
     <!-- Navbar -->
     <nav class="vx-navbar">
         <a href="{{ route('home') }}" class="vx-navbar-brand">
@@ -427,13 +462,39 @@
                 <span class="vx-role-badge">{{ Auth::user()->roles->first()->name ?? 'Usuario' }}</span>
             @endauth
         </a>
-
-        <button class="vx-mobile-toggle" onclick="document.querySelector('.vx-nav').classList.toggle('open')">
-            <i class="bi bi-list"></i>
-        </button>
-
         @auth
-        {{-- Módulos en barra de módulos debajo --}}
+        <div class="vx-navbar-modes">
+            <div class="vx-mode-toggle" role="group" aria-label="Modo de interfaz">
+                <button type="button" id="uiModeDesktopBtn" class="active" onclick="setUiMode('desktop')">Ordenador</button>
+                <button type="button" id="uiModeMobileBtn" onclick="setUiMode('mobile')">Móvil</button>
+            </div>
+            <div class="vx-mode-toggle" role="group" aria-label="Vista de usuario">
+                <button type="button" id="viewModeDevBtn" class="active" onclick="setViewMode('dev')">Desarrollador</button>
+                <button type="button" id="viewModeClientBtn" onclick="setViewMode('client')">Cliente</button>
+            </div>
+        </div>
+        <div class="vx-navbar-mobile-tools" id="vxMobileTools">
+            <button class="vx-mobile-tools-btn" type="button" onclick="toggleMobileToolsMenu()">
+                <i class="bi bi-list"></i> Opciones
+            </button>
+            <div class="vx-mobile-tools-menu">
+                <button type="button" onclick="openSearch(); closeMobileToolsMenu();"><i class="bi bi-search"></i> Buscar</button>
+                <button type="button" onclick="toggleTheme(); closeMobileToolsMenu();"><i class="bi bi-moon-stars"></i> Cambiar tema</button>
+                <button type="button" onclick="setUiMode('desktop'); closeMobileToolsMenu();"><i class="bi bi-display"></i> Vista ordenador</button>
+                <button type="button" onclick="setUiMode('mobile'); closeMobileToolsMenu();"><i class="bi bi-phone"></i> Vista móvil</button>
+                <button type="button" onclick="setViewMode('dev'); closeMobileToolsMenu();"><i class="bi bi-code-slash"></i> Vista desarrollador</button>
+                <button type="button" onclick="setViewMode('client'); closeMobileToolsMenu();"><i class="bi bi-person"></i> Vista cliente</button>
+                @auth
+                    <button type="button" onclick="toggleNotifications(); closeMobileToolsMenu();"><i class="bi bi-bell"></i> Notificaciones</button>
+                    <a href="{{ route('dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                    <a href="{{ route('profile.edit') }}"><i class="bi bi-person-gear"></i> Editar Perfil</a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="danger"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</button>
+                    </form>
+                @endauth
+            </div>
+        </div>
         @endauth
 
         <div class="vx-nav-right">
@@ -448,23 +509,6 @@
             </button>
 
             @auth
-            <!-- Toggle Responsive -->
-            <div class="vx-toggle-group" title="Vista móvil / escritorio">
-                <label class="vx-switch">
-                    <input type="checkbox" id="toggleResponsive" onchange="toggleResponsiveView()">
-                    <span class="vx-switch-slider"></span>
-                </label>
-                <span class="vx-toggle-label" id="responsiveLabel"><i class="bi bi-display"></i></span>
-            </div>
-
-            <!-- Toggle Vista -->
-            <div class="vx-toggle-group" title="Vista desarrollador / cliente">
-                <label class="vx-switch">
-                    <input type="checkbox" id="toggleClientView" onchange="toggleClienteView()">
-                    <span class="vx-switch-slider"></span>
-                </label>
-                <span class="vx-toggle-label" id="clientViewLabel"><i class="bi bi-code-slash"></i></span>
-            </div>
             <!-- Notifications -->
             <div class="vx-nav-item" style="position:relative;">
                 <button class="vx-icon-btn" onclick="toggleNotifications()" title="Notificaciones" style="position:relative;">
@@ -514,17 +558,21 @@
         </div>
     </nav>
 
-    {{-- Barra de módulos --}}
     @auth
-    <div class="vx-modules-bar">
-        <div class="vx-modules-inner">
+    <div class="vx-modulebar">
+        <div class="vx-modulebar-inner">
+        <button class="vx-modules-toggle" id="vxModulesToggle" type="button" onclick="toggleModulesPanel()">
+            <i class="bi bi-grid-1x2"></i> Módulos <i class="bi bi-chevron-down" id="vxModulesToggleIcon" style="font-size:11px;"></i>
+        </button>
+        <div class="vx-module-panel open" id="vxModulesPanel">
+        <ul class="vx-module-nav">
             {{-- Módulo GESTIÓN --}}
             @canany(['ver usuarios', 'ver departamentos', 'ver centros', 'ver roles', 'ver restricciones', 'ver clientes'])
-            <div class="vx-mod-item">
-                <button class="vx-mod-btn {{ request()->is('gestion*','users*','clientes*','departamentos*','centros*','roles*','restricciones*','empresas*','noticias*','campanias*','naming-pcs*','vacaciones*','festivos*') ? 'active' : '' }}">
+            <li class="vx-nav-item vx-module-item-dev">
+                <button class="vx-nav-link {{ request()->is('gestion*','users*','clientes*','departamentos*','centros*','roles*','restricciones*','empresas*','noticias*','campanias*','naming-pcs*','vacaciones*','festivos*') ? 'active' : '' }}">
                     <i class="bi bi-building"></i> Gestión <i class="bi bi-chevron-down" style="font-size:10px;"></i>
                 </button>
-                <div class="vx-mod-drop">
+                <div class="vx-dropdown vx-dropdown-sub">
                     <a href="{{ route('gestion.inicio') }}" class="vx-dropdown-item"><i class="bi bi-house-door"></i> Inicio</a>
                     @can('ver usuarios')
                     <a href="{{ route('users.index') }}" class="vx-dropdown-item"><i class="bi bi-people"></i> Usuarios</a>
@@ -582,19 +630,19 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </li>
             @endcanany
 
             {{-- Módulo RECAMBIOS --}}
             @canany(['ver almacenes', 'ver stocks', 'ver repartos'])
-            <div class="vx-mod-item">
-                <button class="vx-mod-btn {{ request()->is('recambios*','almacenes*','stocks*','repartos*') ? 'active' : '' }}">
+            <li class="vx-nav-item vx-module-item-dev">
+                <button class="vx-nav-link {{ request()->is('recambios*','almacenes*','stocks*','repartos*') ? 'active' : '' }}">
                     <i class="bi bi-box-seam"></i> Recambios <i class="bi bi-chevron-down" style="font-size:10px;"></i>
                 </button>
-                <div class="vx-mod-drop">
+                <div class="vx-dropdown">
                     <a href="{{ route('recambios.inicio') }}" class="vx-dropdown-item"><i class="bi bi-house-door"></i> Inicio</a>
                     @can('ver almacenes')
-                    <a href="{{ route('almacenes.index') }}" class="vx-dropdown-item"><i class="bi bi-shop"></i> Almacenes</a>
+                    <a href="{{ route('almacenes.index') }}" class="vx-dropdown-item"><i class="bi bi-boxes"></i> Almacenes</a>
                     @endcan
                     @can('ver stocks')
                     <a href="{{ route('stocks.index') }}" class="vx-dropdown-item"><i class="bi bi-box2"></i> Stock</a>
@@ -603,32 +651,32 @@
                     <a href="{{ route('repartos.index') }}" class="vx-dropdown-item"><i class="bi bi-truck"></i> Repartos</a>
                     @endcan
                 </div>
-            </div>
+            </li>
             @endcanany
 
             {{-- Módulo TALLERES --}}
             @canany(['ver talleres', 'ver mecanicos', 'ver citas', 'ver coches-sustitucion'])
-            <div class="vx-mod-item">
-                <button class="vx-mod-btn {{ request()->is('talleres*','mecanicos*','citas*','coches-sustitucion*') ? 'active' : '' }}">
+            <li class="vx-nav-item vx-module-item-dev">
+                <button class="vx-nav-link {{ request()->is('talleres*','mecanicos*','citas*','coches-sustitucion*') ? 'active' : '' }}">
                     <i class="bi bi-wrench-adjustable"></i> Talleres <i class="bi bi-chevron-down" style="font-size:10px;"></i>
                 </button>
-                <div class="vx-mod-drop">
+                <div class="vx-dropdown">
                     <a href="{{ route('talleres.inicio') }}" class="vx-dropdown-item"><i class="bi bi-house-door"></i> Inicio</a>
                     @can('ver talleres')<a href="{{ route('talleres.index') }}" class="vx-dropdown-item"><i class="bi bi-tools"></i> Talleres</a>@endcan
                     @can('ver mecanicos')<a href="{{ route('mecanicos.index') }}" class="vx-dropdown-item"><i class="bi bi-person-gear"></i> Mecánicos</a>@endcan
                     @can('ver citas')<a href="{{ route('citas.index') }}" class="vx-dropdown-item"><i class="bi bi-calendar-check"></i> Citas</a>@endcan
                     @can('ver coches-sustitucion')<a href="{{ route('coches-sustitucion.index') }}" class="vx-dropdown-item"><i class="bi bi-car-front"></i> Coches Sustitución</a>@endcan
                 </div>
-            </div>
+            </li>
             @endcanany
 
             {{-- Módulo COMERCIAL --}}
             @canany(['ver vehículos', 'ver ofertas', 'ver ventas', 'ver tasaciones', 'ver catalogo-precios'])
-            <div class="vx-mod-item">
-                <button class="vx-mod-btn {{ request()->is('comercial*','ofertas*','vehiculos*','ventas*','tasaciones*','catalogo-precios*') ? 'active' : '' }}">
+            <li class="vx-nav-item vx-module-item-dev">
+                <button class="vx-nav-link {{ request()->is('comercial*','ofertas*','vehiculos*','ventas*','tasaciones*','catalogo-precios*') ? 'active' : '' }}">
                     <i class="bi bi-car-front"></i> Comercial <i class="bi bi-chevron-down" style="font-size:10px;"></i>
                 </button>
-                <div class="vx-mod-drop">
+                <div class="vx-dropdown">
                     <a href="{{ route('comercial.inicio') }}" class="vx-dropdown-item"><i class="bi bi-house-door"></i> Inicio</a>
                     @can('ver ofertas')
                     <a href="{{ route('ofertas.index') }}" class="vx-dropdown-item"><i class="bi bi-file-earmark-text"></i> Ofertas</a>
@@ -646,38 +694,46 @@
                     <a href="{{ route('catalogo-precios.index') }}" class="vx-dropdown-item"><i class="bi bi-currency-euro"></i> Catálogo Precios</a>
                     @endcan
                 </div>
-            </div>
+            </li>
             @endcanany
 
             {{-- Módulo DATAXIS --}}
-            <div class="vx-mod-item">
-                <button class="vx-mod-btn {{ request()->is('dataxis*') ? 'active' : '' }}">
+            @canany(['ver usuarios', 'ver departamentos', 'ver centros', 'ver roles', 'ver restricciones', 'ver clientes'])
+            <li class="vx-nav-item vx-module-item-dev">
+                <button class="vx-nav-link {{ request()->is('dataxis*') ? 'active' : '' }}">
                     <i class="bi bi-graph-up"></i> Dataxis <i class="bi bi-chevron-down" style="font-size:10px;"></i>
                 </button>
-                <div class="vx-mod-drop">
+                <div class="vx-dropdown">
                     <a href="{{ route('dataxis.inicio') }}" class="vx-dropdown-item"><i class="bi bi-house-door"></i> Inicio</a>
                     <a href="{{ route('dataxis.general') }}" class="vx-dropdown-item"><i class="bi bi-speedometer2"></i> General</a>
                     <a href="{{ route('dataxis.ventas') }}" class="vx-dropdown-item"><i class="bi bi-currency-euro"></i> Ventas</a>
                     <a href="{{ route('dataxis.stock') }}" class="vx-dropdown-item"><i class="bi bi-box-seam"></i> Stock</a>
                     <a href="{{ route('dataxis.taller') }}" class="vx-dropdown-item"><i class="bi bi-wrench-adjustable"></i> Taller</a>
                 </div>
-            </div>
+            </li>
+            @endcanany
 
             {{-- Módulo CLIENTE --}}
-            <div class="vx-mod-item">
-                <button class="vx-mod-btn {{ request()->is('cliente*') ? 'active' : '' }}">
-                    <i class="bi bi-person-heart"></i> Cliente <i class="bi bi-chevron-down" style="font-size:10px;"></i>
+            <li class="vx-nav-item vx-module-item-client">
+                <button class="vx-nav-link {{ request()->is('cliente*') ? 'active' : '' }}">
+                    <i class="bi bi-person-heart"></i>
+                    <span class="vx-module-label-default">Cliente</span>
+                    <span class="vx-module-label-client">Menú</span>
+                    <i class="bi bi-chevron-down" style="font-size:10px;"></i>
                 </button>
-                <div class="vx-mod-drop">
+                <div class="vx-dropdown">
                     <a href="{{ route('cliente.inicio') }}" class="vx-dropdown-item"><i class="bi bi-house-door"></i> Inicio</a>
                     <a href="{{ route('cliente.chatbot') }}" class="vx-dropdown-item"><i class="bi bi-robot"></i> Chatbot IA</a>
                     <a href="{{ route('cliente.pretasacion') }}" class="vx-dropdown-item"><i class="bi bi-calculator"></i> Pretasación IA</a>
+                    <a href="{{ route('cliente.tasacion') }}" class="vx-dropdown-item"><i class="bi bi-clipboard-check"></i> Tasación Formal</a>
                     <a href="{{ route('cliente.configurador') }}" class="vx-dropdown-item"><i class="bi bi-palette"></i> Configurador</a>
                     <a href="{{ route('cliente.precios') }}" class="vx-dropdown-item"><i class="bi bi-currency-euro"></i> Precios</a>
                     <a href="{{ route('cliente.campanias') }}" class="vx-dropdown-item"><i class="bi bi-megaphone"></i> Campañas</a>
                     <a href="{{ route('cliente.concesionarios') }}" class="vx-dropdown-item"><i class="bi bi-building"></i> Concesionarios</a>
                 </div>
-            </div>
+            </li>
+        </ul>
+        </div>
         </div>
     </div>
     @endauth
@@ -706,6 +762,8 @@
         <img src="{{ asset('img/vexis-icon.png') }}" alt="" style="height: 18px; width: auto; vertical-align: middle; margin-right: 6px; opacity: 0.6;">
         <span>&copy; {{ date('Y') }}, made by <a href="{{ route('home') }}">Meng Fei</a></span>
     </footer>
+    </div>
+    </div>
 
     <script>
         /* === Theme Toggle === */
@@ -723,6 +781,80 @@
             if (icon) icon.className = saved === 'dark' ? 'bi bi-sun' : 'bi bi-moon';
         })();
 
+        function setUiMode(mode) {
+            const isMobile = mode === 'mobile';
+            document.body.classList.toggle('vx-force-mobile', isMobile);
+            localStorage.setItem('vexis-ui-mode', mode);
+            document.getElementById('uiModeDesktopBtn')?.classList.toggle('active', !isMobile);
+            document.getElementById('uiModeMobileBtn')?.classList.toggle('active', isMobile);
+            if (!isMobile) {
+                toggleModulesPanel(true);
+            }
+            updateMobilePreviewScale();
+        }
+
+        function setViewMode(mode) {
+            const isClient = mode === 'client';
+            document.body.classList.toggle('vx-client-mode', isClient);
+            localStorage.setItem('vexis-view-mode', mode);
+            document.getElementById('viewModeDevBtn')?.classList.toggle('active', !isClient);
+            document.getElementById('viewModeClientBtn')?.classList.toggle('active', isClient);
+        }
+
+        function toggleModulesPanel(forceOpen = null) {
+            const panel = document.getElementById('vxModulesPanel');
+            const icon = document.getElementById('vxModulesToggleIcon');
+            if (!panel) return;
+
+            if (!document.body.classList.contains('vx-force-mobile')) {
+                panel.classList.add('open');
+                if (icon) icon.className = 'bi bi-chevron-up';
+                return;
+            }
+
+            const nextOpen = forceOpen !== null ? forceOpen : !panel.classList.contains('open');
+            panel.classList.toggle('open', nextOpen);
+            if (icon) icon.className = nextOpen ? 'bi bi-chevron-up' : 'bi bi-chevron-down';
+            localStorage.setItem('vexis-modules-open', nextOpen ? '1' : '0');
+        }
+
+        function toggleMobileToolsMenu() {
+            const panel = document.getElementById('vxMobileTools');
+            if (!panel) return;
+            panel.classList.toggle('open');
+        }
+
+        function closeMobileToolsMenu() {
+            document.getElementById('vxMobileTools')?.classList.remove('open');
+        }
+
+        (function initializeUiModes() {
+            const savedUiMode = localStorage.getItem('vexis-ui-mode') || 'desktop';
+            const savedViewMode = localStorage.getItem('vexis-view-mode') || 'dev';
+            const savedModulesOpen = localStorage.getItem('vexis-modules-open');
+
+            setUiMode(savedUiMode);
+            setViewMode(savedViewMode);
+            if (savedModulesOpen === null) {
+                toggleModulesPanel(true);
+            } else {
+                toggleModulesPanel(savedModulesOpen === '1');
+            }
+        })();
+
+        function updateMobilePreviewScale() {
+            if (!document.body.classList.contains('vx-force-mobile')) {
+                document.documentElement.style.removeProperty('--vx-mobile-preview-scale');
+                return;
+            }
+
+            const baseWidth = 390;
+            const availableWidth = window.innerWidth - 34;
+            const scale = Math.min(1, availableWidth / baseWidth);
+            document.documentElement.style.setProperty('--vx-mobile-preview-scale', String(scale));
+        }
+        window.addEventListener('resize', updateMobilePreviewScale);
+
         /* === Loading Screen === */
         window.addEventListener('load', function() {
             setTimeout(function() {
@@ -733,6 +865,24 @@
 
         /* === Dropdown click outside === */
         document.addEventListener('click', function(e) {
+            const navToggle = e.target.closest('.vx-module-nav .vx-nav-item > .vx-nav-link');
+            if (navToggle) {
+                e.preventDefault();
+                const parentItem = navToggle.closest('.vx-nav-item');
+                document.querySelectorAll('.vx-module-nav .vx-nav-item.open').forEach(item => {
+                    if (item !== parentItem) item.classList.remove('open');
+                });
+                parentItem.classList.toggle('open');
+                return;
+            }
+
+            if (!e.target.closest('#vxModulesPanel') && !e.target.closest('#vxModulesToggle')) {
+                document.querySelectorAll('.vx-module-nav .vx-nav-item.open').forEach(i => i.classList.remove('open'));
+            }
+            if (!e.target.closest('#vxMobileTools')) {
+                closeMobileToolsMenu();
+            }
+
             if (!e.target.closest('.vx-nav-item')) {
                 document.querySelectorAll('.vx-nav-item.open').forEach(i => i.classList.remove('open'));
             }
@@ -830,76 +980,109 @@
     </script>
     <script>
     // Actions dropdown toggle
+    function inferActionType(item, iconClass, label) {
+        const labelLower = (label || '').toLowerCase();
+        const titleLower = (item.getAttribute('title') || '').toLowerCase();
+        const source = `${labelLower} ${titleLower} ${iconClass}`.toLowerCase();
+
+        if (source.includes('trash') || source.includes('eliminar') || source.includes('borrar') || source.includes('delete')) return 'delete';
+        if (source.includes('check') || source.includes('aprob')) return 'approve';
+        if (source.includes('x-lg') || source.includes('x-circle') || source.includes('rechaz')) return 'reject';
+        if (source.includes('pencil') || source.includes('editar') || source.includes('edit')) return 'edit';
+        if (source.includes('eye') || source.includes('ver') || source.includes('show')) return 'view';
+
+        return '';
+    }
+
+    function inferActionLabel(action, fallbackTitle) {
+        if (action === 'view') return 'Ver';
+        if (action === 'edit') return 'Editar';
+        if (action === 'delete') return 'Eliminar';
+        if (action === 'approve') return 'Aprobar';
+        if (action === 'reject') return 'Rechazar';
+        return fallbackTitle || 'Acción';
+    }
+
+    function normalizeActionsMenus() {
+        document.querySelectorAll('.vx-actions-menu').forEach(menu => {
+            menu.querySelectorAll('a, button').forEach(item => {
+                const icon = item.querySelector('i');
+                const iconClass = icon ? icon.className : '';
+                const currentLabel = item.textContent.trim();
+                const action = inferActionType(item, iconClass, currentLabel);
+
+                // Remove button styles reused from table context.
+                item.classList.remove('vx-btn', 'vx-btn-info', 'vx-btn-warning', 'vx-btn-danger', 'vx-btn-success', 'vx-btn-secondary', 'vx-btn-sm');
+                if (action) item.classList.add(`act-${action}`);
+                if (action === 'delete') item.classList.add('act-danger');
+
+                // Ensure all entries show readable text ("Ver", "Editar", etc.)
+                if (!currentLabel) {
+                    const label = inferActionLabel(action, item.getAttribute('title'));
+                    item.append(document.createTextNode(` ${label}`));
+                }
+
+                // Keep a useful tooltip if missing.
+                if (!item.getAttribute('title')) {
+                    const finalLabel = item.textContent.trim();
+                    if (finalLabel) item.setAttribute('title', finalLabel);
+                }
+            });
+        });
+    }
+
+    function positionActionsMenu(actionsEl) {
+        const toggle = actionsEl.querySelector('.vx-actions-toggle');
+        const menu = actionsEl.querySelector('.vx-actions-menu');
+        if (!toggle || !menu) return;
+
+        const gap = 6;
+        const toggleRect = toggle.getBoundingClientRect();
+        let left = toggleRect.right + gap;
+        let top = toggleRect.bottom + 4;
+
+        // Initial paint for accurate size calculation.
+        menu.style.left = `${left}px`;
+        menu.style.top = `${top}px`;
+
+        const menuRect = menu.getBoundingClientRect();
+        if (left + menuRect.width > window.innerWidth - 8) {
+            // Stay on the right side — clamp to the right viewport edge instead of flipping left.
+            left = Math.max(toggleRect.right - menuRect.width, window.innerWidth - menuRect.width - 8);
+        }
+        if (top + menuRect.height > window.innerHeight - 8) {
+            top = Math.max(8, window.innerHeight - menuRect.height - 8);
+        }
+
+        menu.style.left = `${left}px`;
+        menu.style.top = `${top}px`;
+    }
+
+    function repositionOpenActionsMenus() {
+        document.querySelectorAll('.vx-actions.open').forEach(positionActionsMenu);
+    }
+
+    normalizeActionsMenus();
+
     document.addEventListener('click', function(e) {
         const toggle = e.target.closest('.vx-actions-toggle');
         if (toggle) {
             e.stopPropagation();
             const parent = toggle.closest('.vx-actions');
-            document.querySelectorAll('.vx-actions.open').forEach(el => { if (el !== parent) el.classList.remove('open'); });
+            document.querySelectorAll('.vx-actions.open').forEach(el => {
+                if (el !== parent) el.classList.remove('open');
+            });
             parent.classList.toggle('open');
+            if (parent.classList.contains('open')) {
+                positionActionsMenu(parent);
+            }
         } else {
             document.querySelectorAll('.vx-actions.open').forEach(el => el.classList.remove('open'));
         }
     });
 
-    // === Toggle Responsive (móvil/escritorio) ===
-    function toggleResponsiveView() {
-        const on = document.getElementById('toggleResponsive').checked;
-        const label = document.getElementById('responsiveLabel');
-        const main = document.querySelector('.vx-main');
-        const modBar = document.querySelector('.vx-modules-bar');
-        if (on) {
-            document.body.classList.add('vx-mobile-preview');
-            label.innerHTML = '<i class="bi bi-phone"></i>';
-        } else {
-            document.body.classList.remove('vx-mobile-preview');
-            label.innerHTML = '<i class="bi bi-display"></i>';
-        }
-        localStorage.setItem('vx-responsive', on ? '1' : '0');
-    }
-    if (localStorage.getItem('vx-responsive') === '1') {
-        document.getElementById('toggleResponsive').checked = true;
-        toggleResponsiveView();
-    }
-
-    // === Toggle Vista Cliente/Desarrollador ===
-    function toggleClienteView() {
-        const on = document.getElementById('toggleClientView').checked;
-        const label = document.getElementById('clientViewLabel');
-        const modulesBar = document.querySelector('.vx-modules-bar');
-        if (on) {
-            label.innerHTML = '<i class="bi bi-person"></i>';
-            if (modulesBar) {
-                modulesBar.querySelectorAll('.vx-mod-item').forEach(item => {
-                    const btn = item.querySelector('.vx-mod-btn');
-                    if (btn && btn.textContent.trim().toLowerCase().includes('cliente')) {
-                        item.style.display = '';
-                        btn.innerHTML = '<i class="bi bi-list"></i> Menú <i class="bi bi-chevron-down" style="font-size:9px;opacity:0.6;"></i>';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-            }
-        } else {
-            label.innerHTML = '<i class="bi bi-code-slash"></i>';
-            if (modulesBar) {
-                modulesBar.querySelectorAll('.vx-mod-item').forEach(item => {
-                    item.style.display = '';
-                });
-                // Restaurar botón Cliente
-                modulesBar.querySelectorAll('.vx-mod-btn').forEach(btn => {
-                    if (btn.textContent.trim() === 'Menú') {
-                        btn.innerHTML = '<i class="bi bi-person-heart"></i> Cliente <i class="bi bi-chevron-down" style="font-size:10px;"></i>';
-                    }
-                });
-            }
-        }
-        localStorage.setItem('vx-client-view', on ? '1' : '0');
-    }
-    if (localStorage.getItem('vx-client-view') === '1') {
-        document.getElementById('toggleClientView').checked = true;
-        toggleClienteView();
-    }
+    window.addEventListener('resize', repositionOpenActionsMenus);
+    window.addEventListener('scroll', repositionOpenActionsMenus, true);
     </script>
     @stack('scripts')
 </body>

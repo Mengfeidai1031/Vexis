@@ -17,8 +17,22 @@
 /public/hot
 /public/storage
 /storage/*.key
+/storage/**
+!/storage/.gitignore
+!/storage/**/.gitignore
+!/storage/**/.gitkeep
+/storage/framework/views/*
 /storage/pail
 /vendor
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Archivos temporales locales
+*.tmp
+*.temp
+*.bak
+*.orig
+*.swp
+*.swo
+*~

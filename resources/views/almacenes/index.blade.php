@@ -2,7 +2,7 @@
 @section('title', 'Almacenes - VEXIS')
 @section('content')
 <div class="vx-page-header">
-    <h1 class="vx-page-title"><i class="bi bi-shop" style="color:var(--vx-primary);margin-right:6px;"></i>Almacenes</h1>
+    <h1 class="vx-page-title"><i class="bi bi-boxes" style="color:var(--vx-primary);margin-right:6px;"></i>Almacenes</h1>
     <div class="vx-page-actions">
         @can('crear almacenes')
             <a href="{{ route('almacenes.create') }}" class="vx-btn vx-btn-primary"><i class="bi bi-plus-circle"></i> Nuevo Almacén</a>
@@ -61,7 +61,7 @@
         </div>
         <div style="padding:16px 20px;">{{ $almacenes->links('vendor.pagination.vexis') }}</div>
         @else
-        <div class="vx-empty"><i class="bi bi-shop"></i><p>No se encontraron almacenes.</p></div>
+        <div class="vx-empty"><i class="bi bi-boxes"></i><p>No se encontraron almacenes.</p></div>
         @endif
     </div>
 </div>

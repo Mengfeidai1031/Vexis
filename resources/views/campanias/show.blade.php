@@ -47,7 +47,6 @@
         @foreach($campania->fotos as $foto)
         <div style="position:relative;">
             <img src="{{ asset('storage/' . $foto->ruta) }}" alt="{{ $foto->nombre_original }}" style="width:100%;height:80px;object-fit:cover;border-radius:6px;cursor:pointer;" onclick="goToSlide({{ $loop->index }})">
-            <div style="font-size:10px;color:var(--vx-text-muted);margin-top:2px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">{{ $foto->nombre_original }}</div>
         </div>
         @endforeach
     </div>

@@ -1,7 +1,13 @@
 @extends('layouts.app')
 @section('title', 'Pretasación IA - VEXIS')
 @section('content')
-<div class="vx-page-header"><h1 class="vx-page-title"><i class="bi bi-calculator" style="color:#9B59B6;"></i> Pretasación con IA</h1><a href="{{ route('cliente.inicio') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div>
+<div class="vx-page-header">
+    <h1 class="vx-page-title"><i class="bi bi-calculator" style="color:#9B59B6;"></i> Pretasación con IA</h1>
+    <div class="vx-page-actions">
+        <a href="{{ route('cliente.tasacion') }}" class="vx-btn vx-btn-warning"><i class="bi bi-clipboard-check"></i> Solicitar tasación formal</a>
+        <a href="{{ route('cliente.inicio') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
+    </div>
+</div>
 
 <div style="max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:20px;">
     {{-- Formulario --}}
@@ -37,12 +43,21 @@
 <div class="vx-card" style="max-width:900px;margin:16px auto 0;background:rgba(243,156,18,0.05);border-color:rgba(243,156,18,0.2);">
     <div class="vx-card-body" style="padding:12px 16px;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--vx-text-muted);">
         <i class="bi bi-info-circle" style="color:var(--vx-warning);font-size:16px;flex-shrink:0;"></i>
-        Esta pretasación es <strong>orientativa</strong> y se genera mediante inteligencia artificial. Para una tasación precisa, le invitamos a visitarnos en cualquiera de nuestros concesionarios Grupo ARI.
+        Esta pretasación es <strong>orientativa</strong> y se genera con IA a partir de los datos que introduces en el formulario. Si quieres una valoración oficial, crea una <strong>solicitud de tasación formal</strong> desde el botón superior.
     </div>
 </div>
 
 @push('scripts')
 <script>
+function escapeHtml(text) {
+    return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
 document.getElementById('ptSubmit').addEventListener('click', async function() {
     const marca = document.getElementById('ptMarca').value;
     const modelo = document.getElementById('ptModelo').value;
@@ -61,7 +76,10 @@ document.getElementById('ptSubmit').addEventListener('click', async function() {
             body: JSON.stringify({ marca, modelo, anio: parseInt(anio), kilometraje: parseInt(km), combustible: document.getElementById('ptCombustible').value, estado: document.getElementById('ptEstado').value })
         });
         const data = await res.json();
-        const formatted = (data.respuesta || 'Sin respuesta.').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+        const safeText = escapeHtml(data.respuesta || 'Sin respuesta.');
+        const formatted = safeText
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\n/g, '<br>');
         result.innerHTML = `<div style="font-size:13px;line-height:1.7;">${formatted}</div>`;
     } catch (e) {
         result.innerHTML = '<div style="text-align:center;color:var(--vx-danger);"><i class="bi bi-exclamation-triangle" style="font-size:32px;"></i><p>Error al conectar con el servicio.</p></div>';

@@ -19,9 +19,9 @@
             <td style="text-align:center;">{{ $t->vehiculo_anio }}</td>
             <td style="font-family:var(--vx-font-mono);font-size:12px;">{{ number_format($t->kilometraje) }}</td>
             <td style="font-family:var(--vx-font-mono);font-size:12px;">{{ $t->matricula ?? '—' }}</td>
-            <td>@if($t->estado_vehiculo)<span class="vx-badge vx-badge-{{ match($t->estado_vehiculo) { 'excelente' => 'success', 'bueno' => 'info', 'regular' => 'warning', default => 'danger' } }}">{{ ucfirst($t->estado_vehiculo) }}</span>@else<span style="color:var(--vx-text-muted);">—</span>@endif</td>
+            <td><span class="vx-badge vx-badge-{{ match($t->estado_vehiculo) { 'excelente' => 'success', 'bueno' => 'info', 'regular' => 'warning', default => 'danger' } }}">{{ ucfirst($t->estado_vehiculo) }}</span></td>
             <td style="font-family:var(--vx-font-mono);font-weight:700;">{{ $t->valor_estimado ? number_format($t->valor_estimado, 2).'€' : '—' }}</td>
-            <td>@switch($t->estado) @case('pendiente')<span class="vx-badge vx-badge-warning">Pendiente</span>@break @case('valorada')<span class="vx-badge vx-badge-info">Valorada</span>@break @case('aceptada')<span class="vx-badge vx-badge-success">Aceptada</span>@break @case('rechazada')<span class="vx-badge vx-badge-danger">Rechazada</span>@break @endswitch @if(!$t->tasador_id)<span class="vx-badge vx-badge-primary" style="font-size:9px;margin-left:2px;">Web</span>@endif</td>
+            <td>@switch($t->estado) @case('pendiente')<span class="vx-badge vx-badge-warning">Pendiente</span>@break @case('valorada')<span class="vx-badge vx-badge-info">Valorada</span>@break @case('aceptada')<span class="vx-badge vx-badge-success">Aceptada</span>@break @case('rechazada')<span class="vx-badge vx-badge-danger">Rechazada</span>@break @endswitch</td>
             <td style="font-size:12px;">{{ $t->fecha_tasacion->format('d/m/Y') }}</td>
             <td><div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
                 <a href="{{ route('tasaciones.show', $t) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
