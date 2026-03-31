@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreClienteRequest;
 use App\Http\Requests\UpdateClienteRequest;
 use App\Models\Cliente;
+use App\Exports\ClientesExport;
 use App\Repositories\Interfaces\ClienteRepositoryInterface;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ClienteController extends Controller
 {
@@ -74,7 +77,7 @@ class ClienteController extends Controller
     public function destroy(Cliente $cliente)
     {
         $this->authorize('delete', $cliente);
-        
+
         try {
             $this->clienteRepository->delete($cliente->id);
             return redirect()->route('clientes.index')
@@ -83,5 +86,19 @@ class ClienteController extends Controller
             return redirect()->route('clientes.index')
                 ->with('error', 'No se puede eliminar el cliente porque tiene ofertas asociadas.');
         }
+    }
+
+    public function export()
+    {
+        $fileName = 'clientes_' . date('Y-m-d_His') . '.xlsx';
+        return Excel::download(new ClientesExport(), $fileName);
+    }
+
+    public function exportPdf()
+    {
+        $clientes = Cliente::with('empresa')->orderBy('apellidos')->get();
+        $pdf = Pdf::loadView('clientes.pdf', compact('clientes'));
+        $fileName = 'clientes_' . date('Y-m-d_His') . '.pdf';
+        return $pdf->download($fileName);
     }
 }

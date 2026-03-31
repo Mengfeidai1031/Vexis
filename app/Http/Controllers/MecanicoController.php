@@ -31,6 +31,13 @@ class MecanicoController extends Controller
         return redirect()->route('mecanicos.index')->with('success', 'Mecánico registrado correctamente.');
     }
 
+    public function show(Mecanico $mecanico)
+    {
+        $mecanico->load(['taller.empresa', 'taller.centro']);
+        $mecanico->loadCount('citas');
+        return view('mecanicos.show', compact('mecanico'));
+    }
+
     public function edit(Mecanico $mecanico)
     {
         $talleres = Taller::where('activo', true)->orderBy('nombre')->get();

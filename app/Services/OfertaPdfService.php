@@ -12,6 +12,7 @@ use App\Models\Empresa;
 use Spatie\PdfToText\Pdf;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 
 final class OfertaPdfService
@@ -21,8 +22,15 @@ final class OfertaPdfService
      */
     public function procesarPdf($pdfFile, string $marca): OfertaCabecera
     {
-        // 1. Guardar el PDF
-        $pdfPath = $pdfFile->store('ofertas/pdfs', 'public');
+        // 1. Guardar el PDF con nombre intuitivo
+        $timestamp = now()->format('Ymd_His');
+        $originalName = pathinfo($pdfFile->getClientOriginalName(), PATHINFO_FILENAME);
+        $safeName = Str::slug($originalName, '_');
+        $pdfPath = $pdfFile->storeAs(
+            'ofertas/pdfs',
+            "oferta_{$marca}_{$timestamp}_{$safeName}.pdf",
+            'public'
+        );
         
         // 2. Extraer texto del PDF
         $pathCompleto = storage_path('app/public/' . $pdfPath);
@@ -1249,10 +1257,6 @@ final class OfertaPdfService
      */
     public function eliminarOferta(OfertaCabecera $oferta): void
     {
-        if ($oferta->pdf_path && Storage::disk('public')->exists($oferta->pdf_path)) {
-            Storage::disk('public')->delete($oferta->pdf_path);
-        }
-        
         $oferta->delete();
     }
 }

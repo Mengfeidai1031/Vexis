@@ -49,6 +49,12 @@ class CitaTallerController extends Controller
         return redirect()->route('citas.index')->with('success', 'Cita creada correctamente.');
     }
 
+    public function show(CitaTaller $cita)
+    {
+        $cita->load(['mecanico', 'taller', 'marca', 'empresa']);
+        return view('citas.show', compact('cita'));
+    }
+
     public function edit(CitaTaller $cita)
     {
         $mecanicos = Mecanico::where('activo', true)->orderBy('apellidos')->get();

@@ -9,7 +9,7 @@
             <div class="vx-form-group"><label class="vx-label">Modelo <span class="required">*</span></label><input type="text" class="vx-input" name="modelo" value="{{ old('modelo', $coches_sustitucion->modelo) }}" required></div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 16px;">
-            <div class="vx-form-group"><label class="vx-label">Marca <span class="required">*</span></label><select class="vx-select" name="marca_id" required>@foreach($marcas as $m)<option value="{{ $m->id }}" {{ old('marca_id', $coches_sustitucion->marca_id) == $m->id ? 'selected' : '' }}>{{ $m->nombre }}</option>@endforeach</select></div>
+            <div class="vx-form-group"><label class="vx-label">Marca <span class="required">*</span></label><select class="vx-select" name="marca_id" required>@foreach($marcas as $m)<option value="{{ $m->id }}" {{ old('marca_id', $coches_sustitucion->marca_id) == $m->id ? 'selected' : '' }}>{{ $m->nombre }}</option>@endforeach</select><a href="{{ route('gestion.marcas') }}" class="vx-select-create" target="_blank"><i class="bi bi-plus-circle"></i> Gestionar marcas</a></div>
             <div class="vx-form-group"><label class="vx-label">Color</label><input type="text" class="vx-input" name="color" value="{{ old('color', $coches_sustitucion->color) }}"></div>
             <div class="vx-form-group"><label class="vx-label">Año</label><input type="number" class="vx-input" name="anio" value="{{ old('anio', $coches_sustitucion->anio) }}"></div>
         </div>

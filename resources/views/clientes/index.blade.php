@@ -4,6 +4,8 @@
 <div class="vx-page-header">
     <h1 class="vx-page-title">Clientes</h1>
     <div class="vx-page-actions">
+        <a href="{{ route('clientes.export') }}" class="vx-btn vx-btn-success"><i class="bi bi-file-earmark-excel"></i> Excel</a>
+        <a href="{{ route('clientes.exportPdf') }}" class="vx-btn vx-btn-danger"><i class="bi bi-file-earmark-pdf"></i> PDF</a>
         @can('crear clientes')
             <a href="{{ route('clientes.create') }}" class="vx-btn vx-btn-primary"><i class="bi bi-plus-circle"></i> Nuevo Cliente</a>
         @endcan

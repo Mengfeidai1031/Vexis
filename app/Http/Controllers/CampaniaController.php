@@ -7,6 +7,7 @@ use App\Models\CampaniaFoto;
 use App\Models\Marca;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class CampaniaController extends Controller
 {
@@ -45,7 +46,13 @@ class CampaniaController extends Controller
 
         if ($request->hasFile('fotos')) {
             foreach ($request->file('fotos') as $i => $foto) {
-                $path = $foto->store('campanias/' . $campania->id, 'public');
+                $ext = $foto->getClientOriginalExtension();
+                $safeName = Str::slug(pathinfo($foto->getClientOriginalName(), PATHINFO_FILENAME), '_');
+                $path = $foto->storeAs(
+                    'campanias/' . $campania->id,
+                    "foto_{$i}_{$safeName}.{$ext}",
+                    'public'
+                );
                 CampaniaFoto::create([
                     'campania_id' => $campania->id,
                     'ruta' => $path,
@@ -89,12 +96,19 @@ class CampaniaController extends Controller
         if ($request->hasFile('fotos')) {
             $maxOrder = $campania->fotos()->max('orden') ?? -1;
             foreach ($request->file('fotos') as $i => $foto) {
-                $path = $foto->store('campanias/' . $campania->id, 'public');
+                $orden = $maxOrder + $i + 1;
+                $ext = $foto->getClientOriginalExtension();
+                $safeName = Str::slug(pathinfo($foto->getClientOriginalName(), PATHINFO_FILENAME), '_');
+                $path = $foto->storeAs(
+                    'campanias/' . $campania->id,
+                    "foto_{$orden}_{$safeName}.{$ext}",
+                    'public'
+                );
                 CampaniaFoto::create([
                     'campania_id' => $campania->id,
                     'ruta' => $path,
                     'nombre_original' => $foto->getClientOriginalName(),
-                    'orden' => $maxOrder + $i + 1,
+                    'orden' => $orden,
                 ]);
             }
         }
@@ -104,16 +118,13 @@ class CampaniaController extends Controller
 
     public function destroyFoto(CampaniaFoto $foto)
     {
-        Storage::disk('public')->delete($foto->ruta);
         $foto->delete();
         return back()->with('success', 'Foto eliminada correctamente.');
     }
 
     public function destroy(Campania $campania)
     {
-        foreach ($campania->fotos as $foto) {
-            Storage::disk('public')->delete($foto->ruta);
-        }
+        $campania->fotos->each->delete();
         $campania->delete();
         return redirect()->route('campanias.index')->with('success', 'Campaña eliminada correctamente.');
     }

@@ -5,7 +5,7 @@
 <div style="max-width:650px;"><div class="vx-card"><div class="vx-card-body">
     <form action="{{ route('catalogo-precios.update', $catalogo_precio) }}" method="POST">@csrf @method('PUT')
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px;">
-            <div class="vx-form-group"><label class="vx-label">Marca <span class="required">*</span></label><select class="vx-select" name="marca_id" required>@foreach($marcas as $m)<option value="{{ $m->id }}" {{ old('marca_id', $catalogo_precio->marca_id) == $m->id ? 'selected' : '' }}>{{ $m->nombre }}</option>@endforeach</select></div>
+            <div class="vx-form-group"><label class="vx-label">Marca <span class="required">*</span></label><select class="vx-select" name="marca_id" required>@foreach($marcas as $m)<option value="{{ $m->id }}" {{ old('marca_id', $catalogo_precio->marca_id) == $m->id ? 'selected' : '' }}>{{ $m->nombre }}</option>@endforeach</select><a href="{{ route('gestion.marcas') }}" class="vx-select-create" target="_blank"><i class="bi bi-plus-circle"></i> Gestionar marcas</a></div>
             <div class="vx-form-group"><label class="vx-label">Modelo <span class="required">*</span></label><input type="text" class="vx-input" name="modelo" value="{{ old('modelo', $catalogo_precio->modelo) }}" required></div>
         </div>
         <div class="vx-form-group"><label class="vx-label">Versión</label><input type="text" class="vx-input" name="version" value="{{ old('version', $catalogo_precio->version) }}"></div>

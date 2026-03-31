@@ -21,6 +21,7 @@
                         <option value="{{ $marca->id }}" {{ old('marca_id', $campania->marca_id) == $marca->id ? 'selected' : '' }}>{{ $marca->nombre }}</option>
                     @endforeach
                 </select>
+                <a href="{{ route('gestion.marcas') }}" class="vx-select-create" target="_blank"><i class="bi bi-plus-circle"></i> Gestionar marcas</a>
             </div>
             <div class="vx-form-group">
                 <label class="vx-label" for="descripcion">Descripción</label>

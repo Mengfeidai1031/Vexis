@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 class OfertaCabecera extends Model
 {
@@ -24,6 +25,17 @@ class OfertaCabecera extends Model
         'total_sin_impuestos',
         'total_con_impuestos',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function (OfertaCabecera $oferta) {
+            if ($oferta->pdf_path && Storage::disk('public')->exists($oferta->pdf_path)) {
+                Storage::disk('public')->delete($oferta->pdf_path);
+            }
+        });
+    }
 
     protected $casts = [
         'fecha' => 'datetime',

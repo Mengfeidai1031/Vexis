@@ -8,8 +8,11 @@ use App\Models\Cliente;
 use App\Models\Empresa;
 use App\Models\Centro;
 use App\Models\Marca;
+use App\Exports\VentasExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class VentaController extends Controller
 {
@@ -69,5 +72,19 @@ class VentaController extends Controller
     {
         $venta->delete();
         return redirect()->route('ventas.index')->with('success', 'Venta eliminada correctamente.');
+    }
+
+    public function export()
+    {
+        $fileName = 'ventas_' . date('Y-m-d_His') . '.xlsx';
+        return Excel::download(new VentasExport(), $fileName);
+    }
+
+    public function exportPdf()
+    {
+        $ventas = Venta::with(['vehiculo', 'cliente', 'empresa', 'marca'])->orderByDesc('fecha_venta')->get();
+        $pdf = Pdf::loadView('ventas.pdf', compact('ventas'));
+        $fileName = 'ventas_' . date('Y-m-d_His') . '.pdf';
+        return $pdf->download($fileName);
     }
 }

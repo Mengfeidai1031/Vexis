@@ -35,6 +35,12 @@ class CatalogoPrecioController extends Controller
         return redirect()->route('catalogo-precios.index', ['marca_id' => $request->marca_id])->with('success', 'Modelo añadido al catálogo.');
     }
 
+    public function show(CatalogoPrecio $catalogo_precio)
+    {
+        $catalogo_precio->load('marca');
+        return view('catalogo-precios.show', compact('catalogo_precio'));
+    }
+
     public function edit(CatalogoPrecio $catalogo_precio)
     {
         $marcas = Marca::where('activa', true)->orderBy('nombre')->get();

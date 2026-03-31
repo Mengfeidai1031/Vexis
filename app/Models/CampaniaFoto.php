@@ -4,10 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class CampaniaFoto extends Model
 {
     protected $table = 'campania_fotos';
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function (CampaniaFoto $foto) {
+            if ($foto->ruta && Storage::disk('public')->exists($foto->ruta)) {
+                Storage::disk('public')->delete($foto->ruta);
+            }
+        });
+    }
 
     protected $fillable = [
         'campania_id', 'ruta', 'nombre_original', 'orden',

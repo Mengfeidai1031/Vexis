@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\Empresa;
+use App\Models\Departamento;
+use App\Models\Centro;
 
 class AuthController extends Controller
 {
@@ -66,9 +69,9 @@ class AuthController extends Controller
             'apellidos' => $request->apellidos,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'empresa_id' => 1,
-            'departamento_id' => 1,
-            'centro_id' => 1,
+            'empresa_id' => Empresa::first()?->id,
+            'departamento_id' => Departamento::first()?->id,
+            'centro_id' => Centro::first()?->id,
         ]);
 
         // Asignar rol de cliente

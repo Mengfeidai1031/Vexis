@@ -364,10 +364,22 @@
             .vx-info-row { flex-direction: column; gap: 4px; }
             .vx-info-label { width: auto; }
             [style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: 1fr !important; }
+            [style*="grid-template-columns:1fr 1fr"] { grid-template-columns: 1fr !important; }
             [style*="grid-template-columns: repeat(auto-fill"] { grid-template-columns: 1fr !important; }
+            [style*="grid-template-columns:repeat(auto-fill"] { grid-template-columns: 1fr !important; }
             .vx-search-box { flex-direction: column; }
+            .vx-search-box select { width: 100% !important; }
+            .vx-search-box input { width: 100% !important; }
             .vx-page-actions { flex-wrap: wrap; }
             .vx-btn-group { gap: 4px; }
+        }
+
+        @media (max-width: 480px) {
+            .vx-main { padding: 8px; }
+            .vx-page-title { font-size: 18px; }
+            .vx-card-body { padding: 12px; }
+            .vx-btn { font-size: 12px; padding: 6px 10px; }
+            .vx-table th, .vx-table td { padding: 6px 8px; font-size: 12px; }
         }
 
         @media (max-width: 992px) and (min-width: 769px) {

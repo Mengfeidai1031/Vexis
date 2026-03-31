@@ -30,7 +30,7 @@
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px;">
             <div class="vx-form-group"><label class="vx-label">Valor Estimado (€)</label><input type="number" class="vx-input" name="valor_estimado" value="{{ old('valor_estimado') }}" step="0.01" min="0" style="font-family:var(--vx-font-mono);"></div>
-            <div class="vx-form-group"><label class="vx-label">Marca concesionario</label><select class="vx-select" name="marca_id"><option value="">—</option>@foreach($marcas as $m)<option value="{{ $m->id }}" {{ old('marca_id') == $m->id ? 'selected' : '' }}>{{ $m->nombre }}</option>@endforeach</select></div>
+            <div class="vx-form-group"><label class="vx-label">Marca concesionario</label><select class="vx-select" name="marca_id"><option value="">—</option>@foreach($marcas as $m)<option value="{{ $m->id }}" {{ old('marca_id') == $m->id ? 'selected' : '' }}>{{ $m->nombre }}</option>@endforeach</select><a href="{{ route('gestion.marcas') }}" class="vx-select-create" target="_blank"><i class="bi bi-plus-circle"></i> Gestionar marcas</a></div>
         </div>
         <div class="vx-form-group"><label class="vx-label">Observaciones</label><textarea class="vx-input" name="observaciones" rows="2">{{ old('observaciones') }}</textarea></div>
         <div style="display:flex;justify-content:flex-end;gap:8px;"><a href="{{ route('tasaciones.index') }}" class="vx-btn vx-btn-secondary">Cancelar</a><button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-check-lg"></i> Crear Tasación</button></div>

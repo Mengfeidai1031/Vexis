@@ -247,6 +247,7 @@ Route::middleware('auth')->group(function () {
     });
     Route::middleware(['permission:ver mecanicos'])->group(function () {
         Route::get('/mecanicos', [MecanicoController::class, 'index'])->name('mecanicos.index');
+        Route::get('/mecanicos/{mecanico}', [MecanicoController::class, 'show'])->name('mecanicos.show');
     });
     Route::middleware(['permission:editar mecanicos'])->group(function () {
         Route::get('/mecanicos/{mecanico}/edit', [MecanicoController::class, 'edit'])->name('mecanicos.edit');
@@ -263,6 +264,7 @@ Route::middleware('auth')->group(function () {
     });
     Route::middleware(['permission:ver citas'])->group(function () {
         Route::get('/citas', [CitaTallerController::class, 'index'])->name('citas.index');
+        Route::get('/citas/{cita}', [CitaTallerController::class, 'show'])->name('citas.show');
     });
     Route::middleware(['permission:editar citas'])->group(function () {
         Route::get('/citas/{cita}/edit', [CitaTallerController::class, 'edit'])->name('citas.edit');
@@ -297,6 +299,8 @@ Route::middleware('auth')->group(function () {
     });
     Route::middleware(['permission:ver ventas'])->group(function () {
         Route::get('/ventas', [VentaController::class, 'index'])->name('ventas.index');
+        Route::get('/ventas/export/excel', [VentaController::class, 'export'])->name('ventas.export');
+        Route::get('/ventas/export/pdf', [VentaController::class, 'exportPdf'])->name('ventas.exportPdf');
         Route::get('/ventas/{venta}', [VentaController::class, 'show'])->name('ventas.show');
     });
     Route::middleware(['permission:editar ventas'])->group(function () {
@@ -314,6 +318,8 @@ Route::middleware('auth')->group(function () {
     });
     Route::middleware(['permission:ver tasaciones'])->group(function () {
         Route::get('/tasaciones', [TasacionController::class, 'index'])->name('tasaciones.index');
+        Route::get('/tasaciones/export/excel', [TasacionController::class, 'export'])->name('tasaciones.export');
+        Route::get('/tasaciones/export/pdf', [TasacionController::class, 'exportPdf'])->name('tasaciones.exportPdf');
         Route::get('/tasaciones/{tasacion}', [TasacionController::class, 'show'])->name('tasaciones.show');
     });
     Route::middleware(['permission:editar tasaciones'])->group(function () {
@@ -331,6 +337,7 @@ Route::middleware('auth')->group(function () {
     });
     Route::middleware(['permission:ver catalogo-precios'])->group(function () {
         Route::get('/catalogo-precios', [CatalogoPrecioController::class, 'index'])->name('catalogo-precios.index');
+        Route::get('/catalogo-precios/{catalogo_precio}', [CatalogoPrecioController::class, 'show'])->name('catalogo-precios.show');
     });
     Route::middleware(['permission:editar catalogo-precios'])->group(function () {
         Route::get('/catalogo-precios/{catalogo_precio}/edit', [CatalogoPrecioController::class, 'edit'])->name('catalogo-precios.edit');
@@ -521,6 +528,8 @@ Route::middleware('auth')->group(function () {
     
     Route::middleware(['permission:ver clientes'])->group(function () {
         Route::get('/clientes', [ClienteController::class, 'index'])->name('clientes.index');
+        Route::get('/clientes/export/excel', [ClienteController::class, 'export'])->name('clientes.export');
+        Route::get('/clientes/export/pdf', [ClienteController::class, 'exportPdf'])->name('clientes.exportPdf');
         Route::get('/clientes/{cliente}', [ClienteController::class, 'show'])
             ->middleware('can:view,cliente')
             ->name('clientes.show');

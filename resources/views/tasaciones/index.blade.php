@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Tasaciones - VEXIS')
 @section('content')
-<div class="vx-page-header"><h1 class="vx-page-title">Tasaciones</h1><div class="vx-page-actions">@can('crear tasaciones')<a href="{{ route('tasaciones.create') }}" class="vx-btn vx-btn-primary"><i class="bi bi-plus-circle"></i> Nueva Tasación</a>@endcan</div></div>
+<div class="vx-page-header"><h1 class="vx-page-title">Tasaciones</h1><div class="vx-page-actions"><a href="{{ route('tasaciones.export') }}" class="vx-btn vx-btn-success"><i class="bi bi-file-earmark-excel"></i> Excel</a><a href="{{ route('tasaciones.exportPdf') }}" class="vx-btn vx-btn-danger"><i class="bi bi-file-earmark-pdf"></i> PDF</a>@can('crear tasaciones')<a href="{{ route('tasaciones.create') }}" class="vx-btn vx-btn-primary"><i class="bi bi-plus-circle"></i> Nueva Tasación</a>@endcan</div></div>
 <form action="{{ route('tasaciones.index') }}" method="GET" class="vx-search-box">
     <input type="text" name="search" class="vx-input" placeholder="Buscar por código, marca, modelo o matrícula..." value="{{ request('search') }}" style="flex:1;">
     <select name="estado" class="vx-select" style="width:auto;"><option value="">Todos</option>@foreach(\App\Models\Tasacion::$estados as $k => $v)<option value="{{ $k }}" {{ request('estado') == $k ? 'selected' : '' }}>{{ $v }}</option>@endforeach</select>

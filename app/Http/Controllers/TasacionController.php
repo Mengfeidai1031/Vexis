@@ -6,8 +6,11 @@ use App\Models\Tasacion;
 use App\Models\Cliente;
 use App\Models\Empresa;
 use App\Models\Marca;
+use App\Exports\TasacionesExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class TasacionController extends Controller
 {
@@ -61,5 +64,19 @@ class TasacionController extends Controller
     {
         $tasacion->delete();
         return redirect()->route('tasaciones.index')->with('success', 'Tasación eliminada correctamente.');
+    }
+
+    public function export()
+    {
+        $fileName = 'tasaciones_' . date('Y-m-d_His') . '.xlsx';
+        return Excel::download(new TasacionesExport(), $fileName);
+    }
+
+    public function exportPdf()
+    {
+        $tasaciones = Tasacion::with(['cliente', 'empresa', 'marca'])->orderByDesc('fecha_tasacion')->get();
+        $pdf = Pdf::loadView('tasaciones.pdf', compact('tasaciones'));
+        $fileName = 'tasaciones_' . date('Y-m-d_His') . '.pdf';
+        return $pdf->download($fileName);
     }
 }
