@@ -24,6 +24,11 @@
             <div class="vx-form-group"><label class="vx-label">Fecha Factura <span class="required">*</span></label><input type="date" class="vx-input" name="fecha_factura" value="{{ old('fecha_factura', date('Y-m-d')) }}" required></div>
             <div class="vx-form-group"><label class="vx-label">Fecha Vencimiento</label><input type="date" class="vx-input" name="fecha_vencimiento" value="{{ old('fecha_vencimiento') }}"></div>
         </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 16px;">
+            <div class="vx-form-group"><label class="vx-label">Tipo Factura</label><select class="vx-select" name="tipo_factura">@foreach(\App\Models\Verifactu::$tiposFactura as $k => $v)<option value="{{ $k }}" {{ old('tipo_factura', 'F1') == $k ? 'selected' : '' }}>{{ $v }}</option>@endforeach</select></div>
+            <div class="vx-form-group"><label class="vx-label">Clave Régimen IVA</label><select class="vx-select" name="clave_regimen_iva">@foreach(\App\Models\Verifactu::$clavesRegimen as $k => $v)<option value="{{ $k }}" {{ old('clave_regimen_iva', '01') == $k ? 'selected' : '' }}>{{ $v }}</option>@endforeach</select></div>
+            <div class="vx-form-group"><label class="vx-label">Factura Simplificada</label><select class="vx-select" name="factura_simplificada"><option value="0" {{ old('factura_simplificada') == '0' ? 'selected' : '' }}>No</option><option value="1" {{ old('factura_simplificada') == '1' ? 'selected' : '' }}>Sí</option></select></div>
+        </div>
         <div class="vx-form-group"><label class="vx-label">Observaciones</label><textarea class="vx-input" name="observaciones" rows="2">{{ old('observaciones') }}</textarea></div>
         <div style="display:flex;justify-content:flex-end;gap:8px;"><a href="{{ route('facturas.index') }}" class="vx-btn vx-btn-secondary">Cancelar</a><button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-check-lg"></i> Registrar Factura</button></div>
     </form>

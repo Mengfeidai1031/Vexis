@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             AlmacenSeeder::class,
             DatosEjemploSeeder::class,
             VerifactuSeeder::class,
+            SettingSeeder::class,
         ]);
     }
 }

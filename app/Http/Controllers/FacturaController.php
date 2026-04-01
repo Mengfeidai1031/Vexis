@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Factura;
+use App\Models\Verifactu;
 use App\Models\Venta;
 use App\Models\Cliente;
 use App\Models\Empresa;
 use App\Models\Centro;
 use App\Models\Marca;
+use App\Services\AeatVerifactuService;
 use App\Exports\FacturasExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -134,7 +136,16 @@ class FacturaController extends Controller
             }
         }
 
-        $pdf = Pdf::loadView('facturas.factura-pdf', compact('factura', 'logoMarca'))
+        // Get Verifactu registro and QR code if exists
+        $verifactuRegistro = Verifactu::where('factura_id', $factura->id)
+            ->whereNotIn('estado', ['anulado', 'rechazado'])
+            ->first();
+        $qrBase64 = null;
+        if ($verifactuRegistro && $verifactuRegistro->url_qr) {
+            $qrBase64 = AeatVerifactuService::generateQrImage($verifactuRegistro->url_qr);
+        }
+
+        $pdf = Pdf::loadView('facturas.factura-pdf', compact('factura', 'logoMarca', 'qrBase64', 'verifactuRegistro'))
             ->setPaper('a4', 'portrait');
 
         $fileName = 'factura_' . $factura->codigo_factura . '.pdf';

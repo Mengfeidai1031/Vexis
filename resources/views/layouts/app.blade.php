@@ -553,6 +553,9 @@
                     </div>
                     <a href="{{ route('dashboard') }}" class="vx-dropdown-item"><i class="bi bi-speedometer2"></i> Dashboard</a>
                     <a href="{{ route('profile.edit') }}" class="vx-dropdown-item"><i class="bi bi-person-gear"></i> Editar Perfil</a>
+                    @role('Super Admin')
+                    <a href="{{ route('settings.index') }}" class="vx-dropdown-item"><i class="bi bi-gear"></i> Configuración</a>
+                    @endrole
                     <div class="vx-dropdown-divider"></div>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
@@ -705,12 +708,16 @@
                     @can('ver catalogo-precios')
                     <a href="{{ route('catalogo-precios.index') }}" class="vx-dropdown-item"><i class="bi bi-currency-euro"></i> Catálogo Precios</a>
                     @endcan
+                    @if(\App\Models\Setting::get('modulo_facturas', true))
                     @can('ver facturas')
                     <a href="{{ route('facturas.index') }}" class="vx-dropdown-item"><i class="bi bi-receipt"></i> Facturas</a>
                     @endcan
+                    @endif
+                    @if(\App\Models\Setting::get('modulo_verifactu', true))
                     @can('ver verifactu')
                     <a href="{{ route('verifactu.index') }}" class="vx-dropdown-item"><i class="bi bi-shield-check"></i> Verifactu</a>
                     @endcan
+                    @endif
                 </div>
             </li>
             @endcanany

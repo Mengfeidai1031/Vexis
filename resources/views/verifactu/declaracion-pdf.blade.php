@@ -115,7 +115,9 @@
                 <tr><td>Versión</td><td>1.0.0</td></tr>
                 <tr><td>Algoritmo de hash</td><td>SHA-256 (encadenado)</td></tr>
                 <tr><td>Total de registros generados</td><td>{{ $stats['total'] }}</td></tr>
-                <tr><td>Registros validados por AEAT</td><td>{{ $stats['validados'] }}</td></tr>
+                <tr><td>Registros aceptados por AEAT</td><td>{{ $stats['aceptados'] }}</td></tr>
+                <tr><td>Base imponible total</td><td>{{ number_format($stats['base_imponible_total'], 2) }} €</td></tr>
+                <tr><td>Cuota tributaria total</td><td>{{ number_format($stats['cuota_total'], 2) }} €</td></tr>
                 <tr><td>Importe total registrado</td><td>{{ number_format($stats['importe_total'], 2) }} €</td></tr>
                 <tr><td>Primer registro</td><td>{{ $stats['primer_registro']?->format('d/m/Y H:i') ?? '—' }}</td></tr>
                 <tr><td>Último registro</td><td>{{ $stats['ultimo_registro']?->format('d/m/Y H:i') ?? '—' }}</td></tr>

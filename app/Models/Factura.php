@@ -11,9 +11,10 @@ class Factura extends Model
     protected $table = 'facturas';
 
     protected $fillable = [
-        'codigo_factura', 'venta_id', 'cliente_id', 'empresa_id', 'centro_id',
+        'codigo_factura', 'numero_serie', 'venta_id', 'cliente_id', 'empresa_id', 'centro_id',
         'marca_id', 'emisor_id', 'fecha_factura', 'fecha_vencimiento', 'concepto',
         'subtotal', 'iva_porcentaje', 'iva_importe', 'total', 'estado',
+        'tipo_factura', 'clave_regimen_iva', 'factura_simplificada',
         'observaciones', 'pdf_path',
     ];
 

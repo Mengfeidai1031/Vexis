@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Verifactu;
 use App\Models\Factura;
+use App\Services\AeatVerifactuService;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -17,6 +18,7 @@ class VerifactuController extends Controller
             $s = $request->search;
             $query->where(function ($q) use ($s) {
                 $q->where('codigo_registro', 'like', "%$s%")
+                  ->orWhere('numero_serie_factura', 'like', "%$s%")
                   ->orWhereHas('factura', fn($q2) => $q2->where('codigo_factura', 'like', "%$s%"));
             });
         }
@@ -25,10 +27,9 @@ class VerifactuController extends Controller
 
         $registros = $query->orderByDesc('fecha_registro')->paginate(15)->withQueryString();
 
-        // Stats for dashboard
         $stats = [
             'total' => Verifactu::count(),
-            'validados' => Verifactu::where('estado', 'validado')->count(),
+            'aceptados' => Verifactu::where('estado', 'aceptado')->count(),
             'pendientes' => Verifactu::whereIn('estado', ['registrado', 'enviado'])->count(),
             'rechazados' => Verifactu::where('estado', 'rechazado')->count(),
         ];
@@ -40,58 +41,14 @@ class VerifactuController extends Controller
     {
         $verifactu->load(['factura.cliente', 'factura.empresa', 'factura.centro', 'factura.marca', 'factura.venta.vehiculo']);
 
-        // Get previous and next in chain
         $anterior = $verifactu->hash_anterior
             ? Verifactu::where('hash_registro', $verifactu->hash_anterior)->first()
             : null;
         $siguiente = Verifactu::where('hash_anterior', $verifactu->hash_registro)->first();
 
-        return view('verifactu.show', compact('verifactu', 'anterior', 'siguiente'));
-    }
+        $xml = $verifactu->buildAeatXml();
 
-    public function registrar(Request $request)
-    {
-        $request->validate([
-            'factura_id' => 'required|exists:facturas,id',
-            'tipo_operacion' => 'required|in:emision,anulacion,rectificacion',
-        ]);
-
-        $factura = Factura::with(['empresa', 'cliente'])->findOrFail($request->factura_id);
-
-        // Check if this factura already has a verifactu emision record
-        $existente = Verifactu::where('factura_id', $factura->id)
-            ->where('tipo_operacion', 'emision')
-            ->where('estado', '!=', 'anulado')
-            ->first();
-
-        if ($existente && $request->tipo_operacion === 'emision') {
-            return redirect()->route('verifactu.index')
-                ->with('error', 'Esta factura ya tiene un registro Verifactu activo.');
-        }
-
-        // Get last hash in chain
-        $ultimoRegistro = Verifactu::orderByDesc('id')->first();
-        $hashAnterior = $ultimoRegistro?->hash_registro;
-
-        $hash = Verifactu::generateHash($factura, $hashAnterior);
-        $codigo = 'VRF-' . date('Ym') . '-' . str_pad(Verifactu::whereYear('fecha_registro', date('Y'))->count() + 1, 5, '0', STR_PAD_LEFT);
-
-        Verifactu::create([
-            'codigo_registro' => $codigo,
-            'factura_id' => $factura->id,
-            'hash_registro' => $hash,
-            'hash_anterior' => $hashAnterior,
-            'fecha_registro' => now(),
-            'estado' => 'registrado',
-            'tipo_operacion' => $request->tipo_operacion,
-            'nif_emisor' => $factura->empresa?->cif,
-            'nombre_emisor' => $factura->empresa?->nombre,
-            'importe_total' => $factura->total,
-            'observaciones' => $request->observaciones,
-        ]);
-
-        return redirect()->route('verifactu.index')
-            ->with('success', "Registro Verifactu {$codigo} creado correctamente.");
+        return view('verifactu.show', compact('verifactu', 'anterior', 'siguiente', 'xml'));
     }
 
     public function create()
@@ -104,20 +61,67 @@ class VerifactuController extends Controller
         return view('verifactu.create', compact('facturas'));
     }
 
+    public function registrar(Request $request)
+    {
+        $request->validate([
+            'factura_id' => 'required|exists:facturas,id',
+            'tipo_operacion' => 'required|in:alta,anulacion',
+        ]);
+
+        $factura = Factura::with(['empresa', 'cliente'])->findOrFail($request->factura_id);
+
+        // Check duplicate
+        $existente = Verifactu::where('factura_id', $factura->id)
+            ->where('tipo_operacion', 'alta')
+            ->whereNotIn('estado', ['anulado', 'rechazado'])
+            ->first();
+
+        if ($existente && $request->tipo_operacion === 'alta') {
+            return redirect()->route('verifactu.index')
+                ->with('error', 'Esta factura ya tiene un registro Verifactu activo (' . $existente->codigo_registro . ').');
+        }
+
+        $service = new AeatVerifactuService();
+        $registro = $service->registrarFactura($factura, $request->tipo_operacion, $request->observaciones);
+
+        return redirect()->route('verifactu.show', $registro)
+            ->with('success', "Registro Verifactu {$registro->codigo_registro} creado. Puede enviarlo a AEAT desde esta vista.");
+    }
+
+    /**
+     * Send a registro to AEAT sandbox.
+     */
+    public function enviarAeat(Verifactu $verifactu)
+    {
+        if (!in_array($verifactu->estado, ['registrado', 'rechazado'])) {
+            return redirect()->route('verifactu.show', $verifactu)
+                ->with('error', 'Solo se pueden enviar registros en estado "Registrado" o "Rechazado".');
+        }
+
+        $verifactu->update(['estado' => 'enviado']);
+
+        $service = new AeatVerifactuService();
+        $resultado = $service->enviarAeat($verifactu);
+
+        $estado = $resultado['estado'] ?? 'rechazado';
+        $msg = $estado === 'aceptado'
+            ? "Registro {$verifactu->codigo_registro} aceptado por AEAT. CSV: " . ($resultado['csv'] ?? '—')
+            : "Registro rechazado por AEAT: " . ($resultado['errores'][0]['descripcion'] ?? $resultado['descripcion'] ?? 'Error desconocido');
+
+        return redirect()->route('verifactu.show', $verifactu)
+            ->with($estado === 'aceptado' ? 'success' : 'error', $msg);
+    }
+
+    /**
+     * Manually change state (admin override).
+     */
     public function cambiarEstado(Request $request, Verifactu $verifactu)
     {
         $request->validate([
-            'estado' => 'required|in:registrado,enviado,validado,rechazado,anulado',
+            'estado' => 'required|in:registrado,enviado,aceptado,aceptado_errores,rechazado,anulado',
         ]);
 
-        $verifactu->update([
-            'estado' => $request->estado,
-            'respuesta_aeat' => $request->estado === 'validado'
-                ? ['codigo' => 'CSV-' . strtoupper(substr(md5(now()->toString()), 0, 12)), 'fecha_validacion' => now()->format('Y-m-d H:i:s'), 'resultado' => 'Aceptado']
-                : ($request->estado === 'rechazado'
-                    ? ['codigo_error' => 'ERR-' . rand(1000, 9999), 'descripcion' => 'Error en validación AEAT', 'fecha_rechazo' => now()->format('Y-m-d H:i:s')]
-                    : $verifactu->respuesta_aeat),
-        ]);
+        $verifactu->update(['estado' => $request->estado]);
 
         return redirect()->route('verifactu.show', $verifactu)
             ->with('success', 'Estado actualizado a: ' . Verifactu::$estados[$request->estado]);
@@ -127,8 +131,10 @@ class VerifactuController extends Controller
     {
         $stats = [
             'total' => Verifactu::count(),
-            'validados' => Verifactu::where('estado', 'validado')->count(),
-            'importe_total' => Verifactu::where('estado', '!=', 'anulado')->sum('importe_total'),
+            'aceptados' => Verifactu::where('estado', 'aceptado')->count(),
+            'importe_total' => Verifactu::whereNotIn('estado', ['anulado', 'rechazado'])->sum('importe_total'),
+            'base_imponible_total' => Verifactu::whereNotIn('estado', ['anulado', 'rechazado'])->sum('base_imponible'),
+            'cuota_total' => Verifactu::whereNotIn('estado', ['anulado', 'rechazado'])->sum('cuota_tributaria'),
             'primer_registro' => Verifactu::orderBy('fecha_registro')->first()?->fecha_registro,
             'ultimo_registro' => Verifactu::orderByDesc('fecha_registro')->first()?->fecha_registro,
         ];
@@ -149,12 +155,6 @@ class VerifactuController extends Controller
             if ($reg->hash_anterior !== $hashAnterior) {
                 $errores[] = "Registro {$reg->codigo_registro}: hash_anterior no coincide con el hash del registro previo.";
             }
-
-            $hashEsperado = Verifactu::generateHash($reg->factura, $hashAnterior);
-            if ($reg->hash_registro !== $hashEsperado) {
-                $errores[] = "Registro {$reg->codigo_registro}: hash_registro no coincide con el hash calculado.";
-            }
-
             $hashAnterior = $reg->hash_registro;
         }
 
@@ -162,6 +162,20 @@ class VerifactuController extends Controller
             'total_registros' => $registros->count(),
             'cadena_valida' => empty($errores),
             'errores' => $errores,
+        ]);
+    }
+
+    /**
+     * Download XML for a registro.
+     */
+    public function descargarXml(Verifactu $verifactu)
+    {
+        $xml = $verifactu->buildAeatXml();
+        $filename = 'verifactu_' . $verifactu->codigo_registro . '.xml';
+
+        return response($xml, 200, [
+            'Content-Type' => 'application/xml',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
         ]);
     }
 }

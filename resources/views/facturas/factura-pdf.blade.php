@@ -34,7 +34,6 @@
         .totals .total-row td { border-top: 2px solid #33AADD; padding-top: 10px; }
         .totals .total-label { font-size: 14px; font-weight: 800; color: #333; }
         .totals .total-value { font-size: 18px; font-weight: 800; color: #33AADD; text-align: right; font-family: monospace; }
-        .meta-row { display: flex; gap: 30px; margin-bottom: 20px; }
         .meta-table { width: 100%; margin-bottom: 20px; }
         .meta-table td { border: none; padding: 4px 16px 4px 0; font-size: 10px; }
         .meta-label { color: #999; font-weight: 600; text-transform: uppercase; font-size: 9px; }
@@ -45,6 +44,10 @@
         .status-pagada { background: #e8f5e9; color: #2e7d32; }
         .status-vencida { background: #fff3e0; color: #e65100; }
         .status-anulada { background: #fce4ec; color: #c62828; }
+        .verifactu-box { margin-top: 24px; padding: 12px 16px; border: 1px solid #33AADD; border-radius: 6px; background: #f0f9ff; }
+        .verifactu-box td { border: none; vertical-align: top; padding: 0; }
+        .verifactu-label { font-size: 9px; text-transform: uppercase; color: #999; font-weight: 700; }
+        .verifactu-value { font-size: 10px; font-family: monospace; color: #333; word-break: break-all; }
     </style>
 </head>
 <body>
@@ -77,6 +80,11 @@
             <td><span class="meta-label">Venta asociada</span><br><span class="meta-value">{{ $factura->venta?->codigo_venta ?? '—' }}</span></td>
             <td><span class="meta-label">Emitida por</span><br><span class="meta-value">{{ $factura->emisor?->name ?? '—' }}</span></td>
         </tr>
+        <tr>
+            <td><span class="meta-label">Tipo factura</span><br><span class="meta-value">{{ $factura->tipo_factura ?? 'F1' }}</span></td>
+            <td><span class="meta-label">Clave régimen IVA</span><br><span class="meta-value">{{ $factura->clave_regimen_iva ?? '01' }}</span></td>
+            <td colspan="2"><span class="meta-label">Factura simplificada</span><br><span class="meta-value">{{ $factura->factura_simplificada ? 'Sí' : 'No' }}</span></td>
+        </tr>
     </table>
 
     {{-- Parties --}}
@@ -85,7 +93,7 @@
             <td style="padding-right:10px;">
                 <div class="party-box emisor">
                     <div class="party-label">Empresa emisora</div>
-                    <div class="party-name">{{ $factura->empresa?->nombre ?? 'VEXIS Grupo ARI' }}</div>
+                    <div class="party-name">{{ $factura->empresa?->nombre ?? 'VEXIS' }}</div>
                     <div class="party-detail">
                         {{ $factura->centro?->nombre ?? '' }}<br>
                         CIF: {{ $factura->empresa?->cif ?? '—' }}
@@ -151,8 +159,28 @@
     </div>
     @endif
 
+    {{-- Verifactu QR Code --}}
+    @if(isset($qrBase64) && $qrBase64)
+    <div class="verifactu-box">
+        <table style="width:100%;">
+            <tr>
+                <td style="width:100px;padding-right:12px;">
+                    <img src="data:image/png;base64,{{ $qrBase64 }}" alt="QR Verifactu" style="width:90px;height:90px;">
+                </td>
+                <td>
+                    <div style="font-size:11px;font-weight:700;color:#33AADD;margin-bottom:6px;">VERI*FACTU — RD 1007/2023</div>
+                    <div class="verifactu-label">Código registro</div>
+                    <div class="verifactu-value" style="margin-bottom:4px;">{{ $verifactuRegistro->codigo_registro ?? '—' }}</div>
+                    <div class="verifactu-label">Huella SHA-256</div>
+                    <div class="verifactu-value" style="font-size:8px;">{{ $verifactuRegistro->hash_registro ?? '—' }}</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    @endif
+
     <div class="footer">
-        VEXIS — Sistema de Gestión de Grupo ARI &bull; Factura generada el {{ date('d/m/Y H:i') }}
+        VEXIS — Sistema de Gestión &bull; Factura generada el {{ date('d/m/Y H:i') }}
     </div>
 </body>
 </html>

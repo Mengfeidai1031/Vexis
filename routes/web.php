@@ -31,6 +31,7 @@ use App\Http\Controllers\DatAxisController;
 use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\VerifactuController;
+use App\Http\Controllers\SettingController;
 
 // Ruta pública (página de inicio)
 Route::get('/', function () {
@@ -350,38 +351,46 @@ Route::middleware('auth')->group(function () {
     });
 
     // === MÓDULO COMERCIAL: Facturas ===
-    Route::middleware(['permission:crear facturas'])->group(function () {
+    Route::middleware(['module:facturas', 'permission:crear facturas'])->group(function () {
         Route::get('/facturas/create', [FacturaController::class, 'create'])->name('facturas.create');
         Route::post('/facturas', [FacturaController::class, 'store'])->name('facturas.store');
     });
-    Route::middleware(['permission:ver facturas'])->group(function () {
+    Route::middleware(['module:facturas', 'permission:ver facturas'])->group(function () {
         Route::get('/facturas', [FacturaController::class, 'index'])->name('facturas.index');
         Route::get('/facturas/export/excel', [FacturaController::class, 'export'])->name('facturas.export');
         Route::get('/facturas/export/pdf', [FacturaController::class, 'exportPdf'])->name('facturas.exportPdf');
         Route::get('/facturas/{factura}', [FacturaController::class, 'show'])->name('facturas.show');
         Route::get('/facturas/{factura}/generate-pdf', [FacturaController::class, 'generatePdf'])->name('facturas.generatePdf');
     });
-    Route::middleware(['permission:editar facturas'])->group(function () {
+    Route::middleware(['module:facturas', 'permission:editar facturas'])->group(function () {
         Route::get('/facturas/{factura}/edit', [FacturaController::class, 'edit'])->name('facturas.edit');
         Route::put('/facturas/{factura}', [FacturaController::class, 'update'])->name('facturas.update');
     });
-    Route::middleware(['permission:eliminar facturas'])->group(function () {
+    Route::middleware(['module:facturas', 'permission:eliminar facturas'])->group(function () {
         Route::delete('/facturas/{factura}', [FacturaController::class, 'destroy'])->name('facturas.destroy');
     });
 
     // === MÓDULO COMERCIAL: Verifactu ===
-    Route::middleware(['permission:ver verifactu'])->group(function () {
+    Route::middleware(['module:verifactu', 'permission:ver verifactu'])->group(function () {
         Route::get('/verifactu', [VerifactuController::class, 'index'])->name('verifactu.index');
         Route::get('/verifactu/declaracion', [VerifactuController::class, 'declaracion'])->name('verifactu.declaracion');
         Route::get('/verifactu/verificar-cadena', [VerifactuController::class, 'verificarCadena'])->name('verifactu.verificarCadena');
         Route::get('/verifactu/{verifactu}', [VerifactuController::class, 'show'])->name('verifactu.show');
+        Route::get('/verifactu/{verifactu}/xml', [VerifactuController::class, 'descargarXml'])->name('verifactu.descargarXml');
     });
-    Route::middleware(['permission:crear verifactu'])->group(function () {
+    Route::middleware(['module:verifactu', 'permission:crear verifactu'])->group(function () {
         Route::get('/verifactu-registrar', [VerifactuController::class, 'create'])->name('verifactu.create');
         Route::post('/verifactu', [VerifactuController::class, 'registrar'])->name('verifactu.registrar');
     });
-    Route::middleware(['permission:editar verifactu'])->group(function () {
+    Route::middleware(['module:verifactu', 'permission:editar verifactu'])->group(function () {
+        Route::post('/verifactu/{verifactu}/enviar-aeat', [VerifactuController::class, 'enviarAeat'])->name('verifactu.enviarAeat');
         Route::put('/verifactu/{verifactu}/estado', [VerifactuController::class, 'cambiarEstado'])->name('verifactu.cambiarEstado');
+    });
+
+    // === CONFIGURACIÓN (Solo Super Admin) ===
+    Route::middleware(['role:Super Admin'])->group(function () {
+        Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+        Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
     });
 
     // === DATAXIS (Análisis de datos) ===
