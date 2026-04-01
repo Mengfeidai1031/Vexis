@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             CatalogoPrecioSeeder::class,
             AlmacenSeeder::class,
             DatosEjemploSeeder::class,
+            VerifactuSeeder::class,
         ]);
     }
 }

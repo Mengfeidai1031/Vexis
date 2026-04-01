@@ -30,6 +30,7 @@ use App\Http\Controllers\ClienteModuloController;
 use App\Http\Controllers\DatAxisController;
 use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\FacturaController;
+use App\Http\Controllers\VerifactuController;
 
 // Ruta pública (página de inicio)
 Route::get('/', function () {
@@ -366,6 +367,21 @@ Route::middleware('auth')->group(function () {
     });
     Route::middleware(['permission:eliminar facturas'])->group(function () {
         Route::delete('/facturas/{factura}', [FacturaController::class, 'destroy'])->name('facturas.destroy');
+    });
+
+    // === MÓDULO COMERCIAL: Verifactu ===
+    Route::middleware(['permission:ver verifactu'])->group(function () {
+        Route::get('/verifactu', [VerifactuController::class, 'index'])->name('verifactu.index');
+        Route::get('/verifactu/declaracion', [VerifactuController::class, 'declaracion'])->name('verifactu.declaracion');
+        Route::get('/verifactu/verificar-cadena', [VerifactuController::class, 'verificarCadena'])->name('verifactu.verificarCadena');
+        Route::get('/verifactu/{verifactu}', [VerifactuController::class, 'show'])->name('verifactu.show');
+    });
+    Route::middleware(['permission:crear verifactu'])->group(function () {
+        Route::get('/verifactu-registrar', [VerifactuController::class, 'create'])->name('verifactu.create');
+        Route::post('/verifactu', [VerifactuController::class, 'registrar'])->name('verifactu.registrar');
+    });
+    Route::middleware(['permission:editar verifactu'])->group(function () {
+        Route::put('/verifactu/{verifactu}/estado', [VerifactuController::class, 'cambiarEstado'])->name('verifactu.cambiarEstado');
     });
 
     // === DATAXIS (Análisis de datos) ===
