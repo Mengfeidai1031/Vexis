@@ -17,6 +17,18 @@
                     <div class="vx-form-hint">Exactamente 17 caracteres</div>
                 </div>
                 <div class="vx-form-group">
+                    <label class="vx-label" for="matricula">Matrícula</label>
+                    <div style="display:flex;gap:8px;">
+                        <input type="text" class="vx-input @error('matricula') is-invalid @enderror" id="matricula" name="matricula" value="{{ old('matricula', $vehiculo->matricula) }}" maxlength="10" placeholder="1234 BCD" style="text-transform: uppercase; font-family: var(--vx-font-mono);flex:1;">
+                        @if(!$vehiculo->matricula)
+                        <button type="button" id="btnGenerarMatricula" class="vx-btn vx-btn-primary" style="white-space:nowrap;padding:8px 12px;" title="Generar siguiente matrícula disponible"><i class="bi bi-plus-circle"></i> Nueva</button>
+                        @endif
+                    </div>
+                    @error('matricula')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px;">
+                <div class="vx-form-group">
                     <label class="vx-label" for="empresa_id">Empresa <span class="required">*</span></label>
                     <select class="vx-select @error('empresa_id') is-invalid @enderror" id="empresa_id" name="empresa_id" required>
                         <option value="">Seleccione</option>
@@ -26,18 +38,19 @@
                     </select><a href="{{ route('empresas.create') }}" class="vx-select-create" target="_blank"><i class="bi bi-plus-circle"></i> Crear nueva</a>
                     @error('empresa_id')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
                 </div>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px;">
                 <div class="vx-form-group">
                     <label class="vx-label" for="modelo">Modelo <span class="required">*</span></label>
                     <input type="text" class="vx-input @error('modelo') is-invalid @enderror" id="modelo" name="modelo" value="{{ old('modelo', $vehiculo->modelo) }}" required>
                     @error('modelo')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
                 </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px;">
                 <div class="vx-form-group">
                     <label class="vx-label" for="version">Versión <span class="required">*</span></label>
                     <input type="text" class="vx-input @error('version') is-invalid @enderror" id="version" name="version" value="{{ old('version', $vehiculo->version) }}" required>
                     @error('version')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
                 </div>
+                <div></div>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px;">
                 <div class="vx-form-group">
@@ -60,5 +73,31 @@
 </div>
 @endsection
 @push('scripts')
-<script>document.getElementById('chasis').addEventListener('input',function(e){e.target.value=e.target.value.toUpperCase();});</script>
+<script>
+document.getElementById('chasis').addEventListener('input',function(e){e.target.value=e.target.value.toUpperCase();});
+document.getElementById('matricula').addEventListener('input',function(e){e.target.value=e.target.value.toUpperCase();});
+var btnGen = document.getElementById('btnGenerarMatricula');
+if (btnGen) {
+    btnGen.addEventListener('click', function() {
+        const btn = this;
+        const input = document.getElementById('matricula');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="bi bi-hourglass-split"></i>';
+        fetch('{{ route("vehiculos.generarMatricula") }}', {
+            headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
+        })
+        .then(r => r.json())
+        .then(data => {
+            input.value = data.matricula;
+            input.style.borderColor = 'var(--vx-success)';
+            setTimeout(() => input.style.borderColor = '', 1500);
+        })
+        .catch(() => alert('Error al generar matrícula'))
+        .finally(() => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-plus-circle"></i> Nueva';
+        });
+    });
+}
+</script>
 @endpush

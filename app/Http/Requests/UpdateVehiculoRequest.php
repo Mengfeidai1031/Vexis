@@ -26,6 +26,12 @@ class UpdateVehiculoRequest extends FormRequest
                 'size:17',
                 Rule::unique('vehiculos')->ignore($vehiculoId),
             ],
+            'matricula' => [
+                'nullable',
+                'string',
+                'max:10',
+                Rule::unique('vehiculos')->ignore($vehiculoId),
+            ],
             'modelo' => 'required|string|max:255',
             'version' => 'required|string|max:255',
             'color_externo' => 'required|string|max:255',

@@ -19,6 +19,7 @@ class StoreVehiculoRequest extends FormRequest
         
         return [
             'chasis' => 'required|string|size:17|unique:vehiculos,chasis',
+            'matricula' => 'nullable|string|max:10|unique:vehiculos,matricula',
             'modelo' => 'required|string|max:255',
             'version' => 'required|string|max:255',
             'color_externo' => 'required|string|max:255',

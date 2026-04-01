@@ -621,6 +621,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['permission:crear vehículos'])->group(function () {
         Route::get('/vehiculos/create', [VehiculoController::class, 'create'])->name('vehiculos.create');
         Route::post('/vehiculos', [VehiculoController::class, 'store'])->name('vehiculos.store');
+        Route::get('/vehiculos/generar-matricula', [VehiculoController::class, 'generarMatricula'])->name('vehiculos.generarMatricula');
     });
 
     Route::middleware(['permission:ver vehículos'])->group(function () {

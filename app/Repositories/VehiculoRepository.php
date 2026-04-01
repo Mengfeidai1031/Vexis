@@ -43,6 +43,7 @@ class VehiculoRepository implements VehiculoRepositoryInterface
         $query = Vehiculo::with('empresa')
             ->where(function($query) use ($searchTerm) {
                 $query->where('chasis', 'like', "%{$searchTerm}%")
+                    ->orWhere('matricula', 'like', "%{$searchTerm}%")
                     ->orWhere('modelo', 'like', "%{$searchTerm}%")
                     ->orWhere('version', 'like', "%{$searchTerm}%")
                     ->orWhere('color_externo', 'like', "%{$searchTerm}%")

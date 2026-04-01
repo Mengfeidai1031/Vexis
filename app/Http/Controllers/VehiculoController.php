@@ -7,6 +7,7 @@ use App\Http\Requests\StoreVehiculoRequest;
 use App\Http\Requests\UpdateVehiculoRequest;
 use App\Models\Vehiculo;
 use App\Repositories\Interfaces\VehiculoRepositoryInterface;
+use App\Services\MatriculaService;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -86,6 +87,16 @@ class VehiculoController extends Controller
             return redirect()->route('vehiculos.index')
                 ->with('error', 'No se puede eliminar el vehículo porque tiene ofertas asociadas.');
         }
+    }
+
+    /**
+     * Generar siguiente matrícula disponible (AJAX)
+     */
+    public function generarMatricula()
+    {
+        $service = new MatriculaService();
+        $matricula = $service->generarSiguiente();
+        return response()->json(['matricula' => $matricula]);
     }
 
     /**

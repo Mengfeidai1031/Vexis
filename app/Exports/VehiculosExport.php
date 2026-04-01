@@ -43,6 +43,7 @@ class VehiculosExport implements FromCollection, WithHeadings, WithMapping, Shou
         return [
             'ID',
             'Chasis',
+            'Matrícula',
             'Modelo',
             'Versión',
             'Color Externo',
@@ -63,6 +64,7 @@ class VehiculosExport implements FromCollection, WithHeadings, WithMapping, Shou
         return [
             $vehiculo->id,
             $vehiculo->chasis ?? '',
+            $vehiculo->matricula ?? '',
             $vehiculo->modelo ?? '',
             $vehiculo->version ?? '',
             $vehiculo->color_externo ?? '',
