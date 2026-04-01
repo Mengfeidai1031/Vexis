@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', $venta->codigo_venta . ' - VEXIS')
 @section('content')
-<div class="vx-page-header"><h1 class="vx-page-title">{{ $venta->codigo_venta }}</h1><div class="vx-page-actions">@can('editar ventas')<a href="{{ route('ventas.edit', $venta) }}" class="vx-btn vx-btn-warning"><i class="bi bi-pencil"></i> Editar</a>@endcan <a href="{{ route('ventas.index') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div></div>
+<div class="vx-page-header"><h1 class="vx-page-title">{{ $venta->codigo_venta }}</h1><div class="vx-page-actions">@can('crear facturas')<a href="{{ route('facturas.create', ['venta_id' => $venta->id]) }}" class="vx-btn vx-btn-success"><i class="bi bi-receipt"></i> Crear Factura</a>@endcan @can('editar ventas')<a href="{{ route('ventas.edit', $venta) }}" class="vx-btn vx-btn-warning"><i class="bi bi-pencil"></i> Editar</a>@endcan <a href="{{ route('ventas.index') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div></div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:900px;">
     <div class="vx-card"><div class="vx-card-header"><h4>Datos de la Venta</h4></div><div class="vx-card-body">
         <div class="vx-info-row"><div class="vx-info-label">Código</div><div class="vx-info-value" style="font-family:var(--vx-font-mono);font-weight:700;">{{ $venta->codigo_venta }}</div></div>

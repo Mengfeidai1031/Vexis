@@ -683,7 +683,7 @@
             @endcanany
 
             {{-- Módulo COMERCIAL --}}
-            @canany(['ver vehículos', 'ver ofertas', 'ver ventas', 'ver tasaciones', 'ver catalogo-precios'])
+            @canany(['ver vehículos', 'ver ofertas', 'ver ventas', 'ver tasaciones', 'ver catalogo-precios', 'ver facturas'])
             <li class="vx-nav-item vx-module-item-dev">
                 <button class="vx-nav-link {{ request()->is('comercial*','ofertas*','vehiculos*','ventas*','tasaciones*','catalogo-precios*') ? 'active' : '' }}">
                     <i class="bi bi-car-front"></i> Comercial <i class="bi bi-chevron-down" style="font-size:10px;"></i>
@@ -704,6 +704,9 @@
                     @endcan
                     @can('ver catalogo-precios')
                     <a href="{{ route('catalogo-precios.index') }}" class="vx-dropdown-item"><i class="bi bi-currency-euro"></i> Catálogo Precios</a>
+                    @endcan
+                    @can('ver facturas')
+                    <a href="{{ route('facturas.index') }}" class="vx-dropdown-item"><i class="bi bi-receipt"></i> Facturas</a>
                     @endcan
                 </div>
             </li>

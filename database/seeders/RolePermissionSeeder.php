@@ -151,6 +151,12 @@ class RolePermissionSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'editar catalogo-precios']);
         Permission::firstOrCreate(['name' => 'eliminar catalogo-precios']);
 
+        // Crear permisos para Facturas
+        Permission::firstOrCreate(['name' => 'ver facturas']);
+        Permission::firstOrCreate(['name' => 'crear facturas']);
+        Permission::firstOrCreate(['name' => 'editar facturas']);
+        Permission::firstOrCreate(['name' => 'eliminar facturas']);
+
         // Crear rol de Super Admin (tiene todos los permisos)
         $superAdminRole = Role::firstOrCreate(['name' => 'Super Admin']);
         $superAdminRole->syncPermissions(Permission::all());
@@ -178,6 +184,7 @@ class RolePermissionSeeder extends Seeder
             'ver ventas', 'crear ventas', 'editar ventas', 'eliminar ventas',
             'ver tasaciones', 'crear tasaciones', 'editar tasaciones', 'eliminar tasaciones',
             'ver catalogo-precios', 'crear catalogo-precios', 'editar catalogo-precios', 'eliminar catalogo-precios',
+            'ver facturas', 'crear facturas', 'editar facturas', 'eliminar facturas',
         ]);
 
         // Crear rol de Gerente (puede ver y gestionar clientes, vehículos y ofertas)

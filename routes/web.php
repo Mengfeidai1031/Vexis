@@ -29,6 +29,7 @@ use App\Http\Controllers\CatalogoPrecioController;
 use App\Http\Controllers\ClienteModuloController;
 use App\Http\Controllers\DatAxisController;
 use App\Http\Controllers\AlmacenController;
+use App\Http\Controllers\FacturaController;
 
 // Ruta pública (página de inicio)
 Route::get('/', function () {
@@ -345,6 +346,26 @@ Route::middleware('auth')->group(function () {
     });
     Route::middleware(['permission:eliminar catalogo-precios'])->group(function () {
         Route::delete('/catalogo-precios/{catalogo_precio}', [CatalogoPrecioController::class, 'destroy'])->name('catalogo-precios.destroy');
+    });
+
+    // === MÓDULO COMERCIAL: Facturas ===
+    Route::middleware(['permission:crear facturas'])->group(function () {
+        Route::get('/facturas/create', [FacturaController::class, 'create'])->name('facturas.create');
+        Route::post('/facturas', [FacturaController::class, 'store'])->name('facturas.store');
+    });
+    Route::middleware(['permission:ver facturas'])->group(function () {
+        Route::get('/facturas', [FacturaController::class, 'index'])->name('facturas.index');
+        Route::get('/facturas/export/excel', [FacturaController::class, 'export'])->name('facturas.export');
+        Route::get('/facturas/export/pdf', [FacturaController::class, 'exportPdf'])->name('facturas.exportPdf');
+        Route::get('/facturas/{factura}', [FacturaController::class, 'show'])->name('facturas.show');
+        Route::get('/facturas/{factura}/generate-pdf', [FacturaController::class, 'generatePdf'])->name('facturas.generatePdf');
+    });
+    Route::middleware(['permission:editar facturas'])->group(function () {
+        Route::get('/facturas/{factura}/edit', [FacturaController::class, 'edit'])->name('facturas.edit');
+        Route::put('/facturas/{factura}', [FacturaController::class, 'update'])->name('facturas.update');
+    });
+    Route::middleware(['permission:eliminar facturas'])->group(function () {
+        Route::delete('/facturas/{factura}', [FacturaController::class, 'destroy'])->name('facturas.destroy');
     });
 
     // === DATAXIS (Análisis de datos) ===
