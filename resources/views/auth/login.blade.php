@@ -137,23 +137,23 @@
                     <h5><i class="bi bi-info-circle"></i> Usuarios de prueba</h5>
                     <div class="vx-test-user">
                         <span>Super Admin</span>
-                        <code>superadmin@grupoari.com</code>
+                        <code>superadmin@grupodai.com</code>
                     </div>
                     <div class="vx-test-user">
                         <span>Administrador</span>
-                        <code>admin@grupoari.com</code>
+                        <code>admin@grupodai.com</code>
                     </div>
                     <div class="vx-test-user">
                         <span>Gerente</span>
-                        <code>francisco@grupoari.com</code>
+                        <code>francisco@grupodai.com</code>
                     </div>
                     <div class="vx-test-user">
                         <span>Vendedor</span>
-                        <code>maria@grupoari.com</code>
+                        <code>maria@grupodai.com</code>
                     </div>
                     <div class="vx-test-user">
                         <span>Consultor</span>
-                        <code>pedro@grupoari.com</code>
+                        <code>pedro@grupodai.com</code>
                     </div>
                     <div style="margin-top: 8px; font-size: 12px; color: var(--vx-text-muted); text-align: center;">
                         Contraseña para todos: <code>password</code>
