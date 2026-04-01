@@ -5,6 +5,8 @@
     <title>Ventas - VEXIS</title>
     <style>
         body { font-family: 'Helvetica', sans-serif; font-size: 11px; color: #333; }
+        .pdf-header { display: flex; align-items: center; margin-bottom: 12px; border-bottom: 2px solid #33AADD; padding-bottom: 8px; }
+        .pdf-header img { height: 40px; margin-right: 12px; }
         h1 { font-size: 18px; color: #33AADD; margin-bottom: 4px; }
         .subtitle { font-size: 11px; color: #888; margin-bottom: 16px; }
         table { width: 100%; border-collapse: collapse; margin-top: 8px; }
@@ -14,8 +16,10 @@
     </style>
 </head>
 <body>
-    <h1>Listado de Ventas</h1>
-    <div class="subtitle">Generado: {{ date('d/m/Y H:i') }} — VEXIS Grupo ARI</div>
+    <table style="width:100%;border:none;margin-bottom:12px;border-bottom:2px solid #33AADD;padding-bottom:8px;">
+        <tr><td style="border:none;padding:0;"><img src="{{ public_path('img/vexis-logo.png') }}" style="height:36px;"></td><td style="border:none;padding:0;text-align:right;vertical-align:bottom;"><span style="font-size:10px;color:#888;">Generado: {{ date('d/m/Y H:i') }} — VEXIS Grupo ARI</span></td></tr>
+    </table>
+    <h1 style="margin-top:0;">Listado de Ventas</h1>
     <table>
         <thead><tr><th>Código</th><th>Vehículo</th><th>Cliente</th><th>Marca</th><th>Precio</th><th>Pago</th><th>Estado</th><th>Fecha</th></tr></thead>
         <tbody>

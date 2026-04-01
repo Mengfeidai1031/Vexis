@@ -14,8 +14,10 @@
     </style>
 </head>
 <body>
-    <h1>Listado de Clientes</h1>
-    <div class="subtitle">Generado: {{ date('d/m/Y H:i') }} — VEXIS Grupo ARI</div>
+    <table style="width:100%;border:none;margin-bottom:12px;border-bottom:2px solid #33AADD;padding-bottom:8px;">
+        <tr><td style="border:none;padding:0;"><img src="{{ public_path('img/vexis-logo.png') }}" style="height:36px;"></td><td style="border:none;padding:0;text-align:right;vertical-align:bottom;"><span style="font-size:10px;color:#888;">Generado: {{ date('d/m/Y H:i') }} — VEXIS Grupo ARI</span></td></tr>
+    </table>
+    <h1 style="margin-top:0;">Listado de Clientes</h1>
     <table>
         <thead><tr><th>ID</th><th>Nombre</th><th>Apellidos</th><th>DNI</th><th>Email</th><th>Teléfono</th><th>Domicilio</th><th>CP</th><th>Empresa</th></tr></thead>
         <tbody>

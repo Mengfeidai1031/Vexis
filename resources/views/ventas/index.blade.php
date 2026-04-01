@@ -18,7 +18,7 @@
             <td style="font-family:var(--vx-font-mono);font-size:11px;">{{ $v->codigo_venta }}</td>
             <td style="font-weight:600;font-size:13px;">{{ Str::limit($v->vehiculo->modelo ?? '—', 25) }}</td>
             <td style="font-size:12px;">{{ $v->cliente->nombre ?? '—' }} {{ $v->cliente->apellidos ?? '' }}</td>
-            <td>@if($v->marca)<span class="vx-badge" style="background:{{ $v->marca->color }}20;color:{{ $v->marca->color }};">{{ $v->marca->nombre }}</span>@endif</td>
+            <td>@if($v->marca)@php $logoSlug = Str::lower($v->marca->nombre); @endphp<span class="vx-badge" style="background:{{ $v->marca->color }}20;color:{{ $v->marca->color }};display:inline-flex;align-items:center;gap:4px;">@if(file_exists(storage_path("app/public/logos/{$logoSlug}.png")))<img src="{{ asset("storage/logos/{$logoSlug}.png") }}" alt="" style="height:14px;">@endif{{ $v->marca->nombre }}</span>@endif</td>
             <td style="font-family:var(--vx-font-mono);font-weight:700;">{{ number_format($v->precio_final, 2) }}€</td>
             <td style="font-size:11px;">{{ \App\Models\Venta::$formasPago[$v->forma_pago] ?? $v->forma_pago }}</td>
             <td>@switch($v->estado) @case('reservada')<span class="vx-badge vx-badge-warning">Reservada</span>@break @case('pendiente_entrega')<span class="vx-badge vx-badge-info">Pte. Entrega</span>@break @case('entregada')<span class="vx-badge vx-badge-success">Entregada</span>@break @case('cancelada')<span class="vx-badge vx-badge-danger">Cancelada</span>@break @endswitch</td>

@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class ClienteModuloController extends Controller
 {
@@ -520,7 +522,45 @@ class ClienteModuloController extends Controller
                 ->where('disponible', true)
                 ->orderBy('precio_base')->get();
         }
-        return view('cliente.configurador', compact('marcas', 'marcaId', 'modelos', 'modeloSeleccionado', 'versiones'));
+        // Build available images map for the configurador
+        $imagenesDisponibles = [];
+        if ($marcaId && $modeloSeleccionado) {
+            $marca = $marcas->firstWhere('id', $marcaId);
+            $marcaSlug = Str::lower($marca->nombre ?? '');
+            $modeloSlug = Str::lower(str_replace(' ', '_', $modeloSeleccionado));
+            $basePath = "vehiculos/{$marcaSlug}/{$modeloSlug}";
+
+            if (Storage::disk('public')->exists($basePath)) {
+                $dirs = File::directories(Storage::disk('public')->path($basePath));
+                foreach ($dirs as $dir) {
+                    $dirName = basename($dir);
+                    // Extract color from dir name (e.g., "clio_azul" -> "azul")
+                    $color = Str::afterLast($dirName, '_');
+                    $vistas = [];
+                    foreach (['frontal', 'lateral', 'trasera', 'interior', 'asientos'] as $vista) {
+                        $imgPath = "{$basePath}/{$dirName}/{$vista}.jpeg";
+                        if (Storage::disk('public')->exists($imgPath)) {
+                            $vistas[$vista] = asset("storage/{$imgPath}");
+                        }
+                    }
+                    if (!empty($vistas)) {
+                        $imagenesDisponibles[$color] = $vistas;
+                    }
+                }
+            }
+        }
+
+        // Get brand logo URL
+        $logoMarca = null;
+        if ($marcaId) {
+            $marca = $marcas->firstWhere('id', $marcaId);
+            $marcaSlug = Str::lower($marca->nombre ?? '');
+            if (Storage::disk('public')->exists("logos/{$marcaSlug}.png")) {
+                $logoMarca = asset("storage/logos/{$marcaSlug}.png");
+            }
+        }
+
+        return view('cliente.configurador', compact('marcas', 'marcaId', 'modelos', 'modeloSeleccionado', 'versiones', 'imagenesDisponibles', 'logoMarca'));
     }
 
     private function detectRestrictedRequestWithoutPermission(string $message, User $user): ?string

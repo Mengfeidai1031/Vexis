@@ -21,12 +21,25 @@
 !/storage/.gitignore
 !/storage/**/.gitignore
 !/storage/**/.gitkeep
+!/storage/app/
+!/storage/app/public/
+!/storage/app/public/.gitignore
+!/storage/app/public/logos/
+!/storage/app/public/logos/**
+!/storage/app/public/vehiculos/
+!/storage/app/public/vehiculos/**
 /storage/framework/views/*
 /storage/pail
 /vendor
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Imágenes originales (ahora en storage/app/public/)
+/logo
+/renault
+/dacia
+/nissan
 
 # Archivos temporales locales
 *.tmp
