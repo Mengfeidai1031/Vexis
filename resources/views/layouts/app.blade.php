@@ -642,6 +642,11 @@
                             @can('ver festivos')
                             <a href="{{ route('festivos.index') }}" class="vx-dropdown-item"><i class="bi bi-calendar-event"></i> Festivos</a>
                             @endcan
+                            @if(\App\Models\Setting::get('modulo_incidencias', true))
+                            @can('ver incidencias')
+                            <a href="{{ route('incidencias.index') }}" class="vx-dropdown-item"><i class="bi bi-exclamation-triangle"></i> Incidencias</a>
+                            @endcan
+                            @endif
                         </div>
                     </div>
                 </div>

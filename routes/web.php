@@ -32,6 +32,7 @@ use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\VerifactuController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\IncidenciaController;
 
 // Ruta pública (página de inicio)
 Route::get('/', function () {
@@ -385,6 +386,24 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['module:verifactu', 'permission:editar verifactu'])->group(function () {
         Route::post('/verifactu/{verifactu}/enviar-aeat', [VerifactuController::class, 'enviarAeat'])->name('verifactu.enviarAeat');
         Route::put('/verifactu/{verifactu}/estado', [VerifactuController::class, 'cambiarEstado'])->name('verifactu.cambiarEstado');
+    });
+
+    // === MÓDULO INCIDENCIAS ===
+    Route::middleware(['module:incidencias', 'permission:crear incidencias'])->group(function () {
+        Route::get('/incidencias/create', [IncidenciaController::class, 'create'])->name('incidencias.create');
+        Route::post('/incidencias', [IncidenciaController::class, 'store'])->name('incidencias.store');
+    });
+    Route::middleware(['module:incidencias', 'permission:ver incidencias'])->group(function () {
+        Route::get('/incidencias', [IncidenciaController::class, 'index'])->name('incidencias.index');
+        Route::get('/incidencias/{incidencia}', [IncidenciaController::class, 'show'])->name('incidencias.show');
+    });
+    Route::middleware(['module:incidencias', 'permission:editar incidencias'])->group(function () {
+        Route::get('/incidencias/{incidencia}/edit', [IncidenciaController::class, 'edit'])->name('incidencias.edit');
+        Route::put('/incidencias/{incidencia}', [IncidenciaController::class, 'update'])->name('incidencias.update');
+    });
+    Route::middleware(['module:incidencias', 'permission:eliminar incidencias'])->group(function () {
+        Route::delete('/incidencias/{incidencia}', [IncidenciaController::class, 'destroy'])->name('incidencias.destroy');
+        Route::delete('/incidencias/archivo/{archivo}', [IncidenciaController::class, 'eliminarArchivo'])->name('incidencias.eliminarArchivo');
     });
 
     // === CONFIGURACIÓN (Solo Super Admin) ===

@@ -6,7 +6,7 @@
     <div class="vx-page-actions">
         <a href="{{ route('verifactu.declaracion') }}" class="vx-btn vx-btn-danger"><i class="bi bi-file-earmark-pdf"></i> Declaración Responsable</a>
         <button class="vx-btn vx-btn-secondary" id="btnVerificar"><i class="bi bi-shield-check"></i> Verificar Cadena</button>
-        @can('crear verifactu')<a href="{{ route('verifactu.create') }}" class="vx-btn vx-btn-primary"><i class="bi bi-plus-circle"></i> Nuevo Registro</a>@endcan
+        @can('crear verifactu')<a href="{{ route('verifactu.create') }}" class="vx-btn vx-btn-primary"><i class="bi bi-plus-circle"></i> Registro Manual</a>@endcan
     </div>
 </div>
 

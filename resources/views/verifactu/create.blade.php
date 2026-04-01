@@ -25,8 +25,11 @@
             <label class="vx-label">Observaciones</label>
             <textarea class="vx-input" name="observaciones" rows="2" placeholder="Notas adicionales..."></textarea>
         </div>
+        <div style="background:#fff3e0;padding:12px;border-radius:8px;margin-bottom:12px;">
+            <p style="font-size:11px;color:#e65100;margin:0;"><i class="bi bi-exclamation-triangle"></i> <strong>Registro manual.</strong> Los registros Verifactu se generan automáticamente al crear una factura. Use este formulario solo para registrar manualmente facturas existentes que no fueron registradas automáticamente.</p>
+        </div>
         <div style="background:var(--vx-bg);padding:12px;border-radius:8px;margin-bottom:16px;">
-            <p style="font-size:11px;color:var(--vx-text-muted);margin:0;"><i class="bi bi-info-circle"></i> El hash SHA-256 se generará automáticamente encadenado al último registro existente, garantizando la integridad de la cadena Verifactu.</p>
+            <p style="font-size:11px;color:var(--vx-text-muted);margin:0;"><i class="bi bi-info-circle"></i> El hash SHA-256 se generará automáticamente encadenado al último registro existente, garantizando la integridad de la cadena Verifactu conforme al RD 1007/2023 art. 12.</p>
         </div>
         <div style="display:flex;justify-content:flex-end;gap:8px;">
             <a href="{{ route('verifactu.index') }}" class="vx-btn vx-btn-secondary">Cancelar</a>

@@ -58,9 +58,43 @@
     </div>
     @endif
     @if($factura->observaciones)
-    <div class="vx-card">
+    <div class="vx-card" style="margin-bottom:16px;">
         <div class="vx-card-header"><h4>Observaciones</h4></div>
         <div class="vx-card-body"><p style="margin:0;">{{ $factura->observaciones }}</p></div>
+    </div>
+    @endif
+
+    {{-- Verifactu status --}}
+    @php $verifactuRegistro = \App\Models\Verifactu::where('factura_id', $factura->id)->whereNotIn('estado', ['anulado'])->orderByDesc('id')->first(); @endphp
+    @if($verifactuRegistro)
+    <div class="vx-card">
+        <div class="vx-card-header"><h4><i class="bi bi-shield-check"></i> Registro Verifactu</h4></div>
+        <div class="vx-card-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;">
+                <div>
+                    <p style="font-size:11px;color:var(--vx-text-muted);margin:0;">Código Registro</p>
+                    <p style="font-family:var(--vx-font-mono);font-weight:700;margin:2px 0;"><a href="{{ route('verifactu.show', $verifactuRegistro) }}" style="color:var(--vx-primary);">{{ $verifactuRegistro->codigo_registro }}</a></p>
+                </div>
+                <div>
+                    <p style="font-size:11px;color:var(--vx-text-muted);margin:0;">Estado AEAT</p>
+                    <p style="margin:2px 0;">@switch($verifactuRegistro->estado)
+                        @case('registrado')<span class="vx-badge" style="background:#e3f2fd;color:#1565c0;">Registrado</span>@break
+                        @case('enviado')<span class="vx-badge vx-badge-info">Enviado</span>@break
+                        @case('aceptado')<span class="vx-badge vx-badge-success">Aceptado</span>@break
+                        @case('aceptado_errores')<span class="vx-badge vx-badge-warning">Aceptado c/errores</span>@break
+                        @case('rechazado')<span class="vx-badge vx-badge-danger">Rechazado</span>@break
+                    @endswitch</p>
+                </div>
+                <div>
+                    <p style="font-size:11px;color:var(--vx-text-muted);margin:0;">Huella SHA-256</p>
+                    <p style="font-size:9px;font-family:var(--vx-font-mono);color:var(--vx-text-muted);margin:2px 0;word-break:break-all;">{{ substr($verifactuRegistro->hash_registro, 0, 32) }}...</p>
+                </div>
+                <div>
+                    <p style="font-size:11px;color:var(--vx-text-muted);margin:0;">CSV AEAT</p>
+                    <p style="font-family:var(--vx-font-mono);font-weight:700;color:var(--vx-success);margin:2px 0;">{{ $verifactuRegistro->csv_aeat ?? '—' }}</p>
+                </div>
+            </div>
+        </div>
     </div>
     @endif
 </div>

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Factura;
+use App\Models\Setting;
 use App\Models\Verifactu;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Encoding\Encoding;
@@ -73,6 +74,11 @@ class AeatVerifactuService
             'sistema_informatico' => 'VEXIS',
             'version_sistema' => '1.0.0',
         ]);
+
+        // Auto-send to AEAT if configured
+        if (Setting::get('verifactu_envio_aeat', false)) {
+            $this->enviarAeat($registro);
+        }
 
         return $registro;
     }
@@ -194,14 +200,16 @@ class AeatVerifactuService
      */
     public static function generateQrImage(string $url): string
     {
-        $result = Builder::create()
-            ->writer(new PngWriter())
-            ->data($url)
-            ->encoding(new Encoding('UTF-8'))
-            ->errorCorrectionLevel(ErrorCorrectionLevel::Medium)
-            ->size(200)
-            ->margin(10)
-            ->build();
+        $builder = new Builder(
+            writer: new PngWriter(),
+            data: $url,
+            encoding: new Encoding('UTF-8'),
+            errorCorrectionLevel: ErrorCorrectionLevel::Medium,
+            size: 200,
+            margin: 10,
+        );
+
+        $result = $builder->build();
 
         return base64_encode($result->getString());
     }

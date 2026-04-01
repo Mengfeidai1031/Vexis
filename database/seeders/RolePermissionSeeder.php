@@ -163,6 +163,12 @@ class RolePermissionSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'editar verifactu']);
         Permission::firstOrCreate(['name' => 'eliminar verifactu']);
 
+        // Crear permisos para Incidencias
+        Permission::firstOrCreate(['name' => 'ver incidencias']);
+        Permission::firstOrCreate(['name' => 'crear incidencias']);
+        Permission::firstOrCreate(['name' => 'editar incidencias']);
+        Permission::firstOrCreate(['name' => 'eliminar incidencias']);
+
         // Crear rol de Super Admin (tiene todos los permisos)
         $superAdminRole = Role::firstOrCreate(['name' => 'Super Admin']);
         $superAdminRole->syncPermissions(Permission::all());
@@ -192,6 +198,7 @@ class RolePermissionSeeder extends Seeder
             'ver catalogo-precios', 'crear catalogo-precios', 'editar catalogo-precios', 'eliminar catalogo-precios',
             'ver facturas', 'crear facturas', 'editar facturas', 'eliminar facturas',
             'ver verifactu', 'crear verifactu', 'editar verifactu', 'eliminar verifactu',
+            'ver incidencias', 'crear incidencias', 'editar incidencias', 'eliminar incidencias',
         ]);
 
         // Crear rol de Gerente (puede ver y gestionar clientes, vehículos y ofertas)
@@ -203,6 +210,7 @@ class RolePermissionSeeder extends Seeder
             'ver clientes', 'crear clientes', 'editar clientes', 'eliminar clientes',
             'ver vehículos', 'crear vehículos', 'editar vehículos', 'eliminar vehículos',
             'ver ofertas', 'crear ofertas', 'editar ofertas', 'eliminar ofertas',
+            'ver incidencias', 'crear incidencias',
         ]);
 
         // Crear rol de Vendedor (gestión de clientes y ofertas)
@@ -211,6 +219,7 @@ class RolePermissionSeeder extends Seeder
             'ver clientes', 'crear clientes', 'editar clientes',
             'ver vehículos',
             'ver ofertas', 'crear ofertas', 'editar ofertas',
+            'ver incidencias', 'crear incidencias',
         ]);
 
         // Crear rol de Consultor (solo lectura)
@@ -225,6 +234,7 @@ class RolePermissionSeeder extends Seeder
             'ver noticias',
             'ver campanias',
             'ver festivos',
+            'ver incidencias', 'crear incidencias',
         ]);
     }
 }

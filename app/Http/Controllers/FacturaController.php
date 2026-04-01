@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Factura;
+use App\Models\Setting;
 use App\Models\Verifactu;
 use App\Models\Venta;
 use App\Models\Cliente;
@@ -65,7 +66,7 @@ class FacturaController extends Controller
 
         $codigo = 'FAC-' . date('Ym') . '-' . str_pad(Factura::whereYear('fecha_factura', date('Y'))->count() + 1, 4, '0', STR_PAD_LEFT);
 
-        Factura::create([
+        $factura = Factura::create([
             ...$request->except(['_token', '_method']),
             'codigo_factura' => $codigo,
             'iva_importe' => $ivaImporte,
@@ -73,7 +74,20 @@ class FacturaController extends Controller
             'emisor_id' => Auth::id(),
         ]);
 
-        return redirect()->route('facturas.index')->with('success', 'Factura creada correctamente.');
+        // Auto-register in Verifactu if module is enabled
+        $verifactuMsg = '';
+        if (Setting::get('modulo_verifactu', true)) {
+            try {
+                $factura->load(['empresa', 'cliente']);
+                $service = new AeatVerifactuService();
+                $registro = $service->registrarFactura($factura, 'alta');
+                $verifactuMsg = " Registro Verifactu {$registro->codigo_registro} generado automáticamente.";
+            } catch (\Exception $e) {
+                $verifactuMsg = ' (Error al registrar en Verifactu: ' . $e->getMessage() . ')';
+            }
+        }
+
+        return redirect()->route('facturas.index')->with('success', 'Factura creada correctamente.' . $verifactuMsg);
     }
 
     public function show(Factura $factura)
@@ -108,13 +122,28 @@ class FacturaController extends Controller
         $ivaImporte = round($subtotal * $ivaPct / 100, 2);
         $total = round($subtotal + $ivaImporte, 2);
 
+        $estadoAnterior = $factura->estado;
+
         $factura->update([
             ...$request->except(['_token', '_method']),
             'iva_importe' => $ivaImporte,
             'total' => $total,
         ]);
 
-        return redirect()->route('facturas.index')->with('success', 'Factura actualizada correctamente.');
+        // Auto-register anulación in Verifactu when factura changes to anulada
+        $verifactuMsg = '';
+        if ($request->estado === 'anulada' && $estadoAnterior !== 'anulada' && Setting::get('modulo_verifactu', true)) {
+            try {
+                $factura->load(['empresa', 'cliente']);
+                $service = new AeatVerifactuService();
+                $registro = $service->registrarFactura($factura, 'anulacion');
+                $verifactuMsg = " Registro de anulación Verifactu {$registro->codigo_registro} generado.";
+            } catch (\Exception $e) {
+                $verifactuMsg = ' (Error Verifactu: ' . $e->getMessage() . ')';
+            }
+        }
+
+        return redirect()->route('facturas.index')->with('success', 'Factura actualizada correctamente.' . $verifactuMsg);
     }
 
     public function destroy(Factura $factura)
