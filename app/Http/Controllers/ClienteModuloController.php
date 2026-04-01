@@ -505,7 +505,7 @@ class ClienteModuloController extends Controller
     // === CONFIGURADOR DE VEHÍCULOS ===
     public function configurador(Request $request)
     {
-        $marcas = Marca::where('activa', true)->orderBy('nombre')->get();
+        $marcas = Marca::where('activa', true)->orderByRaw("FIELD(LOWER(nombre), 'renault', 'dacia', 'nissan') ASC, nombre ASC")->get();
         $marcaId = $request->marca_id;
         $modelos = [];
         if ($marcaId) {
@@ -538,9 +538,12 @@ class ClienteModuloController extends Controller
                     $color = Str::afterLast($dirName, '_');
                     $vistas = [];
                     foreach (['frontal', 'lateral', 'trasera', 'interior', 'asientos'] as $vista) {
-                        $imgPath = "{$basePath}/{$dirName}/{$vista}.jpeg";
-                        if (Storage::disk('public')->exists($imgPath)) {
-                            $vistas[$vista] = asset("storage/{$imgPath}");
+                        foreach (['jpeg', 'jpg', 'png'] as $ext) {
+                            $imgPath = "{$basePath}/{$dirName}/{$vista}.{$ext}";
+                            if (Storage::disk('public')->exists($imgPath)) {
+                                $vistas[$vista] = asset("storage/{$imgPath}");
+                                break;
+                            }
                         }
                     }
                     if (!empty($vistas)) {

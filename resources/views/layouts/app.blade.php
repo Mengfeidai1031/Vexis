@@ -94,7 +94,7 @@
         .vx-nav-link:hover, .vx-nav-link.active { color: var(--vx-primary); background: rgba(51, 170, 221, 0.08); }
         .vx-nav-link i { font-size: 15px; }
         .vx-dropdown { position: absolute; top: calc(100% + 4px); left: 0; min-width: 220px; background: var(--vx-surface); border: 1px solid var(--vx-border); border-radius: var(--vx-radius); box-shadow: var(--vx-shadow-lg); padding: 6px; opacity: 0; visibility: hidden; transform: translateY(-8px); transition: all 0.2s ease; z-index: 1100; }
-        .vx-nav-item:hover > .vx-dropdown, .vx-nav-item.open > .vx-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+        .vx-nav-item.open > .vx-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
         .vx-dropdown-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 6px; font-size: 13px; font-weight: 400; color: var(--vx-text); text-decoration: none; transition: all 0.15s; }
         .vx-dropdown-item:hover { background: var(--vx-surface-hover); color: var(--vx-primary); }
         .vx-dropdown-item i { font-size: 15px; color: var(--vx-text-muted); width: 20px; text-align: center; }
@@ -111,10 +111,10 @@
         .vx-mega-col .vx-dropdown-header { padding: 8px 16px 4px; }
         .vx-dropdown-sub { min-width: 200px; }
         .vx-submenu-parent { position: relative; }
-        .vx-submenu-trigger { cursor: default; display: flex; align-items: center; }
+        .vx-submenu-trigger { cursor: pointer; display: flex; align-items: center; }
         .vx-submenu-trigger:hover { background: var(--vx-surface-hover); }
         .vx-submenu { position: absolute; left: 100%; top: -4px; min-width: 190px; background: var(--vx-surface); border: 1px solid var(--vx-border); border-radius: 8px; box-shadow: var(--vx-shadow-lg); padding: 4px; display: none; z-index: 1200; }
-        .vx-submenu-parent:hover > .vx-submenu { display: block; }
+        .vx-submenu-parent.open > .vx-submenu { display: block; }
         .vx-icon-btn { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--vx-text-secondary); background: none; border: none; cursor: pointer; transition: all 0.2s; font-size: 17px; position: relative; }
         .vx-icon-btn:hover { background: var(--vx-surface-hover); color: var(--vx-primary); }
         .vx-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--vx-primary), var(--vx-primary-dark)); color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; cursor: pointer; transition: box-shadow 0.2s; }
@@ -342,12 +342,12 @@
             .vx-mobile-toggle { display: block; }
             .vx-nav { display: none; position: absolute; top: var(--vx-navbar-height); left: 0; right: 0; background: var(--vx-surface); border-bottom: 1px solid var(--vx-border); box-shadow: var(--vx-shadow-lg); flex-direction: column; padding: 8px; gap: 2px; }
             .vx-nav.open { display: flex; }
-            .vx-nav-item:hover > .vx-dropdown { position: static; box-shadow: none; border: none; opacity: 1; visibility: visible; transform: none; padding-left: 20px; background: var(--vx-gray-50); border-radius: var(--vx-radius); }
+            .vx-nav-item.open > .vx-dropdown { position: static; box-shadow: none; border: none; opacity: 1; visibility: visible; transform: none; padding-left: 20px; background: var(--vx-gray-50); border-radius: var(--vx-radius); }
             .vx-dropdown { min-width: 100%; }
             .vx-dropdown-mega { flex-direction: column; min-width: 100%; }
             .vx-mega-col:not(:last-child) { border-right: none; border-bottom: 1px solid var(--vx-border); padding-bottom: 4px; margin-bottom: 4px; }
             .vx-submenu { position: static; border: none; box-shadow: none; padding-left: 16px; display: none; }
-            .vx-submenu-parent:hover > .vx-submenu { display: block; }
+            .vx-submenu-parent.open > .vx-submenu { display: block; }
             .vx-submenu-trigger .bi-chevron-right { transform: rotate(90deg); }
         }
 
@@ -893,8 +893,9 @@
             }, 600);
         });
 
-        /* === Dropdown click outside === */
+        /* === Dropdown click-only (no hover) === */
         document.addEventListener('click', function(e) {
+            // Module nav dropdown toggle
             const navToggle = e.target.closest('.vx-module-nav .vx-nav-item > .vx-nav-link');
             if (navToggle) {
                 e.preventDefault();
@@ -906,15 +907,46 @@
                 return;
             }
 
+            // Top navbar dropdown toggle (Gestión, Comercial, etc.)
+            const topNavToggle = e.target.closest('.vx-navbar .vx-nav > .vx-nav-item > .vx-nav-link, .vx-navbar .vx-nav > .vx-nav-item > button.vx-nav-link');
+            if (topNavToggle) {
+                const parentItem = topNavToggle.closest('.vx-nav-item');
+                const hasDropdown = parentItem.querySelector('.vx-dropdown');
+                if (hasDropdown) {
+                    e.preventDefault();
+                    document.querySelectorAll('.vx-navbar .vx-nav > .vx-nav-item.open').forEach(item => {
+                        if (item !== parentItem) item.classList.remove('open');
+                    });
+                    // Close any open submenus when toggling parent
+                    parentItem.querySelectorAll('.vx-submenu-parent.open').forEach(sp => sp.classList.remove('open'));
+                    parentItem.classList.toggle('open');
+                    return;
+                }
+            }
+
+            // Submenu toggle (Seguridad, Mantenimiento, etc.)
+            const submenuTrigger = e.target.closest('.vx-submenu-trigger');
+            if (submenuTrigger) {
+                e.preventDefault();
+                const parentSub = submenuTrigger.closest('.vx-submenu-parent');
+                // Close sibling submenus
+                parentSub.parentElement.querySelectorAll('.vx-submenu-parent.open').forEach(sp => {
+                    if (sp !== parentSub) sp.classList.remove('open');
+                });
+                parentSub.classList.toggle('open');
+                return;
+            }
+
+            // Close dropdowns when clicking outside
             if (!e.target.closest('#vxModulesPanel') && !e.target.closest('#vxModulesToggle')) {
                 document.querySelectorAll('.vx-module-nav .vx-nav-item.open').forEach(i => i.classList.remove('open'));
             }
             if (!e.target.closest('#vxMobileTools')) {
                 closeMobileToolsMenu();
             }
-
             if (!e.target.closest('.vx-nav-item')) {
                 document.querySelectorAll('.vx-nav-item.open').forEach(i => i.classList.remove('open'));
+                document.querySelectorAll('.vx-submenu-parent.open').forEach(sp => sp.classList.remove('open'));
             }
             if (!e.target.closest('#notifPanel') && !e.target.closest('[onclick*="toggleNotifications"]')) {
                 document.getElementById('notifPanel')?.classList.remove('open');
