@@ -174,16 +174,16 @@ class DatosEjemploSeeder extends Seeder
         $centro = Centro::first();
 
         $pcs = [
-            ['nombre'=>'ARI-LP-PC001','tipo'=>'Sobremesa','ubi'=>'Recepción LP','so'=>'Windows 11','ver'=>'PRO','ip'=>'192.168.1.10'],
-            ['nombre'=>'ARI-LP-PC002','tipo'=>'Sobremesa','ubi'=>'Administración LP','so'=>'Windows 11','ver'=>'PRO','ip'=>'192.168.1.11'],
-            ['nombre'=>'ARI-LP-PT001','tipo'=>'Portátil','ubi'=>'Comercial LP','so'=>'Windows 11','ver'=>'PRO','ip'=>'192.168.1.20'],
-            ['nombre'=>'ARI-LP-PT002','tipo'=>'Portátil','ubi'=>'Gerencia LP','so'=>'macOS Sonoma','ver'=>'PRO','ip'=>'192.168.1.21'],
-            ['nombre'=>'ARI-TF-PC001','tipo'=>'Sobremesa','ubi'=>'Recepción TF','so'=>'Windows 10','ver'=>'HOME','ip'=>'192.168.2.10'],
-            ['nombre'=>'ARI-TF-PT001','tipo'=>'Portátil','ubi'=>'Comercial TF','so'=>'Windows 11','ver'=>'PRO','ip'=>'192.168.2.20'],
-            ['nombre'=>'ARI-LZ-PC001','tipo'=>'Sobremesa','ubi'=>'Recepción LZ','so'=>'Windows 11','ver'=>'HOME','ip'=>'192.168.3.10'],
-            ['nombre'=>'ARI-FV-PC001','tipo'=>'Sobremesa','ubi'=>'Recepción FV','so'=>'Windows 10','ver'=>'PRO','ip'=>'192.168.4.10'],
-            ['nombre'=>'ARI-LP-PT003','tipo'=>'Portátil','ubi'=>'Taller LP','so'=>'Ubuntu 24.04 LTS','ver'=>'PRO','ip'=>'192.168.1.30'],
-            ['nombre'=>'ARI-LP-PC003','tipo'=>'Sobremesa','ubi'=>'Recambios LP','so'=>'Windows 11','ver'=>'PRO','ip'=>'192.168.1.12'],
+            ['nombre'=>'DAI-LP-PC001','tipo'=>'Sobremesa','ubi'=>'Recepción LP','so'=>'Windows 11','ver'=>'PRO','ip'=>'192.168.1.10'],
+            ['nombre'=>'DAI-LP-PC002','tipo'=>'Sobremesa','ubi'=>'Administración LP','so'=>'Windows 11','ver'=>'PRO','ip'=>'192.168.1.11'],
+            ['nombre'=>'DAI-LP-PT001','tipo'=>'Portátil','ubi'=>'Comercial LP','so'=>'Windows 11','ver'=>'PRO','ip'=>'192.168.1.20'],
+            ['nombre'=>'DAI-LP-PT002','tipo'=>'Portátil','ubi'=>'Gerencia LP','so'=>'macOS Sonoma','ver'=>'PRO','ip'=>'192.168.1.21'],
+            ['nombre'=>'DAI-TF-PC001','tipo'=>'Sobremesa','ubi'=>'Recepción TF','so'=>'Windows 10','ver'=>'HOME','ip'=>'192.168.2.10'],
+            ['nombre'=>'DAI-TF-PT001','tipo'=>'Portátil','ubi'=>'Comercial TF','so'=>'Windows 11','ver'=>'PRO','ip'=>'192.168.2.20'],
+            ['nombre'=>'DAI-LZ-PC001','tipo'=>'Sobremesa','ubi'=>'Recepción LZ','so'=>'Windows 11','ver'=>'HOME','ip'=>'192.168.3.10'],
+            ['nombre'=>'DAI-FV-PC001','tipo'=>'Sobremesa','ubi'=>'Recepción FV','so'=>'Windows 10','ver'=>'PRO','ip'=>'192.168.4.10'],
+            ['nombre'=>'DAI-LP-PT003','tipo'=>'Portátil','ubi'=>'Taller LP','so'=>'Ubuntu 24.04 LTS','ver'=>'PRO','ip'=>'192.168.1.30'],
+            ['nombre'=>'DAI-LP-PC003','tipo'=>'Sobremesa','ubi'=>'Recambios LP','so'=>'Windows 11','ver'=>'PRO','ip'=>'192.168.1.12'],
         ];
 
         foreach ($pcs as $pc) {

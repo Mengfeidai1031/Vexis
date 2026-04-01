@@ -191,7 +191,7 @@ class ClienteModuloController extends Controller
             ]);
         }
 
-        $contexto = "Eres un asistente virtual de Grupo ARI.\n";
+        $contexto = "Eres un asistente virtual de Grupo DAI.\n";
         $contexto .= "Usuario actual: {$user->nombre_completo} ({$user->email}).\n";
         $contexto .= "Permisos del usuario: " . implode(', ', $user->getAllPermissions()->pluck('name')->toArray()) . ".\n";
         $contexto .= "TABLAS AUTORIZADAS PARA ESTE USUARIO: {$allowedTablesText}.\n\n";

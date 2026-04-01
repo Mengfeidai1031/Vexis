@@ -11,8 +11,8 @@ class NoticiaSeeder extends Seeder
     {
         $noticias = [
             [
-                'titulo' => 'Grupo ARI inaugura nuevo concesionario Nissan en Tenerife',
-                'contenido' => 'Grupo ARI ha inaugurado un nuevo punto de venta Nissan en la zona sur de Tenerife, ampliando su presencia en las Islas Canarias. El nuevo concesionario cuenta con una superficie de más de 1.500 m² y ofrece toda la gama de vehículos Nissan, incluyendo los nuevos modelos eléctricos. La inauguración contó con la presencia del director general de Grupo ARI y representantes de Nissan España.',
+                'titulo' => 'Grupo DAI inaugura nuevo concesionario Nissan en Tenerife',
+                'contenido' => 'Grupo DAI ha inaugurado un nuevo punto de venta Nissan en la zona sur de Tenerife, ampliando su presencia en las Islas Canarias. El nuevo concesionario cuenta con una superficie de más de 1.500 m² y ofrece toda la gama de vehículos Nissan, incluyendo los nuevos modelos eléctricos. La inauguración contó con la presencia del director general de Grupo DAI y representantes de Nissan España.',
                 'categoria' => 'empresa',
                 'destacada' => true,
                 'autor_id' => 1,
@@ -20,7 +20,7 @@ class NoticiaSeeder extends Seeder
             ],
             [
                 'titulo' => 'Nuevo Renault Scenic E-Tech ya disponible en nuestros concesionarios',
-                'contenido' => 'El nuevo Renault Scenic E-Tech 100% eléctrico ya está disponible en todos los concesionarios de Grupo ARI. Con una autonomía de hasta 625 km y un diseño completamente renovado, el Scenic E-Tech representa el compromiso de Renault con la movilidad sostenible. Ven a probarlo y descubre las condiciones especiales de lanzamiento.',
+                'contenido' => 'El nuevo Renault Scenic E-Tech 100% eléctrico ya está disponible en todos los concesionarios de Grupo DAI. Con una autonomía de hasta 625 km y un diseño completamente renovado, el Scenic E-Tech representa el compromiso de Renault con la movilidad sostenible. Ven a probarlo y descubre las condiciones especiales de lanzamiento.',
                 'categoria' => 'comercial',
                 'destacada' => true,
                 'autor_id' => 1,
@@ -44,7 +44,7 @@ class NoticiaSeeder extends Seeder
             ],
             [
                 'titulo' => 'Plan de formación 2026: inscripciones abiertas',
-                'contenido' => 'Ya están abiertas las inscripciones para el plan de formación 2026 de Grupo ARI. Este año se ofrecen cursos de atención al cliente, ventas consultivas, gestión de taller y nuevas tecnologías de vehículos eléctricos. Los empleados interesados pueden inscribirse a través de su responsable de departamento.',
+                'contenido' => 'Ya están abiertas las inscripciones para el plan de formación 2026 de Grupo DAI. Este año se ofrecen cursos de atención al cliente, ventas consultivas, gestión de taller y nuevas tecnologías de vehículos eléctricos. Los empleados interesados pueden inscribirse a través de su responsable de departamento.',
                 'categoria' => 'rrhh',
                 'destacada' => false,
                 'autor_id' => 1,
@@ -52,7 +52,7 @@ class NoticiaSeeder extends Seeder
             ],
             [
                 'titulo' => 'Resultados comerciales enero 2026: crecimiento del 12%',
-                'contenido' => 'Grupo ARI cierra enero de 2026 con un incremento del 12% en ventas respecto al mismo periodo del año anterior. Destaca especialmente el rendimiento de la marca Dacia, que ha experimentado un crecimiento del 25% impulsado por los nuevos modelos Jogger y Duster. Enhorabuena a todo el equipo comercial.',
+                'contenido' => 'Grupo DAI cierra enero de 2026 con un incremento del 12% en ventas respecto al mismo periodo del año anterior. Destaca especialmente el rendimiento de la marca Dacia, que ha experimentado un crecimiento del 25% impulsado por los nuevos modelos Jogger y Duster. Enhorabuena a todo el equipo comercial.',
                 'categoria' => 'empresa',
                 'destacada' => false,
                 'autor_id' => 1,

@@ -49,55 +49,54 @@
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
                 <div>
-                    <p style="font-size:11px;color:var(--vx-text-muted);margin:0;">Creada por</p>
-                    <p style="font-weight:600;margin:2px 0;">{{ $incidencia->usuario?->name ?? '—' }}</p>
+                    <p style="font-size:11px;color:var(--vx-text-muted);margin:0;">Emisor</p>
+                    <p style="font-weight:600;margin:2px 0;">{{ $incidencia->usuario?->nombre_completo ?? '—' }}</p>
                 </div>
                 <div>
                     <p style="font-size:11px;color:var(--vx-text-muted);margin:0;">Técnico asignado</p>
-                    <p style="font-weight:600;margin:2px 0;color:{{ $incidencia->tecnico ? 'var(--vx-text)' : 'var(--vx-text-muted)' }};">{{ $incidencia->tecnico?->name ?? 'Sin asignar' }}</p>
+                    <p style="font-weight:600;margin:2px 0;color:{{ $incidencia->tecnico ? 'var(--vx-text)' : 'var(--vx-text-muted)' }};">{{ $incidencia->tecnico?->nombre_completo ?? 'Sin asignar' }}</p>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- Description --}}
+    {{-- Descripción del usuario --}}
     <div class="vx-card" style="margin-bottom:16px;">
-        <div class="vx-card-header"><h4><i class="bi bi-card-text"></i> Descripción</h4></div>
+        <div class="vx-card-header"><h4><i class="bi bi-person"></i> Descripción del usuario</h4></div>
         <div class="vx-card-body">
             <div style="white-space:pre-wrap;font-size:13px;line-height:1.7;">{{ $incidencia->descripcion }}</div>
         </div>
     </div>
 
     {{-- Comentario técnico --}}
-    @if($incidencia->comentario_tecnico)
     <div class="vx-card" style="margin-bottom:16px;">
-        <div class="vx-card-header"><h4><i class="bi bi-chat-dots"></i> Comentario del Técnico</h4></div>
+        <div class="vx-card-header"><h4><i class="bi bi-tools"></i> Comentario del técnico</h4></div>
         <div class="vx-card-body">
+            @if($incidencia->comentario_tecnico)
             <div style="background:#f0f9ff;padding:12px 16px;border-left:3px solid var(--vx-primary);border-radius:0 6px 6px 0;">
-                <p style="font-size:11px;color:var(--vx-text-muted);margin:0 0 4px;"><strong>{{ $incidencia->tecnico?->name ?? 'Técnico' }}</strong></p>
+                <p style="font-size:11px;color:var(--vx-text-muted);margin:0 0 4px;"><strong>{{ $incidencia->tecnico?->nombre_completo ?? 'Técnico' }}</strong></p>
                 <div style="white-space:pre-wrap;font-size:13px;">{{ $incidencia->comentario_tecnico }}</div>
             </div>
+            @else
+            <p style="font-size:13px;color:var(--vx-text-muted);margin:0;">Sin comentarios del técnico aún.</p>
+            @endif
         </div>
     </div>
-    @endif
 
-    {{-- Archivos --}}
-    @if($incidencia->archivos->count() > 0)
+    {{-- Archivos del usuario --}}
+    @php $archivosUsuario = $incidencia->archivos->where('tipo', 'usuario'); @endphp
     <div class="vx-card" style="margin-bottom:16px;">
-        <div class="vx-card-header"><h4><i class="bi bi-paperclip"></i> Archivos adjuntos ({{ $incidencia->archivos->count() }})</h4></div>
+        <div class="vx-card-header"><h4><i class="bi bi-person"></i> Archivos del usuario ({{ $archivosUsuario->count() }})</h4></div>
         <div class="vx-card-body">
-            @foreach(['usuario' => 'Archivos del usuario', 'tecnico' => 'Archivos del técnico'] as $tipo => $label)
-            @php $archivos = $incidencia->archivos->where('tipo', $tipo); @endphp
-            @if($archivos->count() > 0)
-            <p style="font-size:11px;font-weight:700;color:var(--vx-text-muted);margin:{{ $loop->first ? '0' : '16px' }} 0 8px;text-transform:uppercase;">{{ $label }}</p>
+            @if($archivosUsuario->count() > 0)
             <div style="display:flex;flex-wrap:wrap;gap:8px;">
-                @foreach($archivos as $archivo)
+                @foreach($archivosUsuario as $archivo)
                 <div style="display:flex;align-items:center;gap:8px;background:var(--vx-bg);padding:8px 12px;border-radius:6px;">
                     @php $ext = pathinfo($archivo->nombre_original, PATHINFO_EXTENSION); @endphp
                     <i class="bi {{ in_array($ext, ['jpg','jpeg','png','gif','webp']) ? 'bi-image' : (in_array($ext, ['pdf']) ? 'bi-file-earmark-pdf' : 'bi-file-earmark') }}" style="font-size:16px;color:var(--vx-primary);"></i>
                     <div>
                         <a href="{{ asset('storage/' . $archivo->ruta) }}" target="_blank" style="color:var(--vx-primary);font-size:12px;font-weight:600;">{{ $archivo->nombre_original }}</a>
-                        <div style="font-size:10px;color:var(--vx-text-muted);">{{ $archivo->user?->name ?? '—' }} — {{ $archivo->created_at->format('d/m/Y H:i') }}</div>
+                        <div style="font-size:10px;color:var(--vx-text-muted);">{{ $archivo->user?->nombre_completo ?? '—' }} — {{ $archivo->created_at->format('d/m/Y H:i') }}</div>
                     </div>
                     @can('eliminar incidencias')
                     <form action="{{ route('incidencias.eliminarArchivo', $archivo) }}" method="POST" onsubmit="return confirm('¿Eliminar este archivo?')">@csrf @method('DELETE')
@@ -107,11 +106,40 @@
                 </div>
                 @endforeach
             </div>
+            @else
+            <p style="font-size:13px;color:var(--vx-text-muted);margin:0;">Sin archivos del usuario.</p>
             @endif
-            @endforeach
         </div>
     </div>
-    @endif
+
+    {{-- Archivos del técnico --}}
+    @php $archivosTecnico = $incidencia->archivos->where('tipo', 'tecnico'); @endphp
+    <div class="vx-card" style="margin-bottom:16px;">
+        <div class="vx-card-header"><h4><i class="bi bi-tools"></i> Archivos del técnico ({{ $archivosTecnico->count() }})</h4></div>
+        <div class="vx-card-body">
+            @if($archivosTecnico->count() > 0)
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                @foreach($archivosTecnico as $archivo)
+                <div style="display:flex;align-items:center;gap:8px;background:var(--vx-bg);padding:8px 12px;border-radius:6px;">
+                    @php $ext = pathinfo($archivo->nombre_original, PATHINFO_EXTENSION); @endphp
+                    <i class="bi {{ in_array($ext, ['jpg','jpeg','png','gif','webp']) ? 'bi-image' : (in_array($ext, ['pdf']) ? 'bi-file-earmark-pdf' : 'bi-file-earmark') }}" style="font-size:16px;color:#8e44ad;"></i>
+                    <div>
+                        <a href="{{ asset('storage/' . $archivo->ruta) }}" target="_blank" style="color:#8e44ad;font-size:12px;font-weight:600;">{{ $archivo->nombre_original }}</a>
+                        <div style="font-size:10px;color:var(--vx-text-muted);">{{ $archivo->user?->nombre_completo ?? '—' }} — {{ $archivo->created_at->format('d/m/Y H:i') }}</div>
+                    </div>
+                    @can('eliminar incidencias')
+                    <form action="{{ route('incidencias.eliminarArchivo', $archivo) }}" method="POST" onsubmit="return confirm('¿Eliminar este archivo?')">@csrf @method('DELETE')
+                        <button type="submit" style="background:none;border:none;cursor:pointer;color:var(--vx-danger);font-size:14px;"><i class="bi bi-x-circle"></i></button>
+                    </form>
+                    @endcan
+                </div>
+                @endforeach
+            </div>
+            @else
+            <p style="font-size:13px;color:var(--vx-text-muted);margin:0;">Sin archivos del técnico.</p>
+            @endif
+        </div>
+    </div>
 
     {{-- Timeline --}}
     <div class="vx-card">
@@ -122,14 +150,14 @@
                     <div style="width:8px;height:8px;border-radius:50%;background:#e65100;margin-top:5px;flex-shrink:0;"></div>
                     <div>
                         <div style="font-size:12px;font-weight:600;">Incidencia abierta</div>
-                        <div style="font-size:11px;color:var(--vx-text-muted);">{{ $incidencia->fecha_apertura->format('d/m/Y H:i') }} por {{ $incidencia->usuario?->name ?? '—' }}</div>
+                        <div style="font-size:11px;color:var(--vx-text-muted);">{{ $incidencia->fecha_apertura->format('d/m/Y H:i') }} por {{ $incidencia->usuario?->nombre_completo ?? '—' }}</div>
                     </div>
                 </div>
                 @if($incidencia->tecnico_id)
                 <div style="display:flex;align-items:flex-start;gap:12px;">
                     <div style="width:8px;height:8px;border-radius:50%;background:#1565c0;margin-top:5px;flex-shrink:0;"></div>
                     <div>
-                        <div style="font-size:12px;font-weight:600;">Técnico asignado: {{ $incidencia->tecnico?->name }}</div>
+                        <div style="font-size:12px;font-weight:600;">Técnico asignado: {{ $incidencia->tecnico?->nombre_completo }}</div>
                         <div style="font-size:11px;color:var(--vx-text-muted);">{{ $incidencia->updated_at->format('d/m/Y H:i') }}</div>
                     </div>
                 </div>

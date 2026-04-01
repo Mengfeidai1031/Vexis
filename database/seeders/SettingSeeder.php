@@ -28,7 +28,7 @@ class SettingSeeder extends Seeder
             ['key' => 'modo_mantenimiento', 'value' => '0', 'type' => 'boolean', 'group' => 'sistema', 'description' => 'Modo mantenimiento (solo acceso Super Admin)'],
             ['key' => 'registro_abierto', 'value' => '0', 'type' => 'boolean', 'group' => 'sistema', 'description' => 'Permitir registro de nuevos usuarios'],
             ['key' => 'notificaciones_email', 'value' => '0', 'type' => 'boolean', 'group' => 'sistema', 'description' => 'Enviar notificaciones por email'],
-            ['key' => 'nombre_empresa', 'value' => 'Grupo ARI', 'type' => 'string', 'group' => 'sistema', 'description' => 'Nombre de la empresa (aparece en PDFs y cabeceras)'],
+            ['key' => 'nombre_empresa', 'value' => 'Grupo DAI', 'type' => 'string', 'group' => 'sistema', 'description' => 'Nombre de la empresa (aparece en PDFs y cabeceras)'],
             ['key' => 'email_contacto', 'value' => '', 'type' => 'string', 'group' => 'sistema', 'description' => 'Email de contacto principal'],
             ['key' => 'telefono_contacto', 'value' => '', 'type' => 'string', 'group' => 'sistema', 'description' => 'Teléfono de contacto principal'],
 

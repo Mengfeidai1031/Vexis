@@ -7,13 +7,13 @@
     <div class="vx-card" style="height:520px;display:flex;flex-direction:column;">
         <div class="vx-card-header" style="flex-shrink:0;display:flex;align-items:center;gap:10px;">
             <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--vx-primary),#2980b9);display:flex;align-items:center;justify-content:center;color:white;font-size:18px;"><i class="bi bi-robot"></i></div>
-            <div><h4 style="margin:0;font-size:14px;">Asistente Grupo ARI</h4><p style="margin:0;font-size:11px;color:var(--vx-text-muted);">Impulsado por Gemini AI — Pregúntame sobre vehículos, precios y disponibilidad</p></div>
+            <div><h4 style="margin:0;font-size:14px;">Asistente Grupo DAI</h4><p style="margin:0;font-size:11px;color:var(--vx-text-muted);">Impulsado por Gemini AI — Pregúntame sobre vehículos, precios y disponibilidad</p></div>
             <span id="statusDot" style="margin-left:auto;width:8px;height:8px;border-radius:50%;background:#2ecc71;"></span>
         </div>
         <div id="chatMessages" class="vx-card-body" style="flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:12px;">
             <div class="chat-msg chat-bot">
                 <div class="chat-avatar"><i class="bi bi-robot"></i></div>
-                <div class="chat-bubble">¡Hola! 👋 Soy el asistente virtual de <strong>Grupo ARI</strong>. Puedo ayudarte con información sobre nuestros vehículos Nissan, Renault y Dacia, precios, stock disponible y concesionarios en Canarias. ¿En qué puedo ayudarte?</div>
+                <div class="chat-bubble">¡Hola! 👋 Soy el asistente virtual de <strong>Grupo DAI</strong>. Puedo ayudarte con información sobre nuestros vehículos Nissan, Renault y Dacia, precios, stock disponible y concesionarios en Canarias. ¿En qué puedo ayudarte?</div>
             </div>
         </div>
         <div style="flex-shrink:0;padding:12px 16px;border-top:1px solid var(--vx-border);display:flex;gap:8px;">

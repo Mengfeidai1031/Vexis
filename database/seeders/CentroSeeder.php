@@ -9,7 +9,7 @@ class CentroSeeder extends Seeder
 {
     public function run(): void
     {
-        // Centros de ARI Motor Gran Canaria (empresa_id: 1)
+        // Centros de DAI Motor Gran Canaria (empresa_id: 1)
         Centro::create([
             'nombre' => 'Concesionario Las Palmas - Miller Bajo',
             'empresa_id' => 1,
@@ -34,7 +34,7 @@ class CentroSeeder extends Seeder
             'municipio' => 'Santa Lucía de Tirajana',
         ]);
 
-        // Centros de ARI Motor Tenerife (empresa_id: 2)
+        // Centros de DAI Motor Tenerife (empresa_id: 2)
         Centro::create([
             'nombre' => 'Concesionario Santa Cruz',
             'empresa_id' => 2,
@@ -59,7 +59,7 @@ class CentroSeeder extends Seeder
             'municipio' => 'Granadilla de Abona',
         ]);
 
-        // Centro de ARI Motor Lanzarote (empresa_id: 3)
+        // Centro de DAI Motor Lanzarote (empresa_id: 3)
         Centro::create([
             'nombre' => 'Concesionario Arrecife',
             'empresa_id' => 3,

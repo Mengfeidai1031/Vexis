@@ -36,7 +36,7 @@
     <input type="text" name="search" class="vx-input" placeholder="Buscar por código o título..." value="{{ request('search') }}" style="flex:1;">
     <select name="estado" class="vx-select" style="width:auto;"><option value="">Todos los estados</option>@foreach(\App\Models\Incidencia::$estados as $k => $v)<option value="{{ $k }}" {{ request('estado') == $k ? 'selected' : '' }}>{{ $v }}</option>@endforeach</select>
     <select name="prioridad" class="vx-select" style="width:auto;"><option value="">Todas las prioridades</option>@foreach(\App\Models\Incidencia::$prioridades as $k => $v)<option value="{{ $k }}" {{ request('prioridad') == $k ? 'selected' : '' }}>{{ $v }}</option>@endforeach</select>
-    <select name="tecnico_id" class="vx-select" style="width:auto;"><option value="">Todos los técnicos</option>@foreach($tecnicos as $t)<option value="{{ $t->id }}" {{ request('tecnico_id') == $t->id ? 'selected' : '' }}>{{ $t->name }}</option>@endforeach</select>
+    <select name="tecnico_id" class="vx-select" style="width:auto;"><option value="">Todos los técnicos</option>@foreach($tecnicos as $t)<option value="{{ $t->id }}" {{ request('tecnico_id') == $t->id ? 'selected' : '' }}>{{ $t->nombre_completo }}</option>@endforeach</select>
     <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i></button>
     @if(request()->anyFilled(['search','estado','prioridad','tecnico_id']))<a href="{{ route('incidencias.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>@endif
 </form>
@@ -61,8 +61,8 @@
                 @case('resuelta')<span class="vx-badge vx-badge-success">Resuelta</span>@break
                 @case('cerrada')<span class="vx-badge" style="background:#eee;color:#666;">Cerrada</span>@break
             @endswitch</td>
-            <td style="font-size:12px;">{{ $inc->usuario?->name ?? '—' }}</td>
-            <td style="font-size:12px;">{{ $inc->tecnico?->name ?? '<span style="color:var(--vx-text-muted);">Sin asignar</span>' }}</td>
+            <td style="font-size:12px;">{{ $inc->usuario?->nombre_completo ?? '—' }}</td>
+            <td style="font-size:12px;">{!! $inc->tecnico ? e($inc->tecnico->nombre_completo) : '<span style="color:var(--vx-text-muted);">Sin asignar</span>' !!}</td>
             <td style="font-size:12px;">{{ $inc->fecha_apertura->format('d/m/Y H:i') }}</td>
             <td><a href="{{ route('incidencias.show', $inc) }}" class="vx-btn vx-btn-primary" style="padding:4px 10px;font-size:11px;"><i class="bi bi-eye"></i></a></td>
         </tr>@endforeach</tbody>

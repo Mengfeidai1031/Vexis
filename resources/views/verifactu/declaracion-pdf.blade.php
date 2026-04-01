@@ -62,7 +62,7 @@
                 <td style="padding:4px 0;">
                     <div class="field">
                         <div class="field-label">Empresa</div>
-                        <div class="field-value">VEXIS — Grupo ARI</div>
+                        <div class="field-value">VEXIS — Grupo DAI</div>
                     </div>
                 </td>
                 <td style="padding:4px 0;">
@@ -80,7 +80,7 @@
         <div class="declaration-box">
             <div class="declaration-text">
                 <strong>D./Dña. Meng Fei Dai</strong>, en calidad de Responsable del Sistema Informático de facturación
-                <strong>VEXIS</strong>, utilizado por la empresa <strong>Grupo ARI</strong>, DECLARA RESPONSABLEMENTE que:
+                <strong>VEXIS</strong>, utilizado por la empresa <strong>Grupo DAI</strong>, DECLARA RESPONSABLEMENTE que:
                 <br><br>
                 <strong>PRIMERO.</strong> — El sistema informático de facturación VEXIS cumple con los requisitos establecidos en el
                 <strong>Real Decreto 1007/2023, de 5 de diciembre</strong>, por el que se aprueba el Reglamento que establece
@@ -141,7 +141,7 @@
             <td style="width:50%;text-align:center;border:none;padding:0;">
                 <div style="border-top:1px solid #333;width:200px;margin:60px auto 0;padding-top:8px;font-size:11px;">
                     Sello de la empresa<br>
-                    <span style="font-size:10px;color:#666;">Grupo ARI</span>
+                    <span style="font-size:10px;color:#666;">Grupo DAI</span>
                 </div>
             </td>
         </tr>

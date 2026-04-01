@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'VEXIS - Grupo ARI')
+@section('title', 'VEXIS - Grupo DAI')
 @section('content')
 
 @auth
@@ -13,7 +13,7 @@
         <h1 style="font-size: 28px; font-weight: 300; color: var(--vx-text); margin-bottom: 4px;">
             {{ $greeting }}, <strong style="font-weight: 700;">{{ Auth::user()->nombre }}</strong>
         </h1>
-        <p style="font-size: 14px; color: var(--vx-text-muted);">Bienvenido a VEXIS — Sistema de Gestión de Grupo ARI</p>
+        <p style="font-size: 14px; color: var(--vx-text-muted);">Bienvenido a VEXIS — Sistema de Gestión de Grupo DAI</p>
     </div>
 
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 20px;">
@@ -76,7 +76,7 @@
             Sistema de Gestión
         </h1>
         <p style="font-size: 14px; color: var(--vx-text-muted); margin-bottom: 32px;">
-            Plataforma integral de gestión para concesionarios — Grupo ARI
+            Plataforma integral de gestión para concesionarios — Grupo DAI
         </p>
         <div style="display: flex; flex-direction: column; gap: 10px; max-width: 280px; margin: 0 auto;">
             <a href="{{ route('login') }}" class="vx-btn vx-btn-primary" style="justify-content: center; padding: 12px;">

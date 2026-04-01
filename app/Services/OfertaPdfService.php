@@ -562,7 +562,7 @@ final class OfertaPdfService
                 
                 // Buscar nombre de empresa después del nombre del cliente
                 if (preg_match('/([A-ZÁÉÍÓÚÑ][A-Za-záéíóúñÁÉÍÓÚÑ\s]+,\s*S\.?[AL]\.?)\s*\(([^)]+)\)/iu', $textoDespuesCliente, $matches)) {
-                    $nombreBase = trim($matches[1]); // "MOTOR ARI, S.A."
+                    $nombreBase = trim($matches[1]); // "MOTOR DAI, S.A."
                     $contenidoParentesis = trim($matches[2]); // "JUAN DOMINGUEZ PEREZ, 21"
                     // Guardar nombre sin paréntesis
                     $datos['nombre'] = trim($nombreBase);
@@ -578,9 +578,9 @@ final class OfertaPdfService
         // Si no encontramos con el nombre del cliente, buscar con el patrón original
         if ($datos['nombre'] === 'Empresa Renault') {
             // RENAULT/DACIA: Buscar nombre de empresa después de "ESTABLECIMIENTO"
-            // Formato: "MOTOR ARI, S.A.(JUAN DOMINGUEZ PEREZ, 21)"
+            // Formato: "MOTOR DAI, S.A.(JUAN DOMINGUEZ PEREZ, 21)"
             if (preg_match('/ESTABLECIMIENTO[^\n]*\n[^\n]*?([A-ZÁÉÍÓÚÑ][A-Za-záéíóúñÁÉÍÓÚÑ\s]+,\s*S\.?[AL]\.?)\s*\(([^)]+)\)/iu', $texto, $matches)) {
-                $nombreBase = trim($matches[1]); // "MOTOR ARI, S.A."
+                $nombreBase = trim($matches[1]); // "MOTOR DAI, S.A."
                 $contenidoParentesis = trim($matches[2]); // "JUAN DOMINGUEZ PEREZ, 21"
                 // Guardar nombre sin paréntesis
                 $datos['nombre'] = trim($nombreBase);
@@ -659,7 +659,7 @@ final class OfertaPdfService
 
         // PRIORIDAD 1: Buscar "Sr. Don" seguido de nombre y múltiples espacios antes de empresa
         // Este patrón tiene prioridad porque detecta el caso específico con múltiples espacios
-        // Ejemplo: "Sr. Don Jose Verdugo Rodriguez                                                             MOTOR ARI, S.A."
+        // Ejemplo: "Sr. Don Jose Verdugo Rodriguez                                                             MOTOR DAI, S.A."
         // Captura todas las palabras después de "Don" hasta encontrar 4 o más espacios seguidos de una palabra en mayúsculas
         if (preg_match('/Sr\.?\s+Don\s+((?:[A-Za-záéíóúñÁÉÍÓÚÑ]+\s+){1,}[A-Za-záéíóúñÁÉÍÓÚÑ]+)\s{4,}[A-Z]{2,}/iu', $texto, $matches)) {
             $nombreCapturado = trim($matches[1]);

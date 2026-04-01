@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-VEXIS is a Laravel 12 business management system for an automotive company (Grupo ARI). It covers management, commercial (offers, sales, valuations), spare parts (warehouses, stock, distribution), workshops (appointments, mechanics, replacement vehicles), and a client portal. The application is a single full-stack Laravel app with Blade templates, not a monorepo.
+VEXIS is a Laravel 12 business management system for an automotive company (Grupo DAI). It covers management, commercial (offers, sales, valuations), spare parts (warehouses, stock, distribution), workshops (appointments, mechanics, replacement vehicles), and a client portal. The application is a single full-stack Laravel app with Blade templates, not a monorepo.
 
 ## Commands
 

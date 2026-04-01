@@ -36,14 +36,15 @@ class IncidenciaController extends Controller
             'criticas' => Incidencia::where('prioridad', 'critica')->whereNotIn('estado', ['resuelta', 'cerrada'])->count(),
         ];
 
-        $tecnicos = User::role(['Super Admin', 'Administrador'])->orderBy('name')->get();
+        $tecnicos = User::role(['Super Admin', 'Administrador'])->orderBy('nombre')->get();
 
         return view('incidencias.index', compact('incidencias', 'stats', 'tecnicos'));
     }
 
     public function create()
     {
-        return view('incidencias.create');
+        $tecnicos = User::role(['Super Admin', 'Administrador'])->orderBy('nombre')->get();
+        return view('incidencias.create', compact('tecnicos'));
     }
 
     public function store(Request $request)
@@ -52,7 +53,10 @@ class IncidenciaController extends Controller
             'titulo' => 'required|string|max:255',
             'descripcion' => 'required|string',
             'prioridad' => 'required|in:baja,media,alta,critica',
-            'archivos.*' => 'nullable|file|max:10240',
+            'estado' => 'required|in:abierta,en_progreso,resuelta,cerrada',
+            'tecnico_id' => 'nullable|exists:users,id',
+            'archivos_usuario.*' => 'nullable|file|max:10240',
+            'archivos_tecnico.*' => 'nullable|file|max:10240',
         ]);
 
         $codigo = 'INC-' . date('Ym') . '-' . str_pad(
@@ -60,17 +64,26 @@ class IncidenciaController extends Controller
             4, '0', STR_PAD_LEFT
         );
 
-        $incidencia = Incidencia::create([
+        $data = [
             'codigo_incidencia' => $codigo,
             'titulo' => $request->titulo,
             'descripcion' => $request->descripcion,
             'prioridad' => $request->prioridad,
+            'estado' => $request->estado,
             'usuario_id' => Auth::id(),
+            'tecnico_id' => $request->tecnico_id,
             'fecha_apertura' => now(),
-        ]);
+        ];
 
-        if ($request->hasFile('archivos')) {
-            foreach ($request->file('archivos') as $file) {
+        if (in_array($request->estado, ['resuelta', 'cerrada'])) {
+            $data['fecha_cierre'] = now();
+        }
+
+        $incidencia = Incidencia::create($data);
+
+        // Archivos del usuario
+        if ($request->hasFile('archivos_usuario')) {
+            foreach ($request->file('archivos_usuario') as $file) {
                 $path = $file->store('incidencias/' . $incidencia->id, 'public');
                 IncidenciaArchivo::create([
                     'incidencia_id' => $incidencia->id,
@@ -82,6 +95,20 @@ class IncidenciaController extends Controller
             }
         }
 
+        // Archivos del técnico
+        if ($request->hasFile('archivos_tecnico')) {
+            foreach ($request->file('archivos_tecnico') as $file) {
+                $path = $file->store('incidencias/' . $incidencia->id, 'public');
+                IncidenciaArchivo::create([
+                    'incidencia_id' => $incidencia->id,
+                    'user_id' => Auth::id(),
+                    'ruta' => $path,
+                    'nombre_original' => $file->getClientOriginalName(),
+                    'tipo' => 'tecnico',
+                ]);
+            }
+        }
+
         return redirect()->route('incidencias.show', $incidencia)
             ->with('success', "Incidencia {$codigo} creada correctamente.");
     }
@@ -89,14 +116,14 @@ class IncidenciaController extends Controller
     public function show(Incidencia $incidencia)
     {
         $incidencia->load(['usuario', 'tecnico', 'archivos.user']);
-        $tecnicos = User::role(['Super Admin', 'Administrador'])->orderBy('name')->get();
+        $tecnicos = User::role(['Super Admin', 'Administrador'])->orderBy('nombre')->get();
         return view('incidencias.show', compact('incidencia', 'tecnicos'));
     }
 
     public function edit(Incidencia $incidencia)
     {
         $incidencia->load(['usuario', 'tecnico', 'archivos']);
-        $tecnicos = User::role(['Super Admin', 'Administrador'])->orderBy('name')->get();
+        $tecnicos = User::role(['Super Admin', 'Administrador'])->orderBy('nombre')->get();
         return view('incidencias.edit', compact('incidencia', 'tecnicos'));
     }
 
@@ -109,7 +136,8 @@ class IncidenciaController extends Controller
             'estado' => 'required|in:abierta,en_progreso,resuelta,cerrada',
             'tecnico_id' => 'nullable|exists:users,id',
             'comentario_tecnico' => 'nullable|string',
-            'archivos.*' => 'nullable|file|max:10240',
+            'archivos_usuario.*' => 'nullable|file|max:10240',
+            'archivos_tecnico.*' => 'nullable|file|max:10240',
         ]);
 
         $data = $request->only(['titulo', 'descripcion', 'prioridad', 'estado', 'tecnico_id', 'comentario_tecnico']);
@@ -123,16 +151,30 @@ class IncidenciaController extends Controller
 
         $incidencia->update($data);
 
-        if ($request->hasFile('archivos')) {
-            $tipo = Auth::user()->hasRole(['Super Admin', 'Administrador']) ? 'tecnico' : 'usuario';
-            foreach ($request->file('archivos') as $file) {
+        // Archivos del usuario
+        if ($request->hasFile('archivos_usuario')) {
+            foreach ($request->file('archivos_usuario') as $file) {
                 $path = $file->store('incidencias/' . $incidencia->id, 'public');
                 IncidenciaArchivo::create([
                     'incidencia_id' => $incidencia->id,
                     'user_id' => Auth::id(),
                     'ruta' => $path,
                     'nombre_original' => $file->getClientOriginalName(),
-                    'tipo' => $tipo,
+                    'tipo' => 'usuario',
+                ]);
+            }
+        }
+
+        // Archivos del técnico
+        if ($request->hasFile('archivos_tecnico')) {
+            foreach ($request->file('archivos_tecnico') as $file) {
+                $path = $file->store('incidencias/' . $incidencia->id, 'public');
+                IncidenciaArchivo::create([
+                    'incidencia_id' => $incidencia->id,
+                    'user_id' => Auth::id(),
+                    'ruta' => $path,
+                    'nombre_original' => $file->getClientOriginalName(),
+                    'tipo' => 'tecnico',
                 ]);
             }
         }
