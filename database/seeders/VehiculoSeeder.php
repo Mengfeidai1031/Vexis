@@ -4,11 +4,16 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Vehiculo;
+use App\Models\Marca;
 
 class VehiculoSeeder extends Seeder
 {
     public function run(): void
     {
+        $nissan = Marca::where('slug', 'nissan')->first()?->id;
+        $renault = Marca::where('slug', 'renault')->first()?->id;
+        $dacia = Marca::where('slug', 'dacia')->first()?->id;
+
         // ========== NISSAN (empresa 1 - Gran Canaria) ==========
         Vehiculo::create([
             'chasis' => 'SJNFBNJ11U0123456',
@@ -17,6 +22,7 @@ class VehiculoSeeder extends Seeder
             'color_externo' => 'Gris Oscuro Metalizado',
             'color_interno' => 'Negro Tekna',
             'empresa_id' => 1,
+            'marca_id' => $nissan,
         ]);
 
         Vehiculo::create([
@@ -26,6 +32,7 @@ class VehiculoSeeder extends Seeder
             'color_externo' => 'Rojo Fuji',
             'color_interno' => 'Negro/Rojo',
             'empresa_id' => 1,
+            'marca_id' => $nissan,
         ]);
 
         Vehiculo::create([
@@ -35,6 +42,7 @@ class VehiculoSeeder extends Seeder
             'color_externo' => 'Blanco Perla',
             'color_interno' => 'Cuero Marrón',
             'empresa_id' => 1,
+            'marca_id' => $nissan,
         ]);
 
         Vehiculo::create([
@@ -44,6 +52,7 @@ class VehiculoSeeder extends Seeder
             'color_externo' => 'Azul Magnético',
             'color_interno' => 'Negro',
             'empresa_id' => 1,
+            'marca_id' => $nissan,
         ]);
 
         Vehiculo::create([
@@ -53,6 +62,7 @@ class VehiculoSeeder extends Seeder
             'color_externo' => 'Aurora Green',
             'color_interno' => 'Gris Claro',
             'empresa_id' => 1,
+            'marca_id' => $nissan,
         ]);
 
         // ========== RENAULT (empresa 2 - Tenerife) ==========
@@ -63,6 +73,7 @@ class VehiculoSeeder extends Seeder
             'color_externo' => 'Naranja Valencia',
             'color_interno' => 'Negro Carbono',
             'empresa_id' => 2,
+            'marca_id' => $renault,
         ]);
 
         Vehiculo::create([
@@ -72,6 +83,7 @@ class VehiculoSeeder extends Seeder
             'color_externo' => 'Azul Iron / Negro',
             'color_interno' => 'Cuero/Tela Alpine',
             'empresa_id' => 2,
+            'marca_id' => $renault,
         ]);
 
         Vehiculo::create([
@@ -81,6 +93,7 @@ class VehiculoSeeder extends Seeder
             'color_externo' => 'Gris Schiste',
             'color_interno' => 'Negro/Marrón Nocciola',
             'empresa_id' => 2,
+            'marca_id' => $renault,
         ]);
 
         Vehiculo::create([
@@ -90,6 +103,7 @@ class VehiculoSeeder extends Seeder
             'color_externo' => 'Rojo Flamme',
             'color_interno' => 'Negro R.S. Line',
             'empresa_id' => 2,
+            'marca_id' => $renault,
         ]);
 
         Vehiculo::create([
@@ -99,6 +113,7 @@ class VehiculoSeeder extends Seeder
             'color_externo' => 'Verde Rafale',
             'color_interno' => 'Gris Reciclado',
             'empresa_id' => 2,
+            'marca_id' => $renault,
         ]);
 
         // ========== DACIA (empresa 3 - Lanzarote + mixto) ==========
@@ -109,6 +124,7 @@ class VehiculoSeeder extends Seeder
             'color_externo' => 'Azul Iron',
             'color_interno' => 'Gris Oscuro',
             'empresa_id' => 3,
+            'marca_id' => $dacia,
         ]);
 
         Vehiculo::create([
@@ -118,6 +134,7 @@ class VehiculoSeeder extends Seeder
             'color_externo' => 'Marrón Terracota',
             'color_interno' => 'Negro/Cobre',
             'empresa_id' => 3,
+            'marca_id' => $dacia,
         ]);
 
         Vehiculo::create([
@@ -127,6 +144,7 @@ class VehiculoSeeder extends Seeder
             'color_externo' => 'Verde Cedro',
             'color_interno' => 'Negro Journey',
             'empresa_id' => 3,
+            'marca_id' => $dacia,
         ]);
 
         Vehiculo::create([
@@ -136,6 +154,7 @@ class VehiculoSeeder extends Seeder
             'color_externo' => 'Beige Duna',
             'color_interno' => 'Negro/Cobre Extreme',
             'empresa_id' => 1,
+            'marca_id' => $dacia,
         ]);
 
         Vehiculo::create([
@@ -145,6 +164,7 @@ class VehiculoSeeder extends Seeder
             'color_externo' => 'Gris Moonstone',
             'color_interno' => 'Negro 7 plazas',
             'empresa_id' => 2,
+            'marca_id' => $dacia,
         ]);
 
         Vehiculo::create([
@@ -154,6 +174,7 @@ class VehiculoSeeder extends Seeder
             'color_externo' => 'Azul Rayo',
             'color_interno' => 'Negro/Azul',
             'empresa_id' => 1,
+            'marca_id' => $dacia,
         ]);
 
         Vehiculo::create([
@@ -163,6 +184,7 @@ class VehiculoSeeder extends Seeder
             'color_externo' => 'Blanco Glaciar',
             'color_interno' => 'Gris',
             'empresa_id' => 2,
+            'marca_id' => $nissan,
         ]);
 
         Vehiculo::create([
@@ -172,6 +194,7 @@ class VehiculoSeeder extends Seeder
             'color_externo' => 'Azul Rafale',
             'color_interno' => 'Gris Reciclado Iconic',
             'empresa_id' => 1,
+            'marca_id' => $renault,
         ]);
     }
 }

@@ -15,7 +15,7 @@ class VehiculoRepository implements VehiculoRepositoryInterface
 
     public function all()
     {
-        $query = Vehiculo::with('empresa');
+        $query = Vehiculo::with(['empresa', 'marca']);
         $user = $this->getAuthUser();
         
         // Si tiene restricciones de vehículo específico, usar solo esas (prioridad)
@@ -40,7 +40,7 @@ class VehiculoRepository implements VehiculoRepositoryInterface
 
     public function search($searchTerm)
     {
-        $query = Vehiculo::with('empresa')
+        $query = Vehiculo::with(['empresa', 'marca'])
             ->where(function($query) use ($searchTerm) {
                 $query->where('chasis', 'like', "%{$searchTerm}%")
                     ->orWhere('matricula', 'like', "%{$searchTerm}%")
@@ -77,7 +77,7 @@ class VehiculoRepository implements VehiculoRepositoryInterface
 
     public function find(int $id)
     {
-        $vehiculo = Vehiculo::with('empresa')->findOrFail($id);
+        $vehiculo = Vehiculo::with(['empresa', 'marca'])->findOrFail($id);
         
         // Verificar acceso por empresa y vehículo
         if (!$this->canAccessEmpresa($vehiculo->empresa_id) || !$this->canAccessVehiculo($vehiculo->id)) {

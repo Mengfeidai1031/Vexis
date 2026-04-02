@@ -22,7 +22,7 @@ class VehiculosExport implements FromCollection, WithHeadings, WithMapping, Shou
     {
         $userEmpresaId = Auth::user()?->empresa_id;
         
-        $query = Vehiculo::with('empresa');
+        $query = Vehiculo::with(['empresa', 'marca']);
         
         if ($userEmpresaId) {
             $query->where('empresa_id', $userEmpresaId);
@@ -44,6 +44,7 @@ class VehiculosExport implements FromCollection, WithHeadings, WithMapping, Shou
             'ID',
             'Chasis',
             'Matrícula',
+            'Marca',
             'Modelo',
             'Versión',
             'Color Externo',
@@ -65,6 +66,7 @@ class VehiculosExport implements FromCollection, WithHeadings, WithMapping, Shou
             $vehiculo->id,
             $vehiculo->chasis ?? '',
             $vehiculo->matricula ?? '',
+            $vehiculo->marca?->nombre ?? '',
             $vehiculo->modelo ?? '',
             $vehiculo->version ?? '',
             $vehiculo->color_externo ?? '',

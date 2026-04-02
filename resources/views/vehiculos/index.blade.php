@@ -32,6 +32,7 @@
                             <th>ID</th>
                             <th>Chasis</th>
                             <th>Matrícula</th>
+                            <th>Marca</th>
                             <th>Modelo</th>
                             <th>Versión</th>
                             <th>Color Ext.</th>
@@ -46,6 +47,7 @@
                                 <td style="color: var(--vx-text-muted);">{{ $vehiculo->id }}</td>
                                 <td><span class="vx-badge vx-badge-gray" style="font-family: var(--vx-font-mono); font-size: 10px;">{{ $vehiculo->chasis }}</span></td>
                                 <td>@if($vehiculo->matricula)<span class="vx-badge vx-badge-info" style="font-family:var(--vx-font-mono);font-size:11px;letter-spacing:1px;">{{ $vehiculo->matricula }}</span>@else<span style="color:var(--vx-text-muted);font-size:11px;">—</span>@endif</td>
+                                <td>@if($vehiculo->marca)<span class="vx-badge" style="background:{{ $vehiculo->marca->color }};color:white;font-size:10px;">{{ $vehiculo->marca->nombre }}</span>@else<span style="color:var(--vx-text-muted);font-size:11px;">—</span>@endif</td>
                                 <td style="font-weight: 600;">{{ $vehiculo->modelo }}</td>
                                 <td style="font-size: 12px;">{{ $vehiculo->version }}</td>
                                 <td>{{ $vehiculo->color_externo }}</td>

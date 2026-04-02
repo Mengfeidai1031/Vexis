@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use App\Models\Empresa;
 use App\Models\Factura;
 use App\Models\Venta;
 use App\Models\Verifactu;
@@ -18,7 +19,11 @@ class VerifactuSeeder extends Seeder
 
             foreach ($ventas as $venta) {
                 $subtotal = (float) $venta->precio_final;
-                $ivaPct = 21;
+                // Determine tax: IGIC 7% for Canarias (CP 35xxx/38xxx), IVA 21% otherwise
+                $empresa = $venta->empresa;
+                $cp = $empresa?->codigo_postal ?? '';
+                $isCanarias = str_starts_with($cp, '35') || str_starts_with($cp, '38');
+                $ivaPct = $isCanarias ? 7 : 21;
                 $ivaImporte = round($subtotal * $ivaPct / 100, 2);
                 $total = round($subtotal + $ivaImporte, 2);
 

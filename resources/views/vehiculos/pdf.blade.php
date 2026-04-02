@@ -116,12 +116,13 @@
         <thead>
             <tr>
                 <th style="width: 5%;">ID</th>
-                <th style="width: 15%;">Chasis</th>
-                <th style="width: 20%;">Modelo</th>
-                <th style="width: 20%;">Versión</th>
-                <th style="width: 12%;">Color Externo</th>
-                <th style="width: 12%;">Color Interno</th>
-                <th style="width: 16%;">Empresa</th>
+                <th style="width: 14%;">Chasis</th>
+                <th style="width: 8%;">Marca</th>
+                <th style="width: 16%;">Modelo</th>
+                <th style="width: 18%;">Versión</th>
+                <th style="width: 11%;">Color Ext.</th>
+                <th style="width: 11%;">Color Int.</th>
+                <th style="width: 14%;">Empresa</th>
             </tr>
         </thead>
         <tbody>
@@ -135,15 +136,16 @@
                             <span style="color: #999;">-</span>
                         @endif
                     </td>
+                    <td>{{ $vehiculo->marca?->nombre ?? '-' }}</td>
                     <td><strong>{{ $vehiculo->modelo ?? '-' }}</strong></td>
                     <td>{{ $vehiculo->version ?? '-' }}</td>
                     <td>{{ $vehiculo->color_externo ?? '-' }}</td>
                     <td>{{ $vehiculo->color_interno ?? '-' }}</td>
-                    <td>{{ $vehiculo->empresa ? $vehiculo->empresa->nombre : '-' }}</td>
+                    <td>{{ $vehiculo->empresa?->nombre ?? '-' }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" class="text-center" style="padding: 20px; color: #999;">
+                    <td colspan="8" class="text-center" style="padding: 20px; color: #999;">
                         No hay vehículos registrados
                     </td>
                 </tr>

@@ -19,14 +19,15 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             UserSeeder::class,
             ClienteSeeder::class,
-            VehiculoSeeder::class,
             MarcaSeeder::class,
+            VehiculoSeeder::class,
             NoticiaSeeder::class,
             FestivoSeeder::class,
             TallerSeeder::class,
             CatalogoPrecioSeeder::class,
             AlmacenSeeder::class,
             DatosEjemploSeeder::class,
+            VerifactuSeeder::class,
             SettingSeeder::class,
         ]);
     }

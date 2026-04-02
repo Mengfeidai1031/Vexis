@@ -17,14 +17,17 @@ class Vehiculo extends Model
         'color_externo',
         'color_interno',
         'empresa_id',
+        'marca_id',
     ];
 
-    /**
-     * Relación: Un vehículo pertenece a una empresa
-     */
     public function empresa(): BelongsTo
     {
         return $this->belongsTo(Empresa::class);
+    }
+
+    public function marca(): BelongsTo
+    {
+        return $this->belongsTo(Marca::class);
     }
 
     /**

@@ -19,6 +19,7 @@
             <div class="vx-info-row"><div class="vx-info-label">ID</div><div class="vx-info-value">{{ $vehiculo->id }}</div></div>
             <div class="vx-info-row"><div class="vx-info-label">Chasis (VIN)</div><div class="vx-info-value"><span class="vx-badge vx-badge-gray" style="font-family: var(--vx-font-mono); letter-spacing: 0.5px;">{{ $vehiculo->chasis }}</span></div></div>
             <div class="vx-info-row"><div class="vx-info-label">Matrícula</div><div class="vx-info-value">@if($vehiculo->matricula)<span class="vx-badge vx-badge-info" style="font-family: var(--vx-font-mono); letter-spacing: 1px; font-size: 13px;">{{ $vehiculo->matricula }}</span>@else<span style="color:var(--vx-text-muted);">Sin matricular</span>@endif</div></div>
+            <div class="vx-info-row"><div class="vx-info-label">Marca</div><div class="vx-info-value">@if($vehiculo->marca)<span class="vx-badge" style="background:{{ $vehiculo->marca->color }}; color:white;">{{ $vehiculo->marca->nombre }}</span>@else<span style="color:var(--vx-text-muted);">—</span>@endif</div></div>
             <div class="vx-info-row"><div class="vx-info-label">Modelo</div><div class="vx-info-value" style="font-weight: 600;">{{ $vehiculo->modelo }}</div></div>
             <div class="vx-info-row"><div class="vx-info-label">Versión</div><div class="vx-info-value">{{ $vehiculo->version }}</div></div>
             <div class="vx-info-row"><div class="vx-info-label">Color Externo</div><div class="vx-info-value">{{ $vehiculo->color_externo }}</div></div>

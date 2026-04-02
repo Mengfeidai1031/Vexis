@@ -23,10 +23,39 @@
                         <button type="button" id="btnGenerarMatricula" class="vx-btn vx-btn-primary" style="white-space:nowrap;padding:8px 12px;" title="Generar siguiente matrícula disponible"><i class="bi bi-plus-circle"></i> Nueva</button>
                     </div>
                     @error('matricula')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
-                    <div class="vx-form-hint">Dejar vacío si el vehículo aún no está matriculado. Usar "Nueva" para generar la siguiente matrícula disponible.</div>
+                    <div class="vx-form-hint">Dejar vacío si aún no está matriculado</div>
                 </div>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px;">
+                <div class="vx-form-group">
+                    <label class="vx-label" for="marca_id">Marca <span class="required">*</span></label>
+                    <select class="vx-select @error('marca_id') is-invalid @enderror" id="marca_id" name="marca_id" required>
+                        <option value="">Seleccione una marca</option>
+                        @foreach($marcas as $marca)
+                            <option value="{{ $marca->id }}" {{ old('marca_id') == $marca->id ? 'selected' : '' }}>{{ $marca->nombre }}</option>
+                        @endforeach
+                    </select>
+                    @error('marca_id')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="vx-form-group">
+                    <label class="vx-label" for="modelo">Modelo <span class="required">*</span></label>
+                    <div style="display:flex;gap:8px;">
+                        <select class="vx-select @error('modelo') is-invalid @enderror" id="modelo" name="modelo" required style="flex:1;">
+                            <option value="">Seleccione marca primero</option>
+                        </select>
+                        <a href="{{ route('catalogo-precios.create') }}" class="vx-btn vx-btn-secondary" style="white-space:nowrap;padding:8px 12px;" target="_blank" title="Crear modelo en catálogo"><i class="bi bi-plus-circle"></i></a>
+                    </div>
+                    @error('modelo')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px;">
+                <div class="vx-form-group">
+                    <label class="vx-label" for="version">Versión <span class="required">*</span></label>
+                    <select class="vx-select @error('version') is-invalid @enderror" id="version" name="version" required>
+                        <option value="">Seleccione modelo primero</option>
+                    </select>
+                    @error('version')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
+                </div>
                 <div class="vx-form-group">
                     <label class="vx-label" for="empresa_id">Empresa <span class="required">*</span></label>
                     <select class="vx-select @error('empresa_id') is-invalid @enderror" id="empresa_id" name="empresa_id" required>
@@ -37,19 +66,6 @@
                     </select><a href="{{ route('empresas.create') }}" class="vx-select-create" target="_blank"><i class="bi bi-plus-circle"></i> Crear nueva</a>
                     @error('empresa_id')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
                 </div>
-                <div class="vx-form-group">
-                    <label class="vx-label" for="modelo">Modelo <span class="required">*</span></label>
-                    <input type="text" class="vx-input @error('modelo') is-invalid @enderror" id="modelo" name="modelo" value="{{ old('modelo') }}" placeholder="Ej: Qashqai, Clio..." required>
-                    @error('modelo')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
-                </div>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px;">
-                <div class="vx-form-group">
-                    <label class="vx-label" for="version">Versión <span class="required">*</span></label>
-                    <input type="text" class="vx-input @error('version') is-invalid @enderror" id="version" name="version" value="{{ old('version') }}" placeholder="Ej: 1.3 DIG-T N-Connecta" required>
-                    @error('version')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
-                </div>
-                <div></div>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px;">
                 <div class="vx-form-group">
@@ -73,6 +89,59 @@
 @endsection
 @push('scripts')
 <script>
+const catalogoModelos = @json($catalogoModelos);
+const oldModelo = @json(old('modelo', ''));
+const oldVersion = @json(old('version', ''));
+const marcaSelect = document.getElementById('marca_id');
+const modeloSelect = document.getElementById('modelo');
+const versionSelect = document.getElementById('version');
+
+marcaSelect.addEventListener('change', function() {
+    updateModelos(this.value);
+    versionSelect.innerHTML = '<option value="">Seleccione modelo primero</option>';
+});
+
+modeloSelect.addEventListener('change', function() {
+    updateVersiones(marcaSelect.value, this.value);
+});
+
+function updateModelos(marcaId) {
+    modeloSelect.innerHTML = '<option value="">Seleccione un modelo</option>';
+    if (!marcaId || !catalogoModelos[marcaId]) return;
+    const modelos = [...new Set(catalogoModelos[marcaId].map(c => c.modelo))];
+    modelos.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m;
+        opt.textContent = m;
+        if (m === oldModelo) opt.selected = true;
+        modeloSelect.appendChild(opt);
+    });
+}
+
+function updateVersiones(marcaId, modelo) {
+    versionSelect.innerHTML = '<option value="">Seleccione una versión</option>';
+    if (!marcaId || !modelo || !catalogoModelos[marcaId]) return;
+    const versiones = catalogoModelos[marcaId].filter(c => c.modelo === modelo).map(c => c.version).filter(Boolean);
+    const unique = [...new Set(versiones)];
+    unique.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v;
+        opt.textContent = v;
+        if (v === oldVersion) opt.selected = true;
+        versionSelect.appendChild(opt);
+    });
+}
+
+// Init on page load (for old() values)
+if (marcaSelect.value) {
+    updateModelos(marcaSelect.value);
+    if (oldModelo) {
+        modeloSelect.value = oldModelo;
+        updateVersiones(marcaSelect.value, oldModelo);
+        if (oldVersion) versionSelect.value = oldVersion;
+    }
+}
+
 document.getElementById('chasis').addEventListener('input',function(e){e.target.value=e.target.value.toUpperCase();});
 document.getElementById('matricula').addEventListener('input',function(e){e.target.value=e.target.value.toUpperCase();});
 document.getElementById('btnGenerarMatricula').addEventListener('click', function() {

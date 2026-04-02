@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Exports\VehiculosExport;
 use App\Http\Requests\StoreVehiculoRequest;
 use App\Http\Requests\UpdateVehiculoRequest;
+use App\Models\CatalogoPrecio;
+use App\Models\Centro;
+use App\Models\Marca;
 use App\Models\Vehiculo;
 use App\Repositories\Interfaces\VehiculoRepositoryInterface;
 use App\Services\MatriculaService;
@@ -35,9 +38,16 @@ class VehiculoController extends Controller
     public function create()
     {
         $this->authorize('create', Vehiculo::class);
-        
+
         $empresas = $this->vehiculoRepository->getEmpresas();
-        return view('vehiculos.create', compact('empresas'));
+        $marcas = Marca::where('activa', true)->orderByRaw("FIELD(LOWER(nombre), 'renault', 'dacia', 'nissan') ASC, nombre ASC")->get();
+        $centros = Centro::orderBy('nombre')->get();
+        $catalogoModelos = CatalogoPrecio::where('disponible', true)
+            ->select('marca_id', 'modelo', 'version')
+            ->orderBy('modelo')->orderBy('version')
+            ->get()
+            ->groupBy('marca_id');
+        return view('vehiculos.create', compact('empresas', 'marcas', 'centros', 'catalogoModelos'));
     }
 
     public function store(StoreVehiculoRequest $request)
@@ -60,9 +70,16 @@ class VehiculoController extends Controller
     public function edit(Vehiculo $vehiculo)
     {
         $this->authorize('update', $vehiculo);
-        
+
         $empresas = $this->vehiculoRepository->getEmpresas();
-        return view('vehiculos.edit', compact('vehiculo', 'empresas'));
+        $marcas = Marca::where('activa', true)->orderByRaw("FIELD(LOWER(nombre), 'renault', 'dacia', 'nissan') ASC, nombre ASC")->get();
+        $centros = Centro::orderBy('nombre')->get();
+        $catalogoModelos = CatalogoPrecio::where('disponible', true)
+            ->select('marca_id', 'modelo', 'version')
+            ->orderBy('modelo')->orderBy('version')
+            ->get()
+            ->groupBy('marca_id');
+        return view('vehiculos.edit', compact('vehiculo', 'empresas', 'marcas', 'centros', 'catalogoModelos'));
     }
 
     public function update(UpdateVehiculoRequest $request, Vehiculo $vehiculo)
@@ -87,6 +104,23 @@ class VehiculoController extends Controller
             return redirect()->route('vehiculos.index')
                 ->with('error', 'No se puede eliminar el vehículo porque tiene ofertas asociadas.');
         }
+    }
+
+    /**
+     * Obtener modelos y versiones por marca (AJAX)
+     */
+    public function modelosPorMarca(Marca $marca)
+    {
+        $catalogo = CatalogoPrecio::where('marca_id', $marca->id)
+            ->where('disponible', true)
+            ->select('modelo', 'version')
+            ->orderBy('modelo')->orderBy('version')
+            ->get();
+
+        $modelos = $catalogo->pluck('modelo')->unique()->values();
+        $versiones = $catalogo->groupBy('modelo')->map(fn($items) => $items->pluck('version')->unique()->values());
+
+        return response()->json(['modelos' => $modelos, 'versiones' => $versiones]);
     }
 
     /**
@@ -120,7 +154,7 @@ class VehiculoController extends Controller
     {
         $userEmpresaId = \Illuminate\Support\Facades\Auth::user()?->empresa_id;
         
-        $query = \App\Models\Vehiculo::with('empresa');
+        $query = \App\Models\Vehiculo::with(['empresa', 'marca']);
         
         if ($userEmpresaId) {
             $query->where('empresa_id', $userEmpresaId);

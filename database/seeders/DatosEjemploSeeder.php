@@ -145,13 +145,17 @@ class DatosEjemploSeeder extends Seeder
         if ($talleres->isEmpty()) return;
         $empresa = Empresa::first();
 
+        $nissan = \App\Models\Marca::where('slug', 'nissan')->first()?->id;
+        $renault = \App\Models\Marca::where('slug', 'renault')->first()?->id;
+        $dacia = \App\Models\Marca::where('slug', 'dacia')->first()?->id;
+
         $coches = [
-            ['matricula'=>'1234 GKL','modelo'=>'Dacia Sandero','marca_id'=>3,'color'=>'Blanco','anio'=>2023],
-            ['matricula'=>'5678 HMN','modelo'=>'Renault Clio','marca_id'=>2,'color'=>'Gris','anio'=>2022],
-            ['matricula'=>'9012 JPQ','modelo'=>'Nissan Micra','marca_id'=>1,'color'=>'Rojo','anio'=>2023],
-            ['matricula'=>'3456 KRS','modelo'=>'Dacia Sandero Stepway','marca_id'=>3,'color'=>'Azul','anio'=>2024],
-            ['matricula'=>'7890 LTV','modelo'=>'Renault Clio','marca_id'=>2,'color'=>'Negro','anio'=>2023],
-            ['matricula'=>'2345 MWX','modelo'=>'Nissan Juke','marca_id'=>1,'color'=>'Blanco','anio'=>2022],
+            ['matricula'=>'1234 GKL','modelo'=>'Dacia Sandero','marca_id'=>$dacia,'color'=>'Blanco','anio'=>2023],
+            ['matricula'=>'5678 HMN','modelo'=>'Renault Clio','marca_id'=>$renault,'color'=>'Gris','anio'=>2022],
+            ['matricula'=>'9012 JPQ','modelo'=>'Nissan Micra','marca_id'=>$nissan,'color'=>'Rojo','anio'=>2023],
+            ['matricula'=>'3456 KRS','modelo'=>'Dacia Sandero Stepway','marca_id'=>$dacia,'color'=>'Azul','anio'=>2024],
+            ['matricula'=>'7890 LTV','modelo'=>'Renault Clio','marca_id'=>$renault,'color'=>'Negro','anio'=>2023],
+            ['matricula'=>'2345 MWX','modelo'=>'Nissan Juke','marca_id'=>$nissan,'color'=>'Blanco','anio'=>2022],
         ];
 
         foreach ($coches as $i => $c) {
@@ -196,7 +200,7 @@ class DatosEjemploSeeder extends Seeder
 
     private function seedVentas(): void
     {
-        $vehiculos = Vehiculo::all();
+        $vehiculos = Vehiculo::with('marca')->get();
         $clientes = Cliente::all();
         if ($vehiculos->isEmpty() || $clientes->isEmpty()) return;
         $empresa = Empresa::first();
@@ -206,12 +210,34 @@ class DatosEjemploSeeder extends Seeder
         $formas = ['contado','financiado','leasing','renting'];
         $estados = ['reservada','pendiente_entrega','entregada','cancelada'];
 
-        for ($i = 1; $i <= 8; $i++) {
-            $precio = rand(15000, 55000);
+        // Use up to 8 vehiculos for ventas
+        $vehiculosVenta = $vehiculos->count() >= 8 ? $vehiculos->random(8) : $vehiculos;
+
+        foreach ($vehiculosVenta->values() as $i => $vehiculo) {
+            // Try to get coherent price from catalogo
+            $catalogo = \App\Models\CatalogoPrecio::where('marca_id', $vehiculo->marca_id)
+                ->where('modelo', 'like', '%' . explode(' ', $vehiculo->modelo)[1] . '%')
+                ->first();
+            $precio = $catalogo ? (float) $catalogo->precio_base : rand(15000, 55000);
             $descuento = rand(0, 3000);
+
             Venta::firstOrCreate(
-                ['codigo_venta' => 'VTA-'.date('Ym').'-'.str_pad($i,4,'0',STR_PAD_LEFT)],
-                ['codigo_venta'=>'VTA-'.date('Ym').'-'.str_pad($i,4,'0',STR_PAD_LEFT),'vehiculo_id'=>$vehiculos->random()->id,'cliente_id'=>$clientes->random()->id,'empresa_id'=>$empresa->id,'centro_id'=>$centro->id,'marca_id'=>rand(1,3),'vendedor_id'=>$user->id,'precio_venta'=>$precio,'descuento'=>$descuento,'precio_final'=>$precio-$descuento,'forma_pago'=>$formas[array_rand($formas)],'estado'=>$estados[array_rand($estados)],'fecha_venta'=>now()->subDays(rand(1,60))]
+                ['codigo_venta' => 'VTA-'.date('Ym').'-'.str_pad($i+1,4,'0',STR_PAD_LEFT)],
+                [
+                    'codigo_venta' => 'VTA-'.date('Ym').'-'.str_pad($i+1,4,'0',STR_PAD_LEFT),
+                    'vehiculo_id' => $vehiculo->id,
+                    'cliente_id' => $clientes->random()->id,
+                    'empresa_id' => $empresa->id,
+                    'centro_id' => $centro->id,
+                    'marca_id' => $vehiculo->marca_id,
+                    'vendedor_id' => $user->id,
+                    'precio_venta' => $precio,
+                    'descuento' => $descuento,
+                    'precio_final' => $precio - $descuento,
+                    'forma_pago' => $formas[array_rand($formas)],
+                    'estado' => $estados[array_rand($estados)],
+                    'fecha_venta' => now()->subDays(rand(1,60)),
+                ]
             );
         }
     }
