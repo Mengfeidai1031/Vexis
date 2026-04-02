@@ -42,12 +42,45 @@
         </div>
     </div>
     <div class="vx-card" style="margin-bottom:16px;">
-        <div class="vx-card-header"><h4>Importes</h4></div>
+        <div class="vx-card-header"><h4><i class="bi bi-calculator" style="margin-right:6px;"></i> Desglose Económico</h4></div>
         <div class="vx-card-body">
-            <table class="vx-table" style="max-width:400px;">
-                <tr><td style="font-weight:600;">Subtotal</td><td style="text-align:right;font-family:var(--vx-font-mono);">{{ number_format($factura->subtotal, 2) }} €</td></tr>
-                <tr><td style="font-weight:600;">IVA ({{ number_format($factura->iva_porcentaje, 0) }}%)</td><td style="text-align:right;font-family:var(--vx-font-mono);">{{ number_format($factura->iva_importe, 2) }} €</td></tr>
-                <tr style="border-top:2px solid var(--vx-border);"><td style="font-weight:800;font-size:14px;">TOTAL</td><td style="text-align:right;font-family:var(--vx-font-mono);font-weight:800;font-size:16px;color:var(--vx-primary);">{{ number_format($factura->total, 2) }} €</td></tr>
+            <table style="width:100%;border-collapse:collapse;font-size:13px;max-width:600px;">
+                @if($factura->venta)
+                <tr style="border-bottom:1px solid var(--vx-border);">
+                    <td style="padding:8px 0;font-weight:600;">Precio venta ({{ $factura->venta->vehiculo?->modelo ?? '—' }})</td>
+                    <td style="padding:8px 0;text-align:right;font-family:var(--vx-font-mono);">{{ number_format($factura->venta->precio_venta, 2, ',', '.') }} €</td>
+                </tr>
+                @if($factura->venta->descuento > 0)
+                <tr style="border-bottom:1px solid var(--vx-border);">
+                    <td style="padding:8px 0;color:var(--vx-danger);">Descuento general</td>
+                    <td style="padding:8px 0;text-align:right;font-family:var(--vx-font-mono);color:var(--vx-danger);">-{{ number_format($factura->venta->descuento, 2, ',', '.') }} €</td>
+                </tr>
+                @endif
+                @foreach($factura->venta->conceptos->where('tipo', 'extra') as $extra)
+                <tr style="border-bottom:1px solid var(--vx-border);">
+                    <td style="padding:8px 0;color:var(--vx-success);"><i class="bi bi-plus-circle" style="margin-right:4px;"></i> {{ $extra->descripcion }}</td>
+                    <td style="padding:8px 0;text-align:right;font-family:var(--vx-font-mono);color:var(--vx-success);">+{{ number_format($extra->importe, 2, ',', '.') }} €</td>
+                </tr>
+                @endforeach
+                @foreach($factura->venta->conceptos->where('tipo', 'descuento') as $desc)
+                <tr style="border-bottom:1px solid var(--vx-border);">
+                    <td style="padding:8px 0;color:var(--vx-danger);"><i class="bi bi-dash-circle" style="margin-right:4px;"></i> {{ $desc->descripcion }}</td>
+                    <td style="padding:8px 0;text-align:right;font-family:var(--vx-font-mono);color:var(--vx-danger);">-{{ number_format($desc->importe, 2, ',', '.') }} €</td>
+                </tr>
+                @endforeach
+                @endif
+                <tr style="border-bottom:2px solid var(--vx-border);background:var(--vx-bg);">
+                    <td style="padding:10px 0;font-weight:700;">Subtotal</td>
+                    <td style="padding:10px 0;text-align:right;font-family:var(--vx-font-mono);font-weight:700;">{{ number_format($factura->subtotal, 2, ',', '.') }} €</td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--vx-border);">
+                    <td style="padding:8px 0;">{{ $factura->venta?->impuesto_nombre ?? 'IVA' }} ({{ number_format($factura->iva_porcentaje, 0) }}%)</td>
+                    <td style="padding:8px 0;text-align:right;font-family:var(--vx-font-mono);">{{ number_format($factura->iva_importe, 2, ',', '.') }} €</td>
+                </tr>
+                <tr style="background:var(--vx-bg);">
+                    <td style="padding:12px 0;font-weight:800;font-size:15px;">TOTAL</td>
+                    <td style="padding:12px 0;text-align:right;font-family:var(--vx-font-mono);font-weight:800;font-size:18px;color:var(--vx-primary);">{{ number_format($factura->total, 2, ',', '.') }} €</td>
+                </tr>
             </table>
         </div>
     </div>

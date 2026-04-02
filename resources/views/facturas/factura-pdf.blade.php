@@ -123,16 +123,39 @@
         <thead>
             <tr>
                 <th style="width:60%;">Concepto</th>
-                <th style="width:20%;text-align:center;">Vehículo</th>
+                <th style="width:20%;text-align:center;">Tipo</th>
                 <th style="width:20%;text-align:right;">Importe</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>{{ $factura->concepto ?? 'Venta de vehículo' }}</td>
-                <td style="text-align:center;">{{ $factura->venta?->vehiculo?->modelo ?? '—' }}</td>
-                <td style="text-align:right;font-family:monospace;">{{ number_format($factura->subtotal, 2) }} €</td>
+                <td>{{ $factura->venta?->vehiculo ? 'Vehículo ' . $factura->venta->vehiculo->modelo . ($factura->venta->vehiculo->version ? ' — ' . $factura->venta->vehiculo->version : '') : ($factura->concepto ?? 'Venta de vehículo') }}</td>
+                <td style="text-align:center;">Precio base</td>
+                <td style="text-align:right;font-family:monospace;">{{ number_format($factura->venta?->precio_venta ?? $factura->subtotal, 2, ',', '.') }} €</td>
             </tr>
+            @if($factura->venta && $factura->venta->descuento > 0)
+            <tr>
+                <td style="color:#c62828;">Descuento general</td>
+                <td style="text-align:center;color:#c62828;">Descuento</td>
+                <td style="text-align:right;font-family:monospace;color:#c62828;">-{{ number_format($factura->venta->descuento, 2, ',', '.') }} €</td>
+            </tr>
+            @endif
+            @if($factura->venta && $factura->venta->conceptos)
+                @foreach($factura->venta->conceptos->where('tipo', 'extra') as $extra)
+                <tr>
+                    <td style="color:#2e7d32;">{{ $extra->descripcion }}</td>
+                    <td style="text-align:center;color:#2e7d32;">Extra</td>
+                    <td style="text-align:right;font-family:monospace;color:#2e7d32;">+{{ number_format($extra->importe, 2, ',', '.') }} €</td>
+                </tr>
+                @endforeach
+                @foreach($factura->venta->conceptos->where('tipo', 'descuento') as $desc)
+                <tr>
+                    <td style="color:#c62828;">{{ $desc->descripcion }}</td>
+                    <td style="text-align:center;color:#c62828;">Descuento</td>
+                    <td style="text-align:right;font-family:monospace;color:#c62828;">-{{ number_format($desc->importe, 2, ',', '.') }} €</td>
+                </tr>
+                @endforeach
+            @endif
         </tbody>
     </table>
 
@@ -140,15 +163,15 @@
     <table class="totals">
         <tr>
             <td class="label">Subtotal</td>
-            <td class="value">{{ number_format($factura->subtotal, 2) }} €</td>
+            <td class="value">{{ number_format($factura->subtotal, 2, ',', '.') }} €</td>
         </tr>
         <tr>
-            <td class="label">IVA ({{ number_format($factura->iva_porcentaje, 0) }}%)</td>
-            <td class="value">{{ number_format($factura->iva_importe, 2) }} €</td>
+            <td class="label">{{ $factura->venta?->impuesto_nombre ?? 'IVA' }} ({{ number_format($factura->iva_porcentaje, 0) }}%)</td>
+            <td class="value">{{ number_format($factura->iva_importe, 2, ',', '.') }} €</td>
         </tr>
         <tr class="total-row">
             <td class="total-label">TOTAL</td>
-            <td class="total-value">{{ number_format($factura->total, 2) }} €</td>
+            <td class="total-value">{{ number_format($factura->total, 2, ',', '.') }} €</td>
         </tr>
     </table>
 

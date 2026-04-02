@@ -32,9 +32,6 @@ class SettingSeeder extends Seeder
             ['key' => 'email_contacto', 'value' => '', 'type' => 'string', 'group' => 'sistema', 'description' => 'Email de contacto principal'],
             ['key' => 'telefono_contacto', 'value' => '', 'type' => 'string', 'group' => 'sistema', 'description' => 'Teléfono de contacto principal'],
 
-            // DGT / Matrículas
-            ['key' => 'ultima_matricula_dgt', 'value' => '5000 NPK', 'type' => 'string', 'group' => 'sistema', 'description' => 'Última matrícula conocida de la DGT (se usa como referencia para generar nuevas)'],
-
             // Seguridad
             ['key' => 'max_login_attempts', 'value' => '5', 'type' => 'integer', 'group' => 'seguridad', 'description' => 'Máximo de intentos de login antes de bloqueo'],
             ['key' => 'session_timeout', 'value' => '120', 'type' => 'integer', 'group' => 'seguridad', 'description' => 'Tiempo de sesión en minutos'],

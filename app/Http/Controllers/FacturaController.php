@@ -40,18 +40,19 @@ class FacturaController extends Controller
 
     public function create(Request $request)
     {
-        $ventas = Venta::with(['vehiculo', 'cliente'])->orderByDesc('fecha_venta')->get();
+        $ventas = Venta::with(['vehiculo', 'cliente', 'conceptos'])->orderByDesc('fecha_venta')->get();
         $clientes = Cliente::orderBy('nombre')->get();
         $empresas = Empresa::orderBy('nombre')->get();
         $centros = Centro::orderBy('nombre')->get();
         $marcas = Marca::where('activa', true)->orderBy('nombre')->get();
-        $ventaPreseleccionada = $request->venta_id ? Venta::with(['cliente', 'empresa', 'centro', 'marca'])->find($request->venta_id) : null;
+        $ventaPreseleccionada = $request->venta_id ? Venta::with(['cliente', 'empresa', 'centro', 'marca', 'conceptos'])->find($request->venta_id) : null;
         return view('facturas.create', compact('ventas', 'clientes', 'empresas', 'centros', 'marcas', 'ventaPreseleccionada'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
+            'venta_id' => 'required|exists:ventas,id',
             'empresa_id' => 'required|exists:empresas,id',
             'centro_id' => 'required|exists:centros,id',
             'fecha_factura' => 'required|date',
@@ -59,8 +60,10 @@ class FacturaController extends Controller
             'iva_porcentaje' => 'required|numeric|min:0|max:100',
         ]);
 
-        $subtotal = (float) $request->subtotal;
-        $ivaPct = (float) $request->iva_porcentaje;
+        // Get amounts from the venta (server-side, not from form)
+        $venta = Venta::findOrFail($request->venta_id);
+        $subtotal = (float) ($venta->subtotal ?? $venta->precio_final);
+        $ivaPct = (float) ($venta->impuesto_porcentaje ?? $request->iva_porcentaje);
         $ivaImporte = round($subtotal * $ivaPct / 100, 2);
         $total = round($subtotal + $ivaImporte, 2);
 
@@ -69,6 +72,8 @@ class FacturaController extends Controller
         $factura = Factura::create([
             ...$request->except(['_token', '_method']),
             'codigo_factura' => $codigo,
+            'subtotal' => $subtotal,
+            'iva_porcentaje' => $ivaPct,
             'iva_importe' => $ivaImporte,
             'total' => $total,
             'emisor_id' => Auth::id(),
@@ -92,13 +97,13 @@ class FacturaController extends Controller
 
     public function show(Factura $factura)
     {
-        $factura->load(['venta.vehiculo', 'cliente', 'empresa', 'centro', 'marca', 'emisor']);
+        $factura->load(['venta.vehiculo', 'venta.conceptos', 'cliente', 'empresa', 'centro', 'marca', 'emisor']);
         return view('facturas.show', compact('factura'));
     }
 
     public function edit(Factura $factura)
     {
-        $ventas = Venta::with(['vehiculo', 'cliente'])->orderByDesc('fecha_venta')->get();
+        $ventas = Venta::with(['vehiculo', 'cliente', 'conceptos'])->orderByDesc('fecha_venta')->get();
         $clientes = Cliente::orderBy('nombre')->get();
         $empresas = Empresa::orderBy('nombre')->get();
         $centros = Centro::orderBy('nombre')->get();
@@ -109,23 +114,26 @@ class FacturaController extends Controller
     public function update(Request $request, Factura $factura)
     {
         $request->validate([
+            'venta_id' => 'required|exists:ventas,id',
             'empresa_id' => 'required|exists:empresas,id',
             'centro_id' => 'required|exists:centros,id',
             'fecha_factura' => 'required|date',
-            'subtotal' => 'required|numeric|min:0',
-            'iva_porcentaje' => 'required|numeric|min:0|max:100',
             'estado' => 'required|in:emitida,pagada,vencida,anulada',
         ]);
 
-        $subtotal = (float) $request->subtotal;
-        $ivaPct = (float) $request->iva_porcentaje;
+        // Sync amounts from venta
+        $venta = Venta::findOrFail($request->venta_id);
+        $subtotal = (float) ($venta->subtotal ?? $venta->precio_final);
+        $ivaPct = (float) ($venta->impuesto_porcentaje ?? 7);
         $ivaImporte = round($subtotal * $ivaPct / 100, 2);
         $total = round($subtotal + $ivaImporte, 2);
 
         $estadoAnterior = $factura->estado;
 
         $factura->update([
-            ...$request->except(['_token', '_method']),
+            ...$request->except(['_token', '_method', 'subtotal', 'iva_porcentaje']),
+            'subtotal' => $subtotal,
+            'iva_porcentaje' => $ivaPct,
             'iva_importe' => $ivaImporte,
             'total' => $total,
         ]);
@@ -154,7 +162,7 @@ class FacturaController extends Controller
 
     public function generatePdf(Factura $factura)
     {
-        $factura->load(['venta.vehiculo', 'cliente', 'empresa', 'centro', 'marca', 'emisor']);
+        $factura->load(['venta.vehiculo', 'venta.conceptos', 'cliente', 'empresa', 'centro', 'marca', 'emisor']);
 
         $logoMarca = null;
         if ($factura->marca) {
