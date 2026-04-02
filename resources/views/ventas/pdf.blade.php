@@ -29,7 +29,7 @@
                 <td>{{ $v->vehiculo?->modelo ?? '—' }}</td>
                 <td>{{ $v->cliente ? $v->cliente->nombre . ' ' . $v->cliente->apellidos : '—' }}</td>
                 <td>{{ $v->marca?->nombre ?? '—' }}</td>
-                <td style="text-align:right;">{{ number_format($v->precio_final, 2) }}€</td>
+                <td style="text-align:right;">{{ number_format($v->total ?? $v->precio_final, 2, ',', '.') }} €</td>
                 <td>{{ \App\Models\Venta::$formasPago[$v->forma_pago] ?? $v->forma_pago }}</td>
                 <td>{{ \App\Models\Venta::$estados[$v->estado] ?? $v->estado }}</td>
                 <td>{{ $v->fecha_venta?->format('d/m/Y') }}</td>

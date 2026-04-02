@@ -3,51 +3,37 @@
 namespace App\Services;
 
 use App\Models\Vehiculo;
-use App\Models\Setting;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 class MatriculaService
 {
-    /**
-     * Letras válidas en matrículas españolas (sin vocales, Ñ ni Q)
-     */
     private const LETRAS = ['B','C','D','F','G','H','J','K','L','M','N','P','R','S','T','V','W','X','Y','Z'];
 
     /**
      * Genera la siguiente matrícula disponible.
-     * Usa la más alta entre: BD local, dato DGT (API/cache) y setting manual.
+     * Prioridad: la más alta entre la API DGT (tiempo real) y la BD local.
      */
     public function generarSiguiente(): string
     {
         $candidatas = [];
 
-        // 1. Última matrícula en nuestra BD
-        $ultimaBd = $this->obtenerUltimaMatriculaBd();
-        if ($ultimaBd) {
-            $candidatas[] = $ultimaBd;
-        }
-
-        // 2. Última matrícula desde la DGT (cacheada)
+        // 1. Última matrícula desde la DGT (API en tiempo real, cacheada 1 hora)
         $ultimaDgt = $this->obtenerUltimaMatriculaDgt();
         if ($ultimaDgt) {
             $candidatas[] = $ultimaDgt;
         }
 
-        // 3. Setting manual configurado por admin
-        $ultimaSetting = Setting::get('ultima_matricula_dgt', null);
-        if ($ultimaSetting && self::validarFormato($ultimaSetting)) {
-            $candidatas[] = self::formatear($ultimaSetting);
+        // 2. Última matrícula en nuestra BD
+        $ultimaBd = $this->obtenerUltimaMatriculaBd();
+        if ($ultimaBd) {
+            $candidatas[] = $ultimaBd;
         }
 
         if (empty($candidatas)) {
-            // Fallback: estimación basada en la fecha actual
-            // En 2024 se iba por ~MLx, se emiten ~150k matrículas/mes
-            // Cada combinación de letras = 10.000 placas
             return $this->estimarMatriculaActual();
         }
 
-        // Usar la más alta de todas las candidatas
         $mayor = $this->obtenerMayor($candidatas);
         return $this->calcularSiguiente($mayor);
     }
@@ -66,15 +52,13 @@ class MatriculaService
     }
 
     /**
-     * Intenta obtener la última matrícula desde datos de la DGT.
-     * Consulta datos.gob.es para estadísticas de matriculaciones.
-     * Cachea el resultado 24 horas.
+     * Consulta la API de la DGT en tiempo real para obtener la última matrícula emitida.
+     * Cachea el resultado 1 hora para no saturar la API.
      */
     public function obtenerUltimaMatriculaDgt(): ?string
     {
-        return Cache::remember('dgt_ultima_matricula', 86400, function () {
+        return Cache::remember('dgt_ultima_matricula', 3600, function () {
             try {
-                // API de datos abiertos - matriculaciones de vehículos
                 $response = Http::timeout(5)->get('https://sedeapl.dgt.gob.es/WEB_IEST_CONSULTA/lastPlate.json');
 
                 if ($response->successful()) {
@@ -96,14 +80,10 @@ class MatriculaService
 
     /**
      * Estimación de la matrícula actual basada en la fecha.
-     * El sistema español se inició en sept. 2000 con 0000 BBB.
-     * Ritmo promedio: ~1.2M matrículas/año = ~100k/mes = 10 combinaciones de letras/mes
+     * Referencia: Enero 2024 ≈ 0000 MLL
      */
     private function estimarMatriculaActual(): string
     {
-        // Referencia conocida: Enero 2024 ≈ 0000 MLL
-        // MLL en índice: M=10, L=8, L=8 → posición = 10*400 + 8*20 + 8 = 4168 combinaciones
-        // Cada mes avanza ~10 combinaciones de letras (100k matrículas)
         $refYear = 2024;
         $refMonth = 1;
         $refLetterIndex = 10 * 400 + 8 * 20 + 8; // MLL = 4168
@@ -111,28 +91,18 @@ class MatriculaService
         $now = now();
         $mesesDesdeRef = (($now->year - $refYear) * 12) + ($now->month - $refMonth);
 
-        // ~10 combinaciones de letras por mes
         $comboActual = $refLetterIndex + ($mesesDesdeRef * 10);
 
-        // Convertir índice de combinación a letras
-        $totalLetras = count(self::LETRAS); // 20
-        $l1 = (int) floor($comboActual / ($totalLetras * $totalLetras));
-        $l2 = (int) floor(($comboActual % ($totalLetras * $totalLetras)) / $totalLetras);
-        $l3 = $comboActual % $totalLetras;
-
-        // Clamp
-        $l1 = min($l1, $totalLetras - 1);
-        $l2 = min($l2, $totalLetras - 1);
-        $l3 = min($l3, $totalLetras - 1);
+        $totalLetras = count(self::LETRAS);
+        $l1 = min((int) floor($comboActual / ($totalLetras * $totalLetras)), $totalLetras - 1);
+        $l2 = min((int) floor(($comboActual % ($totalLetras * $totalLetras)) / $totalLetras), $totalLetras - 1);
+        $l3 = min($comboActual % $totalLetras, $totalLetras - 1);
 
         $letras = self::LETRAS[$l1] . self::LETRAS[$l2] . self::LETRAS[$l3];
 
         return "0000 {$letras}";
     }
 
-    /**
-     * De una lista de matrículas, devuelve la más alta.
-     */
     private function obtenerMayor(array $matriculas): string
     {
         usort($matriculas, function ($a, $b) {
@@ -142,9 +112,6 @@ class MatriculaService
         return end($matriculas);
     }
 
-    /**
-     * Convierte una matrícula a un índice numérico para comparar.
-     */
     private function matriculaToIndex(string $matricula): int
     {
         $clean = str_replace(' ', '', strtoupper(trim($matricula)));
@@ -163,10 +130,6 @@ class MatriculaService
         return ($l1 * $totalLetras * $totalLetras + $l2 * $totalLetras + $l3) * 10000 + $numeros;
     }
 
-    /**
-     * Calcula la siguiente matrícula a partir de una dada.
-     * Formato: 1234 BCD (4 números + espacio + 3 letras)
-     */
     public function calcularSiguiente(string $matricula): string
     {
         $clean = str_replace(' ', '', strtoupper(trim($matricula)));
@@ -210,18 +173,12 @@ class MatriculaService
         return "{$num} {$let}";
     }
 
-    /**
-     * Valida que una matrícula tenga formato español válido.
-     */
     public static function validarFormato(string $matricula): bool
     {
         $clean = str_replace(' ', '', strtoupper(trim($matricula)));
         return (bool) preg_match('/^\d{4}[BCDFGHJKLMNPRSTVWXYZ]{3}$/', $clean);
     }
 
-    /**
-     * Formatea una matrícula al formato estándar: 1234 BCD
-     */
     public static function formatear(string $matricula): string
     {
         $clean = str_replace(' ', '', strtoupper(trim($matricula)));

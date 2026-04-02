@@ -207,21 +207,72 @@ class DatosEjemploSeeder extends Seeder
         $centro = Centro::first();
         $user = User::first();
 
+        // Determine tax based on empresa CP
+        $cp = $empresa->codigo_postal ?? '';
+        $esCanarias = str_starts_with($cp, '35') || str_starts_with($cp, '38');
+        $impNombre = $esCanarias ? 'IGIC' : 'IVA';
+        $impPct = $esCanarias ? 7 : 21;
+
         $formas = ['contado','financiado','leasing','renting'];
         $estados = ['reservada','pendiente_entrega','entregada','cancelada'];
 
-        // Use up to 8 vehiculos for ventas
+        $extrasPool = [
+            ['descripcion'=>'Pintura metalizada','importe'=>750],
+            ['descripcion'=>'Techo panorámico','importe'=>1200],
+            ['descripcion'=>'Pack navegación','importe'=>500],
+            ['descripcion'=>'Llantas aleación 18"','importe'=>900],
+            ['descripcion'=>'Tapicería cuero','importe'=>1500],
+            ['descripcion'=>'Cámara 360°','importe'=>600],
+            ['descripcion'=>'Asientos calefactados','importe'=>400],
+            ['descripcion'=>'Portón eléctrico','importe'=>350],
+        ];
+
+        $descuentosPool = [
+            ['descripcion'=>'Descuento campaña','importe'=>500],
+            ['descripcion'=>'Descuento fidelización','importe'=>300],
+            ['descripcion'=>'Promoción financiación','importe'=>800],
+            ['descripcion'=>'Dto. flota empresa','importe'=>1200],
+        ];
+
         $vehiculosVenta = $vehiculos->count() >= 8 ? $vehiculos->random(8) : $vehiculos;
 
         foreach ($vehiculosVenta->values() as $i => $vehiculo) {
-            // Try to get coherent price from catalogo
             $catalogo = \App\Models\CatalogoPrecio::where('marca_id', $vehiculo->marca_id)
-                ->where('modelo', 'like', '%' . explode(' ', $vehiculo->modelo)[1] . '%')
+                ->where('modelo', $vehiculo->modelo)
+                ->where('version', $vehiculo->version)
                 ->first();
             $precio = $catalogo ? (float) $catalogo->precio_base : rand(15000, 55000);
-            $descuento = rand(0, 3000);
+            $descuento = rand(0, 2000);
 
-            Venta::firstOrCreate(
+            // Calculate extras and descuentos for this venta
+            $ventaExtras = [];
+            $ventaDescuentos = [];
+            $sumExtras = 0;
+            $sumDescuentos = 0;
+
+            // 60% chance of having 1-2 extras
+            if (rand(1, 10) <= 6) {
+                $numExtras = rand(1, 2);
+                $selectedExtras = array_rand($extrasPool, min($numExtras, count($extrasPool)));
+                foreach ((array) $selectedExtras as $eIdx) {
+                    $ventaExtras[] = $extrasPool[$eIdx];
+                    $sumExtras += $extrasPool[$eIdx]['importe'];
+                }
+            }
+
+            // 40% chance of having 1 additional descuento
+            if (rand(1, 10) <= 4) {
+                $dIdx = array_rand($descuentosPool);
+                $ventaDescuentos[] = $descuentosPool[$dIdx];
+                $sumDescuentos += $descuentosPool[$dIdx]['importe'];
+            }
+
+            $precioFinal = $precio - $descuento + $sumExtras - $sumDescuentos;
+            $subtotal = $precioFinal;
+            $impImporte = round($subtotal * $impPct / 100, 2);
+            $total = round($subtotal + $impImporte, 2);
+
+            $venta = Venta::firstOrCreate(
                 ['codigo_venta' => 'VTA-'.date('Ym').'-'.str_pad($i+1,4,'0',STR_PAD_LEFT)],
                 [
                     'codigo_venta' => 'VTA-'.date('Ym').'-'.str_pad($i+1,4,'0',STR_PAD_LEFT),
@@ -233,12 +284,37 @@ class DatosEjemploSeeder extends Seeder
                     'vendedor_id' => $user->id,
                     'precio_venta' => $precio,
                     'descuento' => $descuento,
-                    'precio_final' => $precio - $descuento,
+                    'precio_final' => $precioFinal,
+                    'subtotal' => $subtotal,
+                    'impuesto_nombre' => $impNombre,
+                    'impuesto_porcentaje' => $impPct,
+                    'impuesto_importe' => $impImporte,
+                    'total' => $total,
                     'forma_pago' => $formas[array_rand($formas)],
                     'estado' => $estados[array_rand($estados)],
                     'fecha_venta' => now()->subDays(rand(1,60)),
                 ]
             );
+
+            // Create conceptos
+            if ($venta->wasRecentlyCreated) {
+                foreach ($ventaExtras as $extra) {
+                    \App\Models\VentaConcepto::create([
+                        'venta_id' => $venta->id,
+                        'tipo' => 'extra',
+                        'descripcion' => $extra['descripcion'],
+                        'importe' => $extra['importe'],
+                    ]);
+                }
+                foreach ($ventaDescuentos as $desc) {
+                    \App\Models\VentaConcepto::create([
+                        'venta_id' => $venta->id,
+                        'tipo' => 'descuento',
+                        'descripcion' => $desc['descripcion'],
+                        'importe' => $desc['importe'],
+                    ]);
+                }
+            }
         }
     }
 
