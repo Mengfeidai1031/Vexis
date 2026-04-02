@@ -1,7 +1,7 @@
 @extends('layouts.app')
-@section('title', 'Catálogo de Precios - VEXIS')
+@section('title', 'Catálogo - VEXIS')
 @section('content')
-<div class="vx-page-header"><h1 class="vx-page-title">Catálogo de Precios</h1><div class="vx-page-actions">@can('crear catalogo-precios')<a href="{{ route('catalogo-precios.create') }}" class="vx-btn vx-btn-primary"><i class="bi bi-plus-circle"></i> Nuevo Modelo</a>@endcan</div></div>
+<div class="vx-page-header"><h1 class="vx-page-title">Catálogo</h1><div class="vx-page-actions">@can('crear catalogo-precios')<a href="{{ route('catalogo-precios.create') }}" class="vx-btn vx-btn-primary"><i class="bi bi-plus-circle"></i> Nuevo Modelo</a>@endcan</div></div>
 
 {{-- Tabs de marca --}}
 <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">

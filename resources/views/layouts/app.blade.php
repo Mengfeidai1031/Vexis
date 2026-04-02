@@ -711,7 +711,7 @@
                     <a href="{{ route('tasaciones.index') }}" class="vx-dropdown-item"><i class="bi bi-calculator"></i> Tasaciones</a>
                     @endcan
                     @can('ver catalogo-precios')
-                    <a href="{{ route('catalogo-precios.index') }}" class="vx-dropdown-item"><i class="bi bi-currency-euro"></i> Catálogo Precios</a>
+                    <a href="{{ route('catalogo-precios.index') }}" class="vx-dropdown-item"><i class="bi bi-currency-euro"></i> Catálogo</a>
                     @endcan
                     @if(\App\Models\Setting::get('modulo_facturas', true))
                     @can('ver facturas')

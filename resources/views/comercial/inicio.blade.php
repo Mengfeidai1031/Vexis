@@ -36,7 +36,7 @@
         @can('ver catalogo-precios')
         <a href="{{ route('catalogo-precios.index') }}" class="vx-module-card">
             <div class="vx-module-icon" style="background: rgba(231,76,60,0.1); color: var(--vx-danger);"><i class="bi bi-currency-euro"></i></div>
-            <div class="vx-module-info"><h4>Catálogo de Precios</h4><p>Gestión de precios por vehículo y marca</p></div>
+            <div class="vx-module-info"><h4>Catálogo</h4><p>Modelos, versiones y precios base por marca</p></div>
         </a>
         @endcan
     </div>
