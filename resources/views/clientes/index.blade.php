@@ -12,13 +12,12 @@
     </div>
 </div>
 
-<form action="{{ route('clientes.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar por nombre, apellidos, DNI, domicilio, CP o empresa..." value="{{ request('search') }}">
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i> Buscar</button>
-    @if(request('search'))
-        <a href="{{ route('clientes.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>
-    @endif
-</form>
+<x-filtros-avanzados :action="route('clientes.index')">
+    <div class="vx-filtro" data-filtro="nombre"><label class="vx-filtro-label">Nombre</label><select name="nombre" class="vx-select"><option value="">Todos</option>@foreach($clientes_all as $c)<option value="{{ $c->nombre_completo }}" {{ request('nombre') == $c->nombre_completo ? 'selected' : '' }}>{{ $c->nombre_completo }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="dni"><label class="vx-filtro-label">DNI</label><select name="dni" class="vx-select"><option value="">Todos</option>@foreach($clientes_all as $c)<option value="{{ $c->dni }}" {{ request('dni') == $c->dni ? 'selected' : '' }}>{{ $c->dni }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="empresa"><label class="vx-filtro-label">Empresa</label><select name="empresa_id" class="vx-select"><option value="">Todas</option>@foreach($empresas as $e)<option value="{{ $e->id }}" {{ request('empresa_id') == $e->id ? 'selected' : '' }}>{{ $e->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="cp"><label class="vx-filtro-label">Código Postal</label><select name="codigo_postal" class="vx-select"><option value="">Todos</option>@foreach($codigos_postales as $cp)<option value="{{ $cp }}" {{ request('codigo_postal') == $cp ? 'selected' : '' }}>{{ $cp }}</option>@endforeach</select></div>
+</x-filtros-avanzados>
 
 <div class="vx-card">
     <div class="vx-card-body" style="padding: 0;">

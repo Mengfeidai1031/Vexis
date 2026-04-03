@@ -16,17 +16,10 @@ class StockController extends Controller
     public function index(Request $request)
     {
         $query = Stock::with(['almacen', 'empresa', 'centro']);
-        if ($request->filled('search')) {
-            $s = $request->search;
-            $query->where(function ($q) use ($s) {
-                $q->where('referencia', 'like', "%$s%")
-                  ->orWhere('nombre_pieza', 'like', "%$s%")
-                  ->orWhere('marca_pieza', 'like', "%$s%");
-            });
-        }
         if ($request->filled('almacen_id')) $query->where('almacen_id', $request->almacen_id);
         if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
         if ($request->filled('bajo_stock')) $query->whereColumn('cantidad', '<=', 'stock_minimo');
+        if ($request->input('activo') !== null && $request->input('activo') !== '') $query->where('activo', $request->activo);
 
         $stocks = $query->orderBy('nombre_pieza')->paginate(15)->withQueryString();
         $almacenes = Almacen::where('activo', true)->orderBy('nombre')->get();

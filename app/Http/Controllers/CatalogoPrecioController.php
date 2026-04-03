@@ -15,8 +15,8 @@ class CatalogoPrecioController extends Controller
 
         $query = CatalogoPrecio::with('marca');
         if ($marcaSeleccionada) $query->where('marca_id', $marcaSeleccionada);
-        if ($request->filled('search')) { $s = $request->search; $query->where(function ($q) use ($s) { $q->where('modelo', 'like', "%$s%")->orWhere('version', 'like', "%$s%"); }); }
         if ($request->filled('combustible')) $query->where('combustible', $request->combustible);
+        if ($request->filled('disponible')) $query->where('disponible', $request->disponible);
         $catalogo = $query->orderBy('modelo')->orderBy('precio_base')->paginate(20)->withQueryString();
 
         return view('catalogo-precios.index', compact('catalogo', 'marcas', 'marcaSeleccionada'));

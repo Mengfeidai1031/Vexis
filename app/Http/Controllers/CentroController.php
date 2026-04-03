@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCentroRequest;
 use App\Http\Requests\UpdateCentroRequest;
 use App\Models\Centro;
+use App\Models\Empresa;
 use App\Repositories\Interfaces\CentroRepositoryInterface;
 use Illuminate\Http\Request;
 
@@ -22,13 +23,18 @@ class CentroController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->has('search') && !empty($request->search)) {
-            $centros = $this->centroRepository->search($request->search);
-        } else {
-            $centros = $this->centroRepository->all();
-        }
+        $query = Centro::with('empresa');
 
-        return view('centros.index', compact('centros'));
+        if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
+        if ($request->filled('municipio')) $query->where('municipio', $request->municipio);
+        if ($request->filled('provincia')) $query->where('provincia', $request->provincia);
+
+        $centros = $query->orderBy('nombre')->paginate(15)->withQueryString();
+        $empresas = Empresa::orderBy('nombre')->get();
+        $municipios = Centro::whereNotNull('municipio')->distinct()->orderBy('municipio')->pluck('municipio');
+        $provincias = Centro::whereNotNull('provincia')->distinct()->orderBy('provincia')->pluck('provincia');
+
+        return view('centros.index', compact('centros', 'empresas', 'municipios', 'provincias'));
     }
 
     /**

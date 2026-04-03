@@ -13,15 +13,14 @@ class TallerController extends Controller
     public function index(Request $request)
     {
         $query = Taller::with(['empresa', 'centro', 'marca'])->withCount(['mecanicos', 'citas']);
-        if ($request->filled('search')) {
-            $s = $request->search;
-            $query->where(function ($q) use ($s) { $q->where('nombre', 'like', "%$s%")->orWhere('codigo', 'like', "%$s%")->orWhere('localidad', 'like', "%$s%"); });
-        }
         if ($request->filled('isla')) $query->where('isla', $request->isla);
         if ($request->filled('marca_id')) $query->where('marca_id', $request->marca_id);
+        if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
+        if ($request->input('activo') !== null && $request->input('activo') !== '') $query->where('activo', $request->activo);
         $talleres = $query->orderBy('nombre')->paginate(15)->withQueryString();
         $marcas = Marca::where('activa', true)->orderBy('nombre')->get();
-        return view('talleres.index', compact('talleres', 'marcas'));
+        $empresas = Empresa::orderBy('nombre')->get();
+        return view('talleres.index', compact('talleres', 'marcas', 'empresas'));
     }
 
     public function create()

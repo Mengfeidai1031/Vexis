@@ -18,10 +18,10 @@ class RoleController extends Controller
 
     public function index(Request $request)
     {
-        if ($request->has('search') && !empty($request->search)) {
-            $roles = $this->roleRepository->search($request->search);
-        } else {
-            $roles = $this->roleRepository->all();
+        $roles = $this->roleRepository->all();
+
+        if ($request->filled('nombre')) {
+            $roles = $roles->filter(fn($r) => $r->name === $request->nombre)->values();
         }
 
         return view('roles.index', compact('roles'));

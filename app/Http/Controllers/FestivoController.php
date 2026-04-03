@@ -12,12 +12,6 @@ class FestivoController extends Controller
         $anio = $request->input('anio', now()->year);
         $query = Festivo::where('anio', $anio);
 
-        if ($request->filled('search')) {
-            $s = $request->search;
-            $query->where(function ($q) use ($s) {
-                $q->where('nombre', 'like', "%$s%")->orWhere('municipio', 'like', "%$s%");
-            });
-        }
         if ($request->filled('ambito')) {
             $query->where('ambito', $request->ambito);
         }

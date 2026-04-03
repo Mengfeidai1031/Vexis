@@ -9,11 +9,11 @@
         @endcan
     </div>
 </div>
-<form action="{{ route('empresas.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar por nombre, abreviatura, CIF o domicilio..." value="{{ request('search') }}">
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i> Buscar</button>
-    @if(request('search'))<a href="{{ route('empresas.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>@endif
-</form>
+<x-filtros-avanzados :action="route('empresas.index')">
+    <div class="vx-filtro" data-filtro="nombre"><label class="vx-filtro-label">Nombre</label><select name="nombre" class="vx-select"><option value="">Todas</option>@foreach($empresas as $e)<option value="{{ $e->nombre }}" {{ request('nombre') == $e->nombre ? 'selected' : '' }}>{{ $e->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="cif"><label class="vx-filtro-label">CIF</label><select name="cif" class="vx-select"><option value="">Todos</option>@foreach($empresas as $e)<option value="{{ $e->cif }}" {{ request('cif') == $e->cif ? 'selected' : '' }}>{{ $e->cif }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="cp"><label class="vx-filtro-label">Código Postal</label><select name="codigo_postal" class="vx-select"><option value="">Todos</option>@foreach($codigos_postales as $cp)<option value="{{ $cp }}" {{ request('codigo_postal') == $cp ? 'selected' : '' }}>{{ $cp }}</option>@endforeach</select></div>
+</x-filtros-avanzados>
 <div class="vx-card">
     <div class="vx-card-body" style="padding: 0;">
         @if($empresas->count() > 0)

@@ -11,8 +11,8 @@ class MecanicoController extends Controller
     public function index(Request $request)
     {
         $query = Mecanico::with('taller');
-        if ($request->filled('search')) { $s = $request->search; $query->where(function ($q) use ($s) { $q->where('nombre', 'like', "%$s%")->orWhere('apellidos', 'like', "%$s%")->orWhere('especialidad', 'like', "%$s%"); }); }
         if ($request->filled('taller_id')) $query->where('taller_id', $request->taller_id);
+        if ($request->filled('activo')) $query->where('activo', $request->activo);
         $mecanicos = $query->orderBy('apellidos')->paginate(15)->withQueryString();
         $talleres = Taller::where('activo', true)->orderBy('nombre')->get();
         return view('mecanicos.index', compact('mecanicos', 'talleres'));

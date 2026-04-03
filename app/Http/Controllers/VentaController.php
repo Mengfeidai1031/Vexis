@@ -25,12 +25,20 @@ class VentaController extends Controller
     public function index(Request $request)
     {
         $query = Venta::with(['vehiculo', 'cliente', 'empresa', 'marca', 'vendedor']);
-        if ($request->filled('search')) { $s = $request->search; $query->where(function ($q) use ($s) { $q->where('codigo_venta', 'like', "%$s%")->orWhereHas('cliente', fn($q2) => $q2->where('nombre', 'like', "%$s%")->orWhere('apellidos', 'like', "%$s%")); }); }
         if ($request->filled('estado')) $query->where('estado', $request->estado);
         if ($request->filled('marca_id')) $query->where('marca_id', $request->marca_id);
+        if ($request->filled('forma_pago')) $query->where('forma_pago', $request->forma_pago);
+        if ($request->filled('cliente_id')) $query->where('cliente_id', $request->cliente_id);
+        if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
+        if ($request->filled('fecha_desde')) $query->whereDate('fecha_venta', '>=', $request->fecha_desde);
+        if ($request->filled('fecha_hasta')) $query->whereDate('fecha_venta', '<=', $request->fecha_hasta);
+        if ($request->filled('vendedor_id')) $query->where('vendedor_id', $request->vendedor_id);
         $ventas = $query->orderByDesc('fecha_venta')->paginate(15)->withQueryString();
         $marcas = Marca::where('activa', true)->orderBy('nombre')->get();
-        return view('ventas.index', compact('ventas', 'marcas'));
+        $clientes = Cliente::orderBy('nombre')->get();
+        $empresas = Empresa::orderBy('nombre')->get();
+        $vendedores = \App\Models\User::orderBy('nombre')->get();
+        return view('ventas.index', compact('ventas', 'marcas', 'clientes', 'empresas', 'vendedores'));
     }
 
     public function create()

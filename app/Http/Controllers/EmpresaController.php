@@ -10,17 +10,14 @@ class EmpresaController extends Controller
     public function index(Request $request)
     {
         $query = Empresa::query();
-        if ($request->filled('search')) {
-            $s = $request->search;
-            $query->where(function ($q) use ($s) {
-                $q->where('nombre', 'like', "%$s%")
-                  ->orWhere('abreviatura', 'like', "%$s%")
-                  ->orWhere('cif', 'like', "%$s%")
-                  ->orWhere('domicilio', 'like', "%$s%");
-            });
+        if ($request->filled('nombre')) {
+            $query->where('nombre', $request->nombre);
         }
+        if ($request->filled('cif')) $query->where('cif', $request->cif);
+        if ($request->filled('codigo_postal')) $query->where('codigo_postal', $request->codigo_postal);
         $empresas = $query->orderBy('nombre')->paginate(15)->withQueryString();
-        return view('empresas.index', compact('empresas'));
+        $codigos_postales = Empresa::whereNotNull('codigo_postal')->distinct()->orderBy('codigo_postal')->pluck('codigo_postal');
+        return view('empresas.index', compact('empresas', 'codigos_postales'));
     }
 
     public function create()

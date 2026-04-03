@@ -10,79 +10,13 @@
     </div>
 </div>
 
-{{-- Búsqueda y Filtros --}}
-<div class="vx-card" style="margin-bottom: 16px;">
-    <div class="vx-card-body">
-        <form action="{{ route('ofertas.index') }}" method="GET">
-            <div class="vx-search-box" style="margin-bottom: 0;">
-                <input type="text" name="search" class="vx-input" placeholder="Buscar por descripción, cliente, vehículo..." value="{{ $filters['search'] ?? '' }}">
-                <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i> Buscar</button>
-                <button type="button" class="vx-btn vx-btn-secondary" onclick="document.getElementById('filtrosAvanzados').classList.toggle('vx-hidden')"><i class="bi bi-funnel"></i> Filtros</button>
-                @if(!empty(array_filter($filters ?? [], function($v) { return $v !== null && $v !== ''; })))
-                    <a href="{{ route('ofertas.index') }}" class="vx-btn vx-btn-ghost">Limpiar</a>
-                @endif
-            </div>
-
-            <div id="filtrosAvanzados" class="{{ !empty(array_filter(array_diff_key($filters ?? [], ['search' => '']), function($v) { return $v !== null && $v !== ''; })) ? '' : 'vx-hidden' }}" style="margin-top: 12px;">
-                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px 12px;">
-                    <div class="vx-form-group" style="margin-bottom: 0;">
-                        <label class="vx-label">Desde</label>
-                        <input type="date" name="fecha_desde" class="vx-input" value="{{ $filters['fecha_desde'] ?? '' }}">
-                    </div>
-                    <div class="vx-form-group" style="margin-bottom: 0;">
-                        <label class="vx-label">Hasta</label>
-                        <input type="date" name="fecha_hasta" class="vx-input" value="{{ $filters['fecha_hasta'] ?? '' }}">
-                    </div>
-                    <div class="vx-form-group" style="margin-bottom: 0;">
-                        <label class="vx-label">Cliente</label>
-                        <select name="cliente_id" class="vx-select">
-                            <option value="">Todos</option>
-                            @foreach($clientes as $cliente)
-                                <option value="{{ $cliente->id }}" {{ ($filters['cliente_id'] ?? '') == $cliente->id ? 'selected' : '' }}>{{ $cliente->nombre_completo }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="vx-form-group" style="margin-bottom: 0;">
-                        <label class="vx-label">Vehículo</label>
-                        <select name="vehiculo_id" class="vx-select">
-                            <option value="">Todos</option>
-                            @foreach($vehiculos as $vehiculo)
-                                <option value="{{ $vehiculo->id }}" {{ ($filters['vehiculo_id'] ?? '') == $vehiculo->id ? 'selected' : '' }}>{{ $vehiculo->modelo }} - {{ $vehiculo->version }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="vx-form-group" style="margin-bottom: 0;">
-                        <label class="vx-label">Empresa</label>
-                        <select name="empresa_id" class="vx-select">
-                            <option value="">Todas</option>
-                            @foreach($empresas as $empresa)
-                                <option value="{{ $empresa->id }}" {{ ($filters['empresa_id'] ?? '') == $empresa->id ? 'selected' : '' }}>{{ $empresa->nombre }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-                <div style="margin-top: 10px;">
-                    <button type="submit" class="vx-btn vx-btn-primary vx-btn-sm"><i class="bi bi-funnel-fill"></i> Aplicar</button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-
-{{-- Filtros activos --}}
-@php $activeFilters = array_filter($filters ?? [], function($v) { return $v !== null && $v !== ''; }); @endphp
-@if(!empty($activeFilters))
-<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
-    <span style="font-size: 12px; color: var(--vx-text-muted);"><i class="bi bi-funnel-fill"></i> Filtros:</span>
-    @if(!empty($filters['search']))<span class="vx-badge vx-badge-primary">Búsqueda: "{{ $filters['search'] }}"</span>@endif
-    @if(!empty($filters['fecha_desde']))<span class="vx-badge vx-badge-info">Desde: {{ \Carbon\Carbon::parse($filters['fecha_desde'])->format('d/m/Y') }}</span>@endif
-    @if(!empty($filters['fecha_hasta']))<span class="vx-badge vx-badge-info">Hasta: {{ \Carbon\Carbon::parse($filters['fecha_hasta'])->format('d/m/Y') }}</span>@endif
-    @if(!empty($filters['cliente_id']))<span class="vx-badge vx-badge-info">Cliente</span>@endif
-    @if(!empty($filters['vehiculo_id']))<span class="vx-badge vx-badge-info">Vehículo</span>@endif
-    @if(!empty($filters['empresa_id']))<span class="vx-badge vx-badge-info">Empresa</span>@endif
-    <a href="{{ route('ofertas.index') }}" style="font-size: 12px; color: var(--vx-danger);">Limpiar todo</a>
-</div>
-@endif
+<x-filtros-avanzados :action="route('ofertas.index')">
+    <div class="vx-filtro" data-filtro="cliente"><label class="vx-filtro-label">Cliente</label><select name="cliente_id" class="vx-select"><option value="">Todos</option>@foreach($clientes as $cliente)<option value="{{ $cliente->id }}" {{ ($filters['cliente_id'] ?? '') == $cliente->id ? 'selected' : '' }}>{{ $cliente->nombre_completo }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="vehiculo"><label class="vx-filtro-label">Vehículo</label><select name="vehiculo_id" class="vx-select"><option value="">Todos</option>@foreach($vehiculos as $vehiculo)<option value="{{ $vehiculo->id }}" {{ ($filters['vehiculo_id'] ?? '') == $vehiculo->id ? 'selected' : '' }}>{{ $vehiculo->modelo }} - {{ $vehiculo->version }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="empresa"><label class="vx-filtro-label">Empresa</label><select name="empresa_id" class="vx-select"><option value="">Todas</option>@foreach($empresas as $empresa)<option value="{{ $empresa->id }}" {{ ($filters['empresa_id'] ?? '') == $empresa->id ? 'selected' : '' }}>{{ $empresa->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="desde"><label class="vx-filtro-label">Fecha desde</label><input type="date" name="fecha_desde" class="vx-input" value="{{ $filters['fecha_desde'] ?? '' }}"></div>
+    <div class="vx-filtro" data-filtro="hasta"><label class="vx-filtro-label">Fecha hasta</label><input type="date" name="fecha_hasta" class="vx-input" value="{{ $filters['fecha_hasta'] ?? '' }}"></div>
+</x-filtros-avanzados>
 
 {{-- Tabla --}}
 <div class="vx-card">

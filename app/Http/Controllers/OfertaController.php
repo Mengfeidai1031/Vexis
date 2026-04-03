@@ -32,7 +32,7 @@ class OfertaController extends Controller
             'cliente_id' => $request->input('cliente_id'),
             'vehiculo_id' => $request->input('vehiculo_id'),
             'empresa_id' => $request->input('empresa_id'),
-            'search' => $request->input('search'),
+            'search' => null,
         ];
 
         // Verificar si hay algún filtro activo

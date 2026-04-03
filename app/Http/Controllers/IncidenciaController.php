@@ -15,16 +15,12 @@ class IncidenciaController extends Controller
     {
         $query = Incidencia::with(['usuario', 'tecnico']);
 
-        if ($request->filled('search')) {
-            $s = $request->search;
-            $query->where(function ($q) use ($s) {
-                $q->where('codigo_incidencia', 'like', "%$s%")
-                  ->orWhere('titulo', 'like', "%$s%");
-            });
-        }
         if ($request->filled('estado')) $query->where('estado', $request->estado);
         if ($request->filled('prioridad')) $query->where('prioridad', $request->prioridad);
         if ($request->filled('tecnico_id')) $query->where('tecnico_id', $request->tecnico_id);
+        if ($request->filled('usuario_id')) $query->where('user_id', $request->usuario_id);
+        if ($request->filled('fecha_desde')) $query->whereDate('fecha_apertura', '>=', $request->fecha_desde);
+        if ($request->filled('fecha_hasta')) $query->whereDate('fecha_apertura', '<=', $request->fecha_hasta);
 
         $incidencias = $query->orderByDesc('fecha_apertura')->paginate(15)->withQueryString();
 
@@ -38,7 +34,9 @@ class IncidenciaController extends Controller
 
         $tecnicos = User::role(['Super Admin', 'Administrador'])->orderBy('nombre')->get();
 
-        return view('incidencias.index', compact('incidencias', 'stats', 'tecnicos'));
+        $usuarios = User::orderBy('nombre')->get();
+
+        return view('incidencias.index', compact('incidencias', 'stats', 'tecnicos', 'usuarios'));
     }
 
     public function create()

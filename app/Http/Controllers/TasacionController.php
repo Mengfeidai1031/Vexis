@@ -17,10 +17,19 @@ class TasacionController extends Controller
     public function index(Request $request)
     {
         $query = Tasacion::with(['cliente', 'empresa', 'marca', 'tasador']);
-        if ($request->filled('search')) { $s = $request->search; $query->where(function ($q) use ($s) { $q->where('codigo_tasacion', 'like', "%$s%")->orWhere('vehiculo_marca', 'like', "%$s%")->orWhere('vehiculo_modelo', 'like', "%$s%")->orWhere('matricula', 'like', "%$s%"); }); }
         if ($request->filled('estado')) $query->where('estado', $request->estado);
+        if ($request->filled('estado_vehiculo')) $query->where('estado_vehiculo', $request->estado_vehiculo);
+        if ($request->filled('combustible')) $query->where('combustible', $request->combustible);
+        if ($request->filled('cliente_id')) $query->where('cliente_id', $request->cliente_id);
+        if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
+        if ($request->filled('fecha_desde')) $query->whereDate('fecha_tasacion', '>=', $request->fecha_desde);
+        if ($request->filled('fecha_hasta')) $query->whereDate('fecha_tasacion', '<=', $request->fecha_hasta);
+        if ($request->filled('marca')) $query->where('vehiculo_marca', $request->marca);
         $tasaciones = $query->orderByDesc('fecha_tasacion')->paginate(15)->withQueryString();
-        return view('tasaciones.index', compact('tasaciones'));
+        $clientes = Cliente::orderBy('nombre')->get();
+        $empresas = Empresa::orderBy('nombre')->get();
+        $marcas_tasacion = Tasacion::whereNotNull('vehiculo_marca')->distinct()->orderBy('vehiculo_marca')->pluck('vehiculo_marca');
+        return view('tasaciones.index', compact('tasaciones', 'clientes', 'empresas', 'marcas_tasacion'));
     }
 
     public function create()

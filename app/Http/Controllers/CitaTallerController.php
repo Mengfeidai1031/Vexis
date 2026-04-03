@@ -14,10 +14,11 @@ class CitaTallerController extends Controller
     public function index(Request $request)
     {
         $query = CitaTaller::with(['mecanico', 'taller', 'marca']);
-        if ($request->filled('search')) { $s = $request->search; $query->where(function ($q) use ($s) { $q->where('cliente_nombre', 'like', "%$s%")->orWhere('vehiculo_info', 'like', "%$s%"); }); }
         if ($request->filled('taller_id')) $query->where('taller_id', $request->taller_id);
         if ($request->filled('estado')) $query->where('estado', $request->estado);
         if ($request->filled('fecha')) $query->whereDate('fecha', $request->fecha);
+        if ($request->filled('mecanico_id')) $query->where('mecanico_id', $request->mecanico_id);
+        if ($request->filled('marca_id')) $query->where('marca_id', $request->marca_id);
         $citas = $query->orderByDesc('fecha')->orderBy('hora_inicio')->paginate(15)->withQueryString();
         $talleres = Taller::where('activo', true)->orderBy('nombre')->get();
 
@@ -30,7 +31,10 @@ class CitaTallerController extends Controller
             ->orderBy('fecha')->orderBy('hora_inicio')->get()
             ->groupBy(fn($c) => $c->fecha->format('Y-m-d'));
 
-        return view('citas.index', compact('citas', 'talleres', 'citasSemana', 'semanaInicio', 'semanaFin'));
+        $mecanicos = Mecanico::orderBy('nombre')->get();
+        $marcas = Marca::orderBy('nombre')->get();
+
+        return view('citas.index', compact('citas', 'talleres', 'citasSemana', 'semanaInicio', 'semanaFin', 'mecanicos', 'marcas'));
     }
 
     public function create()

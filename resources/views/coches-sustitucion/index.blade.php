@@ -24,12 +24,11 @@
 </div>
 
 {{-- Filtros --}}
-<form action="{{ route('coches-sustitucion.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar matrícula o modelo..." value="{{ request('search') }}" style="flex:1;">
-    <select name="taller_id" class="vx-select" style="width:auto;"><option value="">Todos los talleres</option>@foreach($talleres as $t)<option value="{{ $t->id }}" {{ request('taller_id') == $t->id ? 'selected' : '' }}>{{ $t->nombre }}</option>@endforeach</select>
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i></button>
-    @if(request()->anyFilled(['search','taller_id']))<a href="{{ route('coches-sustitucion.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>@endif
-</form>
+<x-filtros-avanzados :action="route('coches-sustitucion.index')">
+    <div class="vx-filtro" data-filtro="taller"><label class="vx-filtro-label">Taller</label><select name="taller_id" class="vx-select"><option value="">Todos</option>@foreach($talleres as $t)<option value="{{ $t->id }}" {{ request('taller_id') == $t->id ? 'selected' : '' }}>{{ $t->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="marca"><label class="vx-filtro-label">Marca</label><select name="marca_id" class="vx-select"><option value="">Todas</option>@foreach($marcas as $m)<option value="{{ $m->id }}" {{ request('marca_id') == $m->id ? 'selected' : '' }}>{{ $m->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="disponible"><label class="vx-filtro-label">Disponibilidad</label><select name="disponible" class="vx-select"><option value="">Todos</option><option value="1" {{ request('disponible') === '1' ? 'selected' : '' }}>Disponible</option><option value="0" {{ request('disponible') === '0' ? 'selected' : '' }}>En uso</option></select></div>
+</x-filtros-avanzados>
 
 {{-- Tabla --}}
 <div class="vx-card"><div class="vx-card-body" style="padding:0;">

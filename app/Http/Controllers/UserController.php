@@ -32,14 +32,27 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        // Si hay búsqueda, filtrar
-        if ($request->has('search') && !empty($request->search)) {
-            $users = $this->userRepository->search($request->search);
-        } else {
-            $users = $this->userRepository->all();
-        }
+        $query = User::with(['empresa', 'departamento', 'centro'])
+            ->withCount('restrictions');
 
-        return view('users.index', compact('users'));
+        if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
+        if ($request->filled('centro_id')) $query->where('centro_id', $request->centro_id);
+        if ($request->filled('departamento_id')) $query->where('departamento_id', $request->departamento_id);
+        if ($request->filled('rol')) $query->role($request->rol);
+        if ($request->filled('nombre')) {
+            $nombre = $request->nombre;
+            $query->whereRaw("CONCAT(nombre, ' ', apellidos) = ?", [$nombre]);
+        }
+        if ($request->filled('email')) $query->where('email', $request->email);
+
+        $users = $query->orderBy('nombre')->paginate(15)->withQueryString();
+        $empresas = $this->userRepository->getEmpresas();
+        $departamentos = $this->userRepository->getDepartamentos();
+        $centros = $this->userRepository->getCentros();
+        $roles = Role::orderBy('name')->get();
+        $users_all = User::orderBy('nombre')->get();
+
+        return view('users.index', compact('users', 'empresas', 'departamentos', 'centros', 'roles', 'users_all'));
     }
 
     /**

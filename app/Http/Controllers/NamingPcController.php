@@ -12,19 +12,15 @@ class NamingPcController extends Controller
     public function index(Request $request)
     {
         $query = NamingPc::with(['centro', 'empresa']);
-        if ($request->filled('search')) {
-            $s = $request->search;
-            $query->where(function ($q) use ($s) {
-                $q->where('nombre_equipo', 'like', "%$s%")
-                  ->orWhere('direccion_ip', 'like', "%$s%")
-                  ->orWhere('ubicacion', 'like', "%$s%");
-            });
-        }
         if ($request->filled('tipo')) $query->where('tipo', $request->tipo);
         if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
+        if ($request->filled('centro_id')) $query->where('centro_id', $request->centro_id);
+        if ($request->filled('sistema_operativo')) $query->where('sistema_operativo', $request->sistema_operativo);
+        if ($request->filled('activo')) $query->where('activo', $request->activo);
         $namingPcs = $query->orderBy('nombre_equipo')->paginate(15)->withQueryString();
         $empresas = Empresa::orderBy('nombre')->get();
-        return view('naming-pcs.index', compact('namingPcs', 'empresas'));
+        $centros = Centro::orderBy('nombre')->get();
+        return view('naming-pcs.index', compact('namingPcs', 'empresas', 'centros'));
     }
 
     public function create()

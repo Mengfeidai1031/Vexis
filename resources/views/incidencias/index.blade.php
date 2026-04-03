@@ -32,14 +32,14 @@
     </div></div>
 </div>
 
-<form action="{{ route('incidencias.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar por código o título..." value="{{ request('search') }}" style="flex:1;">
-    <select name="estado" class="vx-select" style="width:auto;"><option value="">Todos los estados</option>@foreach(\App\Models\Incidencia::$estados as $k => $v)<option value="{{ $k }}" {{ request('estado') == $k ? 'selected' : '' }}>{{ $v }}</option>@endforeach</select>
-    <select name="prioridad" class="vx-select" style="width:auto;"><option value="">Todas las prioridades</option>@foreach(\App\Models\Incidencia::$prioridades as $k => $v)<option value="{{ $k }}" {{ request('prioridad') == $k ? 'selected' : '' }}>{{ $v }}</option>@endforeach</select>
-    <select name="tecnico_id" class="vx-select" style="width:auto;"><option value="">Todos los técnicos</option>@foreach($tecnicos as $t)<option value="{{ $t->id }}" {{ request('tecnico_id') == $t->id ? 'selected' : '' }}>{{ $t->nombre_completo }}</option>@endforeach</select>
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i></button>
-    @if(request()->anyFilled(['search','estado','prioridad','tecnico_id']))<a href="{{ route('incidencias.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>@endif
-</form>
+<x-filtros-avanzados :action="route('incidencias.index')">
+    <div class="vx-filtro" data-filtro="estado"><label class="vx-filtro-label">Estado</label><select name="estado" class="vx-select"><option value="">Todos</option>@foreach(\App\Models\Incidencia::$estados as $k => $v)<option value="{{ $k }}" {{ request('estado') == $k ? 'selected' : '' }}>{{ $v }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="prioridad"><label class="vx-filtro-label">Prioridad</label><select name="prioridad" class="vx-select"><option value="">Todas</option>@foreach(\App\Models\Incidencia::$prioridades as $k => $v)<option value="{{ $k }}" {{ request('prioridad') == $k ? 'selected' : '' }}>{{ $v }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="tecnico"><label class="vx-filtro-label">Técnico</label><select name="tecnico_id" class="vx-select"><option value="">Todos</option>@foreach($tecnicos as $t)<option value="{{ $t->id }}" {{ request('tecnico_id') == $t->id ? 'selected' : '' }}>{{ $t->nombre_completo }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="creador"><label class="vx-filtro-label">Creada por</label><select name="usuario_id" class="vx-select"><option value="">Todos</option>@foreach($usuarios as $u)<option value="{{ $u->id }}" {{ request('usuario_id') == $u->id ? 'selected' : '' }}>{{ $u->nombre_completo }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="desde"><label class="vx-filtro-label">Fecha desde</label><input type="date" name="fecha_desde" class="vx-input" value="{{ request('fecha_desde') }}"></div>
+    <div class="vx-filtro" data-filtro="hasta"><label class="vx-filtro-label">Fecha hasta</label><input type="date" name="fecha_hasta" class="vx-input" value="{{ request('fecha_hasta') }}"></div>
+</x-filtros-avanzados>
 
 <div class="vx-card"><div class="vx-card-body" style="padding:0;">
     @if($incidencias->count() > 0)

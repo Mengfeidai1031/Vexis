@@ -9,23 +9,12 @@
         @endcan
     </div>
 </div>
-<form action="{{ route('almacenes.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar por nombre, código, domicilio..." value="{{ request('search') }}" style="flex:1;">
-    <select name="isla" class="vx-select" style="width:auto;">
-        <option value="">Todas las islas</option>
-        @foreach(\App\Models\Almacen::$islas as $isla)
-            <option value="{{ $isla }}" {{ request('isla') == $isla ? 'selected' : '' }}>{{ $isla }}</option>
-        @endforeach
-    </select>
-    <select name="empresa_id" class="vx-select" style="width:auto;">
-        <option value="">Todas las empresas</option>
-        @foreach($empresas as $e)
-            <option value="{{ $e->id }}" {{ request('empresa_id') == $e->id ? 'selected' : '' }}>{{ $e->nombre }}</option>
-        @endforeach
-    </select>
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i></button>
-    @if(request()->anyFilled(['search','isla','empresa_id']))<a href="{{ route('almacenes.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>@endif
-</form>
+<x-filtros-avanzados :action="route('almacenes.index')">
+    <div class="vx-filtro" data-filtro="isla"><label class="vx-filtro-label">Isla</label><select name="isla" class="vx-select"><option value="">Todas</option>@foreach(\App\Models\Almacen::$islas as $isla)<option value="{{ $isla }}" {{ request('isla') == $isla ? 'selected' : '' }}>{{ $isla }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="empresa"><label class="vx-filtro-label">Empresa</label><select name="empresa_id" class="vx-select"><option value="">Todas</option>@foreach($empresas as $e)<option value="{{ $e->id }}" {{ request('empresa_id') == $e->id ? 'selected' : '' }}>{{ $e->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="centro"><label class="vx-filtro-label">Centro</label><select name="centro_id" class="vx-select"><option value="">Todos</option>@foreach($centros as $c)<option value="{{ $c->id }}" {{ request('centro_id') == $c->id ? 'selected' : '' }}>{{ $c->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="activo"><label class="vx-filtro-label">Estado</label><select name="activo" class="vx-select"><option value="">Todos</option><option value="1" {{ request('activo') === '1' ? 'selected' : '' }}>Activo</option><option value="0" {{ request('activo') === '0' ? 'selected' : '' }}>Inactivo</option></select></div>
+</x-filtros-avanzados>
 <div class="vx-card">
     <div class="vx-card-body" style="padding:0;">
         @if($almacenes->count() > 0)

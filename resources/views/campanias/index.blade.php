@@ -9,17 +9,10 @@
         @endcan
     </div>
 </div>
-<form action="{{ route('campanias.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar campaña..." value="{{ request('search') }}" style="flex:1;">
-    <select name="marca_id" class="vx-select" style="width:auto;">
-        <option value="">Todas las marcas</option>
-        @foreach($marcas as $marca)
-            <option value="{{ $marca->id }}" {{ request('marca_id') == $marca->id ? 'selected' : '' }}>{{ $marca->nombre }}</option>
-        @endforeach
-    </select>
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i></button>
-    @if(request()->anyFilled(['search','marca_id']))<a href="{{ route('campanias.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>@endif
-</form>
+<x-filtros-avanzados :action="route('campanias.index')">
+    <div class="vx-filtro" data-filtro="marca"><label class="vx-filtro-label">Marca</label><select name="marca_id" class="vx-select"><option value="">Todas</option>@foreach($marcas as $marca)<option value="{{ $marca->id }}" {{ request('marca_id') == $marca->id ? 'selected' : '' }}>{{ $marca->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="activa"><label class="vx-filtro-label">Estado</label><select name="activa" class="vx-select"><option value="">Todos</option><option value="1" {{ request('activa') === '1' ? 'selected' : '' }}>Activa</option><option value="0" {{ request('activa') === '0' ? 'selected' : '' }}>Inactiva</option></select></div>
+</x-filtros-avanzados>
 @if($campanias->count() > 0)
     @foreach($campanias as $campania)
     <div class="vx-card" style="margin-bottom:16px;">

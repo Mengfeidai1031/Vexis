@@ -32,13 +32,12 @@
 
 <div id="verifyResult" style="display:none;margin-bottom:16px;padding:12px 16px;border-radius:8px;font-size:13px;"></div>
 
-<form action="{{ route('verifactu.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar por código registro o factura..." value="{{ request('search') }}" style="flex:1;">
-    <select name="estado" class="vx-select" style="width:auto;"><option value="">Todos los estados</option>@foreach(\App\Models\Verifactu::$estados as $k => $v)<option value="{{ $k }}" {{ request('estado') == $k ? 'selected' : '' }}>{{ $v }}</option>@endforeach</select>
-    <select name="tipo_operacion" class="vx-select" style="width:auto;"><option value="">Todas las operaciones</option>@foreach(\App\Models\Verifactu::$tiposOperacion as $k => $v)<option value="{{ $k }}" {{ request('tipo_operacion') == $k ? 'selected' : '' }}>{{ $v }}</option>@endforeach</select>
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i></button>
-    @if(request()->anyFilled(['search','estado','tipo_operacion']))<a href="{{ route('verifactu.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>@endif
-</form>
+<x-filtros-avanzados :action="route('verifactu.index')">
+    <div class="vx-filtro" data-filtro="estado"><label class="vx-filtro-label">Estado</label><select name="estado" class="vx-select"><option value="">Todos</option>@foreach(\App\Models\Verifactu::$estados as $k => $v)<option value="{{ $k }}" {{ request('estado') == $k ? 'selected' : '' }}>{{ $v }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="tipo"><label class="vx-filtro-label">Tipo operación</label><select name="tipo_operacion" class="vx-select"><option value="">Todas</option>@foreach(\App\Models\Verifactu::$tiposOperacion as $k => $v)<option value="{{ $k }}" {{ request('tipo_operacion') == $k ? 'selected' : '' }}>{{ $v }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="desde"><label class="vx-filtro-label">Fecha desde</label><input type="date" name="fecha_desde" class="vx-input" value="{{ request('fecha_desde') }}"></div>
+    <div class="vx-filtro" data-filtro="hasta"><label class="vx-filtro-label">Fecha hasta</label><input type="date" name="fecha_hasta" class="vx-input" value="{{ request('fecha_hasta') }}"></div>
+</x-filtros-avanzados>
 
 <div class="vx-card"><div class="vx-card-body" style="padding:0;">
     @if($registros->count() > 0)

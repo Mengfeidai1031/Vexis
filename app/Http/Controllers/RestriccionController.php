@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\UserRestrictionHelper;
+use App\Models\User;
 use App\Models\UserRestriction;
 use App\Repositories\Interfaces\RestriccionRepositoryInterface;
 use Illuminate\Http\Request;
@@ -21,13 +22,18 @@ class RestriccionController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->has('search') && !empty($request->search)) {
-            $restricciones = $this->restriccionRepository->search($request->search);
-        } else {
-            $restricciones = $this->restriccionRepository->all();
+        $restricciones = $this->restriccionRepository->all();
+
+        if ($request->filled('user_id')) {
+            $restricciones = $restricciones->filter(fn($r) => $r->user_id == $request->user_id)->values();
+        }
+        if ($request->filled('tipo')) {
+            $restricciones = $restricciones->filter(fn($r) => $r->restrictable_type === $request->tipo)->values();
         }
 
-        return view('restricciones.index', compact('restricciones'));
+        $usuarios = User::orderBy('nombre')->get();
+
+        return view('restricciones.index', compact('restricciones', 'usuarios'));
     }
 
     /**

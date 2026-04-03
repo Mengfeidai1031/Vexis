@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateVehiculoRequest;
 use App\Models\CatalogoPrecio;
 use App\Models\Centro;
 use App\Models\Marca;
+use App\Models\Empresa;
 use App\Models\Vehiculo;
 use App\Repositories\Interfaces\VehiculoRepositoryInterface;
 use App\Services\MatriculaService;
@@ -26,13 +27,24 @@ class VehiculoController extends Controller
 
     public function index(Request $request)
     {
-        if ($request->has('search') && !empty($request->search)) {
-            $vehiculos = $this->vehiculoRepository->search($request->search);
-        } else {
-            $vehiculos = $this->vehiculoRepository->all();
-        }
+        $query = Vehiculo::with(['marca', 'empresa']);
 
-        return view('vehiculos.index', compact('vehiculos'));
+        if ($request->filled('marca_id')) $query->where('marca_id', $request->marca_id);
+        if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
+        if ($request->filled('modelo')) $query->where('modelo', $request->modelo);
+        if ($request->filled('version')) $query->where('version', $request->version);
+        if ($request->filled('color_externo')) $query->where('color_externo', $request->color_externo);
+        if ($request->filled('color_interno')) $query->where('color_interno', $request->color_interno);
+
+        $vehiculos = $query->orderByDesc('id')->paginate(15)->withQueryString();
+        $marcas = Marca::where('activa', true)->orderBy('nombre')->get();
+        $empresas = Empresa::orderBy('nombre')->get();
+        $modelos = Vehiculo::whereNotNull('modelo')->distinct()->orderBy('modelo')->pluck('modelo');
+        $versiones = Vehiculo::whereNotNull('version')->distinct()->orderBy('version')->pluck('version');
+        $colores_ext = Vehiculo::whereNotNull('color_externo')->where('color_externo', '!=', '')->distinct()->orderBy('color_externo')->pluck('color_externo');
+        $colores_int = Vehiculo::whereNotNull('color_interno')->where('color_interno', '!=', '')->distinct()->orderBy('color_interno')->pluck('color_interno');
+
+        return view('vehiculos.index', compact('vehiculos', 'marcas', 'empresas', 'modelos', 'versiones', 'colores_ext', 'colores_int'));
     }
 
     public function create()

@@ -22,13 +22,22 @@ class ClienteController extends Controller
 
     public function index(Request $request)
     {
-        if ($request->has('search') && !empty($request->search)) {
-            $clientes = $this->clienteRepository->search($request->search);
-        } else {
-            $clientes = $this->clienteRepository->all();
-        }
+        $query = Cliente::with('empresa');
 
-        return view('clientes.index', compact('clientes'));
+        if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
+        if ($request->filled('nombre')) {
+            $nombre = $request->nombre;
+            $query->whereRaw("CONCAT(nombre, ' ', apellidos) = ?", [$nombre]);
+        }
+        if ($request->filled('dni')) $query->where('dni', $request->dni);
+        if ($request->filled('codigo_postal')) $query->where('codigo_postal', $request->codigo_postal);
+
+        $clientes = $query->orderBy('nombre')->paginate(15)->withQueryString();
+        $empresas = $this->clienteRepository->getEmpresas();
+        $clientes_all = Cliente::orderBy('nombre')->get();
+        $codigos_postales = Cliente::whereNotNull('codigo_postal')->distinct()->orderBy('codigo_postal')->pluck('codigo_postal');
+
+        return view('clientes.index', compact('clientes', 'empresas', 'clientes_all', 'codigos_postales'));
     }
 
     public function create()

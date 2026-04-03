@@ -17,8 +17,8 @@ class CampaniaController extends Controller
         if ($request->filled('marca_id')) {
             $query->where('marca_id', $request->marca_id);
         }
-        if ($request->filled('search')) {
-            $query->where('nombre', 'like', '%' . $request->search . '%');
+        if ($request->filled('activa')) {
+            $query->where('activa', $request->activa);
         }
         $campanias = $query->orderByDesc('created_at')->paginate(10)->withQueryString();
         $marcas = Marca::where('activa', true)->orderBy('nombre')->get();

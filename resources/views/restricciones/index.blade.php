@@ -10,13 +10,10 @@
     </div>
 </div>
 
-<form action="{{ route('restricciones.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar por usuario o entidad restringida..." value="{{ request('search') }}">
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i> Buscar</button>
-    @if(request('search'))
-        <a href="{{ route('restricciones.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>
-    @endif
-</form>
+<x-filtros-avanzados :action="route('restricciones.index')">
+    <div class="vx-filtro" data-filtro="usuario"><label class="vx-filtro-label">Usuario</label><select name="user_id" class="vx-select"><option value="">Todos</option>@foreach($usuarios as $u)<option value="{{ $u->id }}" {{ request('user_id') == $u->id ? 'selected' : '' }}>{{ $u->nombre_completo }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="tipo"><label class="vx-filtro-label">Tipo</label><select name="tipo" class="vx-select"><option value="">Todos</option><option value="App\Models\Empresa" {{ request('tipo') == 'App\Models\Empresa' ? 'selected' : '' }}>Empresa</option><option value="App\Models\Cliente" {{ request('tipo') == 'App\Models\Cliente' ? 'selected' : '' }}>Cliente</option><option value="App\Models\Vehiculo" {{ request('tipo') == 'App\Models\Vehiculo' ? 'selected' : '' }}>Vehículo</option><option value="App\Models\Centro" {{ request('tipo') == 'App\Models\Centro' ? 'selected' : '' }}>Centro</option><option value="App\Models\Departamento" {{ request('tipo') == 'App\Models\Departamento' ? 'selected' : '' }}>Departamento</option></select></div>
+</x-filtros-avanzados>
 
 <div class="vx-card">
     <div class="vx-card-body" style="padding: 0;">

@@ -14,19 +14,17 @@ class RepartoController extends Controller
     public function index(Request $request)
     {
         $query = Reparto::with(['stock', 'almacenOrigen', 'almacenDestino', 'empresa']);
-        if ($request->filled('search')) {
-            $s = $request->search;
-            $query->where(function ($q) use ($s) {
-                $q->where('codigo_reparto', 'like', "%$s%")
-                  ->orWhere('solicitado_por', 'like', "%$s%");
-            });
-        }
         if ($request->filled('estado')) $query->where('estado', $request->estado);
         if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
+        if ($request->filled('almacen_origen_id')) $query->where('almacen_origen_id', $request->almacen_origen_id);
+        if ($request->filled('almacen_destino_id')) $query->where('almacen_destino_id', $request->almacen_destino_id);
+        if ($request->filled('fecha_desde')) $query->whereDate('fecha_solicitud', '>=', $request->fecha_desde);
+        if ($request->filled('fecha_hasta')) $query->whereDate('fecha_solicitud', '<=', $request->fecha_hasta);
 
         $repartos = $query->orderByDesc('fecha_solicitud')->paginate(15)->withQueryString();
         $empresas = Empresa::orderBy('nombre')->get();
-        return view('repartos.index', compact('repartos', 'empresas'));
+        $almacenes = Almacen::orderBy('nombre')->get();
+        return view('repartos.index', compact('repartos', 'empresas', 'almacenes'));
     }
 
     public function create()

@@ -14,8 +14,9 @@ class CocheSustitucionController extends Controller
     public function index(Request $request)
     {
         $query = CocheSustitucion::with(['marca', 'taller', 'empresa']);
-        if ($request->filled('search')) { $s = $request->search; $query->where(function ($q) use ($s) { $q->where('matricula', 'like', "%$s%")->orWhere('modelo', 'like', "%$s%"); }); }
         if ($request->filled('taller_id')) $query->where('taller_id', $request->taller_id);
+        if ($request->filled('marca_id')) $query->where('marca_id', $request->marca_id);
+        if ($request->filled('disponible')) $query->where('disponible', $request->disponible);
         $coches = $query->orderBy('matricula')->paginate(15)->withQueryString();
         $talleres = Taller::where('activo', true)->orderBy('nombre')->get();
 
@@ -26,7 +27,9 @@ class CocheSustitucionController extends Controller
             ->where(function ($q) use ($mes) { $q->whereBetween('fecha_inicio', [$mes, $mes->copy()->endOfMonth()])->orWhereBetween('fecha_fin', [$mes, $mes->copy()->endOfMonth()]); })
             ->get()->map(fn($r) => ['title' => $r->coche->matricula . ' — ' . $r->cliente_nombre, 'start' => $r->fecha_inicio->format('Y-m-d'), 'end' => $r->fecha_fin->addDay()->format('Y-m-d'), 'color' => match($r->estado) { 'reservado' => '#f39c12', 'entregado' => '#3498db', default => '#2ecc71' }]);
 
-        return view('coches-sustitucion.index', compact('coches', 'talleres', 'reservas', 'mes'));
+        $marcas = Marca::orderBy('nombre')->get();
+
+        return view('coches-sustitucion.index', compact('coches', 'talleres', 'reservas', 'mes', 'marcas'));
     }
 
     public function create()

@@ -10,13 +10,9 @@
     </div>
 </div>
 
-<form action="{{ route('roles.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar por nombre de rol..." value="{{ request('search') }}">
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i> Buscar</button>
-    @if(request('search'))
-        <a href="{{ route('roles.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>
-    @endif
-</form>
+<x-filtros-avanzados :action="route('roles.index')">
+    <div class="vx-filtro" data-filtro="nombre"><label class="vx-filtro-label">Nombre</label><select name="nombre" class="vx-select"><option value="">Todos</option>@foreach($roles as $r)<option value="{{ $r->name }}" {{ request('nombre') == $r->name ? 'selected' : '' }}>{{ $r->name }}</option>@endforeach</select></div>
+</x-filtros-avanzados>
 
 <div class="vx-card">
     <div class="vx-card-body" style="padding: 0;">

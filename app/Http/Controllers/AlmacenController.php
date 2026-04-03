@@ -12,24 +12,22 @@ class AlmacenController extends Controller
     public function index(Request $request)
     {
         $query = Almacen::with(['empresa', 'centro']);
-        if ($request->filled('search')) {
-            $s = $request->search;
-            $query->where(function ($q) use ($s) {
-                $q->where('nombre', 'like', "%$s%")
-                  ->orWhere('codigo', 'like', "%$s%")
-                  ->orWhere('domicilio', 'like', "%$s%")
-                  ->orWhere('localidad', 'like', "%$s%");
-            });
-        }
         if ($request->filled('isla')) {
             $query->where('isla', $request->isla);
         }
         if ($request->filled('empresa_id')) {
             $query->where('empresa_id', $request->empresa_id);
         }
+        if ($request->filled('centro_id')) {
+            $query->where('centro_id', $request->centro_id);
+        }
+        if ($request->filled('activo')) {
+            $query->where('activo', $request->activo);
+        }
         $almacenes = $query->orderBy('nombre')->paginate(15)->withQueryString();
         $empresas = Empresa::orderBy('nombre')->get();
-        return view('almacenes.index', compact('almacenes', 'empresas'));
+        $centros = Centro::orderBy('nombre')->get();
+        return view('almacenes.index', compact('almacenes', 'empresas', 'centros'));
     }
 
     public function create()

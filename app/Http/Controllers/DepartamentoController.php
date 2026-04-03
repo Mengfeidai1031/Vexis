@@ -22,10 +22,10 @@ class DepartamentoController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->has('search') && !empty($request->search)) {
-            $departamentos = $this->departamentoRepository->search($request->search);
-        } else {
-            $departamentos = $this->departamentoRepository->all();
+        $departamentos = $this->departamentoRepository->all();
+
+        if ($request->filled('nombre')) {
+            $departamentos = $departamentos->filter(fn($d) => $d->nombre === $request->nombre)->values();
         }
 
         return view('departamentos.index', compact('departamentos'));

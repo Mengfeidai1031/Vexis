@@ -24,18 +24,17 @@ class FacturaController extends Controller
     public function index(Request $request)
     {
         $query = Factura::with(['venta', 'cliente', 'empresa', 'centro', 'marca', 'emisor']);
-        if ($request->filled('search')) {
-            $s = $request->search;
-            $query->where(function ($q) use ($s) {
-                $q->where('codigo_factura', 'like', "%$s%")
-                  ->orWhereHas('cliente', fn($q2) => $q2->where('nombre', 'like', "%$s%")->orWhere('apellidos', 'like', "%$s%"));
-            });
-        }
         if ($request->filled('estado')) $query->where('estado', $request->estado);
         if ($request->filled('marca_id')) $query->where('marca_id', $request->marca_id);
+        if ($request->filled('cliente_id')) $query->where('cliente_id', $request->cliente_id);
+        if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
+        if ($request->filled('fecha_desde')) $query->whereDate('fecha_factura', '>=', $request->fecha_desde);
+        if ($request->filled('fecha_hasta')) $query->whereDate('fecha_factura', '<=', $request->fecha_hasta);
         $facturas = $query->orderByDesc('fecha_factura')->paginate(15)->withQueryString();
         $marcas = Marca::where('activa', true)->orderBy('nombre')->get();
-        return view('facturas.index', compact('facturas', 'marcas'));
+        $clientes = Cliente::orderBy('nombre')->get();
+        $empresas = Empresa::orderBy('nombre')->get();
+        return view('facturas.index', compact('facturas', 'marcas', 'clientes', 'empresas'));
     }
 
     public function create(Request $request)

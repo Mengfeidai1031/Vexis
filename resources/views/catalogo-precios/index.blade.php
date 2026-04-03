@@ -12,12 +12,11 @@
     @endforeach
 </div>
 
-<form action="{{ route('catalogo-precios.index') }}" method="GET" class="vx-search-box" style="margin-bottom:16px;">
+<x-filtros-avanzados :action="route('catalogo-precios.index')">
     <input type="hidden" name="marca_id" value="{{ $marcaSeleccionada }}">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar modelo o versión..." value="{{ request('search') }}" style="flex:1;">
-    <select name="combustible" class="vx-select" style="width:auto;"><option value="">Todos</option>@foreach(\App\Models\CatalogoPrecio::$combustibles as $c)<option value="{{ $c }}" {{ request('combustible') == $c ? 'selected' : '' }}>{{ $c }}</option>@endforeach</select>
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i></button>
-</form>
+    <div class="vx-filtro" data-filtro="combustible"><label class="vx-filtro-label">Combustible</label><select name="combustible" class="vx-select"><option value="">Todos</option>@foreach(\App\Models\CatalogoPrecio::$combustibles as $c)<option value="{{ $c }}" {{ request('combustible') == $c ? 'selected' : '' }}>{{ $c }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="disponible"><label class="vx-filtro-label">Disponibilidad</label><select name="disponible" class="vx-select"><option value="">Todos</option><option value="1" {{ request('disponible') === '1' ? 'selected' : '' }}>Disponible</option><option value="0" {{ request('disponible') === '0' ? 'selected' : '' }}>No disponible</option></select></div>
+</x-filtros-avanzados>
 
 {{-- Grid de modelos --}}
 @if($catalogo->count() > 0)

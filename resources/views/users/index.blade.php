@@ -14,14 +14,14 @@
     </div>
 </div>
 
-{{-- Buscador --}}
-<form action="{{ route('users.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar por nombre, email, empresa, departamento o centro..." value="{{ request('search') }}">
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i> Buscar</button>
-    @if(request('search'))
-        <a href="{{ route('users.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>
-    @endif
-</form>
+<x-filtros-avanzados :action="route('users.index')">
+    <div class="vx-filtro" data-filtro="nombre"><label class="vx-filtro-label">Nombre</label><select name="nombre" class="vx-select"><option value="">Todos</option>@foreach($users_all as $u)<option value="{{ $u->nombre_completo }}" {{ request('nombre') == $u->nombre_completo ? 'selected' : '' }}>{{ $u->nombre_completo }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="email"><label class="vx-filtro-label">Email</label><select name="email" class="vx-select"><option value="">Todos</option>@foreach($users_all as $u)<option value="{{ $u->email }}" {{ request('email') == $u->email ? 'selected' : '' }}>{{ $u->email }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="empresa"><label class="vx-filtro-label">Empresa</label><select name="empresa_id" class="vx-select"><option value="">Todas</option>@foreach($empresas as $e)<option value="{{ $e->id }}" {{ request('empresa_id') == $e->id ? 'selected' : '' }}>{{ $e->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="centro"><label class="vx-filtro-label">Centro</label><select name="centro_id" class="vx-select"><option value="">Todos</option>@foreach($centros as $c)<option value="{{ $c->id }}" {{ request('centro_id') == $c->id ? 'selected' : '' }}>{{ $c->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="depto"><label class="vx-filtro-label">Departamento</label><select name="departamento_id" class="vx-select"><option value="">Todos</option>@foreach($departamentos as $d)<option value="{{ $d->id }}" {{ request('departamento_id') == $d->id ? 'selected' : '' }}>{{ $d->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="rol"><label class="vx-filtro-label">Rol</label><select name="rol" class="vx-select"><option value="">Todos</option>@foreach($roles as $r)<option value="{{ $r->name }}" {{ request('rol') == $r->name ? 'selected' : '' }}>{{ $r->name }}</option>@endforeach</select></div>
+</x-filtros-avanzados>
 
 {{-- Tabla --}}
 <div class="vx-card">

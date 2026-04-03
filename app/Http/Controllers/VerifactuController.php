@@ -14,16 +14,10 @@ class VerifactuController extends Controller
     {
         $query = Verifactu::with(['factura.cliente', 'factura.empresa', 'factura.marca']);
 
-        if ($request->filled('search')) {
-            $s = $request->search;
-            $query->where(function ($q) use ($s) {
-                $q->where('codigo_registro', 'like', "%$s%")
-                  ->orWhere('numero_serie_factura', 'like', "%$s%")
-                  ->orWhereHas('factura', fn($q2) => $q2->where('codigo_factura', 'like', "%$s%"));
-            });
-        }
         if ($request->filled('estado')) $query->where('estado', $request->estado);
         if ($request->filled('tipo_operacion')) $query->where('tipo_operacion', $request->tipo_operacion);
+        if ($request->filled('fecha_desde')) $query->whereDate('fecha_registro', '>=', $request->fecha_desde);
+        if ($request->filled('fecha_hasta')) $query->whereDate('fecha_registro', '<=', $request->fecha_hasta);
 
         $registros = $query->orderByDesc('fecha_registro')->paginate(15)->withQueryString();
 

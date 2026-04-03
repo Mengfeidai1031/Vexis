@@ -10,13 +10,11 @@
     </div>
 </div>
 
-<form action="{{ route('centros.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar por nombre, dirección, provincia, municipio o empresa..." value="{{ request('search') }}">
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i> Buscar</button>
-    @if(request('search'))
-        <a href="{{ route('centros.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>
-    @endif
-</form>
+<x-filtros-avanzados :action="route('centros.index')">
+    <div class="vx-filtro" data-filtro="empresa"><label class="vx-filtro-label">Empresa</label><select name="empresa_id" class="vx-select"><option value="">Todas</option>@foreach($empresas as $e)<option value="{{ $e->id }}" {{ request('empresa_id') == $e->id ? 'selected' : '' }}>{{ $e->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="municipio"><label class="vx-filtro-label">Municipio</label><select name="municipio" class="vx-select"><option value="">Todos</option>@foreach($municipios as $m)<option value="{{ $m }}" {{ request('municipio') == $m ? 'selected' : '' }}>{{ $m }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="provincia"><label class="vx-filtro-label">Provincia</label><select name="provincia" class="vx-select"><option value="">Todas</option>@foreach($provincias as $p)<option value="{{ $p }}" {{ request('provincia') == $p ? 'selected' : '' }}>{{ $p }}</option>@endforeach</select></div>
+</x-filtros-avanzados>
 
 <div class="vx-card">
     <div class="vx-card-body" style="padding: 0;">
