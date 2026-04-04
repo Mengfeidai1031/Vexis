@@ -15,7 +15,7 @@
 <div class="vx-card"><div class="vx-card-body" style="padding:0;">
     @if($tasaciones->count() > 0)
     <div class="vx-table-wrapper"><table class="vx-table">
-        <thead><tr><th>Código</th><th>Vehículo</th><th>Año</th><th>Km</th><th>Matrícula</th><th>Estado Veh.</th><th>Valor Est.</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead>
+        <thead><tr><x-columna-ordenable campo="codigo_tasacion" label="Código" /><x-columna-ordenable campo="vehiculo_marca" label="Vehículo" /><x-columna-ordenable campo="vehiculo_anio" label="Año" /><x-columna-ordenable campo="kilometraje" label="Km" /><x-columna-ordenable campo="matricula" label="Matrícula" /><x-columna-ordenable campo="estado_vehiculo" label="Estado Veh." /><x-columna-ordenable campo="valor_estimado" label="Valor Est." /><x-columna-ordenable campo="estado" label="Estado" /><x-columna-ordenable campo="fecha_tasacion" label="Fecha" /><th>Acciones</th></tr></thead>
         <tbody>@foreach($tasaciones as $t)
         <tr>
             <td style="font-family:var(--vx-font-mono);font-size:11px;">{{ $t->codigo_tasacion }}</td>

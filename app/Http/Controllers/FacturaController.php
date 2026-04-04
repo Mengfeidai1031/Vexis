@@ -30,7 +30,14 @@ class FacturaController extends Controller
         if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
         if ($request->filled('fecha_desde')) $query->whereDate('fecha_factura', '>=', $request->fecha_desde);
         if ($request->filled('fecha_hasta')) $query->whereDate('fecha_factura', '<=', $request->fecha_hasta);
-        $facturas = $query->orderByDesc('fecha_factura')->paginate(15)->withQueryString();
+        // Sorting
+        $sortable = ['id', 'codigo_factura', 'cliente_id', 'marca_id', 'concepto', 'subtotal', 'iva_importe', 'total', 'estado', 'fecha_factura'];
+        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
+            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+            $query->reorder()->orderBy($request->sort_by, $dir);
+        }
+
+        $facturas = $query->paginate(15)->withQueryString();
         $marcas = Marca::where('activa', true)->orderBy('nombre')->get();
         $clientes = Cliente::orderBy('nombre')->get();
         $empresas = Empresa::orderBy('nombre')->get();

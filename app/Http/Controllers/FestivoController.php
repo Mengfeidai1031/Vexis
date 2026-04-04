@@ -19,7 +19,14 @@ class FestivoController extends Controller
             $query->where('municipio', $request->municipio);
         }
 
-        $festivos = $query->orderBy('fecha')->paginate(20)->withQueryString();
+        // Sorting
+        $sortable = ['id', 'fecha', 'nombre', 'ambito', 'municipio'];
+        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
+            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+            $query->reorder()->orderBy($request->sort_by, $dir);
+        }
+
+        $festivos = $query->paginate(20)->withQueryString();
 
         // Datos para calendario
         $eventos = Festivo::where('anio', $anio)->get()->map(fn($f) => [

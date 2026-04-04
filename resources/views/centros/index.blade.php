@@ -23,12 +23,12 @@
                 <table class="vx-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Empresa</th>
-                            <th>Dirección</th>
-                            <th>Municipio</th>
-                            <th>Provincia</th>
+                            <x-columna-ordenable campo="id" label="ID" />
+                            <x-columna-ordenable campo="nombre" label="Nombre" />
+                            <x-columna-ordenable campo="empresa_id" label="Empresa" />
+                            <x-columna-ordenable campo="direccion" label="Dirección" />
+                            <x-columna-ordenable campo="municipio" label="Municipio" />
+                            <x-columna-ordenable campo="provincia" label="Provincia" />
                             <th>Acciones</th>
                         </tr>
                     </thead>

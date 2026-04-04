@@ -29,11 +29,11 @@
                 <table class="vx-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Fecha</th>
-                            <th>Cliente</th>
+                            <x-columna-ordenable campo="id" label="ID" />
+                            <x-columna-ordenable campo="fecha" label="Fecha" />
+                            <x-columna-ordenable campo="cliente_id" label="Cliente" />
                             <th>Empresa</th>
-                            <th>Vehículo</th>
+                            <x-columna-ordenable campo="vehiculo_id" label="Vehículo" />
                             <th>Líneas</th>
                             <th>Total</th>
                             <th>Acciones</th>

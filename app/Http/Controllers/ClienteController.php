@@ -32,7 +32,14 @@ class ClienteController extends Controller
         if ($request->filled('dni')) $query->where('dni', $request->dni);
         if ($request->filled('codigo_postal')) $query->where('codigo_postal', $request->codigo_postal);
 
-        $clientes = $query->orderBy('nombre')->paginate(15)->withQueryString();
+        // Sorting
+        $sortable = ['id', 'nombre', 'apellidos', 'dni', 'empresa_id', 'domicilio', 'codigo_postal'];
+        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
+            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+            $query->reorder()->orderBy($request->sort_by, $dir);
+        }
+
+        $clientes = $query->paginate(15)->withQueryString();
         $empresas = $this->clienteRepository->getEmpresas();
         $clientes_all = Cliente::orderBy('nombre')->get();
         $codigos_postales = Cliente::whereNotNull('codigo_postal')->distinct()->orderBy('codigo_postal')->pluck('codigo_postal');

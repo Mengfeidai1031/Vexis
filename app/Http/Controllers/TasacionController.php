@@ -25,7 +25,14 @@ class TasacionController extends Controller
         if ($request->filled('fecha_desde')) $query->whereDate('fecha_tasacion', '>=', $request->fecha_desde);
         if ($request->filled('fecha_hasta')) $query->whereDate('fecha_tasacion', '<=', $request->fecha_hasta);
         if ($request->filled('marca')) $query->where('vehiculo_marca', $request->marca);
-        $tasaciones = $query->orderByDesc('fecha_tasacion')->paginate(15)->withQueryString();
+        // Sorting
+        $sortable = ['id', 'codigo_tasacion', 'vehiculo_marca', 'vehiculo_modelo', 'vehiculo_anio', 'kilometraje', 'matricula', 'estado_vehiculo', 'valor_estimado', 'estado', 'fecha_tasacion'];
+        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
+            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+            $query->reorder()->orderBy($request->sort_by, $dir);
+        }
+
+        $tasaciones = $query->paginate(15)->withQueryString();
         $clientes = Cliente::orderBy('nombre')->get();
         $empresas = Empresa::orderBy('nombre')->get();
         $marcas_tasacion = Tasacion::whereNotNull('vehiculo_marca')->distinct()->orderBy('vehiculo_marca')->pluck('vehiculo_marca');

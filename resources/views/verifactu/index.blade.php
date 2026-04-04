@@ -42,7 +42,7 @@
 <div class="vx-card"><div class="vx-card-body" style="padding:0;">
     @if($registros->count() > 0)
     <div class="vx-table-wrapper"><table class="vx-table">
-        <thead><tr><th>Código</th><th>Factura</th><th>Tipo</th><th>Tipo Factura</th><th>Emisor</th><th>Importe</th><th>Hash</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead>
+        <thead><tr><x-columna-ordenable campo="codigo_registro" label="Código" /><x-columna-ordenable campo="factura_id" label="Factura" /><x-columna-ordenable campo="tipo_operacion" label="Tipo" /><x-columna-ordenable campo="tipo_factura" label="Tipo Factura" /><x-columna-ordenable campo="nombre_emisor" label="Emisor" /><x-columna-ordenable campo="importe_total" label="Importe" /><th>Hash</th><x-columna-ordenable campo="estado" label="Estado" /><x-columna-ordenable campo="fecha_registro" label="Fecha" /><th>Acciones</th></tr></thead>
         <tbody>@foreach($registros as $r)
         <tr>
             <td style="font-family:var(--vx-font-mono);font-size:11px;">{{ $r->codigo_registro }}</td>

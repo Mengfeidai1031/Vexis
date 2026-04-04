@@ -34,7 +34,7 @@
 <div class="vx-card"><div class="vx-card-body" style="padding:0;">
     @if($coches->count() > 0)
     <div class="vx-table-wrapper"><table class="vx-table">
-        <thead><tr><th>Matrícula</th><th>Modelo</th><th>Marca</th><th>Color</th><th>Taller</th><th>Disponible</th><th>Acciones</th></tr></thead>
+        <thead><tr><x-columna-ordenable campo="matricula" label="Matrícula" /><x-columna-ordenable campo="modelo" label="Modelo" /><x-columna-ordenable campo="marca_id" label="Marca" /><x-columna-ordenable campo="color" label="Color" /><x-columna-ordenable campo="taller_id" label="Taller" /><x-columna-ordenable campo="disponible" label="Disponible" /><th>Acciones</th></tr></thead>
         <tbody>@foreach($coches as $c)
         <tr>
             <td style="font-family:var(--vx-font-mono);font-weight:600;">{{ $c->matricula }}</td>

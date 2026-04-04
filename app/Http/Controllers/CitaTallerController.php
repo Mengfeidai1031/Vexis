@@ -19,7 +19,14 @@ class CitaTallerController extends Controller
         if ($request->filled('fecha')) $query->whereDate('fecha', $request->fecha);
         if ($request->filled('mecanico_id')) $query->where('mecanico_id', $request->mecanico_id);
         if ($request->filled('marca_id')) $query->where('marca_id', $request->marca_id);
-        $citas = $query->orderByDesc('fecha')->orderBy('hora_inicio')->paginate(15)->withQueryString();
+        // Sorting
+        $sortable = ['id', 'fecha', 'hora_inicio', 'hora_fin', 'cliente_nombre', 'vehiculo_info', 'mecanico_id', 'taller_id', 'estado'];
+        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
+            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+            $query->reorder()->orderBy($request->sort_by, $dir);
+        }
+
+        $citas = $query->paginate(15)->withQueryString();
         $talleres = Taller::where('activo', true)->orderBy('nombre')->get();
 
         // Calendario semanal

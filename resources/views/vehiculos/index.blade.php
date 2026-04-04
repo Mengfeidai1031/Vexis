@@ -30,15 +30,15 @@
                 <table class="vx-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Chasis</th>
-                            <th>Matrícula</th>
-                            <th>Marca</th>
-                            <th>Modelo</th>
-                            <th>Versión</th>
-                            <th>Color Ext.</th>
-                            <th>Color Int.</th>
-                            <th>Empresa</th>
+                            <x-columna-ordenable campo="id" label="ID" />
+                            <x-columna-ordenable campo="chasis" label="Chasis" />
+                            <x-columna-ordenable campo="matricula" label="Matrícula" />
+                            <x-columna-ordenable campo="marca_id" label="Marca" />
+                            <x-columna-ordenable campo="modelo" label="Modelo" />
+                            <x-columna-ordenable campo="version" label="Versión" />
+                            <x-columna-ordenable campo="color_externo" label="Color Ext." />
+                            <x-columna-ordenable campo="color_interno" label="Color Int." />
+                            <x-columna-ordenable campo="empresa_id" label="Empresa" />
                             <th>Acciones</th>
                         </tr>
                     </thead>

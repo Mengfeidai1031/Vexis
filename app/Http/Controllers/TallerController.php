@@ -17,7 +17,14 @@ class TallerController extends Controller
         if ($request->filled('marca_id')) $query->where('marca_id', $request->marca_id);
         if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
         if ($request->input('activo') !== null && $request->input('activo') !== '') $query->where('activo', $request->activo);
-        $talleres = $query->orderBy('nombre')->paginate(15)->withQueryString();
+        // Sorting
+        $sortable = ['id', 'codigo', 'nombre', 'marca_id', 'isla', 'localidad', 'capacidad_diaria', 'activo'];
+        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
+            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+            $query->reorder()->orderBy($request->sort_by, $dir);
+        }
+
+        $talleres = $query->paginate(15)->withQueryString();
         $marcas = Marca::where('activa', true)->orderBy('nombre')->get();
         $empresas = Empresa::orderBy('nombre')->get();
         return view('talleres.index', compact('talleres', 'marcas', 'empresas'));

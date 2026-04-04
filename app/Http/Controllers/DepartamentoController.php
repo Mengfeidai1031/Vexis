@@ -28,6 +28,18 @@ class DepartamentoController extends Controller
             $departamentos = $departamentos->filter(fn($d) => $d->nombre === $request->nombre)->values();
         }
 
+        // Sorting
+        $sortable = ['id', 'nombre', 'abreviatura', 'created_at'];
+        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
+            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+            if ($departamentos instanceof \Illuminate\Pagination\AbstractPaginator) {
+                $sorted = $departamentos->getCollection()->sortBy($request->sort_by, SORT_REGULAR, $dir === 'desc')->values();
+                $departamentos->setCollection($sorted);
+            } else {
+                $departamentos = $departamentos->sortBy($request->sort_by, SORT_REGULAR, $dir === 'desc')->values();
+            }
+        }
+
         return view('departamentos.index', compact('departamentos'));
     }
 

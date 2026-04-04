@@ -31,13 +31,13 @@
                 <table class="vx-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Email</th>
-                            <th>Empresa</th>
-                            <th>Departamento</th>
-                            <th>Centro</th>
-                            <th>Teléfono</th>
+                            <x-columna-ordenable campo="id" label="ID" />
+                            <x-columna-ordenable campo="nombre" label="Nombre" />
+                            <x-columna-ordenable campo="email" label="Email" />
+                            <x-columna-ordenable campo="empresa_id" label="Empresa" />
+                            <x-columna-ordenable campo="departamento_id" label="Departamento" />
+                            <x-columna-ordenable campo="centro_id" label="Centro" />
+                            <x-columna-ordenable campo="telefono" label="Teléfono" />
                             <th>Restricciones</th>
                             <th>Acciones</th>
                         </tr>

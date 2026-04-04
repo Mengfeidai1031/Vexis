@@ -24,6 +24,18 @@ class RoleController extends Controller
             $roles = $roles->filter(fn($r) => $r->name === $request->nombre)->values();
         }
 
+        // Sorting
+        $sortable = ['id', 'name', 'created_at'];
+        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
+            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+            if ($roles instanceof \Illuminate\Pagination\AbstractPaginator) {
+                $sorted = $roles->getCollection()->sortBy($request->sort_by, SORT_REGULAR, $dir === 'desc')->values();
+                $roles->setCollection($sorted);
+            } else {
+                $roles = $roles->sortBy($request->sort_by, SORT_REGULAR, $dir === 'desc')->values();
+            }
+        }
+
         return view('roles.index', compact('roles'));
     }
 

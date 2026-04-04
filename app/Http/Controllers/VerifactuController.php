@@ -19,7 +19,14 @@ class VerifactuController extends Controller
         if ($request->filled('fecha_desde')) $query->whereDate('fecha_registro', '>=', $request->fecha_desde);
         if ($request->filled('fecha_hasta')) $query->whereDate('fecha_registro', '<=', $request->fecha_hasta);
 
-        $registros = $query->orderByDesc('fecha_registro')->paginate(15)->withQueryString();
+        // Sorting
+        $sortable = ['id', 'codigo_registro', 'factura_id', 'tipo_operacion', 'tipo_factura', 'nombre_emisor', 'importe_total', 'estado', 'fecha_registro'];
+        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
+            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+            $query->reorder()->orderBy($request->sort_by, $dir);
+        }
+
+        $registros = $query->paginate(15)->withQueryString();
 
         $stats = [
             'total' => Verifactu::count(),

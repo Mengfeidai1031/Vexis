@@ -62,8 +62,8 @@
         <div class="vx-table-wrapper">
             <table class="vx-table">
                 <thead><tr>
-                    @if($isSuperAdmin)<th>Empleado</th>@endif
-                    <th>Desde</th><th>Hasta</th><th>Días</th><th>Estado</th><th>Motivo</th><th>Acciones</th>
+                    @if($isSuperAdmin)<x-columna-ordenable campo="user_id" label="Empleado" />@endif
+                    <x-columna-ordenable campo="fecha_inicio" label="Desde" /><x-columna-ordenable campo="fecha_fin" label="Hasta" /><x-columna-ordenable campo="dias_solicitados" label="Días" /><x-columna-ordenable campo="estado" label="Estado" /><x-columna-ordenable campo="motivo" label="Motivo" /><th>Acciones</th>
                 </tr></thead>
                 <tbody>
                     @foreach($vacaciones as $v)

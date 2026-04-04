@@ -17,7 +17,14 @@ class CocheSustitucionController extends Controller
         if ($request->filled('taller_id')) $query->where('taller_id', $request->taller_id);
         if ($request->filled('marca_id')) $query->where('marca_id', $request->marca_id);
         if ($request->filled('disponible')) $query->where('disponible', $request->disponible);
-        $coches = $query->orderBy('matricula')->paginate(15)->withQueryString();
+        // Sorting
+        $sortable = ['id', 'matricula', 'modelo', 'marca_id', 'color', 'taller_id', 'disponible'];
+        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
+            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+            $query->reorder()->orderBy($request->sort_by, $dir);
+        }
+
+        $coches = $query->paginate(15)->withQueryString();
         $talleres = Taller::where('activo', true)->orderBy('nombre')->get();
 
         // Reservas del mes para calendario

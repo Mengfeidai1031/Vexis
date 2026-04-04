@@ -24,7 +24,14 @@ class AlmacenController extends Controller
         if ($request->filled('activo')) {
             $query->where('activo', $request->activo);
         }
-        $almacenes = $query->orderBy('nombre')->paginate(15)->withQueryString();
+        // Sorting
+        $sortable = ['id', 'codigo', 'nombre', 'localidad', 'isla', 'empresa_id', 'centro_id', 'activo'];
+        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
+            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+            $query->reorder()->orderBy($request->sort_by, $dir);
+        }
+
+        $almacenes = $query->paginate(15)->withQueryString();
         $empresas = Empresa::orderBy('nombre')->get();
         $centros = Centro::orderBy('nombre')->get();
         return view('almacenes.index', compact('almacenes', 'empresas', 'centros'));

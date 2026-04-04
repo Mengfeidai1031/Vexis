@@ -44,7 +44,7 @@
 <div class="vx-card"><div class="vx-card-body" style="padding:0;">
     @if($incidencias->count() > 0)
     <div class="vx-table-wrapper"><table class="vx-table">
-        <thead><tr><th>Código</th><th>Título</th><th>Prioridad</th><th>Estado</th><th>Creada por</th><th>Técnico</th><th>Fecha</th><th>Acciones</th></tr></thead>
+        <thead><tr><x-columna-ordenable campo="codigo_incidencia" label="Código" /><x-columna-ordenable campo="titulo" label="Título" /><x-columna-ordenable campo="prioridad" label="Prioridad" /><x-columna-ordenable campo="estado" label="Estado" /><x-columna-ordenable campo="usuario_id" label="Creada por" /><x-columna-ordenable campo="tecnico_id" label="Técnico" /><x-columna-ordenable campo="fecha_apertura" label="Fecha" /><th>Acciones</th></tr></thead>
         <tbody>@foreach($incidencias as $inc)
         <tr>
             <td style="font-family:var(--vx-font-mono);font-size:11px;">{{ $inc->codigo_incidencia }}</td>

@@ -45,7 +45,14 @@ class UserController extends Controller
         }
         if ($request->filled('email')) $query->where('email', $request->email);
 
-        $users = $query->orderBy('nombre')->paginate(15)->withQueryString();
+        // Sorting
+        $sortable = ['id', 'nombre', 'apellidos', 'email', 'empresa_id', 'departamento_id', 'centro_id', 'telefono'];
+        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
+            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+            $query->reorder()->orderBy($request->sort_by, $dir);
+        }
+
+        $users = $query->paginate(15)->withQueryString();
         $empresas = $this->userRepository->getEmpresas();
         $departamentos = $this->userRepository->getDepartamentos();
         $centros = $this->userRepository->getCentros();

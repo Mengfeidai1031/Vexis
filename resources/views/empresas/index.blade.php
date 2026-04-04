@@ -19,7 +19,7 @@
         @if($empresas->count() > 0)
         <div class="vx-table-wrapper">
             <table class="vx-table">
-                <thead><tr><th>ID</th><th>Nombre</th><th>Abrev.</th><th>CIF</th><th>Domicilio</th><th>CP</th><th>Teléfono</th><th>Acciones</th></tr></thead>
+                <thead><tr><x-columna-ordenable campo="id" label="ID" /><x-columna-ordenable campo="nombre" label="Nombre" /><x-columna-ordenable campo="abreviatura" label="Abrev." /><x-columna-ordenable campo="cif" label="CIF" /><x-columna-ordenable campo="domicilio" label="Domicilio" /><x-columna-ordenable campo="codigo_postal" label="CP" /><x-columna-ordenable campo="telefono" label="Teléfono" /><th>Acciones</th></tr></thead>
                 <tbody>
                     @foreach($empresas as $empresa)
                     <tr>

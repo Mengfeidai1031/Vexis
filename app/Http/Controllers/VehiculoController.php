@@ -36,7 +36,14 @@ class VehiculoController extends Controller
         if ($request->filled('color_externo')) $query->where('color_externo', $request->color_externo);
         if ($request->filled('color_interno')) $query->where('color_interno', $request->color_interno);
 
-        $vehiculos = $query->orderByDesc('id')->paginate(15)->withQueryString();
+        // Sorting
+        $sortable = ['id', 'chasis', 'matricula', 'marca_id', 'modelo', 'version', 'color_externo', 'color_interno', 'empresa_id'];
+        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
+            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+            $query->reorder()->orderBy($request->sort_by, $dir);
+        }
+
+        $vehiculos = $query->paginate(15)->withQueryString();
         $marcas = Marca::where('activa', true)->orderBy('nombre')->get();
         $empresas = Empresa::orderBy('nombre')->get();
         $modelos = Vehiculo::whereNotNull('modelo')->distinct()->orderBy('modelo')->pluck('modelo');

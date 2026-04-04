@@ -36,7 +36,7 @@
         @if($festivos->count() > 0)
         <div class="vx-table-wrapper">
             <table class="vx-table">
-                <thead><tr><th>Fecha</th><th>Nombre</th><th>Ámbito</th><th>Municipio</th><th>Acciones</th></tr></thead>
+                <thead><tr><x-columna-ordenable campo="fecha" label="Fecha" /><x-columna-ordenable campo="nombre" label="Nombre" /><x-columna-ordenable campo="ambito" label="Ámbito" /><x-columna-ordenable campo="municipio" label="Municipio" /><th>Acciones</th></tr></thead>
                 <tbody>
                     @foreach($festivos as $f)
                     <tr>

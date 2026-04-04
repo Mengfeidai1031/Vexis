@@ -17,7 +17,14 @@ class NamingPcController extends Controller
         if ($request->filled('centro_id')) $query->where('centro_id', $request->centro_id);
         if ($request->filled('sistema_operativo')) $query->where('sistema_operativo', $request->sistema_operativo);
         if ($request->filled('activo')) $query->where('activo', $request->activo);
-        $namingPcs = $query->orderBy('nombre_equipo')->paginate(15)->withQueryString();
+        // Sorting
+        $sortable = ['id', 'nombre_equipo', 'tipo', 'direccion_ip', 'empresa_id', 'centro_id', 'sistema_operativo', 'version_so', 'activo'];
+        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
+            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+            $query->reorder()->orderBy($request->sort_by, $dir);
+        }
+
+        $namingPcs = $query->paginate(15)->withQueryString();
         $empresas = Empresa::orderBy('nombre')->get();
         $centros = Centro::orderBy('nombre')->get();
         return view('naming-pcs.index', compact('namingPcs', 'empresas', 'centros'));

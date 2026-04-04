@@ -31,6 +31,18 @@ class RestriccionController extends Controller
             $restricciones = $restricciones->filter(fn($r) => $r->restrictable_type === $request->tipo)->values();
         }
 
+        // Sorting
+        $sortable = ['id', 'user_id', 'restrictable_type', 'created_at'];
+        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
+            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+            if ($restricciones instanceof \Illuminate\Pagination\AbstractPaginator) {
+                $sorted = $restricciones->getCollection()->sortBy($request->sort_by, SORT_REGULAR, $dir === 'desc')->values();
+                $restricciones->setCollection($sorted);
+            } else {
+                $restricciones = $restricciones->sortBy($request->sort_by, SORT_REGULAR, $dir === 'desc')->values();
+            }
+        }
+
         $usuarios = User::orderBy('nombre')->get();
 
         return view('restricciones.index', compact('restricciones', 'usuarios'));

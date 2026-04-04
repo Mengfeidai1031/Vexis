@@ -15,7 +15,14 @@ class EmpresaController extends Controller
         }
         if ($request->filled('cif')) $query->where('cif', $request->cif);
         if ($request->filled('codigo_postal')) $query->where('codigo_postal', $request->codigo_postal);
-        $empresas = $query->orderBy('nombre')->paginate(15)->withQueryString();
+        // Sorting
+        $sortable = ['id', 'nombre', 'abreviatura', 'cif', 'domicilio', 'codigo_postal', 'telefono'];
+        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
+            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+            $query->reorder()->orderBy($request->sort_by, $dir);
+        }
+
+        $empresas = $query->paginate(15)->withQueryString();
         $codigos_postales = Empresa::whereNotNull('codigo_postal')->distinct()->orderBy('codigo_postal')->pluck('codigo_postal');
         return view('empresas.index', compact('empresas', 'codigos_postales'));
     }

@@ -9,7 +9,7 @@
 <div class="vx-card"><div class="vx-card-body" style="padding:0;">
     @if($mecanicos->count() > 0)
     <div class="vx-table-wrapper"><table class="vx-table">
-        <thead><tr><th>Nombre</th><th>Especialidad</th><th>Taller</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <thead><tr><x-columna-ordenable campo="nombre" label="Nombre" /><x-columna-ordenable campo="especialidad" label="Especialidad" /><x-columna-ordenable campo="taller_id" label="Taller" /><x-columna-ordenable campo="activo" label="Estado" /><th>Acciones</th></tr></thead>
         <tbody>@foreach($mecanicos as $m)
         <tr>
             <td style="font-weight:600;"><i class="bi bi-person-gear" style="color:var(--vx-success);margin-right:4px;"></i>{{ $m->nombre_completo }}</td>

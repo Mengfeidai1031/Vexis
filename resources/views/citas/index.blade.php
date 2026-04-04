@@ -66,7 +66,7 @@
 <div class="vx-card"><div class="vx-card-body" style="padding:0;">
     @if($citas->count() > 0)
     <div class="vx-table-wrapper"><table class="vx-table">
-        <thead><tr><th>Fecha</th><th>Hora</th><th>Cliente</th><th>Vehículo</th><th>Mecánico</th><th>Taller</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <thead><tr><x-columna-ordenable campo="fecha" label="Fecha" /><x-columna-ordenable campo="hora_inicio" label="Hora" /><x-columna-ordenable campo="cliente_nombre" label="Cliente" /><x-columna-ordenable campo="vehiculo_info" label="Vehículo" /><x-columna-ordenable campo="mecanico_id" label="Mecánico" /><x-columna-ordenable campo="taller_id" label="Taller" /><x-columna-ordenable campo="estado" label="Estado" /><th>Acciones</th></tr></thead>
         <tbody>@foreach($citas as $c)
         <tr>
             <td style="font-size:12px;">{{ $c->fecha->format('d/m/Y') }}</td>

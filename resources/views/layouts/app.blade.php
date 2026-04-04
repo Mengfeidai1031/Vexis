@@ -776,9 +776,9 @@
                     <div class="vx-mega-col">
                         <div class="vx-mega-col-title">Explorar</div>
                         <a href="{{ route('cliente.precios') }}" class="vx-dropdown-item"><i class="bi bi-currency-euro"></i> Precios</a>
+                        <a href="{{ route('cliente.noticias') }}" class="vx-dropdown-item"><i class="bi bi-newspaper"></i> Noticias</a>
                         <a href="{{ route('cliente.campanias') }}" class="vx-dropdown-item"><i class="bi bi-megaphone"></i> Campañas</a>
                         <a href="{{ route('cliente.concesionarios') }}" class="vx-dropdown-item"><i class="bi bi-building"></i> Concesionarios</a>
-                        <a href="{{ route('cliente.noticias') }}" class="vx-dropdown-item"><i class="bi bi-newspaper"></i> Noticias</a>
                         <a href="{{ route('cliente.talleres') }}" class="vx-dropdown-item"><i class="bi bi-tools"></i> Talleres</a>
                     </div>
                 </div>

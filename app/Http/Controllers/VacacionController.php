@@ -21,7 +21,16 @@ class VacacionController extends Controller
         if ($request->filled('estado')) {
             $query->where('estado', $request->estado);
         }
-        $vacaciones = $query->whereYear('fecha_inicio', $anio)->orderByDesc('created_at')->paginate(15)->withQueryString();
+        $query->whereYear('fecha_inicio', $anio);
+
+        // Sorting
+        $sortable = ['id', 'user_id', 'fecha_inicio', 'fecha_fin', 'dias_solicitados', 'estado', 'motivo'];
+        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
+            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+            $query->reorder()->orderBy($request->sort_by, $dir);
+        }
+
+        $vacaciones = $query->paginate(15)->withQueryString();
 
         $diasUsados = Vacacion::diasUsados($user->id, $anio);
         $diasDisponibles = Vacacion::DIAS_TOTALES - $diasUsados;

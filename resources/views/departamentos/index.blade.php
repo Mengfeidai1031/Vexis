@@ -21,10 +21,10 @@
                 <table class="vx-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Abreviatura</th>
-                            <th>Creado</th>
+                            <x-columna-ordenable campo="id" label="ID" />
+                            <x-columna-ordenable campo="nombre" label="Nombre" />
+                            <x-columna-ordenable campo="abreviatura" label="Abreviatura" />
+                            <x-columna-ordenable campo="created_at" label="Creado" />
                             <th>Acciones</th>
                         </tr>
                     </thead>

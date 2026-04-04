@@ -13,7 +13,14 @@ class MecanicoController extends Controller
         $query = Mecanico::with('taller');
         if ($request->filled('taller_id')) $query->where('taller_id', $request->taller_id);
         if ($request->filled('activo')) $query->where('activo', $request->activo);
-        $mecanicos = $query->orderBy('apellidos')->paginate(15)->withQueryString();
+        // Sorting
+        $sortable = ['id', 'nombre', 'apellidos', 'especialidad', 'taller_id', 'activo'];
+        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
+            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+            $query->reorder()->orderBy($request->sort_by, $dir);
+        }
+
+        $mecanicos = $query->paginate(15)->withQueryString();
         $talleres = Taller::where('activo', true)->orderBy('nombre')->get();
         return view('mecanicos.index', compact('mecanicos', 'talleres'));
     }

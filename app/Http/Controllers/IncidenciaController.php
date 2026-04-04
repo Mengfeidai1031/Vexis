@@ -22,7 +22,14 @@ class IncidenciaController extends Controller
         if ($request->filled('fecha_desde')) $query->whereDate('fecha_apertura', '>=', $request->fecha_desde);
         if ($request->filled('fecha_hasta')) $query->whereDate('fecha_apertura', '<=', $request->fecha_hasta);
 
-        $incidencias = $query->orderByDesc('fecha_apertura')->paginate(15)->withQueryString();
+        // Sorting
+        $sortable = ['id', 'codigo_incidencia', 'titulo', 'prioridad', 'estado', 'usuario_id', 'tecnico_id', 'fecha_apertura'];
+        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
+            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+            $query->reorder()->orderBy($request->sort_by, $dir);
+        }
+
+        $incidencias = $query->paginate(15)->withQueryString();
 
         $stats = [
             'total' => Incidencia::count(),

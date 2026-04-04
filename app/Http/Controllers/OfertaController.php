@@ -46,6 +46,14 @@ class OfertaController extends Controller
             $ofertas = $this->ofertaRepository->all();
         }
 
+        // Sorting
+        $sortable = ['id', 'fecha', 'cliente_id', 'vehiculo_id'];
+        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
+            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+            $sorted = $ofertas->getCollection()->sortBy($request->sort_by, SORT_REGULAR, $dir === 'desc')->values();
+            $ofertas->setCollection($sorted);
+        }
+
         // Obtener datos para los selectores de filtros
         $clientes = $this->ofertaRepository->getClientes();
         $vehiculos = $this->ofertaRepository->getVehiculos();

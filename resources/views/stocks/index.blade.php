@@ -18,7 +18,7 @@
 <div class="vx-card"><div class="vx-card-body" style="padding:0;">
     @if($stocks->count() > 0)
     <div class="vx-table-wrapper"><table class="vx-table">
-        <thead><tr><th>Ref.</th><th>Pieza</th><th>Marca</th><th>Cantidad</th><th>Mín.</th><th>Precio</th><th>Almacén</th><th>Empresa</th><th>Acciones</th></tr></thead>
+        <thead><tr><x-columna-ordenable campo="referencia" label="Ref." /><x-columna-ordenable campo="nombre_pieza" label="Pieza" /><x-columna-ordenable campo="marca_pieza" label="Marca" /><x-columna-ordenable campo="cantidad" label="Cantidad" /><x-columna-ordenable campo="stock_minimo" label="Mín." /><x-columna-ordenable campo="precio_unitario" label="Precio" /><x-columna-ordenable campo="almacen_id" label="Almacén" /><x-columna-ordenable campo="empresa_id" label="Empresa" /><th>Acciones</th></tr></thead>
         <tbody>
             @foreach($stocks as $s)
             <tr>

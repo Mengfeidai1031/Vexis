@@ -29,7 +29,14 @@ class CentroController extends Controller
         if ($request->filled('municipio')) $query->where('municipio', $request->municipio);
         if ($request->filled('provincia')) $query->where('provincia', $request->provincia);
 
-        $centros = $query->orderBy('nombre')->paginate(15)->withQueryString();
+        // Sorting
+        $sortable = ['id', 'nombre', 'empresa_id', 'direccion', 'municipio', 'provincia'];
+        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
+            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+            $query->reorder()->orderBy($request->sort_by, $dir);
+        }
+
+        $centros = $query->paginate(15)->withQueryString();
         $empresas = Empresa::orderBy('nombre')->get();
         $municipios = Centro::whereNotNull('municipio')->distinct()->orderBy('municipio')->pluck('municipio');
         $provincias = Centro::whereNotNull('provincia')->distinct()->orderBy('provincia')->pluck('provincia');

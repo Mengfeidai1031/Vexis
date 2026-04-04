@@ -16,7 +16,7 @@
 <div class="vx-card"><div class="vx-card-body" style="padding:0;">
     @if($repartos->count() > 0)
     <div class="vx-table-wrapper"><table class="vx-table">
-        <thead><tr><th>Código</th><th>Pieza</th><th>Cantidad</th><th>Origen</th><th>Destino</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead>
+        <thead><tr><x-columna-ordenable campo="codigo_reparto" label="Código" /><x-columna-ordenable campo="stock_id" label="Pieza" /><x-columna-ordenable campo="cantidad" label="Cantidad" /><x-columna-ordenable campo="almacen_origen_id" label="Origen" /><x-columna-ordenable campo="almacen_destino_id" label="Destino" /><x-columna-ordenable campo="estado" label="Estado" /><x-columna-ordenable campo="fecha_solicitud" label="Fecha" /><th>Acciones</th></tr></thead>
         <tbody>
             @foreach($repartos as $r)
             <tr>

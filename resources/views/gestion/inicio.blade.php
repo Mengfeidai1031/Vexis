@@ -118,6 +118,14 @@
             <div class="vx-module-info"><h4>Festivos</h4><p>Calendario de festivos por municipio</p></div>
         </a>
         @endcan
+        @if(\App\Models\Setting::get('modulo_incidencias', true))
+        @can('ver incidencias')
+        <a href="{{ route('incidencias.index') }}" class="vx-module-card">
+            <div class="vx-module-icon" style="background: rgba(243,156,18,0.1); color: var(--vx-warning);"><i class="bi bi-exclamation-triangle"></i></div>
+            <div class="vx-module-info"><h4>Incidencias</h4><p>Gestión de incidencias y soporte</p></div>
+        </a>
+        @endcan
+        @endif
     </div>
 </div>
 @endcanany

@@ -6,19 +6,14 @@
 </div>
 <p style="color: var(--vx-text-muted); margin-bottom: 24px;">Gestión de ofertas, vehículos, ventas y tasaciones.</p>
 
+{{-- Sección Gestión Administrativa --}}
 <div class="vx-module-section">
-    <h3 class="vx-module-section-title">Operaciones</h3>
+    <h3 class="vx-module-section-title">Gestión Administrativa</h3>
     <div class="vx-module-grid">
         @can('ver ofertas')
         <a href="{{ route('ofertas.index') }}" class="vx-module-card">
             <div class="vx-module-icon" style="background: rgba(243,156,18,0.1); color: var(--vx-warning);"><i class="bi bi-file-earmark-text"></i></div>
             <div class="vx-module-info"><h4>Ofertas</h4><p>Ofertas comerciales con procesamiento PDF</p></div>
-        </a>
-        @endcan
-        @can('ver vehículos')
-        <a href="{{ route('vehiculos.index') }}" class="vx-module-card">
-            <div class="vx-module-icon" style="background: rgba(52,152,219,0.1); color: var(--vx-info);"><i class="bi bi-truck"></i></div>
-            <div class="vx-module-info"><h4>Vehículos</h4><p>Inventario de vehículos con exportación</p></div>
         </a>
         @endcan
         @can('ver ventas')
@@ -31,6 +26,35 @@
         <a href="{{ route('tasaciones.index') }}" class="vx-module-card">
             <div class="vx-module-icon" style="background: rgba(155,89,182,0.1); color: #9B59B6;"><i class="bi bi-calculator"></i></div>
             <div class="vx-module-info"><h4>Tasaciones</h4><p>Tasaciones de vehículos</p></div>
+        </a>
+        @endcan
+        @if(\App\Models\Setting::get('modulo_facturas', true))
+        @can('ver facturas')
+        <a href="{{ route('facturas.index') }}" class="vx-module-card">
+            <div class="vx-module-icon" style="background: rgba(231,76,60,0.1); color: var(--vx-danger);"><i class="bi bi-receipt"></i></div>
+            <div class="vx-module-info"><h4>Facturas</h4><p>Gestión y emisión de facturas</p></div>
+        </a>
+        @endcan
+        @endif
+        @if(\App\Models\Setting::get('modulo_verifactu', true))
+        @can('ver verifactu')
+        <a href="{{ route('verifactu.index') }}" class="vx-module-card">
+            <div class="vx-module-icon" style="background: rgba(52,73,94,0.1); color: #34495E;"><i class="bi bi-shield-check"></i></div>
+            <div class="vx-module-info"><h4>Verifactu</h4><p>Registro y verificación de facturación electrónica</p></div>
+        </a>
+        @endcan
+        @endif
+    </div>
+</div>
+
+{{-- Sección Gestión de Vehículos --}}
+<div class="vx-module-section">
+    <h3 class="vx-module-section-title">Gestión de Vehículos</h3>
+    <div class="vx-module-grid">
+        @can('ver vehículos')
+        <a href="{{ route('vehiculos.index') }}" class="vx-module-card">
+            <div class="vx-module-icon" style="background: rgba(52,152,219,0.1); color: var(--vx-info);"><i class="bi bi-truck"></i></div>
+            <div class="vx-module-info"><h4>Vehículos</h4><p>Inventario de vehículos con exportación</p></div>
         </a>
         @endcan
         @can('ver catalogo-precios')

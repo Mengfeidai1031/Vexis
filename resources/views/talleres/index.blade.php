@@ -14,7 +14,7 @@
 <div class="vx-card"><div class="vx-card-body" style="padding:0;">
     @if($talleres->count() > 0)
     <div class="vx-table-wrapper"><table class="vx-table">
-        <thead><tr><th>Código</th><th>Nombre</th><th>Marca</th><th>Isla</th><th>Localidad</th><th>Cap.</th><th>Mec.</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <thead><tr><x-columna-ordenable campo="codigo" label="Código" /><x-columna-ordenable campo="nombre" label="Nombre" /><x-columna-ordenable campo="marca_id" label="Marca" /><x-columna-ordenable campo="isla" label="Isla" /><x-columna-ordenable campo="localidad" label="Localidad" /><x-columna-ordenable campo="capacidad_diaria" label="Cap." /><th>Mec.</th><x-columna-ordenable campo="activo" label="Estado" /><th>Acciones</th></tr></thead>
         <tbody>@foreach($talleres as $t)
         <tr>
             <td style="font-family:var(--vx-font-mono);font-size:11px;">{{ $t->codigo }}</td>

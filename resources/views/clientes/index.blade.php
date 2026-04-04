@@ -26,12 +26,12 @@
                 <table class="vx-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>DNI</th>
-                            <th>Empresa</th>
-                            <th>Domicilio</th>
-                            <th>CP</th>
+                            <x-columna-ordenable campo="id" label="ID" />
+                            <x-columna-ordenable campo="nombre" label="Nombre" />
+                            <x-columna-ordenable campo="dni" label="DNI" />
+                            <x-columna-ordenable campo="empresa_id" label="Empresa" />
+                            <x-columna-ordenable campo="domicilio" label="Domicilio" />
+                            <x-columna-ordenable campo="codigo_postal" label="CP" />
                             <th>Acciones</th>
                         </tr>
                     </thead>

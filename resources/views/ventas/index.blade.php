@@ -15,7 +15,7 @@
 <div class="vx-card"><div class="vx-card-body" style="padding:0;">
     @if($ventas->count() > 0)
     <div class="vx-table-wrapper"><table class="vx-table">
-        <thead><tr><th>Código</th><th>Vehículo</th><th>Cliente</th><th>Marca</th><th>Total</th><th>Pago</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead>
+        <thead><tr><x-columna-ordenable campo="codigo_venta" label="Código" /><x-columna-ordenable campo="vehiculo_id" label="Vehículo" /><x-columna-ordenable campo="cliente_id" label="Cliente" /><x-columna-ordenable campo="marca_id" label="Marca" /><x-columna-ordenable campo="precio_final" label="Total" /><x-columna-ordenable campo="forma_pago" label="Pago" /><x-columna-ordenable campo="estado" label="Estado" /><x-columna-ordenable campo="fecha_venta" label="Fecha" /><th>Acciones</th></tr></thead>
         <tbody>@foreach($ventas as $v)
         <tr>
             <td style="font-family:var(--vx-font-mono);font-size:11px;">{{ $v->codigo_venta }}</td>

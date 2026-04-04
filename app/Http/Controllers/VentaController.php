@@ -33,7 +33,14 @@ class VentaController extends Controller
         if ($request->filled('fecha_desde')) $query->whereDate('fecha_venta', '>=', $request->fecha_desde);
         if ($request->filled('fecha_hasta')) $query->whereDate('fecha_venta', '<=', $request->fecha_hasta);
         if ($request->filled('vendedor_id')) $query->where('vendedor_id', $request->vendedor_id);
-        $ventas = $query->orderByDesc('fecha_venta')->paginate(15)->withQueryString();
+        // Sorting
+        $sortable = ['id', 'codigo_venta', 'vehiculo_id', 'cliente_id', 'marca_id', 'precio_final', 'forma_pago', 'estado', 'fecha_venta'];
+        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
+            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+            $query->reorder()->orderBy($request->sort_by, $dir);
+        }
+
+        $ventas = $query->paginate(15)->withQueryString();
         $marcas = Marca::where('activa', true)->orderBy('nombre')->get();
         $clientes = Cliente::orderBy('nombre')->get();
         $empresas = Empresa::orderBy('nombre')->get();

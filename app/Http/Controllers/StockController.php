@@ -21,7 +21,14 @@ class StockController extends Controller
         if ($request->filled('bajo_stock')) $query->whereColumn('cantidad', '<=', 'stock_minimo');
         if ($request->input('activo') !== null && $request->input('activo') !== '') $query->where('activo', $request->activo);
 
-        $stocks = $query->orderBy('nombre_pieza')->paginate(15)->withQueryString();
+        // Sorting
+        $sortable = ['id', 'referencia', 'nombre_pieza', 'marca_pieza', 'cantidad', 'stock_minimo', 'precio_unitario', 'almacen_id', 'empresa_id'];
+        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
+            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+            $query->reorder()->orderBy($request->sort_by, $dir);
+        }
+
+        $stocks = $query->paginate(15)->withQueryString();
         $almacenes = Almacen::where('activo', true)->orderBy('nombre')->get();
         $empresas = Empresa::orderBy('nombre')->get();
         return view('stocks.index', compact('stocks', 'almacenes', 'empresas'));

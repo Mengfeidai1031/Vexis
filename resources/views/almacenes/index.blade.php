@@ -20,7 +20,7 @@
         @if($almacenes->count() > 0)
         <div class="vx-table-wrapper">
             <table class="vx-table">
-                <thead><tr><th>Código</th><th>Nombre</th><th>Localidad</th><th>Isla</th><th>Empresa</th><th>Centro</th><th>Estado</th><th>Acciones</th></tr></thead>
+                <thead><tr><x-columna-ordenable campo="codigo" label="Código" /><x-columna-ordenable campo="nombre" label="Nombre" /><x-columna-ordenable campo="localidad" label="Localidad" /><x-columna-ordenable campo="isla" label="Isla" /><x-columna-ordenable campo="empresa_id" label="Empresa" /><x-columna-ordenable campo="centro_id" label="Centro" /><x-columna-ordenable campo="activo" label="Estado" /><th>Acciones</th></tr></thead>
                 <tbody>
                     @foreach($almacenes as $almacen)
                     <tr>

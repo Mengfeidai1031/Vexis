@@ -21,11 +21,11 @@
                 <table class="vx-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
+                            <x-columna-ordenable campo="id" label="ID" />
+                            <x-columna-ordenable campo="name" label="Nombre" />
                             <th>Permisos</th>
                             <th>Usuarios</th>
-                            <th>Creado</th>
+                            <x-columna-ordenable campo="created_at" label="Creado" />
                             <th>Acciones</th>
                         </tr>
                     </thead>

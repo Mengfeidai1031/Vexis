@@ -21,7 +21,7 @@
         @if($namingPcs->count() > 0)
         <div class="vx-table-wrapper">
             <table class="vx-table">
-                <thead><tr><th>Nombre</th><th>Tipo</th><th>IP</th><th>Empresa</th><th>Centro</th><th>SO</th><th>Versión</th><th>Estado</th><th>Acciones</th></tr></thead>
+                <thead><tr><x-columna-ordenable campo="nombre_equipo" label="Nombre" /><x-columna-ordenable campo="tipo" label="Tipo" /><x-columna-ordenable campo="direccion_ip" label="IP" /><x-columna-ordenable campo="empresa_id" label="Empresa" /><x-columna-ordenable campo="centro_id" label="Centro" /><x-columna-ordenable campo="sistema_operativo" label="SO" /><x-columna-ordenable campo="version_so" label="Versión" /><x-columna-ordenable campo="activo" label="Estado" /><th>Acciones</th></tr></thead>
                 <tbody>
                     @foreach($namingPcs as $pc)
                     <tr>
