@@ -109,6 +109,7 @@
         .vx-mega-col:not(:last-child) { border-right: 1px solid var(--vx-border); }
         .vx-mega-col .vx-dropdown-item { padding: 7px 16px; }
         .vx-mega-col .vx-dropdown-header { padding: 8px 16px 4px; }
+        .vx-mega-col-title { padding: 8px 16px 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--vx-text-muted); }
         .vx-dropdown-sub { min-width: 200px; }
         .vx-submenu-parent { position: relative; }
         .vx-submenu-trigger { cursor: pointer; display: flex; align-items: center; }
@@ -693,36 +694,48 @@
             {{-- Módulo COMERCIAL --}}
             @canany(['ver vehículos', 'ver ofertas', 'ver ventas', 'ver tasaciones', 'ver catalogo-precios', 'ver facturas', 'ver verifactu'])
             <li class="vx-nav-item vx-module-item-dev">
-                <button class="vx-nav-link {{ request()->is('comercial*','ofertas*','vehiculos*','ventas*','tasaciones*','catalogo-precios*') ? 'active' : '' }}">
+                <button class="vx-nav-link {{ request()->is('comercial*','ofertas*','vehiculos*','ventas*','tasaciones*','catalogo-precios*','facturas*','verifactu*') ? 'active' : '' }}">
                     <i class="bi bi-car-front"></i> Comercial <i class="bi bi-chevron-down" style="font-size:10px;"></i>
                 </button>
-                <div class="vx-dropdown">
+                <div class="vx-dropdown vx-dropdown-sub">
                     <a href="{{ route('comercial.inicio') }}" class="vx-dropdown-item"><i class="bi bi-house-door"></i> Inicio</a>
-                    @can('ver ofertas')
-                    <a href="{{ route('ofertas.index') }}" class="vx-dropdown-item"><i class="bi bi-file-earmark-text"></i> Ofertas</a>
-                    @endcan
-                    @can('ver vehículos')
-                    <a href="{{ route('vehiculos.index') }}" class="vx-dropdown-item"><i class="bi bi-truck"></i> Vehículos</a>
-                    @endcan
-                    @can('ver ventas')
-                    <a href="{{ route('ventas.index') }}" class="vx-dropdown-item"><i class="bi bi-cart-check"></i> Ventas</a>
-                    @endcan
-                    @can('ver tasaciones')
-                    <a href="{{ route('tasaciones.index') }}" class="vx-dropdown-item"><i class="bi bi-calculator"></i> Tasaciones</a>
-                    @endcan
-                    @can('ver catalogo-precios')
-                    <a href="{{ route('catalogo-precios.index') }}" class="vx-dropdown-item"><i class="bi bi-currency-euro"></i> Catálogo</a>
-                    @endcan
-                    @if(\App\Models\Setting::get('modulo_facturas', true))
-                    @can('ver facturas')
-                    <a href="{{ route('facturas.index') }}" class="vx-dropdown-item"><i class="bi bi-receipt"></i> Facturas</a>
-                    @endcan
-                    @endif
-                    @if(\App\Models\Setting::get('modulo_verifactu', true))
-                    @can('ver verifactu')
-                    <a href="{{ route('verifactu.index') }}" class="vx-dropdown-item"><i class="bi bi-shield-check"></i> Verifactu</a>
-                    @endcan
-                    @endif
+                    {{-- Gestión Administrativa con submenú --}}
+                    <div class="vx-submenu-parent">
+                        <div class="vx-dropdown-item vx-submenu-trigger"><i class="bi bi-clipboard-data"></i> Gestión Administrativa <i class="bi bi-chevron-right" style="margin-left:auto;font-size:10px;"></i></div>
+                        <div class="vx-submenu">
+                            @can('ver ofertas')
+                            <a href="{{ route('ofertas.index') }}" class="vx-dropdown-item"><i class="bi bi-file-earmark-text"></i> Ofertas</a>
+                            @endcan
+                            @can('ver ventas')
+                            <a href="{{ route('ventas.index') }}" class="vx-dropdown-item"><i class="bi bi-cart-check"></i> Ventas</a>
+                            @endcan
+                            @can('ver tasaciones')
+                            <a href="{{ route('tasaciones.index') }}" class="vx-dropdown-item"><i class="bi bi-calculator"></i> Tasaciones</a>
+                            @endcan
+                            @if(\App\Models\Setting::get('modulo_facturas', true))
+                            @can('ver facturas')
+                            <a href="{{ route('facturas.index') }}" class="vx-dropdown-item"><i class="bi bi-receipt"></i> Facturas</a>
+                            @endcan
+                            @endif
+                            @if(\App\Models\Setting::get('modulo_verifactu', true))
+                            @can('ver verifactu')
+                            <a href="{{ route('verifactu.index') }}" class="vx-dropdown-item"><i class="bi bi-shield-check"></i> Verifactu</a>
+                            @endcan
+                            @endif
+                        </div>
+                    </div>
+                    {{-- Gestión de Vehículos con submenú --}}
+                    <div class="vx-submenu-parent">
+                        <div class="vx-dropdown-item vx-submenu-trigger"><i class="bi bi-car-front"></i> Gestión de Vehículos <i class="bi bi-chevron-right" style="margin-left:auto;font-size:10px;"></i></div>
+                        <div class="vx-submenu">
+                            @can('ver vehículos')
+                            <a href="{{ route('vehiculos.index') }}" class="vx-dropdown-item"><i class="bi bi-truck"></i> Vehículos</a>
+                            @endcan
+                            @can('ver catalogo-precios')
+                            <a href="{{ route('catalogo-precios.index') }}" class="vx-dropdown-item"><i class="bi bi-currency-euro"></i> Catálogo</a>
+                            @endcan
+                        </div>
+                    </div>
                 </div>
             </li>
             @endcanany
@@ -751,15 +764,21 @@
                     <span class="vx-module-label-client">Menú</span>
                     <i class="bi bi-chevron-down" style="font-size:10px;"></i>
                 </button>
-                <div class="vx-dropdown">
-                    <a href="{{ route('cliente.inicio') }}" class="vx-dropdown-item"><i class="bi bi-house-door"></i> Inicio</a>
-                    <a href="{{ route('cliente.chatbot') }}" class="vx-dropdown-item"><i class="bi bi-robot"></i> Chatbot IA</a>
-                    <a href="{{ route('cliente.pretasacion') }}" class="vx-dropdown-item"><i class="bi bi-calculator"></i> Pretasación IA</a>
-                    <a href="{{ route('cliente.tasacion') }}" class="vx-dropdown-item"><i class="bi bi-clipboard-check"></i> Tasación Formal</a>
-                    <a href="{{ route('cliente.configurador') }}" class="vx-dropdown-item"><i class="bi bi-palette"></i> Configurador</a>
-                    <a href="{{ route('cliente.precios') }}" class="vx-dropdown-item"><i class="bi bi-currency-euro"></i> Precios</a>
-                    <a href="{{ route('cliente.campanias') }}" class="vx-dropdown-item"><i class="bi bi-megaphone"></i> Campañas</a>
-                    <a href="{{ route('cliente.concesionarios') }}" class="vx-dropdown-item"><i class="bi bi-building"></i> Concesionarios</a>
+                <div class="vx-dropdown vx-dropdown-mega">
+                    <div class="vx-mega-col">
+                        <div class="vx-mega-col-title">Servicios</div>
+                        <a href="{{ route('cliente.inicio') }}" class="vx-dropdown-item"><i class="bi bi-house-door"></i> Inicio</a>
+                        <a href="{{ route('cliente.chatbot') }}" class="vx-dropdown-item"><i class="bi bi-robot"></i> Chatbot IA</a>
+                        <a href="{{ route('cliente.pretasacion') }}" class="vx-dropdown-item"><i class="bi bi-calculator"></i> Pretasación IA</a>
+                        <a href="{{ route('cliente.tasacion') }}" class="vx-dropdown-item"><i class="bi bi-clipboard-check"></i> Tasación Formal</a>
+                    </div>
+                    <div class="vx-mega-col">
+                        <div class="vx-mega-col-title">Explorar</div>
+                        <a href="{{ route('cliente.configurador') }}" class="vx-dropdown-item"><i class="bi bi-palette"></i> Configurador</a>
+                        <a href="{{ route('cliente.precios') }}" class="vx-dropdown-item"><i class="bi bi-currency-euro"></i> Precios</a>
+                        <a href="{{ route('cliente.campanias') }}" class="vx-dropdown-item"><i class="bi bi-megaphone"></i> Campañas</a>
+                        <a href="{{ route('cliente.concesionarios') }}" class="vx-dropdown-item"><i class="bi bi-building"></i> Concesionarios</a>
+                    </div>
                 </div>
             </li>
         </ul>
