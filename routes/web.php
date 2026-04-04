@@ -431,6 +431,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/cliente/concesionarios', [ClienteModuloController::class, 'concesionarios'])->name('cliente.concesionarios');
     Route::get('/cliente/precios', [ClienteModuloController::class, 'precios'])->name('cliente.precios');
     Route::get('/cliente/configurador', [ClienteModuloController::class, 'configurador'])->name('cliente.configurador');
+    Route::get('/cliente/noticias', [ClienteModuloController::class, 'noticias'])->name('cliente.noticias');
+    Route::get('/cliente/talleres', [ClienteModuloController::class, 'talleres'])->name('cliente.talleres');
 
     // Perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

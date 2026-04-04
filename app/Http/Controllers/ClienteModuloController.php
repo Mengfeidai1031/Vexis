@@ -9,6 +9,8 @@ use App\Models\Centro;
 use App\Models\Cliente;
 use App\Models\Marca;
 use App\Models\Empresa;
+use App\Models\Noticia;
+use App\Models\Taller;
 use App\Models\Tasacion;
 use App\Models\User;
 use App\Models\Vehiculo;
@@ -25,6 +27,27 @@ class ClienteModuloController extends Controller
     public function inicio()
     {
         return view('cliente.inicio');
+    }
+
+    // === NOTICIAS (solo vista) ===
+    public function noticias()
+    {
+        $noticias = Noticia::with('autor')
+            ->where('publicada', true)
+            ->orderByDesc('destacada')
+            ->orderByDesc('fecha_publicacion')
+            ->get();
+        return view('cliente.noticias', compact('noticias'));
+    }
+
+    // === TALLERES (solo vista) ===
+    public function talleres()
+    {
+        $talleres = Taller::with(['empresa', 'marca'])
+            ->where('activo', true)
+            ->orderBy('nombre')
+            ->get();
+        return view('cliente.talleres', compact('talleres'));
     }
 
     // === CAMPAÑAS (solo vista) ===

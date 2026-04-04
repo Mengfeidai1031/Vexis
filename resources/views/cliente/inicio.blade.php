@@ -36,6 +36,14 @@
             <div class="vx-module-icon" style="background:rgba(52,73,94,0.1);color:#34495E;"><i class="bi bi-building"></i></div>
             <div class="vx-module-info"><h4>Concesionarios</h4><p>Encuentra tu concesionario más cercano</p></div>
         </a>
+        <a href="{{ route('cliente.noticias') }}" class="vx-module-card">
+            <div class="vx-module-icon" style="background:rgba(41,128,185,0.1);color:#2980b9;"><i class="bi bi-newspaper"></i></div>
+            <div class="vx-module-info"><h4>Noticias</h4><p>Últimas novedades del grupo</p></div>
+        </a>
+        <a href="{{ route('cliente.talleres') }}" class="vx-module-card">
+            <div class="vx-module-icon" style="background:rgba(230,126,34,0.1);color:#e67e22;"><i class="bi bi-tools"></i></div>
+            <div class="vx-module-info"><h4>Talleres</h4><p>Encuentra el taller más cercano</p></div>
+        </a>
     </div>
 </div>
 
