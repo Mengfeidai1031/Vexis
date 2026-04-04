@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Factura;
+use App\Models\Incidencia;
 use App\Models\Venta;
 use App\Models\Tasacion;
 use App\Models\Stock;
@@ -97,6 +99,77 @@ class DatAxisController extends Controller
         return view('dataxis.taller', compact('citasEstado', 'citasDia', 'cargaMecanico', 'tasacionesEstado'));
     }
 
+    public function facturas()
+    {
+        // Facturación mensual (últimos 6 meses)
+        $facturasMes = Factura::select(
+                DB::raw("DATE_FORMAT(fecha_factura, '%Y-%m') as mes"),
+                DB::raw('COUNT(*) as total'),
+                DB::raw('SUM(total) as importe')
+            )->where('fecha_factura', '>=', now()->subMonths(6))
+            ->groupBy('mes')->orderBy('mes')->get();
+
+        // Facturas por estado
+        $facturasEstado = Factura::select('estado', DB::raw('COUNT(*) as total'), DB::raw('SUM(total) as importe'))
+            ->groupBy('estado')->get();
+
+        // Importe total facturado
+        $totalFacturado = Factura::where('estado', '!=', 'anulada')->sum('total');
+        $totalIva = Factura::where('estado', '!=', 'anulada')->sum('iva_importe');
+        $totalFacturas = Factura::count();
+        $facturasPagadas = Factura::where('estado', 'pagada')->count();
+
+        // Facturación por marca
+        $facturasMarca = Factura::join('marcas', 'facturas.marca_id', '=', 'marcas.id')
+            ->select('marcas.nombre', 'marcas.color', DB::raw('COUNT(*) as total'), DB::raw('SUM(facturas.total) as importe'))
+            ->where('facturas.estado', '!=', 'anulada')
+            ->groupBy('marcas.nombre', 'marcas.color')->get();
+
+        return view('dataxis.facturas', compact(
+            'facturasMes', 'facturasEstado', 'totalFacturado', 'totalIva',
+            'totalFacturas', 'facturasPagadas', 'facturasMarca'
+        ));
+    }
+
+    public function incidencias()
+    {
+        // Incidencias por estado
+        $incidenciasEstado = Incidencia::select('estado', DB::raw('COUNT(*) as total'))
+            ->groupBy('estado')->get();
+
+        // Incidencias por prioridad
+        $incidenciasPrioridad = Incidencia::select('prioridad', DB::raw('COUNT(*) as total'))
+            ->groupBy('prioridad')->get();
+
+        // Tiempo medio de resolución (días) — solo resueltas/cerradas con fecha_cierre
+        $tiempoMedio = Incidencia::whereNotNull('fecha_cierre')
+            ->select(DB::raw('AVG(DATEDIFF(fecha_cierre, fecha_apertura)) as dias'))
+            ->value('dias');
+
+        // Carga por técnico
+        $cargaTecnico = Incidencia::join('users', 'incidencias.tecnico_id', '=', 'users.id')
+            ->select(DB::raw("CONCAT(users.nombre, ' ', users.apellidos) as tecnico"), DB::raw('COUNT(*) as total'),
+                DB::raw("SUM(CASE WHEN incidencias.estado IN ('resuelta','cerrada') THEN 1 ELSE 0 END) as resueltas"))
+            ->groupBy('tecnico')->orderByDesc('total')->limit(8)->get();
+
+        // Incidencias por mes (últimos 6 meses)
+        $incidenciasMes = Incidencia::select(
+                DB::raw("DATE_FORMAT(fecha_apertura, '%Y-%m') as mes"),
+                DB::raw('COUNT(*) as total'),
+                DB::raw("SUM(CASE WHEN estado IN ('resuelta','cerrada') THEN 1 ELSE 0 END) as cerradas")
+            )->where('fecha_apertura', '>=', now()->subMonths(6))
+            ->groupBy('mes')->orderBy('mes')->get();
+
+        // KPIs
+        $totalIncidencias = Incidencia::count();
+        $abiertas = Incidencia::whereIn('estado', ['abierta', 'en_progreso'])->count();
+
+        return view('dataxis.incidencias', compact(
+            'incidenciasEstado', 'incidenciasPrioridad', 'tiempoMedio',
+            'cargaTecnico', 'incidenciasMes', 'totalIncidencias', 'abiertas'
+        ));
+    }
+
     public function general()
     {
         // KPIs
@@ -106,6 +179,8 @@ class DatAxisController extends Controller
         $totalVehiculos = Vehiculo::count();
         $totalStock = Stock::sum('cantidad');
         $totalUsuarios = User::count();
+        $totalFacturado = Factura::where('estado', '!=', 'anulada')->sum('total');
+        $incidenciasAbiertas = Incidencia::whereIn('estado', ['abierta', 'en_progreso'])->count();
 
         // Catálogo por marca
         $catalogoMarca = CatalogoPrecio::join('marcas', 'catalogo_precios.marca_id', '=', 'marcas.id')
@@ -122,7 +197,8 @@ class DatAxisController extends Controller
 
         return view('dataxis.general', compact(
             'totalVentas', 'importeVentas', 'totalClientes', 'totalVehiculos',
-            'totalStock', 'totalUsuarios', 'catalogoMarca', 'clientesMes'
+            'totalStock', 'totalUsuarios', 'totalFacturado', 'incidenciasAbiertas',
+            'catalogoMarca', 'clientesMes'
         ));
     }
 }

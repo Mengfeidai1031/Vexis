@@ -24,6 +24,14 @@
             <div class="vx-module-icon" style="background:rgba(155,89,182,0.1);color:#9B59B6;"><i class="bi bi-wrench-adjustable"></i></div>
             <div class="vx-module-info"><h4>Taller</h4><p>Citas, carga mecánicos y tasaciones</p></div>
         </a>
+        <a href="{{ route('dataxis.facturas') }}" class="vx-module-card">
+            <div class="vx-module-icon" style="background:rgba(231,76,60,0.1);color:var(--vx-danger);"><i class="bi bi-receipt"></i></div>
+            <div class="vx-module-info"><h4>Facturas</h4><p>Facturación mensual, por estado y marca</p></div>
+        </a>
+        <a href="{{ route('dataxis.incidencias') }}" class="vx-module-card">
+            <div class="vx-module-icon" style="background:rgba(243,156,18,0.1);color:var(--vx-warning);"><i class="bi bi-exclamation-triangle"></i></div>
+            <div class="vx-module-info"><h4>Incidencias</h4><p>Estado, prioridad, tiempos y carga técnica</p></div>
+        </a>
     </div>
 </div>
 

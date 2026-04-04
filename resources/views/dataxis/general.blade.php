@@ -11,6 +11,8 @@
     <div class="dx-kpi"><div class="dx-kpi-icon" style="background:rgba(231,76,60,0.1);color:var(--vx-danger);"><i class="bi bi-car-front"></i></div><div><div class="dx-kpi-val">{{ $totalVehiculos }}</div><div class="dx-kpi-lbl">Vehículos</div></div></div>
     <div class="dx-kpi"><div class="dx-kpi-icon" style="background:rgba(243,156,18,0.1);color:var(--vx-warning);"><i class="bi bi-box2"></i></div><div><div class="dx-kpi-val">{{ number_format($totalStock, 0, ',', '.') }}</div><div class="dx-kpi-lbl">Uds. Stock</div></div></div>
     <div class="dx-kpi"><div class="dx-kpi-icon" style="background:rgba(52,73,94,0.1);color:#34495E;"><i class="bi bi-person-badge"></i></div><div><div class="dx-kpi-val">{{ $totalUsuarios }}</div><div class="dx-kpi-lbl">Usuarios</div></div></div>
+    <div class="dx-kpi"><div class="dx-kpi-icon" style="background:rgba(231,76,60,0.1);color:var(--vx-danger);"><i class="bi bi-receipt"></i></div><div><div class="dx-kpi-val">{{ number_format($totalFacturado, 0, ',', '.') }}€</div><div class="dx-kpi-lbl">Facturado</div></div></div>
+    <div class="dx-kpi"><div class="dx-kpi-icon" style="background:rgba(243,156,18,0.1);color:var(--vx-warning);"><i class="bi bi-exclamation-triangle"></i></div><div><div class="dx-kpi-val">{{ $incidenciasAbiertas }}</div><div class="dx-kpi-lbl">Inc. Abiertas</div></div></div>
 </div>
 
 {{-- Gráficas --}}

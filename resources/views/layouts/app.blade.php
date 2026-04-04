@@ -746,12 +746,26 @@
                 <button class="vx-nav-link {{ request()->is('dataxis*') ? 'active' : '' }}">
                     <i class="bi bi-graph-up"></i> Dataxis <i class="bi bi-chevron-down" style="font-size:10px;"></i>
                 </button>
-                <div class="vx-dropdown">
+                <div class="vx-dropdown vx-dropdown-sub">
                     <a href="{{ route('dataxis.inicio') }}" class="vx-dropdown-item"><i class="bi bi-house-door"></i> Inicio</a>
                     <a href="{{ route('dataxis.general') }}" class="vx-dropdown-item"><i class="bi bi-speedometer2"></i> General</a>
-                    <a href="{{ route('dataxis.ventas') }}" class="vx-dropdown-item"><i class="bi bi-currency-euro"></i> Ventas</a>
-                    <a href="{{ route('dataxis.stock') }}" class="vx-dropdown-item"><i class="bi bi-box-seam"></i> Stock</a>
-                    <a href="{{ route('dataxis.taller') }}" class="vx-dropdown-item"><i class="bi bi-wrench-adjustable"></i> Taller</a>
+                    {{-- Comercial --}}
+                    <div class="vx-submenu-parent">
+                        <div class="vx-dropdown-item vx-submenu-trigger"><i class="bi bi-cart-check"></i> Comercial <i class="bi bi-chevron-right" style="margin-left:auto;font-size:10px;"></i></div>
+                        <div class="vx-submenu">
+                            <a href="{{ route('dataxis.ventas') }}" class="vx-dropdown-item"><i class="bi bi-currency-euro"></i> Ventas</a>
+                            <a href="{{ route('dataxis.facturas') }}" class="vx-dropdown-item"><i class="bi bi-receipt"></i> Facturas</a>
+                        </div>
+                    </div>
+                    {{-- Operaciones --}}
+                    <div class="vx-submenu-parent">
+                        <div class="vx-dropdown-item vx-submenu-trigger"><i class="bi bi-gear"></i> Operaciones <i class="bi bi-chevron-right" style="margin-left:auto;font-size:10px;"></i></div>
+                        <div class="vx-submenu">
+                            <a href="{{ route('dataxis.stock') }}" class="vx-dropdown-item"><i class="bi bi-box-seam"></i> Stock</a>
+                            <a href="{{ route('dataxis.taller') }}" class="vx-dropdown-item"><i class="bi bi-wrench-adjustable"></i> Taller</a>
+                            <a href="{{ route('dataxis.incidencias') }}" class="vx-dropdown-item"><i class="bi bi-exclamation-triangle"></i> Incidencias</a>
+                        </div>
+                    </div>
                 </div>
             </li>
             @endcanany

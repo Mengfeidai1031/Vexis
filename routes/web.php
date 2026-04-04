@@ -418,6 +418,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/dataxis/ventas', [DatAxisController::class, 'ventas'])->name('dataxis.ventas');
     Route::get('/dataxis/stock', [DatAxisController::class, 'stock'])->name('dataxis.stock');
     Route::get('/dataxis/taller', [DatAxisController::class, 'taller'])->name('dataxis.taller');
+    Route::get('/dataxis/facturas', [DatAxisController::class, 'facturas'])->name('dataxis.facturas');
+    Route::get('/dataxis/incidencias', [DatAxisController::class, 'incidencias'])->name('dataxis.incidencias');
 
     // === MÓDULO CLIENTE ===
     Route::get('/cliente', [ClienteModuloController::class, 'inicio'])->name('cliente.inicio');
