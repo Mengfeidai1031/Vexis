@@ -596,13 +596,28 @@
                 </button>
                 <div class="vx-dropdown vx-dropdown-sub">
                     <a href="{{ route('gestion.inicio') }}" class="vx-dropdown-item"><i class="bi bi-house-door"></i> Inicio</a>
-                    @can('ver usuarios')
-                    <a href="{{ route('users.index') }}" class="vx-dropdown-item"><i class="bi bi-people"></i> Usuarios</a>
-                    @endcan
-                    @can('ver clientes')
-                    <a href="{{ route('clientes.index') }}" class="vx-dropdown-item"><i class="bi bi-person-lines-fill"></i> Clientes</a>
-                    @endcan
-                    <a href="{{ route('vacaciones.index') }}" class="vx-dropdown-item"><i class="bi bi-calendar-check"></i> Vacaciones</a>
+                    {{-- Gestión Empleados con submenú --}}
+                    <div class="vx-submenu-parent">
+                        <div class="vx-dropdown-item vx-submenu-trigger"><i class="bi bi-person-badge"></i> Gestión Empleados <i class="bi bi-chevron-right" style="margin-left:auto;font-size:10px;"></i></div>
+                        <div class="vx-submenu">
+                            @can('ver usuarios')
+                            <a href="{{ route('users.index') }}" class="vx-dropdown-item"><i class="bi bi-people"></i> Usuarios</a>
+                            @endcan
+                            <a href="{{ route('vacaciones.index') }}" class="vx-dropdown-item"><i class="bi bi-calendar-check"></i> Vacaciones</a>
+                        </div>
+                    </div>
+                    {{-- Gestión Clientes con submenú --}}
+                    <div class="vx-submenu-parent">
+                        <div class="vx-dropdown-item vx-submenu-trigger"><i class="bi bi-person-lines-fill"></i> Gestión Clientes <i class="bi bi-chevron-right" style="margin-left:auto;font-size:10px;"></i></div>
+                        <div class="vx-submenu">
+                            @can('ver clientes')
+                            <a href="{{ route('clientes.index') }}" class="vx-dropdown-item"><i class="bi bi-person-lines-fill"></i> Clientes</a>
+                            @endcan
+                            @if(\Route::has('tipos-cliente.index'))
+                            <a href="{{ route('tipos-cliente.index') }}" class="vx-dropdown-item"><i class="bi bi-tags"></i> Tipos de Cliente</a>
+                            @endif
+                        </div>
+                    </div>
                     {{-- Seguridad con submenú --}}
                     <div class="vx-submenu-parent">
                         <div class="vx-dropdown-item vx-submenu-trigger"><i class="bi bi-shield-lock"></i> Seguridad <i class="bi bi-chevron-right" style="margin-left:auto;font-size:10px;"></i></div>
@@ -712,11 +727,17 @@
                             @can('ver ofertas')
                             <a href="{{ route('ofertas.index') }}" class="vx-dropdown-item"><i class="bi bi-file-earmark-text"></i> Ofertas</a>
                             @endcan
-                            @can('ver ventas')
-                            <a href="{{ route('ventas.index') }}" class="vx-dropdown-item"><i class="bi bi-cart-check"></i> Ventas</a>
-                            @endcan
                             @can('ver tasaciones')
                             <a href="{{ route('tasaciones.index') }}" class="vx-dropdown-item"><i class="bi bi-calculator"></i> Tasaciones</a>
+                            @endcan
+                        </div>
+                    </div>
+                    {{-- Gestión Ventas con submenú --}}
+                    <div class="vx-submenu-parent">
+                        <div class="vx-dropdown-item vx-submenu-trigger"><i class="bi bi-cart-check"></i> Gestión Ventas <i class="bi bi-chevron-right" style="margin-left:auto;font-size:10px;"></i></div>
+                        <div class="vx-submenu">
+                            @can('ver ventas')
+                            <a href="{{ route('ventas.index') }}" class="vx-dropdown-item"><i class="bi bi-cart-check"></i> Ventas</a>
                             @endcan
                             @if(\App\Models\Setting::get('modulo_facturas', true))
                             @can('ver facturas')
