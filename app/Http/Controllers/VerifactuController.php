@@ -146,6 +146,27 @@ class VerifactuController extends Controller
         return $pdf->download('declaracion_responsable_verifactu_' . date('Y-m-d') . '.pdf');
     }
 
+    public function cumplimiento()
+    {
+        $stats = [
+            'total' => Verifactu::count(),
+            'aceptados' => Verifactu::where('estado', 'aceptado')->count(),
+            'pendientes' => Verifactu::whereIn('estado', ['registrado', 'enviado'])->count(),
+            'rechazados' => Verifactu::where('estado', 'rechazado')->count(),
+            'anulados' => Verifactu::where('estado', 'anulado')->count(),
+            'primer_registro' => Verifactu::orderBy('fecha_registro')->first()?->fecha_registro,
+            'ultimo_registro' => Verifactu::orderByDesc('fecha_registro')->first()?->fecha_registro,
+            'importe_total' => Verifactu::whereNotIn('estado', ['anulado', 'rechazado'])->sum('importe_total'),
+            'base_imponible_total' => Verifactu::whereNotIn('estado', ['anulado', 'rechazado'])->sum('base_imponible'),
+            'cuota_total' => Verifactu::whereNotIn('estado', ['anulado', 'rechazado'])->sum('cuota_tributaria'),
+        ];
+
+        $pdf = Pdf::loadView('verifactu.cumplimiento-pdf', compact('stats'))
+            ->setPaper('a4', 'portrait');
+
+        return $pdf->download('cumplimiento_tecnico_verifactu_' . date('Y-m-d') . '.pdf');
+    }
+
     public function verificarCadena()
     {
         $registros = Verifactu::with('factura')->orderBy('id')->get();

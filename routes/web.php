@@ -375,6 +375,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['module:verifactu', 'permission:ver verifactu'])->group(function () {
         Route::get('/verifactu', [VerifactuController::class, 'index'])->name('verifactu.index');
         Route::get('/verifactu/declaracion', [VerifactuController::class, 'declaracion'])->name('verifactu.declaracion');
+        Route::get('/verifactu/cumplimiento', [VerifactuController::class, 'cumplimiento'])->name('verifactu.cumplimiento');
         Route::get('/verifactu/verificar-cadena', [VerifactuController::class, 'verificarCadena'])->name('verifactu.verificarCadena');
         Route::get('/verifactu/{verifactu}', [VerifactuController::class, 'show'])->name('verifactu.show');
         Route::get('/verifactu/{verifactu}/xml', [VerifactuController::class, 'descargarXml'])->name('verifactu.descargarXml');

@@ -48,6 +48,10 @@
         .verifactu-box td { border: none; vertical-align: top; padding: 0; }
         .verifactu-label { font-size: 9px; text-transform: uppercase; color: #999; font-weight: 700; }
         .verifactu-value { font-size: 10px; font-family: monospace; color: #333; word-break: break-all; }
+        #footer-legal { margin-top: 30px; padding-top: 14px; border-top: 2px solid #33AADD; font-size: 8px; color: #555; line-height: 1.5; }
+        #footer-legal .legal-block { margin-bottom: 8px; }
+        #footer-legal .legal-title { font-size: 8px; text-transform: uppercase; font-weight: 700; color: #33AADD; letter-spacing: 0.5px; margin-bottom: 2px; }
+        #footer-legal .legal-text { text-align: justify; }
     </style>
 </head>
 <body>
@@ -201,6 +205,41 @@
         </table>
     </div>
     @endif
+
+    <div id="footer-legal">
+        <div class="legal-block">
+            <div class="legal-title">Datos Registrales</div>
+            <div class="legal-text">
+                {{ $factura->empresa?->nombre ?? 'VEXIS' }} — CIF: {{ $factura->empresa?->cif ?? '—' }}.
+                Domicilio social: {{ $factura->empresa?->domicilio ?? '—' }}.
+                Inscrita en el Registro Mercantil correspondiente. Los datos registrales completos (tomo, folio, hoja e inscripción) constan en los archivos de la sociedad y a disposición del cliente.
+            </div>
+        </div>
+        <div class="legal-block">
+            <div class="legal-title">Mención Fiscal IVA / IGIC</div>
+            <div class="legal-text">
+                Factura emitida conforme al Real Decreto 1619/2012, de 30 de noviembre, por el que se aprueba el Reglamento de facturación.
+                Operación sujeta y no exenta de {{ $factura->venta?->impuesto_nombre ?? 'IVA' }} al tipo del {{ number_format($factura->iva_porcentaje, 0) }}%, clave de régimen {{ $factura->clave_regimen_iva ?? '01' }}.
+                En operaciones con Canarias se aplicará IGIC en lugar de IVA conforme a la Ley 20/1991.
+            </div>
+        </div>
+        <div class="legal-block">
+            <div class="legal-title">Cláusula de Privacidad (RGPD)</div>
+            <div class="legal-text">
+                En cumplimiento del Reglamento (UE) 2016/679 (RGPD) y la LOPDGDD 3/2018, le informamos que sus datos personales serán tratados por {{ $factura->empresa?->nombre ?? 'VEXIS' }} con la finalidad de gestionar la relación comercial, la facturación y el cumplimiento de obligaciones legales.
+                Base legal: ejecución del contrato y obligación legal. Conservación: durante el plazo legalmente exigido.
+                Puede ejercer los derechos de acceso, rectificación, supresión, oposición, limitación y portabilidad dirigiéndose por escrito al domicilio de la empresa o al correo de protección de datos.
+            </div>
+        </div>
+        <div class="legal-block">
+            <div class="legal-title">Reserva de Dominio y Garantía</div>
+            <div class="legal-text">
+                Los bienes facturados permanecerán en propiedad de {{ $factura->empresa?->nombre ?? 'VEXIS' }} hasta el completo pago del precio, conforme a la Ley 28/1998 de Venta a Plazos de Bienes Muebles.
+                La garantía legal se ajusta al Real Decreto Legislativo 1/2007 (TRLGDCU) modificado por la Ley 7/2021: 3 años para bienes nuevos y 1 año para bienes de segunda mano, desde la fecha de entrega.
+                Quedan excluidos de garantía los daños derivados de uso indebido, negligencia o mantenimiento incorrecto.
+            </div>
+        </div>
+    </div>
 
     <div class="footer">
         VEXIS — Sistema de Gestión &bull; Factura generada el {{ date('d/m/Y H:i') }}

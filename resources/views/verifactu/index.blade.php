@@ -5,6 +5,7 @@
     <h1 class="vx-page-title">@if(file_exists(storage_path('app/public/logos/verifactu.png')))<img src="{{ asset('storage/logos/verifactu.png') }}" alt="Verifactu" style="height:24px;vertical-align:middle;margin-right:6px;">@endif Verifactu</h1>
     <div class="vx-page-actions">
         <a href="{{ route('verifactu.declaracion') }}" class="vx-btn vx-btn-danger"><i class="bi bi-file-earmark-pdf"></i> Declaración Responsable</a>
+        <a href="{{ route('verifactu.cumplimiento') }}" class="vx-btn vx-btn-info"><i class="bi bi-file-earmark-check"></i> Informe Cumplimiento</a>
         <button class="vx-btn vx-btn-secondary" id="btnVerificar"><i class="bi bi-shield-check"></i> Verificar Cadena</button>
         @can('crear verifactu')<a href="{{ route('verifactu.create') }}" class="vx-btn vx-btn-primary"><i class="bi bi-plus-circle"></i> Registro Manual</a>@endcan
     </div>

@@ -1,0 +1,49 @@
+# VEXIS - Contexto
+
+## Modo operación
+- Modo Ejecución Pura: cero cortesía, output directo, explicaciones mínimas (solo breaking changes o errores graves), viñetas breves.
+- Prioridad: eficiencia técnica y precisión. Sin capa social.
+
+## Proyecto
+Laravel 12 + PHP 8.2 + MySQL 8 (`vexis_db`). App full-stack Blade (no monorepo) para Grupo DAI (automoción).
+Módulos: Gestión, Comercial (ofertas/ventas/tasaciones), Recambios, Talleres, Cliente portal.
+
+## Stack
+- Blade + Tailwind 4 + Vite + Bootstrap Icons
+- Spatie Permission (RBAC, 40+ permisos)
+- DomPDF, spatie/pdf-to-text, maatwebsite/excel, @google/generative-ai
+
+## Patrones
+- Repository Pattern: `app/Repositories/` bind en `AppServiceProvider` (Users, Clientes, Vehiculos, Ofertas, Restricciones)
+- Policies en `app/Policies/` (8). `UserRestrictionHelper` = acceso polimórfico (empresa/cliente/vehiculo)
+- Services en `app/Services/` (ej. `OfertaPdfService` Nissan/Renault con transacciones)
+- FormRequests en `app/Http/Requests/` (12)
+
+## Jerarquía multi-tenant
+Empresa → Centro → Departamento. Restricciones vía `UserRestriction` polimórfico.
+
+## Rutas
+`routes/web.php` (~596 líneas) organizado por módulo con middleware de permisos.
+
+## Frontend design system
+`resources/views/layouts/app.blade.php`: CSS vars (primary #33AADD), dark mode `data-theme`, Plus Jakarta Sans, clases `.vx-card`, `.vx-dash-module`, `.vx-avatar`.
+
+## Comandos
+```
+npm run setup    # install + migrate + build
+npm run dev      # serve + queue + pail + vite
+npm run test     # phpunit
+php artisan test --filter=Nombre
+./vendor/bin/pint
+npm run build
+```
+
+## Testing
+PHPUnit + SQLite in-memory (`phpunit.xml`). Suites Unit/Feature.
+
+## Infra
+Session/cache/queue = driver `database`.
+
+## Git
+Branch actual: `develop`. Main para PRs: `main`.
+Últimos commits relevantes: Dataxis views, sort component reutilizable, reorganización menús Cliente (Noticias/Talleres), submenús Gestión Admin/Vehículos en Comercial, fix layout user/técnico en Incidencias.
