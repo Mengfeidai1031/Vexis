@@ -14,7 +14,7 @@
     <div class="vx-card">
         <div class="vx-card-header"><h4><i class="bi bi-car-front" style="color:#9B59B6;"></i> Datos del vehículo</h4></div>
         <div class="vx-card-body">
-            <div class="vx-form-group"><label class="vx-label">Marca <span class="required">*</span></label><input type="text" id="ptMarca" class="vx-input" placeholder="Ej: Nissan, Renault, Seat..." required></div>
+            <div class="vx-form-group"><label class="vx-label">Marca <span class="required">*</span></label><input type="text" id="ptMarca" class="vx-input" placeholder="Ej: Renault, Dacia, Nissan..." required></div>
             <div class="vx-form-group"><label class="vx-label">Modelo <span class="required">*</span></label><input type="text" id="ptModelo" class="vx-input" placeholder="Ej: Qashqai, Clio, León..." required></div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 12px;">
                 <div class="vx-form-group"><label class="vx-label">Año <span class="required">*</span></label><input type="number" id="ptAnio" class="vx-input" value="{{ date('Y') - 3 }}" min="1990" max="2030" required></div>

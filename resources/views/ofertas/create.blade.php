@@ -22,29 +22,29 @@
                 {{-- Selector de Marca --}}
                 <div class="vx-form-group">
                     <label class="vx-label">Marca del Vehículo <span class="required">*</span></label>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                        <label class="vx-marca-card" id="card-nissan">
-                            <input type="radio" name="marca" value="nissan" required {{ old('marca') == 'nissan' ? 'checked' : '' }} style="display: none;">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                        <label class="vx-marca-card" id="card-renault">
+                            <input type="radio" name="marca" value="renault_dacia" required {{ old('marca') == 'renault_dacia' ? 'checked' : '' }} style="display: none;" data-sub="renault">
                             <div class="vx-marca-inner">
-                                <svg width="60" height="60" viewBox="0 0 100 100">
-                                    <circle cx="50" cy="50" r="40" fill="none" stroke="#C3002F" stroke-width="4"/>
-                                    <rect x="12" y="45" width="76" height="10" fill="#C3002F"/>
-                                    <text x="50" y="72" font-size="11" text-anchor="middle" fill="#C3002F" font-weight="bold">NISSAN</text>
-                                </svg>
-                                <div style="font-weight: 700; font-size: 14px;">NISSAN</div>
-                                <div style="font-size: 11px; color: var(--vx-text-muted);">Concesionarios Nissan</div>
+                                <img src="{{ asset('storage/logos/renault.png') }}" alt="Renault" class="vx-marca-logo">
+                                <div style="font-weight: 700; font-size: 14px;">RENAULT</div>
+                                <div style="font-size: 11px; color: var(--vx-text-muted);">Concesionarios Renault</div>
                             </div>
                         </label>
-                        <label class="vx-marca-card" id="card-renault">
-                            <input type="radio" name="marca" value="renault_dacia" required {{ old('marca') == 'renault_dacia' ? 'checked' : '' }} style="display: none;">
+                        <label class="vx-marca-card" id="card-dacia">
+                            <input type="radio" name="marca" value="renault_dacia" required {{ old('marca_sub') == 'dacia' ? 'checked' : '' }} style="display: none;" data-sub="dacia">
                             <div class="vx-marca-inner">
-                                <svg width="60" height="60" viewBox="0 0 100 100">
-                                    <polygon points="50,8 92,50 50,92 8,50" fill="none" stroke="#FFCC00" stroke-width="4"/>
-                                    <text x="50" y="45" font-size="9" text-anchor="middle" fill="#FFCC00" font-weight="bold">RENAULT</text>
-                                    <text x="50" y="60" font-size="9" text-anchor="middle" fill="#646B52" font-weight="bold">DACIA</text>
-                                </svg>
-                                <div style="font-weight: 700; font-size: 14px;">RENAULT / DACIA</div>
-                                <div style="font-size: 11px; color: var(--vx-text-muted);">Concesionarios Renault o Dacia</div>
+                                <img src="{{ asset('storage/logos/dacia.png') }}" alt="Dacia" class="vx-marca-logo">
+                                <div style="font-weight: 700; font-size: 14px;">DACIA</div>
+                                <div style="font-size: 11px; color: var(--vx-text-muted);">Concesionarios Dacia</div>
+                            </div>
+                        </label>
+                        <label class="vx-marca-card" id="card-nissan">
+                            <input type="radio" name="marca" value="nissan" required {{ old('marca') == 'nissan' ? 'checked' : '' }} style="display: none;" data-sub="nissan">
+                            <div class="vx-marca-inner">
+                                <img src="{{ asset('storage/logos/nissan.png') }}" alt="Nissan" class="vx-marca-logo">
+                                <div style="font-weight: 700; font-size: 14px;">NISSAN</div>
+                                <div style="font-size: 11px; color: var(--vx-text-muted);">Concesionarios Nissan</div>
                             </div>
                         </label>
                     </div>
@@ -79,7 +79,8 @@
 .vx-marca-card{display:block;cursor:pointer;border:2px solid var(--vx-border);border-radius:var(--vx-radius);transition:all .2s;}
 .vx-marca-card:hover{border-color:var(--vx-primary);box-shadow:0 0 0 3px rgba(51,170,221,.12);}
 .vx-marca-card:has(input:checked){border-color:var(--vx-primary);background:rgba(51,170,221,.06);}
-.vx-marca-inner{padding:20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.vx-marca-inner{padding:20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;}
+.vx-marca-logo{height:60px;width:auto;object-fit:contain;filter:drop-shadow(0 1px 2px rgba(0,0,0,.08));}
 </style>
 @endsection
 

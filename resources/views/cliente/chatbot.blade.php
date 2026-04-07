@@ -13,7 +13,7 @@
         <div id="chatMessages" class="vx-card-body" style="flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:12px;">
             <div class="chat-msg chat-bot">
                 <div class="chat-avatar"><i class="bi bi-robot"></i></div>
-                <div class="chat-bubble">¡Hola! 👋 Soy el asistente virtual de <strong>Grupo DAI</strong>. Puedo ayudarte con información sobre nuestros vehículos Nissan, Renault y Dacia, precios, stock disponible y concesionarios en Canarias. ¿En qué puedo ayudarte?</div>
+                <div class="chat-bubble">¡Hola! 👋 Soy el asistente virtual de <strong>Grupo DAI</strong>. Puedo ayudarte con información sobre nuestros vehículos Renault, Dacia y Nissan, precios, stock disponible y concesionarios en Canarias. ¿En qué puedo ayudarte?</div>
             </div>
         </div>
         <div style="flex-shrink:0;padding:12px 16px;border-top:1px solid var(--vx-border);display:flex;gap:8px;">
@@ -22,8 +22,9 @@
         </div>
     </div>
     <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
-        <button class="chat-suggestion" onclick="sendSuggestion(this)">¿Qué modelos Nissan tenéis?</button>
+        <button class="chat-suggestion" onclick="sendSuggestion(this)">¿Qué modelos Renault tenéis?</button>
         <button class="chat-suggestion" onclick="sendSuggestion(this)">Precio del Dacia Duster</button>
+        <button class="chat-suggestion" onclick="sendSuggestion(this)">Modelos Nissan disponibles</button>
         <button class="chat-suggestion" onclick="sendSuggestion(this)">¿Dónde estáis en Gran Canaria?</button>
         <button class="chat-suggestion" onclick="sendSuggestion(this)">Coches eléctricos disponibles</button>
     </div>

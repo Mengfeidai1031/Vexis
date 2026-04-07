@@ -404,12 +404,16 @@
         /* Loading Screen */
         .vx-loading-screen { position: fixed; inset: 0; background: var(--vx-bg); display: flex; align-items: center; justify-content: center; z-index: 99999; transition: opacity 0.4s, visibility 0.4s; }
         .vx-loading-screen.hidden { opacity: 0; visibility: hidden; }
-        .vx-loading-inner { text-align: center; }
-        .vx-loading-logo { width: 120px; animation: vxPulse 1.8s infinite ease-in-out; }
-        .vx-loading-bar { width: 160px; height: 3px; background: var(--vx-gray-200); border-radius: 2px; overflow: hidden; margin: 20px auto 0; }
-        .vx-loading-bar-fill { height: 100%; width: 40%; background: linear-gradient(90deg, var(--vx-primary), var(--vx-primary-light)); border-radius: 2px; animation: vxLoadBar 1.2s infinite ease-in-out; }
-        @keyframes vxPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(0.95); } }
-        @keyframes vxLoadBar { 0% { margin-left: 0; width: 30%; } 50% { width: 50%; } 100% { margin-left: 70%; width: 30%; } }
+        .vx-loading-inner { position: relative; width: 260px; height: 260px; display: flex; align-items: center; justify-content: center; }
+        .vx-loading-logo { width: 120px; height: auto; z-index: 5; animation: vxLogoPulse 2.4s infinite ease-in-out; filter: drop-shadow(0 4px 16px rgba(51,170,221,0.35)); }
+        .vx-ring { position: absolute; top: 50%; left: 50%; border-radius: 50%; border-style: solid; border-color: transparent; pointer-events: none; }
+        /* 2 semicírculos con 2 gaps = bordes opuestos transparentes */
+        .vx-ring-1 { width: 170px; height: 170px; margin: -85px 0 0 -85px; border-width: 4px; border-top-color: var(--vx-primary); border-bottom-color: var(--vx-primary); animation: vxRingCW 2.1s linear infinite; }
+        .vx-ring-2 { width: 210px; height: 210px; margin: -105px 0 0 -105px; border-width: 4px; border-left-color: #b0b6be; border-right-color: #b0b6be; animation: vxRingCCW 2.1s linear infinite; animation-delay: -0.35s; }
+        .vx-ring-3 { width: 250px; height: 250px; margin: -125px 0 0 -125px; border-width: 4px; border-top-color: var(--vx-primary); border-bottom-color: var(--vx-primary); animation: vxRingCW 2.1s linear infinite; animation-delay: -0.9s; }
+        @keyframes vxRingCW { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes vxRingCCW { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+        @keyframes vxLogoPulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(0.96); opacity: 0.9; } }
 
         /* Notifications Panel */
         .vx-notif-panel { position: absolute; top: calc(100% + 8px); right: 0; width: 360px; max-height: 420px; background: var(--vx-surface); border: 1px solid var(--vx-border); border-radius: var(--vx-radius-lg); box-shadow: var(--vx-shadow-lg); z-index: 1100; display: none; overflow: hidden; }
@@ -452,8 +456,10 @@
     <!-- Loading Screen -->
     <div class="vx-loading-screen" id="vxLoader">
         <div class="vx-loading-inner">
+            <span class="vx-ring vx-ring-1"></span>
+            <span class="vx-ring vx-ring-2"></span>
+            <span class="vx-ring vx-ring-3"></span>
             <img src="{{ asset('img/vexis-logo.png') }}" alt="VEXIS" class="vx-loading-logo">
-            <div class="vx-loading-bar"><div class="vx-loading-bar-fill"></div></div>
         </div>
     </div>
 
