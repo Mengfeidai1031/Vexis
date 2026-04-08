@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             CentroSeeder::class,
             RolePermissionSeeder::class,
             UserSeeder::class,
+            TipoClienteSeeder::class,
             ClienteSeeder::class,
             MarcaSeeder::class,
             VehiculoSeeder::class,

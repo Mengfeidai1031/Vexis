@@ -13,6 +13,7 @@ class Cliente extends Model
         'nombre',
         'apellidos',
         'empresa_id',
+        'tipo_cliente_id',
         'dni',
         'email',
         'telefono',
@@ -26,6 +27,11 @@ class Cliente extends Model
     public function empresa(): BelongsTo
     {
         return $this->belongsTo(Empresa::class);
+    }
+
+    public function tipoCliente(): BelongsTo
+    {
+        return $this->belongsTo(TipoCliente::class, 'tipo_cliente_id');
     }
 
     /**

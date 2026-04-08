@@ -22,7 +22,9 @@ class ClienteController extends Controller
 
     public function index(Request $request)
     {
-        $query = Cliente::with('empresa');
+        $query = Cliente::with(['empresa', 'tipoCliente']);
+
+        if ($request->filled('tipo_cliente_id')) $query->where('tipo_cliente_id', $request->tipo_cliente_id);
 
         if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
         if ($request->filled('nombre')) {
@@ -43,16 +45,18 @@ class ClienteController extends Controller
         $empresas = $this->clienteRepository->getEmpresas();
         $clientes_all = Cliente::orderBy('nombre')->get();
         $codigos_postales = Cliente::whereNotNull('codigo_postal')->distinct()->orderBy('codigo_postal')->pluck('codigo_postal');
+        $tipos_cliente = \App\Models\TipoCliente::where('activo', true)->orderBy('nombre')->get();
 
-        return view('clientes.index', compact('clientes', 'empresas', 'clientes_all', 'codigos_postales'));
+        return view('clientes.index', compact('clientes', 'empresas', 'clientes_all', 'codigos_postales', 'tipos_cliente'));
     }
 
     public function create()
     {
         $this->authorize('create', Cliente::class);
-        
+
         $empresas = $this->clienteRepository->getEmpresas();
-        return view('clientes.create', compact('empresas'));
+        $tipos_cliente = \App\Models\TipoCliente::where('activo', true)->orderBy('nombre')->get();
+        return view('clientes.create', compact('empresas', 'tipos_cliente'));
     }
 
     public function store(StoreClienteRequest $request)
@@ -77,7 +81,8 @@ class ClienteController extends Controller
         $this->authorize('update', $cliente);
         
         $empresas = $this->clienteRepository->getEmpresas();
-        return view('clientes.edit', compact('cliente', 'empresas'));
+        $tipos_cliente = \App\Models\TipoCliente::where('activo', true)->orderBy('nombre')->get();
+        return view('clientes.edit', compact('cliente', 'empresas', 'tipos_cliente'));
     }
 
     public function update(UpdateClienteRequest $request, Cliente $cliente)

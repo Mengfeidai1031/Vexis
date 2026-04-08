@@ -31,6 +31,7 @@ class StoreClienteRequest extends FormRequest
                     }
                 },
             ],
+            'tipo_cliente_id' => 'nullable|exists:tipos_cliente,id',
             'dni' => 'nullable|string|max:10|unique:clientes,dni',
             'email' => 'required|email|max:255',
             'telefono' => 'required|string|max:20',

@@ -8,6 +8,7 @@ use App\Http\Controllers\CentroController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RestriccionController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\TipoClienteController;
 use App\Http\Controllers\VehiculoController;
 use App\Http\Controllers\OfertaController;
 use App\Http\Controllers\ProfileController;
@@ -620,6 +621,22 @@ Route::middleware('auth')->group(function () {
         Route::delete('/clientes/{cliente}', [ClienteController::class, 'destroy'])
             ->middleware('can:delete,cliente')
             ->name('clientes.destroy');
+    });
+
+    // CRUD de Tipos de Cliente
+    Route::middleware(['permission:ver tipos-cliente'])->group(function () {
+        Route::get('/tipos-cliente', [TipoClienteController::class, 'index'])->name('tipos-cliente.index');
+    });
+    Route::middleware(['permission:crear tipos-cliente'])->group(function () {
+        Route::get('/tipos-cliente/create', [TipoClienteController::class, 'create'])->name('tipos-cliente.create');
+        Route::post('/tipos-cliente', [TipoClienteController::class, 'store'])->name('tipos-cliente.store');
+    });
+    Route::middleware(['permission:editar tipos-cliente'])->group(function () {
+        Route::get('/tipos-cliente/{tipoCliente}/edit', [TipoClienteController::class, 'edit'])->name('tipos-cliente.edit');
+        Route::put('/tipos-cliente/{tipoCliente}', [TipoClienteController::class, 'update'])->name('tipos-cliente.update');
+    });
+    Route::middleware(['permission:eliminar tipos-cliente'])->group(function () {
+        Route::delete('/tipos-cliente/{tipoCliente}', [TipoClienteController::class, 'destroy'])->name('tipos-cliente.destroy');
     });
 
     // CRUD de vehículos - Solo con permisos

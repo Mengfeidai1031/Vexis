@@ -38,6 +38,16 @@
                     @error('empresa_id')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
                 </div>
             </div>
+            <div class="vx-form-group">
+                <label class="vx-label" for="tipo_cliente_id">Tipo de Cliente</label>
+                <select class="vx-select @error('tipo_cliente_id') is-invalid @enderror" id="tipo_cliente_id" name="tipo_cliente_id">
+                    <option value="">— Sin tipo —</option>
+                    @foreach($tipos_cliente as $tipo)
+                        <option value="{{ $tipo->id }}" {{ old('tipo_cliente_id') == $tipo->id ? 'selected' : '' }}>{{ $tipo->nombre }}</option>
+                    @endforeach
+                </select>@can('crear tipos-cliente')<a href="{{ route('tipos-cliente.create') }}" class="vx-select-create" target="_blank"><i class="bi bi-plus-circle"></i> Crear nuevo</a>@endcan
+                @error('tipo_cliente_id')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
+            </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px;">
                 <div class="vx-form-group">
                     <label class="vx-label" for="email">Correo Electrónico <span class="required">*</span></label>

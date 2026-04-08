@@ -37,6 +37,12 @@ class RolePermissionSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'editar clientes']);
         Permission::firstOrCreate(['name' => 'eliminar clientes']);
 
+        // Crear permisos para Tipos de Cliente
+        Permission::firstOrCreate(['name' => 'ver tipos-cliente']);
+        Permission::firstOrCreate(['name' => 'crear tipos-cliente']);
+        Permission::firstOrCreate(['name' => 'editar tipos-cliente']);
+        Permission::firstOrCreate(['name' => 'eliminar tipos-cliente']);
+
         // Crear permisos para Vehículos
         Permission::firstOrCreate(['name' => 'ver vehículos']);
         Permission::firstOrCreate(['name' => 'crear vehículos']);
@@ -199,6 +205,7 @@ class RolePermissionSeeder extends Seeder
             'ver facturas', 'crear facturas', 'editar facturas', 'eliminar facturas',
             'ver verifactu', 'crear verifactu', 'editar verifactu', 'eliminar verifactu',
             'ver incidencias', 'crear incidencias', 'editar incidencias', 'eliminar incidencias',
+            'ver tipos-cliente', 'crear tipos-cliente', 'editar tipos-cliente', 'eliminar tipos-cliente',
         ]);
 
         // Crear rol de Gerente (puede ver y gestionar clientes, vehículos y ofertas)
@@ -208,6 +215,7 @@ class RolePermissionSeeder extends Seeder
             'ver departamentos',
             'ver centros',
             'ver clientes', 'crear clientes', 'editar clientes', 'eliminar clientes',
+            'ver tipos-cliente', 'crear tipos-cliente', 'editar tipos-cliente',
             'ver vehículos', 'crear vehículos', 'editar vehículos', 'eliminar vehículos',
             'ver ofertas', 'crear ofertas', 'editar ofertas', 'eliminar ofertas',
             'ver incidencias', 'crear incidencias',
@@ -217,6 +225,7 @@ class RolePermissionSeeder extends Seeder
         $vendedorRole = Role::firstOrCreate(['name' => 'Vendedor']);
         $vendedorRole->syncPermissions([
             'ver clientes', 'crear clientes', 'editar clientes',
+            'ver tipos-cliente', 'crear tipos-cliente',
             'ver vehículos',
             'ver ofertas', 'crear ofertas', 'editar ofertas',
             'ver incidencias', 'crear incidencias',
@@ -229,6 +238,7 @@ class RolePermissionSeeder extends Seeder
             'ver departamentos',
             'ver centros',
             'ver clientes',
+            'ver tipos-cliente',
             'ver vehículos',
             'ver ofertas',
             'ver noticias',

@@ -33,6 +33,7 @@ class UpdateClienteRequest extends FormRequest
                     }
                 },
             ],
+            'tipo_cliente_id' => 'nullable|exists:tipos_cliente,id',
             'dni' => [
                 'nullable',
                 'string',
