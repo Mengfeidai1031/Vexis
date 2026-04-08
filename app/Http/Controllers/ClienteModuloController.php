@@ -471,6 +471,7 @@ class ClienteModuloController extends Controller
 
         /** @var User $user */
         $user = Auth::user();
+        $tipoParticularId = \App\Models\TipoCliente::where('slug', 'particular')->value('id');
         $cliente = Cliente::firstOrCreate(
             ['email' => $user->email],
             [
@@ -478,6 +479,7 @@ class ClienteModuloController extends Controller
                 'apellidos' => $user->apellidos,
                 'telefono' => $user->telefono,
                 'empresa_id' => $request->empresa_id,
+                'tipo_cliente_id' => $tipoParticularId,
             ]
         );
 

@@ -90,6 +90,14 @@
     </a>
     @endcanany
 
+    <a href="{{ route('dataxis.inicio') }}" class="vx-dash-module">
+        <div class="vx-dash-module-icon" style="background: linear-gradient(135deg, #2ECC71, #27AE60);"><i class="bi bi-bar-chart-line"></i></div>
+        <div class="vx-dash-module-info">
+            <h4>Dataxis</h4>
+            <p>Análisis, KPIs, Informes</p>
+        </div>
+    </a>
+
     <a href="{{ route('cliente.inicio') }}" class="vx-dash-module">
         <div class="vx-dash-module-icon" style="background: linear-gradient(135deg, #E74C3C, #C0392B);"><i class="bi bi-person-heart"></i></div>
         <div class="vx-dash-module-info">

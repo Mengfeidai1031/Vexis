@@ -1159,10 +1159,12 @@ final class OfertaPdfService
         }
 
         // Crear nuevo cliente
+        $tipoParticularId = \App\Models\TipoCliente::where('slug', 'particular')->value('id');
         return Cliente::create([
             'nombre' => $datos['nombre'],
             'apellidos' => $datos['apellidos'],
             'empresa_id' => $empresaId,
+            'tipo_cliente_id' => $tipoParticularId,
             'dni' => $datos['dni'] ?? null,
             'email' => $datos['email'] ?: 'pdf-' . uniqid() . '@extraido.local',
             'telefono' => $datos['telefono'] ?: '000000000',
