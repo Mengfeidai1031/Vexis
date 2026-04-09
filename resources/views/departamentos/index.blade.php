@@ -12,6 +12,7 @@
 
 <x-filtros-avanzados :action="route('departamentos.index')">
     <div class="vx-filtro" data-filtro="nombre"><label class="vx-filtro-label">Nombre</label><select name="nombre" class="vx-select"><option value="">Todos</option>@foreach($departamentos as $d)<option value="{{ $d->nombre }}" {{ request('nombre') == $d->nombre ? 'selected' : '' }}>{{ $d->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="abreviatura"><label class="vx-filtro-label">Abreviatura</label><select name="abreviatura" class="vx-select"><option value="">Todas</option>@foreach($departamentos as $d)<option value="{{ $d->abreviatura }}" {{ request('abreviatura') == $d->abreviatura ? 'selected' : '' }}>{{ $d->abreviatura }}</option>@endforeach</select></div>
 </x-filtros-avanzados>
 
 <div class="vx-card">

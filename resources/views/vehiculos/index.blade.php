@@ -15,6 +15,8 @@
 </div>
 
 <x-filtros-avanzados :action="route('vehiculos.index')">
+    <div class="vx-filtro" data-filtro="chasis"><label class="vx-filtro-label">Chasis</label><select name="chasis" class="vx-select"><option value="">Todos</option>@foreach($chasis_list as $ch)<option value="{{ $ch }}" {{ request('chasis') == $ch ? 'selected' : '' }}>{{ $ch }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="matricula"><label class="vx-filtro-label">Matrícula</label><select name="matricula" class="vx-select"><option value="">Todas</option>@foreach($matriculas as $m)<option value="{{ $m }}" {{ request('matricula') == $m ? 'selected' : '' }}>{{ $m }}</option>@endforeach</select></div>
     <div class="vx-filtro" data-filtro="marca"><label class="vx-filtro-label">Marca</label><select name="marca_id" class="vx-select"><option value="">Todas</option>@foreach($marcas as $m)<option value="{{ $m->id }}" {{ request('marca_id') == $m->id ? 'selected' : '' }}>{{ $m->nombre }}</option>@endforeach</select></div>
     <div class="vx-filtro" data-filtro="modelo"><label class="vx-filtro-label">Modelo</label><select name="modelo" class="vx-select"><option value="">Todos</option>@foreach($modelos as $mod)<option value="{{ $mod }}" {{ request('modelo') == $mod ? 'selected' : '' }}>{{ $mod }}</option>@endforeach</select></div>
     <div class="vx-filtro" data-filtro="version"><label class="vx-filtro-label">Versión</label><select name="version" class="vx-select"><option value="">Todas</option>@foreach($versiones as $ver)<option value="{{ $ver }}" {{ request('version') == $ver ? 'selected' : '' }}>{{ $ver }}</option>@endforeach</select></div>

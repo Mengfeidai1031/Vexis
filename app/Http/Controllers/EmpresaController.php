@@ -15,6 +15,8 @@ class EmpresaController extends Controller
         }
         if ($request->filled('cif')) $query->where('cif', $request->cif);
         if ($request->filled('codigo_postal')) $query->where('codigo_postal', $request->codigo_postal);
+        if ($request->filled('domicilio')) $query->where('domicilio', $request->domicilio);
+        if ($request->filled('telefono')) $query->where('telefono', $request->telefono);
         // Sorting
         $sortable = ['id', 'nombre', 'abreviatura', 'cif', 'domicilio', 'codigo_postal', 'telefono'];
         if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {

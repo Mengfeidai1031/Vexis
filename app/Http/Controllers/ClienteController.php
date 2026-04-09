@@ -33,6 +33,9 @@ class ClienteController extends Controller
         }
         if ($request->filled('dni')) $query->where('dni', $request->dni);
         if ($request->filled('codigo_postal')) $query->where('codigo_postal', $request->codigo_postal);
+        if ($request->filled('domicilio')) $query->where('domicilio', $request->domicilio);
+        if ($request->filled('email')) $query->where('email', $request->email);
+        if ($request->filled('telefono')) $query->where('telefono', $request->telefono);
 
         // Sorting
         $sortable = ['id', 'nombre', 'apellidos', 'dni', 'empresa_id', 'domicilio', 'codigo_postal'];

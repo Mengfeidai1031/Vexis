@@ -20,6 +20,8 @@ class RepartoController extends Controller
         if ($request->filled('almacen_destino_id')) $query->where('almacen_destino_id', $request->almacen_destino_id);
         if ($request->filled('fecha_desde')) $query->whereDate('fecha_solicitud', '>=', $request->fecha_desde);
         if ($request->filled('fecha_hasta')) $query->whereDate('fecha_solicitud', '<=', $request->fecha_hasta);
+        if ($request->filled('codigo_reparto')) $query->where('codigo_reparto', $request->codigo_reparto);
+        if ($request->filled('stock_id')) $query->where('stock_id', $request->stock_id);
 
         // Sorting
         $sortable = ['id', 'codigo_reparto', 'stock_id', 'cantidad', 'almacen_origen_id', 'almacen_destino_id', 'estado', 'fecha_solicitud'];
@@ -31,7 +33,9 @@ class RepartoController extends Controller
         $repartos = $query->paginate(15)->withQueryString();
         $empresas = Empresa::orderBy('nombre')->get();
         $almacenes = Almacen::orderBy('nombre')->get();
-        return view('repartos.index', compact('repartos', 'empresas', 'almacenes'));
+        $codigos_reparto = Reparto::distinct()->orderBy('codigo_reparto')->pluck('codigo_reparto');
+        $stocks_reparto = Stock::orderBy('nombre_pieza')->get();
+        return view('repartos.index', compact('repartos', 'empresas', 'almacenes', 'codigos_reparto', 'stocks_reparto'));
     }
 
     public function create()

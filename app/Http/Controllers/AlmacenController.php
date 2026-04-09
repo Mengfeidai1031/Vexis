@@ -24,6 +24,9 @@ class AlmacenController extends Controller
         if ($request->filled('activo')) {
             $query->where('activo', $request->activo);
         }
+        if ($request->filled('nombre')) $query->where('nombre', $request->nombre);
+        if ($request->filled('localidad')) $query->where('localidad', $request->localidad);
+        if ($request->filled('codigo')) $query->where('codigo', $request->codigo);
         // Sorting
         $sortable = ['id', 'codigo', 'nombre', 'localidad', 'isla', 'empresa_id', 'centro_id', 'activo'];
         if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
@@ -34,7 +37,10 @@ class AlmacenController extends Controller
         $almacenes = $query->paginate(15)->withQueryString();
         $empresas = Empresa::orderBy('nombre')->get();
         $centros = Centro::orderBy('nombre')->get();
-        return view('almacenes.index', compact('almacenes', 'empresas', 'centros'));
+        $nombres_almacenes = Almacen::distinct()->orderBy('nombre')->pluck('nombre');
+        $localidades_almacenes = Almacen::whereNotNull('localidad')->distinct()->orderBy('localidad')->pluck('localidad');
+        $codigos_almacenes = Almacen::distinct()->orderBy('codigo')->pluck('codigo');
+        return view('almacenes.index', compact('almacenes', 'empresas', 'centros', 'nombres_almacenes', 'localidades_almacenes', 'codigos_almacenes'));
     }
 
     public function create()

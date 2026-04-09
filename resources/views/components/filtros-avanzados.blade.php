@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var label = filtro.querySelector('.vx-filtro-label');
             if (!label) return;
             var labelText = label.textContent;
-            var input = filtro.querySelector('select, input[type="text"], input[type="date"]');
+            var input = filtro.querySelector('select, input[type="text"], input[type="date"], input[type="number"]');
             var hasValue = input && input.value && input.value !== '';
 
             if (hasValue) anyActive = true;

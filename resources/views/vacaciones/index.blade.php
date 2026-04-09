@@ -55,6 +55,15 @@
     </div>
 </div>
 
+{{-- Filtros --}}
+<x-filtros-avanzados :action="route('vacaciones.index')">
+    @if($isSuperAdmin)
+    <div class="vx-filtro" data-filtro="usuario"><label class="vx-filtro-label">Usuario</label><select name="user_id" class="vx-select"><option value="">Todos</option>@foreach($usuarios_vac as $u)<option value="{{ $u->id }}" {{ request('user_id') == $u->id ? 'selected' : '' }}>{{ $u->nombre_completo }}</option>@endforeach</select></div>
+    @endif
+    <div class="vx-filtro" data-filtro="estado"><label class="vx-filtro-label">Estado</label><select name="estado" class="vx-select"><option value="">Todos</option><option value="pendiente" {{ request('estado') == 'pendiente' ? 'selected' : '' }}>Pendiente</option><option value="aprobada" {{ request('estado') == 'aprobada' ? 'selected' : '' }}>Aprobada</option><option value="rechazada" {{ request('estado') == 'rechazada' ? 'selected' : '' }}>Rechazada</option></select></div>
+    <div class="vx-filtro" data-filtro="anio"><label class="vx-filtro-label">Año</label><select name="anio" class="vx-select">@foreach($anios_disponibles as $a)<option value="{{ $a }}" {{ request('anio', now()->year) == $a ? 'selected' : '' }}>{{ $a }}</option>@endforeach @if(!$anios_disponibles->contains(now()->year))<option value="{{ now()->year }}" {{ request('anio', now()->year) == now()->year ? 'selected' : '' }}>{{ now()->year }}</option>@endif</select></div>
+</x-filtros-avanzados>
+
 {{-- Tabla solicitudes --}}
 <div class="vx-card">
     <div class="vx-card-body" style="padding:0;">

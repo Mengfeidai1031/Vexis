@@ -35,6 +35,8 @@ class VehiculoController extends Controller
         if ($request->filled('version')) $query->where('version', $request->version);
         if ($request->filled('color_externo')) $query->where('color_externo', $request->color_externo);
         if ($request->filled('color_interno')) $query->where('color_interno', $request->color_interno);
+        if ($request->filled('matricula')) $query->where('matricula', $request->matricula);
+        if ($request->filled('chasis')) $query->where('chasis', $request->chasis);
 
         // Sorting
         $sortable = ['id', 'chasis', 'matricula', 'marca_id', 'modelo', 'version', 'color_externo', 'color_interno', 'empresa_id'];
@@ -50,8 +52,10 @@ class VehiculoController extends Controller
         $versiones = Vehiculo::whereNotNull('version')->distinct()->orderBy('version')->pluck('version');
         $colores_ext = Vehiculo::whereNotNull('color_externo')->where('color_externo', '!=', '')->distinct()->orderBy('color_externo')->pluck('color_externo');
         $colores_int = Vehiculo::whereNotNull('color_interno')->where('color_interno', '!=', '')->distinct()->orderBy('color_interno')->pluck('color_interno');
+        $matriculas = Vehiculo::whereNotNull('matricula')->distinct()->orderBy('matricula')->pluck('matricula');
+        $chasis_list = Vehiculo::whereNotNull('chasis')->distinct()->orderBy('chasis')->pluck('chasis');
 
-        return view('vehiculos.index', compact('vehiculos', 'marcas', 'empresas', 'modelos', 'versiones', 'colores_ext', 'colores_int'));
+        return view('vehiculos.index', compact('vehiculos', 'marcas', 'empresas', 'modelos', 'versiones', 'colores_ext', 'colores_int', 'matriculas', 'chasis_list'));
     }
 
     public function create()

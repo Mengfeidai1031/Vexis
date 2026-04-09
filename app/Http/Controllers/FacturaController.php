@@ -30,6 +30,10 @@ class FacturaController extends Controller
         if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
         if ($request->filled('fecha_desde')) $query->whereDate('fecha_factura', '>=', $request->fecha_desde);
         if ($request->filled('fecha_hasta')) $query->whereDate('fecha_factura', '<=', $request->fecha_hasta);
+        if ($request->filled('concepto')) $query->where('concepto', $request->concepto);
+        if ($request->filled('codigo_factura')) $query->where('codigo_factura', $request->codigo_factura);
+        if ($request->filled('total_min')) $query->where('total', '>=', $request->total_min);
+        if ($request->filled('total_max')) $query->where('total', '<=', $request->total_max);
         // Sorting
         $sortable = ['id', 'codigo_factura', 'cliente_id', 'marca_id', 'concepto', 'subtotal', 'iva_importe', 'total', 'estado', 'fecha_factura'];
         if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
@@ -41,7 +45,9 @@ class FacturaController extends Controller
         $marcas = Marca::where('activa', true)->orderBy('nombre')->get();
         $clientes = Cliente::orderBy('nombre')->get();
         $empresas = Empresa::orderBy('nombre')->get();
-        return view('facturas.index', compact('facturas', 'marcas', 'clientes', 'empresas'));
+        $codigos_factura = Factura::distinct()->orderBy('codigo_factura')->pluck('codigo_factura');
+        $conceptos_factura = Factura::whereNotNull('concepto')->distinct()->orderBy('concepto')->pluck('concepto');
+        return view('facturas.index', compact('facturas', 'marcas', 'clientes', 'empresas', 'codigos_factura', 'conceptos_factura'));
     }
 
     public function create(Request $request)

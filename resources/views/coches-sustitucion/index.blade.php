@@ -25,9 +25,12 @@
 
 {{-- Filtros --}}
 <x-filtros-avanzados :action="route('coches-sustitucion.index')">
-    <div class="vx-filtro" data-filtro="taller"><label class="vx-filtro-label">Taller</label><select name="taller_id" class="vx-select"><option value="">Todos</option>@foreach($talleres as $t)<option value="{{ $t->id }}" {{ request('taller_id') == $t->id ? 'selected' : '' }}>{{ $t->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="matricula"><label class="vx-filtro-label">Matrícula</label><select name="matricula" class="vx-select"><option value="">Todas</option>@foreach($matriculas_cs as $m)<option value="{{ $m }}" {{ request('matricula') == $m ? 'selected' : '' }}>{{ $m }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="modelo"><label class="vx-filtro-label">Modelo</label><select name="modelo" class="vx-select"><option value="">Todos</option>@foreach($modelos_cs as $m)<option value="{{ $m }}" {{ request('modelo') == $m ? 'selected' : '' }}>{{ $m }}</option>@endforeach</select></div>
     <div class="vx-filtro" data-filtro="marca"><label class="vx-filtro-label">Marca</label><select name="marca_id" class="vx-select"><option value="">Todas</option>@foreach($marcas as $m)<option value="{{ $m->id }}" {{ request('marca_id') == $m->id ? 'selected' : '' }}>{{ $m->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="taller"><label class="vx-filtro-label">Taller</label><select name="taller_id" class="vx-select"><option value="">Todos</option>@foreach($talleres as $t)<option value="{{ $t->id }}" {{ request('taller_id') == $t->id ? 'selected' : '' }}>{{ $t->nombre }}</option>@endforeach</select></div>
     <div class="vx-filtro" data-filtro="disponible"><label class="vx-filtro-label">Disponibilidad</label><select name="disponible" class="vx-select"><option value="">Todos</option><option value="1" {{ request('disponible') === '1' ? 'selected' : '' }}>Disponible</option><option value="0" {{ request('disponible') === '0' ? 'selected' : '' }}>En uso</option></select></div>
+    <div class="vx-filtro" data-filtro="empresa"><label class="vx-filtro-label">Empresa</label><select name="empresa_id" class="vx-select"><option value="">Todas</option>@foreach($empresas as $e)<option value="{{ $e->id }}" {{ request('empresa_id') == $e->id ? 'selected' : '' }}>{{ $e->nombre }}</option>@endforeach</select></div>
 </x-filtros-avanzados>
 
 {{-- Tabla --}}

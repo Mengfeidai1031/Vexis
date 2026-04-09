@@ -11,7 +11,9 @@
 </div>
 
 <x-filtros-avanzados :action="route('centros.index')">
+    <div class="vx-filtro" data-filtro="nombre"><label class="vx-filtro-label">Nombre</label><select name="nombre" class="vx-select"><option value="">Todos</option>@foreach($nombres_centros as $n)<option value="{{ $n }}" {{ request('nombre') == $n ? 'selected' : '' }}>{{ $n }}</option>@endforeach</select></div>
     <div class="vx-filtro" data-filtro="empresa"><label class="vx-filtro-label">Empresa</label><select name="empresa_id" class="vx-select"><option value="">Todas</option>@foreach($empresas as $e)<option value="{{ $e->id }}" {{ request('empresa_id') == $e->id ? 'selected' : '' }}>{{ $e->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="direccion"><label class="vx-filtro-label">Dirección</label><select name="direccion" class="vx-select"><option value="">Todas</option>@foreach($direcciones_centros as $d)<option value="{{ $d }}" {{ request('direccion') == $d ? 'selected' : '' }}>{{ $d }}</option>@endforeach</select></div>
     <div class="vx-filtro" data-filtro="municipio"><label class="vx-filtro-label">Municipio</label><select name="municipio" class="vx-select"><option value="">Todos</option>@foreach($municipios as $m)<option value="{{ $m }}" {{ request('municipio') == $m ? 'selected' : '' }}>{{ $m }}</option>@endforeach</select></div>
     <div class="vx-filtro" data-filtro="provincia"><label class="vx-filtro-label">Provincia</label><select name="provincia" class="vx-select"><option value="">Todas</option>@foreach($provincias as $p)<option value="{{ $p }}" {{ request('provincia') == $p ? 'selected' : '' }}>{{ $p }}</option>@endforeach</select></div>
 </x-filtros-avanzados>

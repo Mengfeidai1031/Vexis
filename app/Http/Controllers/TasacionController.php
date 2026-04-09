@@ -25,6 +25,13 @@ class TasacionController extends Controller
         if ($request->filled('fecha_desde')) $query->whereDate('fecha_tasacion', '>=', $request->fecha_desde);
         if ($request->filled('fecha_hasta')) $query->whereDate('fecha_tasacion', '<=', $request->fecha_hasta);
         if ($request->filled('marca')) $query->where('vehiculo_marca', $request->marca);
+        if ($request->filled('matricula')) $query->where('matricula', $request->matricula);
+        if ($request->filled('tasador_id')) $query->where('tasador_id', $request->tasador_id);
+        if ($request->filled('valor_min')) $query->where('valor_estimado', '>=', $request->valor_min);
+        if ($request->filled('valor_max')) $query->where('valor_estimado', '<=', $request->valor_max);
+        if ($request->filled('km_min')) $query->where('kilometraje', '>=', $request->km_min);
+        if ($request->filled('km_max')) $query->where('kilometraje', '<=', $request->km_max);
+        if ($request->filled('codigo_tasacion')) $query->where('codigo_tasacion', $request->codigo_tasacion);
         // Sorting
         $sortable = ['id', 'codigo_tasacion', 'vehiculo_marca', 'vehiculo_modelo', 'vehiculo_anio', 'kilometraje', 'matricula', 'estado_vehiculo', 'valor_estimado', 'estado', 'fecha_tasacion'];
         if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
@@ -36,7 +43,11 @@ class TasacionController extends Controller
         $clientes = Cliente::orderBy('nombre')->get();
         $empresas = Empresa::orderBy('nombre')->get();
         $marcas_tasacion = Tasacion::whereNotNull('vehiculo_marca')->distinct()->orderBy('vehiculo_marca')->pluck('vehiculo_marca');
-        return view('tasaciones.index', compact('tasaciones', 'clientes', 'empresas', 'marcas_tasacion'));
+        $tasadorIds = Tasacion::whereNotNull('tasador_id')->distinct()->pluck('tasador_id');
+        $tasadores = \App\Models\User::whereIn('id', $tasadorIds)->orderBy('nombre')->get();
+        $matriculas_tasacion = Tasacion::whereNotNull('matricula')->distinct()->orderBy('matricula')->pluck('matricula');
+        $codigos_tasacion = Tasacion::distinct()->orderBy('codigo_tasacion')->pluck('codigo_tasacion');
+        return view('tasaciones.index', compact('tasaciones', 'clientes', 'empresas', 'marcas_tasacion', 'tasadores', 'matriculas_tasacion', 'codigos_tasacion'));
     }
 
     public function create()

@@ -17,6 +17,9 @@ class TallerController extends Controller
         if ($request->filled('marca_id')) $query->where('marca_id', $request->marca_id);
         if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
         if ($request->input('activo') !== null && $request->input('activo') !== '') $query->where('activo', $request->activo);
+        if ($request->filled('nombre')) $query->where('nombre', $request->nombre);
+        if ($request->filled('localidad')) $query->where('localidad', $request->localidad);
+        if ($request->filled('codigo')) $query->where('codigo', $request->codigo);
         // Sorting
         $sortable = ['id', 'codigo', 'nombre', 'marca_id', 'isla', 'localidad', 'capacidad_diaria', 'activo'];
         if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
@@ -27,7 +30,10 @@ class TallerController extends Controller
         $talleres = $query->paginate(15)->withQueryString();
         $marcas = Marca::where('activa', true)->orderBy('nombre')->get();
         $empresas = Empresa::orderBy('nombre')->get();
-        return view('talleres.index', compact('talleres', 'marcas', 'empresas'));
+        $nombres_talleres = Taller::distinct()->orderBy('nombre')->pluck('nombre');
+        $localidades_talleres = Taller::whereNotNull('localidad')->distinct()->orderBy('localidad')->pluck('localidad');
+        $codigos_talleres = Taller::distinct()->orderBy('codigo')->pluck('codigo');
+        return view('talleres.index', compact('talleres', 'marcas', 'empresas', 'nombres_talleres', 'localidades_talleres', 'codigos_talleres'));
     }
 
     public function create()

@@ -20,6 +20,13 @@ class StockController extends Controller
         if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
         if ($request->filled('bajo_stock')) $query->whereColumn('cantidad', '<=', 'stock_minimo');
         if ($request->input('activo') !== null && $request->input('activo') !== '') $query->where('activo', $request->activo);
+        if ($request->filled('referencia')) $query->where('referencia', $request->referencia);
+        if ($request->filled('nombre_pieza')) $query->where('nombre_pieza', $request->nombre_pieza);
+        if ($request->filled('marca_pieza')) $query->where('marca_pieza', $request->marca_pieza);
+        if ($request->filled('cantidad_min')) $query->where('cantidad', '>=', $request->cantidad_min);
+        if ($request->filled('cantidad_max')) $query->where('cantidad', '<=', $request->cantidad_max);
+        if ($request->filled('precio_min')) $query->where('precio_unitario', '>=', $request->precio_min);
+        if ($request->filled('precio_max')) $query->where('precio_unitario', '<=', $request->precio_max);
 
         // Sorting
         $sortable = ['id', 'referencia', 'nombre_pieza', 'marca_pieza', 'cantidad', 'stock_minimo', 'precio_unitario', 'almacen_id', 'empresa_id'];
@@ -31,7 +38,10 @@ class StockController extends Controller
         $stocks = $query->paginate(15)->withQueryString();
         $almacenes = Almacen::where('activo', true)->orderBy('nombre')->get();
         $empresas = Empresa::orderBy('nombre')->get();
-        return view('stocks.index', compact('stocks', 'almacenes', 'empresas'));
+        $referencias = Stock::distinct()->orderBy('referencia')->pluck('referencia');
+        $nombres_pieza = Stock::distinct()->orderBy('nombre_pieza')->pluck('nombre_pieza');
+        $marcas_pieza = Stock::whereNotNull('marca_pieza')->distinct()->orderBy('marca_pieza')->pluck('marca_pieza');
+        return view('stocks.index', compact('stocks', 'almacenes', 'empresas', 'referencias', 'nombres_pieza', 'marcas_pieza'));
     }
 
     public function create()

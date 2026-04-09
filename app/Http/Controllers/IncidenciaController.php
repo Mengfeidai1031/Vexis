@@ -21,6 +21,8 @@ class IncidenciaController extends Controller
         if ($request->filled('usuario_id')) $query->where('user_id', $request->usuario_id);
         if ($request->filled('fecha_desde')) $query->whereDate('fecha_apertura', '>=', $request->fecha_desde);
         if ($request->filled('fecha_hasta')) $query->whereDate('fecha_apertura', '<=', $request->fecha_hasta);
+        if ($request->filled('codigo_incidencia')) $query->where('codigo_incidencia', $request->codigo_incidencia);
+        if ($request->filled('titulo')) $query->where('titulo', $request->titulo);
 
         // Sorting
         $sortable = ['id', 'codigo_incidencia', 'titulo', 'prioridad', 'estado', 'usuario_id', 'tecnico_id', 'fecha_apertura'];
@@ -43,7 +45,10 @@ class IncidenciaController extends Controller
 
         $usuarios = User::orderBy('nombre')->get();
 
-        return view('incidencias.index', compact('incidencias', 'stats', 'tecnicos', 'usuarios'));
+        $codigos_incidencia = Incidencia::distinct()->orderBy('codigo_incidencia')->pluck('codigo_incidencia');
+        $titulos_incidencia = Incidencia::distinct()->orderBy('titulo')->pluck('titulo');
+
+        return view('incidencias.index', compact('incidencias', 'stats', 'tecnicos', 'usuarios', 'codigos_incidencia', 'titulos_incidencia'));
     }
 
     public function create()

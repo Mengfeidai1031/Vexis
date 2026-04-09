@@ -21,6 +21,9 @@ class VacacionController extends Controller
         if ($request->filled('estado')) {
             $query->where('estado', $request->estado);
         }
+        if ($isSuperAdmin && $request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
         $query->whereYear('fecha_inicio', $anio);
 
         // Sorting
@@ -52,7 +55,10 @@ class VacacionController extends Controller
                 'estado' => $v->estado,
             ]);
 
-        return view('vacaciones.index', compact('vacaciones', 'diasUsados', 'diasDisponibles', 'anio', 'eventos', 'isSuperAdmin'));
+        $usuarios_vac = \App\Models\User::orderBy('nombre')->get();
+        $anios_disponibles = Vacacion::selectRaw('YEAR(fecha_inicio) as anio')->distinct()->orderByDesc('anio')->pluck('anio');
+
+        return view('vacaciones.index', compact('vacaciones', 'diasUsados', 'diasDisponibles', 'anio', 'eventos', 'isSuperAdmin', 'usuarios_vac', 'anios_disponibles'));
     }
 
     public function create()

@@ -28,6 +28,8 @@ class CentroController extends Controller
         if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
         if ($request->filled('municipio')) $query->where('municipio', $request->municipio);
         if ($request->filled('provincia')) $query->where('provincia', $request->provincia);
+        if ($request->filled('nombre')) $query->where('nombre', $request->nombre);
+        if ($request->filled('direccion')) $query->where('direccion', $request->direccion);
 
         // Sorting
         $sortable = ['id', 'nombre', 'empresa_id', 'direccion', 'municipio', 'provincia'];
@@ -40,8 +42,10 @@ class CentroController extends Controller
         $empresas = Empresa::orderBy('nombre')->get();
         $municipios = Centro::whereNotNull('municipio')->distinct()->orderBy('municipio')->pluck('municipio');
         $provincias = Centro::whereNotNull('provincia')->distinct()->orderBy('provincia')->pluck('provincia');
+        $nombres_centros = Centro::distinct()->orderBy('nombre')->pluck('nombre');
+        $direcciones_centros = Centro::whereNotNull('direccion')->distinct()->orderBy('direccion')->pluck('direccion');
 
-        return view('centros.index', compact('centros', 'empresas', 'municipios', 'provincias'));
+        return view('centros.index', compact('centros', 'empresas', 'municipios', 'provincias', 'nombres_centros', 'direcciones_centros'));
     }
 
     /**

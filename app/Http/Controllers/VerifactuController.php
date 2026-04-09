@@ -16,6 +16,7 @@ class VerifactuController extends Controller
 
         if ($request->filled('estado')) $query->where('estado', $request->estado);
         if ($request->filled('tipo_operacion')) $query->where('tipo_operacion', $request->tipo_operacion);
+        if ($request->filled('codigo_registro')) $query->where('codigo_registro', $request->codigo_registro);
         if ($request->filled('fecha_desde')) $query->whereDate('fecha_registro', '>=', $request->fecha_desde);
         if ($request->filled('fecha_hasta')) $query->whereDate('fecha_registro', '<=', $request->fecha_hasta);
 
@@ -35,7 +36,9 @@ class VerifactuController extends Controller
             'rechazados' => Verifactu::where('estado', 'rechazado')->count(),
         ];
 
-        return view('verifactu.index', compact('registros', 'stats'));
+        $codigos_verifactu = Verifactu::distinct()->orderBy('codigo_registro')->pluck('codigo_registro');
+
+        return view('verifactu.index', compact('registros', 'stats', 'codigos_verifactu'));
     }
 
     public function show(Verifactu $verifactu)

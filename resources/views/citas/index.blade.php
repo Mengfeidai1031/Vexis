@@ -56,9 +56,11 @@
 </div>
 
 <x-filtros-avanzados :action="route('citas.index')">
+    <div class="vx-filtro" data-filtro="fecha"><label class="vx-filtro-label">Fecha</label><input type="date" name="fecha" class="vx-input" value="{{ request('fecha') }}"></div>
+    <div class="vx-filtro" data-filtro="cliente"><label class="vx-filtro-label">Cliente</label><select name="cliente_nombre" class="vx-select"><option value="">Todos</option>@foreach($clientes_citas as $c)<option value="{{ $c }}" {{ request('cliente_nombre') == $c ? 'selected' : '' }}>{{ $c }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="mecanico"><label class="vx-filtro-label">Mecánico</label><select name="mecanico_id" class="vx-select"><option value="">Todos</option>@foreach($mecanicos as $m)<option value="{{ $m->id }}" {{ request('mecanico_id') == $m->id ? 'selected' : '' }}>{{ $m->nombre_completo }}</option>@endforeach</select></div>
     <div class="vx-filtro" data-filtro="taller"><label class="vx-filtro-label">Taller</label><select name="taller_id" class="vx-select"><option value="">Todos</option>@foreach($talleres as $t)<option value="{{ $t->id }}" {{ request('taller_id') == $t->id ? 'selected' : '' }}>{{ $t->nombre }}</option>@endforeach</select></div>
     <div class="vx-filtro" data-filtro="estado"><label class="vx-filtro-label">Estado</label><select name="estado" class="vx-select"><option value="">Todos</option>@foreach(\App\Models\CitaTaller::$estados as $k => $v)<option value="{{ $k }}" {{ request('estado') == $k ? 'selected' : '' }}>{{ $v }}</option>@endforeach</select></div>
-    <div class="vx-filtro" data-filtro="mecanico"><label class="vx-filtro-label">Mecánico</label><select name="mecanico_id" class="vx-select"><option value="">Todos</option>@foreach($mecanicos as $m)<option value="{{ $m->id }}" {{ request('mecanico_id') == $m->id ? 'selected' : '' }}>{{ $m->nombre_completo }}</option>@endforeach</select></div>
     <div class="vx-filtro" data-filtro="marca"><label class="vx-filtro-label">Marca</label><select name="marca_id" class="vx-select"><option value="">Todas</option>@foreach($marcas as $m)<option value="{{ $m->id }}" {{ request('marca_id') == $m->id ? 'selected' : '' }}>{{ $m->nombre }}</option>@endforeach</select></div>
 </x-filtros-avanzados>
 

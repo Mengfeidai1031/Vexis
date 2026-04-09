@@ -3,6 +3,8 @@
 @section('content')
 <div class="vx-page-header"><h1 class="vx-page-title">Mecánicos</h1><div class="vx-page-actions">@can('crear mecanicos')<a href="{{ route('mecanicos.create') }}" class="vx-btn vx-btn-primary"><i class="bi bi-plus-circle"></i> Nuevo</a>@endcan</div></div>
 <x-filtros-avanzados :action="route('mecanicos.index')">
+    <div class="vx-filtro" data-filtro="nombre"><label class="vx-filtro-label">Nombre</label><select name="mecanico_id" class="vx-select"><option value="">Todos</option>@foreach($mecanicos_all as $m)<option value="{{ $m->id }}" {{ request('mecanico_id') == $m->id ? 'selected' : '' }}>{{ $m->nombre }} {{ $m->apellidos }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="especialidad"><label class="vx-filtro-label">Especialidad</label><select name="especialidad" class="vx-select"><option value="">Todas</option>@foreach($especialidades as $e)<option value="{{ $e }}" {{ request('especialidad') == $e ? 'selected' : '' }}>{{ $e }}</option>@endforeach</select></div>
     <div class="vx-filtro" data-filtro="taller"><label class="vx-filtro-label">Taller</label><select name="taller_id" class="vx-select"><option value="">Todos</option>@foreach($talleres as $t)<option value="{{ $t->id }}" {{ request('taller_id') == $t->id ? 'selected' : '' }}>{{ $t->nombre }}</option>@endforeach</select></div>
     <div class="vx-filtro" data-filtro="activo"><label class="vx-filtro-label">Estado</label><select name="activo" class="vx-select"><option value="">Todos</option><option value="1" {{ request('activo') === '1' ? 'selected' : '' }}>Activo</option><option value="0" {{ request('activo') === '0' ? 'selected' : '' }}>Inactivo</option></select></div>
 </x-filtros-avanzados>

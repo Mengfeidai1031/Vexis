@@ -33,6 +33,12 @@ class VentaController extends Controller
         if ($request->filled('fecha_desde')) $query->whereDate('fecha_venta', '>=', $request->fecha_desde);
         if ($request->filled('fecha_hasta')) $query->whereDate('fecha_venta', '<=', $request->fecha_hasta);
         if ($request->filled('vendedor_id')) $query->where('vendedor_id', $request->vendedor_id);
+        if ($request->filled('vehiculo_modelo')) {
+            $query->whereHas('vehiculo', fn($q) => $q->where('modelo', $request->vehiculo_modelo));
+        }
+        if ($request->filled('precio_min')) $query->where('precio_final', '>=', $request->precio_min);
+        if ($request->filled('precio_max')) $query->where('precio_final', '<=', $request->precio_max);
+        if ($request->filled('codigo_venta')) $query->where('codigo_venta', $request->codigo_venta);
         // Sorting
         $sortable = ['id', 'codigo_venta', 'vehiculo_id', 'cliente_id', 'marca_id', 'precio_final', 'forma_pago', 'estado', 'fecha_venta'];
         if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
@@ -45,7 +51,9 @@ class VentaController extends Controller
         $clientes = Cliente::orderBy('nombre')->get();
         $empresas = Empresa::orderBy('nombre')->get();
         $vendedores = \App\Models\User::orderBy('nombre')->get();
-        return view('ventas.index', compact('ventas', 'marcas', 'clientes', 'empresas', 'vendedores'));
+        $modelos_vehiculo = Vehiculo::distinct()->orderBy('modelo')->pluck('modelo');
+        $codigos_venta = Venta::distinct()->orderBy('codigo_venta')->pluck('codigo_venta');
+        return view('ventas.index', compact('ventas', 'marcas', 'clientes', 'empresas', 'vendedores', 'modelos_vehiculo', 'codigos_venta'));
     }
 
     public function create()

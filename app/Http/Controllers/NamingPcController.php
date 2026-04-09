@@ -17,6 +17,9 @@ class NamingPcController extends Controller
         if ($request->filled('centro_id')) $query->where('centro_id', $request->centro_id);
         if ($request->filled('sistema_operativo')) $query->where('sistema_operativo', $request->sistema_operativo);
         if ($request->filled('activo')) $query->where('activo', $request->activo);
+        if ($request->filled('nombre_equipo')) $query->where('nombre_equipo', $request->nombre_equipo);
+        if ($request->filled('direccion_ip')) $query->where('direccion_ip', $request->direccion_ip);
+        if ($request->filled('version_so')) $query->where('version_so', $request->version_so);
         // Sorting
         $sortable = ['id', 'nombre_equipo', 'tipo', 'direccion_ip', 'empresa_id', 'centro_id', 'sistema_operativo', 'version_so', 'activo'];
         if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
@@ -27,7 +30,10 @@ class NamingPcController extends Controller
         $namingPcs = $query->paginate(15)->withQueryString();
         $empresas = Empresa::orderBy('nombre')->get();
         $centros = Centro::orderBy('nombre')->get();
-        return view('naming-pcs.index', compact('namingPcs', 'empresas', 'centros'));
+        $nombres_pc = NamingPc::distinct()->orderBy('nombre_equipo')->pluck('nombre_equipo');
+        $ips_pc = NamingPc::whereNotNull('direccion_ip')->distinct()->orderBy('direccion_ip')->pluck('direccion_ip');
+        $versiones_pc = NamingPc::whereNotNull('version_so')->distinct()->orderBy('version_so')->pluck('version_so');
+        return view('naming-pcs.index', compact('namingPcs', 'empresas', 'centros', 'nombres_pc', 'ips_pc', 'versiones_pc'));
     }
 
     public function create()

@@ -11,11 +11,11 @@
 </div>
 
 <x-filtros-avanzados :action="route('ofertas.index')">
-    <div class="vx-filtro" data-filtro="cliente"><label class="vx-filtro-label">Cliente</label><select name="cliente_id" class="vx-select"><option value="">Todos</option>@foreach($clientes as $cliente)<option value="{{ $cliente->id }}" {{ ($filters['cliente_id'] ?? '') == $cliente->id ? 'selected' : '' }}>{{ $cliente->nombre_completo }}</option>@endforeach</select></div>
-    <div class="vx-filtro" data-filtro="vehiculo"><label class="vx-filtro-label">Vehículo</label><select name="vehiculo_id" class="vx-select"><option value="">Todos</option>@foreach($vehiculos as $vehiculo)<option value="{{ $vehiculo->id }}" {{ ($filters['vehiculo_id'] ?? '') == $vehiculo->id ? 'selected' : '' }}>{{ $vehiculo->modelo }} - {{ $vehiculo->version }}</option>@endforeach</select></div>
-    <div class="vx-filtro" data-filtro="empresa"><label class="vx-filtro-label">Empresa</label><select name="empresa_id" class="vx-select"><option value="">Todas</option>@foreach($empresas as $empresa)<option value="{{ $empresa->id }}" {{ ($filters['empresa_id'] ?? '') == $empresa->id ? 'selected' : '' }}>{{ $empresa->nombre }}</option>@endforeach</select></div>
     <div class="vx-filtro" data-filtro="desde"><label class="vx-filtro-label">Fecha desde</label><input type="date" name="fecha_desde" class="vx-input" value="{{ $filters['fecha_desde'] ?? '' }}"></div>
     <div class="vx-filtro" data-filtro="hasta"><label class="vx-filtro-label">Fecha hasta</label><input type="date" name="fecha_hasta" class="vx-input" value="{{ $filters['fecha_hasta'] ?? '' }}"></div>
+    <div class="vx-filtro" data-filtro="cliente"><label class="vx-filtro-label">Cliente</label><select name="cliente_id" class="vx-select"><option value="">Todos</option>@foreach($clientes as $cliente)<option value="{{ $cliente->id }}" {{ ($filters['cliente_id'] ?? '') == $cliente->id ? 'selected' : '' }}>{{ $cliente->nombre_completo }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="empresa"><label class="vx-filtro-label">Empresa</label><select name="empresa_id" class="vx-select"><option value="">Todas</option>@foreach($empresas as $empresa)<option value="{{ $empresa->id }}" {{ ($filters['empresa_id'] ?? '') == $empresa->id ? 'selected' : '' }}>{{ $empresa->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="vehiculo"><label class="vx-filtro-label">Vehículo</label><select name="vehiculo_id" class="vx-select"><option value="">Todos</option>@foreach($vehiculos as $vehiculo)<option value="{{ $vehiculo->id }}" {{ ($filters['vehiculo_id'] ?? '') == $vehiculo->id ? 'selected' : '' }}>{{ $vehiculo->modelo }} - {{ $vehiculo->version }}</option>@endforeach</select></div>
 </x-filtros-avanzados>
 
 {{-- Tabla --}}

@@ -19,6 +19,7 @@ class CitaTallerController extends Controller
         if ($request->filled('fecha')) $query->whereDate('fecha', $request->fecha);
         if ($request->filled('mecanico_id')) $query->where('mecanico_id', $request->mecanico_id);
         if ($request->filled('marca_id')) $query->where('marca_id', $request->marca_id);
+        if ($request->filled('cliente_nombre')) $query->where('cliente_nombre', $request->cliente_nombre);
         // Sorting
         $sortable = ['id', 'fecha', 'hora_inicio', 'hora_fin', 'cliente_nombre', 'vehiculo_info', 'mecanico_id', 'taller_id', 'estado'];
         if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
@@ -40,8 +41,9 @@ class CitaTallerController extends Controller
 
         $mecanicos = Mecanico::orderBy('nombre')->get();
         $marcas = Marca::orderBy('nombre')->get();
+        $clientes_citas = CitaTaller::distinct()->orderBy('cliente_nombre')->pluck('cliente_nombre');
 
-        return view('citas.index', compact('citas', 'talleres', 'citasSemana', 'semanaInicio', 'semanaFin', 'mecanicos', 'marcas'));
+        return view('citas.index', compact('citas', 'talleres', 'citasSemana', 'semanaInicio', 'semanaFin', 'mecanicos', 'marcas', 'clientes_citas'));
     }
 
     public function create()

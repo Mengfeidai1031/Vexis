@@ -44,6 +44,7 @@ class UserController extends Controller
             $query->whereRaw("CONCAT(nombre, ' ', apellidos) = ?", [$nombre]);
         }
         if ($request->filled('email')) $query->where('email', $request->email);
+        if ($request->filled('telefono')) $query->where('telefono', $request->telefono);
 
         // Sorting
         $sortable = ['id', 'nombre', 'apellidos', 'email', 'empresa_id', 'departamento_id', 'centro_id', 'telefono'];

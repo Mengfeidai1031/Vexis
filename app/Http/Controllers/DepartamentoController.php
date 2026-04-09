@@ -27,6 +27,9 @@ class DepartamentoController extends Controller
         if ($request->filled('nombre')) {
             $departamentos = $departamentos->filter(fn($d) => $d->nombre === $request->nombre)->values();
         }
+        if ($request->filled('abreviatura')) {
+            $departamentos = $departamentos->filter(fn($d) => $d->abreviatura === $request->abreviatura)->values();
+        }
 
         // Sorting
         $sortable = ['id', 'nombre', 'abreviatura', 'created_at'];

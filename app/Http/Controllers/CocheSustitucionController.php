@@ -17,6 +17,9 @@ class CocheSustitucionController extends Controller
         if ($request->filled('taller_id')) $query->where('taller_id', $request->taller_id);
         if ($request->filled('marca_id')) $query->where('marca_id', $request->marca_id);
         if ($request->filled('disponible')) $query->where('disponible', $request->disponible);
+        if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
+        if ($request->filled('matricula')) $query->where('matricula', $request->matricula);
+        if ($request->filled('modelo')) $query->where('modelo', $request->modelo);
         // Sorting
         $sortable = ['id', 'matricula', 'modelo', 'marca_id', 'color', 'taller_id', 'disponible'];
         if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
@@ -35,8 +38,11 @@ class CocheSustitucionController extends Controller
             ->get()->map(fn($r) => ['title' => $r->coche->matricula . ' — ' . $r->cliente_nombre, 'start' => $r->fecha_inicio->format('Y-m-d'), 'end' => $r->fecha_fin->addDay()->format('Y-m-d'), 'color' => match($r->estado) { 'reservado' => '#f39c12', 'entregado' => '#3498db', default => '#2ecc71' }]);
 
         $marcas = Marca::orderBy('nombre')->get();
+        $empresas = Empresa::orderBy('nombre')->get();
+        $matriculas_cs = CocheSustitucion::distinct()->orderBy('matricula')->pluck('matricula');
+        $modelos_cs = CocheSustitucion::distinct()->orderBy('modelo')->pluck('modelo');
 
-        return view('coches-sustitucion.index', compact('coches', 'talleres', 'reservas', 'mes', 'marcas'));
+        return view('coches-sustitucion.index', compact('coches', 'talleres', 'reservas', 'mes', 'marcas', 'empresas', 'matriculas_cs', 'modelos_cs'));
     }
 
     public function create()
