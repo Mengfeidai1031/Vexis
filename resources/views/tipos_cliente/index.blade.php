@@ -13,25 +13,11 @@
 @if(session('success'))<div class="vx-alert vx-alert-success">{{ session('success') }}</div>@endif
 @if(session('error'))<div class="vx-alert vx-alert-danger">{{ session('error') }}</div>@endif
 
-<div class="vx-card vx-filter-card">
-    <div class="vx-card-body">
-        <form method="GET" action="{{ route('tipos-cliente.index') }}" style="display:grid;grid-template-columns:repeat(3,1fr) auto;gap:12px;align-items:end;">
-            <div class="vx-form-group" style="margin:0;"><label class="vx-label">Nombre</label><input type="text" name="nombre" class="vx-input" value="{{ request('nombre') }}"></div>
-            <div class="vx-form-group" style="margin:0;"><label class="vx-label">Estado</label>
-                <select name="activo" class="vx-select">
-                    <option value="">Todos</option>
-                    <option value="1" @selected(request('activo')==='1')>Activos</option>
-                    <option value="0" @selected(request('activo')==='0')>Inactivos</option>
-                </select>
-            </div>
-            <div></div>
-            <div style="display:flex;gap:6px;">
-                <button class="vx-btn vx-btn-primary" type="submit"><i class="bi bi-search"></i></button>
-                <a href="{{ route('tipos-cliente.index') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-x-lg"></i></a>
-            </div>
-        </form>
-    </div>
-</div>
+<x-filtros-avanzados :action="route('tipos-cliente.index')">
+    <div class="vx-filtro" data-filtro="nombre"><label class="vx-filtro-label">Nombre</label><select name="nombre" class="vx-select"><option value="">Todos</option>@foreach($tipos_all as $t)<option value="{{ $t->nombre }}" {{ request('nombre') == $t->nombre ? 'selected' : '' }}>{{ $t->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="descripcion"><label class="vx-filtro-label">Descripción</label><select name="descripcion" class="vx-select"><option value="">Todas</option>@foreach($tipos_all as $t)@if($t->descripcion)<option value="{{ $t->descripcion }}" {{ request('descripcion') == $t->descripcion ? 'selected' : '' }}>{{ $t->descripcion }}</option>@endif @endforeach</select></div>
+    <div class="vx-filtro" data-filtro="activo"><label class="vx-filtro-label">Estado</label><select name="activo" class="vx-select"><option value="">Todos</option><option value="1" @selected(request('activo')==='1')>Activos</option><option value="0" @selected(request('activo')==='0')>Inactivos</option></select></div>
+</x-filtros-avanzados>
 
 <div class="vx-card">
     <div class="vx-card-body" style="padding:0;">

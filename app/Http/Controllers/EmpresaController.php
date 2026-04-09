@@ -13,6 +13,7 @@ class EmpresaController extends Controller
         if ($request->filled('nombre')) {
             $query->where('nombre', $request->nombre);
         }
+        if ($request->filled('abreviatura')) $query->where('abreviatura', $request->abreviatura);
         if ($request->filled('cif')) $query->where('cif', $request->cif);
         if ($request->filled('codigo_postal')) $query->where('codigo_postal', $request->codigo_postal);
         if ($request->filled('domicilio')) $query->where('domicilio', $request->domicilio);
@@ -25,8 +26,10 @@ class EmpresaController extends Controller
         }
 
         $empresas = $query->paginate(15)->withQueryString();
+        $empresas_all = Empresa::orderBy('nombre')->get();
+        $abreviaturas = Empresa::whereNotNull('abreviatura')->distinct()->orderBy('abreviatura')->pluck('abreviatura');
         $codigos_postales = Empresa::whereNotNull('codigo_postal')->distinct()->orderBy('codigo_postal')->pluck('codigo_postal');
-        return view('empresas.index', compact('empresas', 'codigos_postales'));
+        return view('empresas.index', compact('empresas', 'empresas_all', 'abreviaturas', 'codigos_postales'));
     }
 
     public function create()

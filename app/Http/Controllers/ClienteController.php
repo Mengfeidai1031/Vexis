@@ -38,7 +38,7 @@ class ClienteController extends Controller
         if ($request->filled('telefono')) $query->where('telefono', $request->telefono);
 
         // Sorting
-        $sortable = ['id', 'nombre', 'apellidos', 'dni', 'empresa_id', 'domicilio', 'codigo_postal'];
+        $sortable = ['id', 'nombre', 'apellidos', 'dni', 'empresa_id', 'domicilio', 'codigo_postal', 'tipo_cliente_id', 'email', 'telefono'];
         if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
             $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
             $query->reorder()->orderBy($request->sort_by, $dir);

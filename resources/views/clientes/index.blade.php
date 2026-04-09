@@ -32,6 +32,9 @@
                         <tr>
                             <x-columna-ordenable campo="id" label="ID" />
                             <x-columna-ordenable campo="nombre" label="Nombre" />
+                            <x-columna-ordenable campo="tipo_cliente_id" label="Tipo" />
+                            <x-columna-ordenable campo="email" label="Email" />
+                            <x-columna-ordenable campo="telefono" label="Teléfono" />
                             <x-columna-ordenable campo="dni" label="DNI" />
                             <x-columna-ordenable campo="empresa_id" label="Empresa" />
                             <x-columna-ordenable campo="domicilio" label="Domicilio" />
@@ -44,6 +47,9 @@
                             <tr>
                                 <td style="color: var(--vx-text-muted);">{{ $cliente->id }}</td>
                                 <td style="font-weight: 600;">{{ $cliente->nombre_completo }}</td>
+                                <td>{{ $cliente->tipoCliente->nombre ?? '-' }}</td>
+                                <td style="font-size: 12px;">{{ $cliente->email }}</td>
+                                <td style="font-size: 12px;">{{ $cliente->telefono }}</td>
                                 <td><span class="vx-badge vx-badge-gray" style="font-family: var(--vx-font-mono);">{{ $cliente->dni }}</span></td>
                                 <td>{{ $cliente->empresa->nombre }}</td>
                                 <td style="font-size: 12px;">{{ $cliente->domicilio }}</td>

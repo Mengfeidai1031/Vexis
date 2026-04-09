@@ -145,23 +145,25 @@ class DatosEjemploSeeder extends Seeder
         if ($talleres->isEmpty()) return;
         $empresa = Empresa::first();
 
-        $nissan = \App\Models\Marca::where('slug', 'nissan')->first()?->id;
-        $renault = \App\Models\Marca::where('slug', 'renault')->first()?->id;
-        $dacia = \App\Models\Marca::where('slug', 'dacia')->first()?->id;
+        // Pick real vehicles from the vehiculos table so matriculas/modelos are coherent
+        $vehiculos = Vehiculo::with('marca')->inRandomOrder()->take(6)->get();
+        if ($vehiculos->isEmpty()) return;
 
-        $coches = [
-            ['matricula'=>'1234 GKL','modelo'=>'Dacia Sandero','marca_id'=>$dacia,'color'=>'Blanco','anio'=>2023],
-            ['matricula'=>'5678 HMN','modelo'=>'Renault Clio','marca_id'=>$renault,'color'=>'Gris','anio'=>2022],
-            ['matricula'=>'9012 JPQ','modelo'=>'Nissan Micra','marca_id'=>$nissan,'color'=>'Rojo','anio'=>2023],
-            ['matricula'=>'3456 KRS','modelo'=>'Dacia Sandero Stepway','marca_id'=>$dacia,'color'=>'Azul','anio'=>2024],
-            ['matricula'=>'7890 LTV','modelo'=>'Renault Clio','marca_id'=>$renault,'color'=>'Negro','anio'=>2023],
-            ['matricula'=>'2345 MWX','modelo'=>'Nissan Juke','marca_id'=>$nissan,'color'=>'Blanco','anio'=>2022],
-        ];
+        $colores = ['Blanco','Gris','Rojo','Azul','Negro','Plata'];
 
-        foreach ($coches as $i => $c) {
+        foreach ($vehiculos->values() as $i => $v) {
             $coche = CocheSustitucion::firstOrCreate(
-                ['matricula' => $c['matricula']],
-                [...$c,'taller_id'=>$talleres[$i % $talleres->count()]->id,'empresa_id'=>$empresa->id,'disponible'=>true]
+                ['matricula' => $v->matricula],
+                [
+                    'matricula' => $v->matricula,
+                    'modelo' => ($v->marca?->nombre ? $v->marca->nombre.' ' : '').$v->modelo,
+                    'marca_id' => $v->marca_id,
+                    'color' => $colores[$i % count($colores)],
+                    'anio' => 2023,
+                    'taller_id' => $talleres[$i % $talleres->count()]->id,
+                    'empresa_id' => $empresa->id,
+                    'disponible' => true,
+                ]
             );
             if ($i < 3) {
                 ReservaSustitucion::firstOrCreate(

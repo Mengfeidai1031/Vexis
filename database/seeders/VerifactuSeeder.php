@@ -85,7 +85,7 @@ class VerifactuSeeder extends Seeder
                     'hash_anterior' => $hashAnterior,
                     'fecha_registro' => $factura->fecha_factura->addHours(rand(1, 8)),
                     'estado' => $estado,
-                    'tipo_operacion' => 'emision',
+                    'tipo_operacion' => 'alta',
                     'nif_emisor' => $factura->empresa?->cif,
                     'nombre_emisor' => $factura->empresa?->nombre,
                     'importe_total' => $factura->total,

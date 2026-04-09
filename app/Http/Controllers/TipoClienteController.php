@@ -12,7 +12,8 @@ class TipoClienteController extends Controller
     {
         $query = TipoCliente::withCount('clientes');
 
-        if ($request->filled('nombre')) $query->where('nombre', 'like', '%'.$request->nombre.'%');
+        if ($request->filled('nombre')) $query->where('nombre', $request->nombre);
+        if ($request->filled('descripcion')) $query->where('descripcion', $request->descripcion);
         if ($request->filled('activo')) $query->where('activo', $request->activo);
 
         $sortable = ['id', 'nombre', 'slug', 'activo', 'clientes_count'];
@@ -24,7 +25,8 @@ class TipoClienteController extends Controller
         }
 
         $tipos = $query->paginate(15)->withQueryString();
-        return view('tipos_cliente.index', compact('tipos'));
+        $tipos_all = TipoCliente::orderBy('nombre')->get();
+        return view('tipos_cliente.index', compact('tipos', 'tipos_all'));
     }
 
     public function create()

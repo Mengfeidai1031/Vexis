@@ -17,6 +17,7 @@ class VerifactuController extends Controller
         if ($request->filled('estado')) $query->where('estado', $request->estado);
         if ($request->filled('tipo_operacion')) $query->where('tipo_operacion', $request->tipo_operacion);
         if ($request->filled('codigo_registro')) $query->where('codigo_registro', $request->codigo_registro);
+        if ($request->filled('factura_id')) $query->where('factura_id', $request->factura_id);
         if ($request->filled('fecha_desde')) $query->whereDate('fecha_registro', '>=', $request->fecha_desde);
         if ($request->filled('fecha_hasta')) $query->whereDate('fecha_registro', '<=', $request->fecha_hasta);
 
@@ -37,8 +38,9 @@ class VerifactuController extends Controller
         ];
 
         $codigos_verifactu = Verifactu::distinct()->orderBy('codigo_registro')->pluck('codigo_registro');
+        $facturas_verifactu = Factura::orderBy('codigo_factura')->get(['id','codigo_factura']);
 
-        return view('verifactu.index', compact('registros', 'stats', 'codigos_verifactu'));
+        return view('verifactu.index', compact('registros', 'stats', 'codigos_verifactu', 'facturas_verifactu'));
     }
 
     public function show(Verifactu $verifactu)

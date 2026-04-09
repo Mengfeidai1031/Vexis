@@ -17,7 +17,7 @@ class UserSeeder extends Seeder
             'empresa_id' => 1,
             'departamento_id' => 7, // Informática
             'centro_id' => 1,
-            'email' => 'superadmin@grupodai.com',
+            'email' => 'superadmin@grupo-dai.com',
             'telefono' => '928301501',
             'extension' => '100',
             'password' => Hash::make('password'),
@@ -31,7 +31,7 @@ class UserSeeder extends Seeder
             'empresa_id' => 1,
             'departamento_id' => 1, // Administración
             'centro_id' => 1,
-            'email' => 'admin@grupodai.com',
+            'email' => 'admin@grupo-dai.com',
             'telefono' => '928301502',
             'extension' => '101',
             'password' => Hash::make('password'),
@@ -45,7 +45,7 @@ class UserSeeder extends Seeder
             'empresa_id' => 2,
             'departamento_id' => 8, // Dirección
             'centro_id' => 4,
-            'email' => 'francisco@grupodai.com',
+            'email' => 'francisco@grupo-dai.com',
             'telefono' => '922653201',
             'extension' => '200',
             'password' => Hash::make('password'),
@@ -59,7 +59,7 @@ class UserSeeder extends Seeder
             'empresa_id' => 1,
             'departamento_id' => 2, // Ventas
             'centro_id' => 2,
-            'email' => 'maria@grupodai.com',
+            'email' => 'maria@grupo-dai.com',
             'telefono' => '628445566',
             'extension' => '301',
             'password' => Hash::make('password'),
@@ -73,7 +73,7 @@ class UserSeeder extends Seeder
             'empresa_id' => 2,
             'departamento_id' => 2, // Ventas
             'centro_id' => 5,
-            'email' => 'joseantonio@grupodai.com',
+            'email' => 'joseantonio@grupo-dai.com',
             'telefono' => '622778899',
             'extension' => '302',
             'password' => Hash::make('password'),
@@ -87,7 +87,7 @@ class UserSeeder extends Seeder
             'empresa_id' => 3,
             'departamento_id' => 1, // Administración
             'centro_id' => 7,
-            'email' => 'pedro@grupodai.com',
+            'email' => 'pedro@grupo-dai.com',
             'telefono' => '928812301',
             'extension' => '400',
             'password' => Hash::make('password'),
