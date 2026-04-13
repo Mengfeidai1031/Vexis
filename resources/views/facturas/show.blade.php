@@ -9,7 +9,7 @@
         <a href="{{ route('facturas.index') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
     </div>
 </div>
-<div style="max-width:900px;">
+<div style="max-width:800px;">
     <div class="vx-card" style="margin-bottom:16px;">
         <div class="vx-card-header"><h4>Datos de la Factura</h4></div>
         <div class="vx-card-body">

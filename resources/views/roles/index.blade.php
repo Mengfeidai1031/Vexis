@@ -39,19 +39,19 @@
                                 <td>{{ $role->created_at->format('d/m/Y') }}</td>
                                 <td>
                                     <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">@can('ver roles')
-                                            <a href="{{ route('roles.show', $role->id) }}" class="vx-btn vx-btn-info vx-btn-sm" title="Ver"><i class="bi bi-eye"></i></a>
+                                            <a href="{{ route('roles.show', $role->id) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
                                         @endcan
                                         @can('editar roles')
-                                            <a href="{{ route('roles.edit', $role->id) }}" class="vx-btn vx-btn-warning vx-btn-sm" title="Editar"><i class="bi bi-pencil"></i></a>
+                                            <a href="{{ route('roles.edit', $role->id) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>
                                         @endcan
                                         @can('eliminar roles')
                                             @if($role->users_count == 0)
                                                 <form action="{{ route('roles.destroy', $role->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar este rol?');">
                                                     @csrf @method('DELETE')
-                                                    <button type="submit" class="vx-btn vx-btn-danger vx-btn-sm" title="Eliminar"><i class="bi bi-trash"></i></button>
+                                                    <button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button>
                                                 </form>
                                             @else
-                                                <button class="vx-btn vx-btn-danger vx-btn-sm" disabled title="Tiene usuarios asignados"><i class="bi bi-trash"></i></button>
+                                                <button class="act-danger" disabled title="Tiene usuarios asignados"><i class="bi bi-trash"></i> Eliminar</button>
                                             @endif
                                         @endcan</div></div>
                                 </td>

@@ -8,7 +8,7 @@
         <a href="{{ route('stocks.index') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
     </div>
 </div>
-<div style="max-width:700px;">
+<div style="max-width:800px;">
     <div class="vx-card"><div class="vx-card-body">
         <div class="vx-info-row"><div class="vx-info-label">Referencia</div><div class="vx-info-value" style="font-family:var(--vx-font-mono);">{{ $stock->referencia }}</div></div>
         <div class="vx-info-row"><div class="vx-info-label">Pieza</div><div class="vx-info-value" style="font-weight:600;">{{ $stock->nombre_pieza }}</div></div>

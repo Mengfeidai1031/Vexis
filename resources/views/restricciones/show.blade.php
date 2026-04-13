@@ -10,7 +10,7 @@
         <a href="{{ route('restricciones.index') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
     </div>
 </div>
-<div style="max-width: 700px;">
+<div style="max-width: 800px;">
     <div class="vx-card">
         <div class="vx-card-header"><h3><i class="bi bi-shield-excl" style="color: var(--vx-warning); margin-right: 8px;"></i>Restricción #{{ $restriccion->id }}</h3></div>
         <div class="vx-card-body">

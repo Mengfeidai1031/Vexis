@@ -5,7 +5,7 @@
     <h1 class="vx-page-title">{{ $taller->nombre }}</h1>
     <div class="vx-page-actions">@can('editar talleres')<a href="{{ route('talleres.edit', $taller) }}" class="vx-btn vx-btn-warning"><i class="bi bi-pencil"></i> Editar</a>@endcan <a href="{{ route('talleres.index') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div>
 </div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:900px;">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:950px;">
     <div class="vx-card"><div class="vx-card-header"><h4>Información</h4></div><div class="vx-card-body">
         <div class="vx-info-row"><div class="vx-info-label">Código</div><div class="vx-info-value" style="font-family:var(--vx-font-mono);">{{ $taller->codigo }}</div></div>
         <div class="vx-info-row"><div class="vx-info-label">Marca</div><div class="vx-info-value">@if($taller->marca)<span class="vx-badge" style="background:{{ $taller->marca->color }}20;color:{{ $taller->marca->color }};">{{ $taller->marca->nombre }}</span>@else — @endif</div></div>

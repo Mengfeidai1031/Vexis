@@ -5,7 +5,7 @@
     <h1 class="vx-page-title">Cita #{{ $cita->id }}</h1>
     <div class="vx-page-actions">@can('editar citas')<a href="{{ route('citas.edit', $cita) }}" class="vx-btn vx-btn-warning"><i class="bi bi-pencil"></i> Editar</a>@endcan <a href="{{ route('citas.index') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div>
 </div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:900px;">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:950px;">
     <div class="vx-card"><div class="vx-card-header"><h4>Información de la Cita</h4></div><div class="vx-card-body">
         <div class="vx-info-row"><div class="vx-info-label">Cliente</div><div class="vx-info-value" style="font-weight:600;">{{ $cita->cliente_nombre }}</div></div>
         <div class="vx-info-row"><div class="vx-info-label">Vehículo</div><div class="vx-info-value">{{ $cita->vehiculo_info ?? '—' }}</div></div>

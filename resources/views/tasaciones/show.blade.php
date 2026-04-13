@@ -2,7 +2,7 @@
 @section('title', $tasacion->codigo_tasacion . ' - VEXIS')
 @section('content')
 <div class="vx-page-header"><h1 class="vx-page-title">{{ $tasacion->codigo_tasacion }}</h1><div class="vx-page-actions">@can('editar tasaciones')<a href="{{ route('tasaciones.edit', $tasacion) }}" class="vx-btn vx-btn-warning"><i class="bi bi-pencil"></i> Editar</a>@endcan <a href="{{ route('tasaciones.index') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div></div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:900px;">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:950px;">
     <div class="vx-card"><div class="vx-card-header"><h4>Vehículo Tasado</h4></div><div class="vx-card-body">
         <div class="vx-info-row"><div class="vx-info-label">Marca / Modelo</div><div class="vx-info-value" style="font-weight:700;">{{ $tasacion->vehiculo_marca }} {{ $tasacion->vehiculo_modelo }}</div></div>
         <div class="vx-info-row"><div class="vx-info-label">Año</div><div class="vx-info-value">{{ $tasacion->vehiculo_anio }}</div></div>

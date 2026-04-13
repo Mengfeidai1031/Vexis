@@ -16,11 +16,11 @@
         <div class="vx-card-body">
             <div class="vx-form-group"><label class="vx-label">Marca <span class="required">*</span></label><input type="text" id="ptMarca" class="vx-input" placeholder="Ej: Renault, Dacia, Nissan..." required></div>
             <div class="vx-form-group"><label class="vx-label">Modelo <span class="required">*</span></label><input type="text" id="ptModelo" class="vx-input" placeholder="Ej: Qashqai, Clio, León..." required></div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 12px;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px;">
                 <div class="vx-form-group"><label class="vx-label">Año <span class="required">*</span></label><input type="number" id="ptAnio" class="vx-input" value="{{ date('Y') - 3 }}" min="1990" max="2030" required></div>
                 <div class="vx-form-group"><label class="vx-label">Kilometraje <span class="required">*</span></label><input type="number" id="ptKm" class="vx-input" placeholder="60000" min="0" required style="font-family:var(--vx-font-mono);"></div>
             </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 12px;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px;">
                 <div class="vx-form-group"><label class="vx-label">Combustible</label><select id="ptCombustible" class="vx-select"><option value="">—</option><option>Gasolina</option><option>Diésel</option><option>Híbrido</option><option>Eléctrico</option><option>GLP</option></select></div>
                 <div class="vx-form-group"><label class="vx-label">Estado general</label><select id="ptEstado" class="vx-select"><option value="">—</option><option>Excelente</option><option>Bueno</option><option>Regular</option><option>Malo</option></select></div>
             </div>

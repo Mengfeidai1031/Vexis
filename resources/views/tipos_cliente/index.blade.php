@@ -10,58 +10,62 @@
     </div>
 </div>
 
-@if(session('success'))<div class="vx-alert vx-alert-success">{{ session('success') }}</div>@endif
-@if(session('error'))<div class="vx-alert vx-alert-danger">{{ session('error') }}</div>@endif
-
 <x-filtros-avanzados :action="route('tipos-cliente.index')">
     <div class="vx-filtro" data-filtro="nombre"><label class="vx-filtro-label">Nombre</label><select name="nombre" class="vx-select"><option value="">Todos</option>@foreach($tipos_all as $t)<option value="{{ $t->nombre }}" {{ request('nombre') == $t->nombre ? 'selected' : '' }}>{{ $t->nombre }}</option>@endforeach</select></div>
-    <div class="vx-filtro" data-filtro="descripcion"><label class="vx-filtro-label">Descripción</label><select name="descripcion" class="vx-select"><option value="">Todas</option>@foreach($tipos_all as $t)@if($t->descripcion)<option value="{{ $t->descripcion }}" {{ request('descripcion') == $t->descripcion ? 'selected' : '' }}>{{ $t->descripcion }}</option>@endif @endforeach</select></div>
+    <div class="vx-filtro" data-filtro="descripcion"><label class="vx-filtro-label">Descripcion</label><select name="descripcion" class="vx-select"><option value="">Todas</option>@foreach($tipos_all as $t)@if($t->descripcion)<option value="{{ $t->descripcion }}" {{ request('descripcion') == $t->descripcion ? 'selected' : '' }}>{{ $t->descripcion }}</option>@endif @endforeach</select></div>
     <div class="vx-filtro" data-filtro="activo"><label class="vx-filtro-label">Estado</label><select name="activo" class="vx-select"><option value="">Todos</option><option value="1" @selected(request('activo')==='1')>Activos</option><option value="0" @selected(request('activo')==='0')>Inactivos</option></select></div>
 </x-filtros-avanzados>
 
 <div class="vx-card">
     <div class="vx-card-body" style="padding:0;">
-        <table class="vx-table">
-            <thead>
-                <tr>
-                    <th>Color</th>
-                    <th>Nombre</th>
-                    <th>Descripción</th>
-                    <th>Clientes</th>
-                    <th>Estado</th>
-                    <th style="text-align:right;">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($tipos as $tipo)
-                <tr>
-                    <td><span style="display:inline-block;width:20px;height:20px;border-radius:6px;background:{{ $tipo->color }};border:1px solid var(--vx-border);"></span></td>
-                    <td><strong>{{ $tipo->nombre }}</strong></td>
-                    <td style="color:var(--vx-text-muted);">{{ $tipo->descripcion ?: '—' }}</td>
-                    <td>{{ $tipo->clientes_count }}</td>
-                    <td>
-                        @if($tipo->activo)<span class="vx-badge vx-badge-success">Activo</span>
-                        @else<span class="vx-badge vx-badge-secondary">Inactivo</span>@endif
-                    </td>
-                    <td style="text-align:right;white-space:nowrap;">
-                        @can('editar tipos-cliente')
-                        <a href="{{ route('tipos-cliente.edit', $tipo) }}" class="vx-btn vx-btn-sm vx-btn-secondary"><i class="bi bi-pencil"></i></a>
-                        @endcan
-                        @can('eliminar tipos-cliente')
-                        <form action="{{ route('tipos-cliente.destroy', $tipo) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar este tipo?');">
-                            @csrf @method('DELETE')
-                            <button type="submit" class="vx-btn vx-btn-sm vx-btn-danger"><i class="bi bi-trash"></i></button>
-                        </form>
-                        @endcan
-                    </td>
-                </tr>
-                @empty
-                <tr><td colspan="6" style="text-align:center;padding:30px;color:var(--vx-text-muted);">Sin tipos de cliente.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
+        @if($tipos->count() > 0)
+        <div class="vx-table-wrapper">
+            <table class="vx-table">
+                <thead>
+                    <tr>
+                        <x-columna-ordenable campo="id" label="ID" />
+                        <th>Color</th>
+                        <x-columna-ordenable campo="nombre" label="Nombre" />
+                        <x-columna-ordenable campo="descripcion" label="Descripcion" />
+                        <th>Clientes</th>
+                        <x-columna-ordenable campo="activo" label="Estado" />
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($tipos as $tipo)
+                    <tr>
+                        <td style="color: var(--vx-text-muted);">{{ $tipo->id }}</td>
+                        <td><span style="display:inline-block;width:20px;height:20px;border-radius:6px;background:{{ $tipo->color }};border:1px solid var(--vx-border);"></span></td>
+                        <td style="font-weight: 600;">{{ $tipo->nombre }}</td>
+                        <td style="color:var(--vx-text-muted);">{{ $tipo->descripcion ?: '—' }}</td>
+                        <td>{{ $tipo->clientes_count }}</td>
+                        <td>
+                            @if($tipo->activo)<span class="vx-badge vx-badge-success">Activo</span>
+                            @else<span class="vx-badge vx-badge-gray">Inactivo</span>@endif
+                        </td>
+                        <td>
+                            <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+                                @can('editar tipos-cliente')
+                                    <a href="{{ route('tipos-cliente.edit', $tipo) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>
+                                @endcan
+                                @can('eliminar tipos-cliente')
+                                    <form action="{{ route('tipos-cliente.destroy', $tipo) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar este tipo?');">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button>
+                                    </form>
+                                @endcan
+                            </div></div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        <div style="padding: 16px 20px;">{{ $tipos->links('vendor.pagination.vexis') }}</div>
+        @else
+        <div class="vx-empty"><i class="bi bi-tags"></i><p>No se encontraron tipos de cliente.</p></div>
+        @endif
     </div>
 </div>
-
-<div style="margin-top:16px;">{{ $tipos->links() }}</div>
 @endsection

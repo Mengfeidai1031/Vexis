@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Dataxis Incidencias - VEXIS')
 @section('content')
-<div class="vx-page-header"><h1 class="vx-page-title"><i class="bi bi-exclamation-triangle" style="color:var(--vx-warning);"></i> Dataxis — Incidencias</h1><a href="{{ route('dataxis.inicio') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div>
+<div class="vx-page-header"><h1 class="vx-page-title">Dataxis — Incidencias</h1><div class="vx-page-actions"><a href="{{ route('dataxis.inicio') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div></div>
 
 {{-- KPIs --}}
 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:24px;">
@@ -12,21 +12,12 @@
 </div>
 
 {{-- Gráficas --}}
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-    <div class="vx-card" style="grid-column:span 2;"><div class="vx-card-header"><h4>Incidencias por Mes</h4></div><div class="vx-card-body"><canvas id="chartIncMes" height="140"></canvas></div></div>
-    <div class="vx-card"><div class="vx-card-header"><h4>Por Estado</h4></div><div class="vx-card-body"><canvas id="chartIncEstado" height="220"></canvas></div></div>
-    <div class="vx-card"><div class="vx-card-header"><h4>Por Prioridad</h4></div><div class="vx-card-body"><canvas id="chartIncPrioridad" height="220"></canvas></div></div>
-    <div class="vx-card" style="grid-column:span 2;"><div class="vx-card-header"><h4>Carga por Técnico</h4></div><div class="vx-card-body"><canvas id="chartIncTecnico" height="180"></canvas></div></div>
+<div class="dx-grid">
+    <div class="vx-card dx-grid-full dx-chart-lg"><div class="vx-card-header"><h4>Incidencias por Mes</h4></div><div class="vx-card-body"><canvas id="chartIncMes" height="120"></canvas></div></div>
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4>Por Estado</h4></div><div class="vx-card-body"><canvas id="chartIncEstado" height="180"></canvas></div></div>
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4>Por Prioridad</h4></div><div class="vx-card-body"><canvas id="chartIncPrioridad" height="180"></canvas></div></div>
+    <div class="vx-card dx-grid-full dx-chart-lg"><div class="vx-card-header"><h4>Carga por Técnico</h4></div><div class="vx-card-body"><canvas id="chartIncTecnico" height="140"></canvas></div></div>
 </div>
-
-@push('styles')
-<style>
-.dx-kpi{display:flex;align-items:center;gap:12px;padding:16px;background:var(--vx-surface);border:1px solid var(--vx-border);border-radius:var(--vx-radius-lg);}
-.dx-kpi-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
-.dx-kpi-val{font-size:20px;font-weight:800;font-family:var(--vx-font-mono);}
-.dx-kpi-lbl{font-size:11px;color:var(--vx-text-muted);}
-</style>
-@endpush
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -44,7 +35,7 @@ new Chart(document.getElementById('chartIncMes'), {
             { label: 'Cerradas', data: {!! json_encode($incidenciasMes->pluck('cerradas')) !!}, backgroundColor: 'rgba(46,204,113,0.7)', borderRadius: 6, stack: 'a' }
         ]
     },
-    options: { plugins: { legend: { position: 'top' } }, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true, ticks: { stepSize: 1 } } } }
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true, ticks: { stepSize: 1 } } } }
 });
 
 new Chart(document.getElementById('chartIncEstado'), {
@@ -53,7 +44,7 @@ new Chart(document.getElementById('chartIncEstado'), {
         labels: {!! json_encode($incidenciasEstado->pluck('estado')) !!},
         datasets: [{ data: {!! json_encode($incidenciasEstado->pluck('total')) !!}, backgroundColor: ['#E65100','#3498DB','#2ECC71','#95A5A6'], borderWidth: 2, borderColor: isDark ? '#1F2937' : '#fff' }]
     },
-    options: { plugins: { legend: { position: 'bottom' } } }
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
 });
 
 const prioridadColors = { baja: '#2ECC71', media: '#3498DB', alta: '#F39C12', critica: '#E74C3C' };
@@ -63,7 +54,7 @@ new Chart(document.getElementById('chartIncPrioridad'), {
         labels: {!! json_encode($incidenciasPrioridad->pluck('prioridad')) !!},
         datasets: [{ data: {!! json_encode($incidenciasPrioridad->pluck('total')) !!}, backgroundColor: {!! json_encode($incidenciasPrioridad->pluck('prioridad')->map(fn($p) => $prioridadColors[$p] ?? '#95A5A6')) !!}, borderWidth: 2, borderColor: isDark ? '#1F2937' : '#fff' }]
     },
-    options: { plugins: { legend: { position: 'bottom' } } }
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
 });
 
 new Chart(document.getElementById('chartIncTecnico'), {
@@ -75,7 +66,7 @@ new Chart(document.getElementById('chartIncTecnico'), {
             { label: 'Resueltas', data: {!! json_encode($cargaTecnico->pluck('resueltas')) !!}, backgroundColor: 'rgba(46,204,113,0.7)', borderRadius: 6 }
         ]
     },
-    options: { indexAxis: 'y', plugins: { legend: { position: 'top' } }, scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+    options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { position: 'top' } }, scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } }
 });
 </script>
 @endpush

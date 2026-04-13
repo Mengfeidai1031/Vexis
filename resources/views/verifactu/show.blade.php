@@ -14,7 +14,7 @@
     </div>
 </div>
 
-<div style="max-width:960px;">
+<div style="max-width:800px;">
     {{-- Estado y tipo --}}
     <div class="vx-card" style="margin-bottom:16px;">
         <div class="vx-card-header"><h4><i class="bi bi-shield-check"></i> Información del Registro</h4></div>
@@ -31,12 +31,12 @@
                 <div>
                     <p style="font-size:11px;color:var(--vx-text-muted);margin:0;">Estado AEAT</p>
                     <p style="margin:2px 0 12px;">@switch($verifactu->estado)
-                        @case('registrado')<span class="vx-badge" style="background:#e3f2fd;color:#1565c0;">Registrado</span>@break
+                        @case('registrado')<span class="vx-badge vx-badge-info">Registrado</span>@break
                         @case('enviado')<span class="vx-badge vx-badge-info">Enviado a AEAT</span>@break
                         @case('aceptado')<span class="vx-badge vx-badge-success">Aceptado</span>@break
                         @case('aceptado_errores')<span class="vx-badge vx-badge-warning">Aceptado con errores</span>@break
                         @case('rechazado')<span class="vx-badge vx-badge-danger">Rechazado</span>@break
-                        @case('anulado')<span class="vx-badge" style="background:#eee;color:#666;">Anulado</span>@break
+                        @case('anulado')<span class="vx-badge vx-badge-gray">Anulado</span>@break
                     @endswitch</p>
                     <p style="font-size:11px;color:var(--vx-text-muted);margin:0;">Fecha Registro</p>
                     <p style="margin:2px 0 12px;">{{ $verifactu->fecha_registro->format('d/m/Y H:i:s') }}</p>

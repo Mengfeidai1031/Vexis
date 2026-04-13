@@ -1,13 +1,13 @@
 @extends('layouts.app')
 @section('title', 'Dataxis Stock - VEXIS')
 @section('content')
-<div class="vx-page-header"><h1 class="vx-page-title"><i class="bi bi-box-seam" style="color:var(--vx-warning);"></i> Dataxis — Stock</h1><a href="{{ route('dataxis.inicio') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div>
+<div class="vx-page-header"><h1 class="vx-page-title">Dataxis — Stock</h1><div class="vx-page-actions"><a href="{{ route('dataxis.inicio') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div></div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-    <div class="vx-card"><div class="vx-card-header"><h4>Unidades por Almacén</h4></div><div class="vx-card-body"><canvas id="chartStockAlm" height="220"></canvas></div></div>
-    <div class="vx-card"><div class="vx-card-header"><h4>Valor Stock por Almacén</h4></div><div class="vx-card-body"><canvas id="chartValorAlm" height="220"></canvas></div></div>
-    <div class="vx-card"><div class="vx-card-header"><h4>Top Piezas por Valor</h4></div><div class="vx-card-body"><canvas id="chartTopValor" height="220"></canvas></div></div>
-    <div class="vx-card"><div class="vx-card-header"><h4><i class="bi bi-exclamation-triangle" style="color:var(--vx-danger);"></i> Alertas Bajo Stock</h4></div><div class="vx-card-body" style="padding:0;">
+<div class="dx-grid">
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4>Unidades por Almacén</h4></div><div class="vx-card-body"><canvas id="chartStockAlm" height="180"></canvas></div></div>
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4>Valor Stock por Almacén</h4></div><div class="vx-card-body"><canvas id="chartValorAlm" height="180"></canvas></div></div>
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4>Top Piezas por Valor</h4></div><div class="vx-card-body"><canvas id="chartTopValor" height="180"></canvas></div></div>
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4><i class="bi bi-exclamation-triangle" style="color:var(--vx-danger);"></i> Alertas Bajo Stock</h4></div><div class="vx-card-body" style="padding:0;">
         @if($bajoStock->count() > 0)
         <div class="vx-table-wrapper"><table class="vx-table"><thead><tr><th>Ref.</th><th>Pieza</th><th>Actual</th><th>Mínimo</th></tr></thead><tbody>
             @foreach($bajoStock as $s)
@@ -31,19 +31,19 @@ const colors = ['#33AADD','#2ECC71','#F39C12','#E74C3C','#9B59B6','#1ABC9C','#E6
 new Chart(document.getElementById('chartStockAlm'), {
     type: 'doughnut',
     data: { labels: {!! json_encode($stockAlmacen->pluck('nombre')) !!}, datasets: [{ data: {!! json_encode($stockAlmacen->pluck('total')) !!}, backgroundColor: colors, borderWidth: 2, borderColor: isDark ? '#1F2937' : '#fff' }] },
-    options: { plugins: { legend: { position: 'bottom' } } }
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
 });
 
 new Chart(document.getElementById('chartValorAlm'), {
     type: 'bar',
     data: { labels: {!! json_encode($valorStock->pluck('nombre')) !!}, datasets: [{ label: 'Valor (€)', data: {!! json_encode($valorStock->pluck('valor')->map(fn($v) => round($v, 2))) !!}, backgroundColor: colors.map(c => c + '99'), borderColor: colors, borderWidth: 2, borderRadius: 6 }] },
-    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => v.toLocaleString() + '€' } } } }
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { callback: v => v.toLocaleString() + '€' } } } }
 });
 
 new Chart(document.getElementById('chartTopValor'), {
     type: 'bar',
     data: { labels: {!! json_encode($topValor->pluck('nombre_pieza')->map(fn($n) => Str::limit($n, 20))) !!}, datasets: [{ label: 'Valor', data: {!! json_encode($topValor->pluck('valor')->map(fn($v) => round($v, 2))) !!}, backgroundColor: 'rgba(243,156,18,0.7)', borderRadius: 6 }] },
-    options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { ticks: { callback: v => v.toLocaleString() + '€' } } } }
+    options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { ticks: { callback: v => v.toLocaleString() + '€' } } } }
 });
 </script>
 @endpush

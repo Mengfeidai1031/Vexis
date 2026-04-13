@@ -92,18 +92,18 @@
                                 <form action="{{ route('vacaciones.gestionar', $v) }}" method="POST" style="display:inline;">
                                     @csrf @method('PATCH')
                                     <input type="hidden" name="estado" value="aprobada">
-                                    <button type="submit" class="vx-btn vx-btn-success vx-btn-sm" title="Aprobar"><i class="bi bi-check-lg"></i></button>
+                                    <button type="submit" style="color:var(--vx-success);"><i class="bi bi-check-lg"></i> Aprobar</button>
                                 </form>
                                 <form action="{{ route('vacaciones.gestionar', $v) }}" method="POST" style="display:inline;">
                                     @csrf @method('PATCH')
                                     <input type="hidden" name="estado" value="rechazada">
-                                    <button type="submit" class="vx-btn vx-btn-danger vx-btn-sm" title="Rechazar"><i class="bi bi-x-lg"></i></button>
+                                    <button type="submit" class="act-danger"><i class="bi bi-x-lg"></i> Rechazar</button>
                                 </form>
                                 @endif
                                 @if($v->estado === 'pendiente')
                                 <form action="{{ route('vacaciones.destroy', $v) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar solicitud?');">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="vx-btn vx-btn-secondary vx-btn-sm"><i class="bi bi-trash"></i></button>
+                                    <button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button>
                                 </form>
                                 @endif</div></div>
                         </td>

@@ -64,16 +64,15 @@
                                 </td>
                                 <td>
                                     <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">@can('view', $user)
-                                            <a href="{{ route('users.show', $user) }}" class="vx-btn vx-btn-info vx-btn-sm" title="Ver"><i class="bi bi-eye"></i></a>
+                                            <a href="{{ route('users.show', $user) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
                                         @endcan
                                         @can('update', $user)
-                                            <a href="{{ route('users.edit', $user) }}" class="vx-btn vx-btn-warning vx-btn-sm" title="Editar"><i class="bi bi-pencil"></i></a>
+                                            <a href="{{ route('users.edit', $user) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>
                                         @endcan
                                         @can('delete', $user)
                                             <form action="{{ route('users.destroy', $user) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar este usuario?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="vx-btn vx-btn-danger vx-btn-sm" title="Eliminar"><i class="bi bi-trash"></i></button>
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button>
                                             </form>
                                         @endcan</div></div>
                                 </td>

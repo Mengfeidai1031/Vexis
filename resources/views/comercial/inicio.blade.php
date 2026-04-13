@@ -2,82 +2,83 @@
 @section('title', 'Comercial - VEXIS')
 @section('content')
 <div class="vx-page-header">
-    <h1 class="vx-page-title"><i class="bi bi-car-front" style="color: var(--vx-primary); margin-right: 8px;"></i>Módulo Comercial</h1>
+    <h1 class="vx-page-title">Módulo Comercial</h1>
 </div>
-<p style="color: var(--vx-text-muted); margin-bottom: 24px;">Gestión de ofertas, vehículos, ventas y tasaciones.</p>
 
-{{-- Sección Gestión Administrativa --}}
-<div class="vx-module-section">
-    <h3 class="vx-module-section-title">Gestión Administrativa</h3>
-    <div class="vx-module-grid">
+<div class="mod-banner">
+    <div class="mod-banner-content">
+        <div class="mod-banner-icon" style="background:linear-gradient(135deg,#F39C12,#E67E22);"><i class="bi bi-car-front"></i></div>
+        <div>
+            <h2 style="margin:0 0 4px;font-size:18px;font-weight:800;">Centro Comercial</h2>
+            <p style="margin:0;font-size:12px;color:var(--vx-text-muted);">Gestión de ofertas, vehículos, ventas y tasaciones.</p>
+        </div>
+    </div>
+</div>
+
+{{-- Gestión Administrativa --}}
+<div class="mod-section">
+    <h3 class="mod-section-title"><i class="bi bi-briefcase"></i> Gestión Administrativa</h3>
+    <div class="mod-grid">
         @can('ver ofertas')
-        <a href="{{ route('ofertas.index') }}" class="vx-module-card">
-            <div class="vx-module-icon" style="background: rgba(243,156,18,0.1); color: var(--vx-warning);"><i class="bi bi-file-earmark-text"></i></div>
-            <div class="vx-module-info"><h4>Ofertas</h4><p>Ofertas comerciales con procesamiento PDF</p></div>
+        <a href="{{ route('ofertas.index') }}" class="mod-card">
+            <div class="mod-card-icon" style="background:linear-gradient(135deg,#F39C12,#E67E22);"><i class="bi bi-file-earmark-text"></i></div>
+            <div class="mod-card-info"><h4>Ofertas</h4><p>Ofertas comerciales con procesamiento PDF</p></div>
+            <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan
         @can('ver ventas')
-        <a href="{{ route('ventas.index') }}" class="vx-module-card">
-            <div class="vx-module-icon" style="background: rgba(46,204,113,0.1); color: var(--vx-success);"><i class="bi bi-cart-check"></i></div>
-            <div class="vx-module-info"><h4>Ventas</h4><p>Registro y seguimiento de ventas</p></div>
+        <a href="{{ route('ventas.index') }}" class="mod-card">
+            <div class="mod-card-icon" style="background:linear-gradient(135deg,#2ECC71,#27AE60);"><i class="bi bi-cart-check"></i></div>
+            <div class="mod-card-info"><h4>Ventas</h4><p>Registro y seguimiento de ventas</p></div>
+            <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan
         @can('ver tasaciones')
-        <a href="{{ route('tasaciones.index') }}" class="vx-module-card">
-            <div class="vx-module-icon" style="background: rgba(155,89,182,0.1); color: #9B59B6;"><i class="bi bi-calculator"></i></div>
-            <div class="vx-module-info"><h4>Tasaciones</h4><p>Tasaciones de vehículos</p></div>
+        <a href="{{ route('tasaciones.index') }}" class="mod-card">
+            <div class="mod-card-icon" style="background:linear-gradient(135deg,#9B59B6,#8E44AD);"><i class="bi bi-calculator"></i></div>
+            <div class="mod-card-info"><h4>Tasaciones</h4><p>Tasaciones de vehículos</p></div>
+            <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan
         @if(\App\Models\Setting::get('modulo_facturas', true))
         @can('ver facturas')
-        <a href="{{ route('facturas.index') }}" class="vx-module-card">
-            <div class="vx-module-icon" style="background: rgba(231,76,60,0.1); color: var(--vx-danger);"><i class="bi bi-receipt"></i></div>
-            <div class="vx-module-info"><h4>Facturas</h4><p>Gestión y emisión de facturas</p></div>
+        <a href="{{ route('facturas.index') }}" class="mod-card">
+            <div class="mod-card-icon" style="background:linear-gradient(135deg,#E74C3C,#C0392B);"><i class="bi bi-receipt"></i></div>
+            <div class="mod-card-info"><h4>Facturas</h4><p>Gestión y emisión de facturas</p></div>
+            <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan
         @endif
         @if(\App\Models\Setting::get('modulo_verifactu', true))
         @can('ver verifactu')
-        <a href="{{ route('verifactu.index') }}" class="vx-module-card">
-            <div class="vx-module-icon" style="background: rgba(52,73,94,0.1); color: #34495E;"><i class="bi bi-shield-check"></i></div>
-            <div class="vx-module-info"><h4>Verifactu</h4><p>Registro y verificación de facturación electrónica</p></div>
+        <a href="{{ route('verifactu.index') }}" class="mod-card">
+            <div class="mod-card-icon" style="background:linear-gradient(135deg,#34495E,#2C3E50);"><i class="bi bi-shield-check"></i></div>
+            <div class="mod-card-info"><h4>Verifactu</h4><p>Registro y verificación de facturación electrónica</p></div>
+            <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan
         @endif
     </div>
 </div>
 
-{{-- Sección Gestión de Vehículos --}}
-<div class="vx-module-section">
-    <h3 class="vx-module-section-title">Gestión de Vehículos</h3>
-    <div class="vx-module-grid">
+{{-- Gestión de Vehículos --}}
+<div class="mod-section">
+    <h3 class="mod-section-title"><i class="bi bi-truck"></i> Gestión de Vehículos</h3>
+    <div class="mod-grid">
         @can('ver vehículos')
-        <a href="{{ route('vehiculos.index') }}" class="vx-module-card">
-            <div class="vx-module-icon" style="background: rgba(52,152,219,0.1); color: var(--vx-info);"><i class="bi bi-truck"></i></div>
-            <div class="vx-module-info"><h4>Vehículos</h4><p>Inventario de vehículos con exportación</p></div>
+        <a href="{{ route('vehiculos.index') }}" class="mod-card">
+            <div class="mod-card-icon" style="background:linear-gradient(135deg,#3498DB,#2980b9);"><i class="bi bi-truck"></i></div>
+            <div class="mod-card-info"><h4>Vehículos</h4><p>Inventario de vehículos con exportación</p></div>
+            <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan
         @can('ver catalogo-precios')
-        <a href="{{ route('catalogo-precios.index') }}" class="vx-module-card">
-            <div class="vx-module-icon" style="background: rgba(231,76,60,0.1); color: var(--vx-danger);"><i class="bi bi-currency-euro"></i></div>
-            <div class="vx-module-info"><h4>Catálogo</h4><p>Modelos, versiones y precios base por marca</p></div>
+        <a href="{{ route('catalogo-precios.index') }}" class="mod-card">
+            <div class="mod-card-icon" style="background:linear-gradient(135deg,#E74C3C,#C0392B);"><i class="bi bi-currency-euro"></i></div>
+            <div class="mod-card-info"><h4>Catálogo</h4><p>Modelos, versiones y precios base por marca</p></div>
+            <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan
     </div>
 </div>
-
-@push('styles')
-<style>
-.vx-module-section { margin-bottom: 28px; }
-.vx-module-section-title { font-size: 15px; font-weight: 700; color: var(--vx-text-secondary); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
-.vx-module-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
-.vx-module-card { display: flex; align-items: center; gap: 14px; padding: 18px 20px; background: var(--vx-surface); border: 1px solid var(--vx-border); border-radius: var(--vx-radius-lg); text-decoration: none; color: var(--vx-text); transition: all 0.2s; position: relative; }
-.vx-module-card:hover { border-color: var(--vx-primary); box-shadow: 0 4px 16px rgba(51,170,221,0.1); transform: translateY(-2px); }
-.vx-module-card-disabled { opacity: 0.55; pointer-events: none; }
-.vx-module-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
-.vx-module-info h4 { font-size: 14px; font-weight: 700; margin: 0 0 2px; }
-.vx-module-info p { font-size: 12px; color: var(--vx-text-muted); margin: 0; }
-.vx-module-soon { position: absolute; top: 8px; right: 10px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--vx-text-muted); background: var(--vx-gray-100); padding: 2px 6px; border-radius: 4px; }
-</style>
-@endpush
 @endsection

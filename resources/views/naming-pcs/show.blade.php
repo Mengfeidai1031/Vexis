@@ -8,7 +8,7 @@
         <a href="{{ route('naming-pcs.index') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
     </div>
 </div>
-<div style="max-width:700px;">
+<div style="max-width:800px;">
     <div class="vx-card">
         <div class="vx-card-header"><h3><i class="bi bi-pc-display" style="color:var(--vx-primary);margin-right:8px;"></i>{{ $namingPc->nombre_equipo }}</h3></div>
         <div class="vx-card-body">

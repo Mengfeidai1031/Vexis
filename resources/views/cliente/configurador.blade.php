@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Configurador - VEXIS')
 @section('content')
-<div class="vx-page-header"><h1 class="vx-page-title"><i class="bi bi-palette" style="color:var(--vx-success);"></i> Configurador de Vehículos</h1><a href="{{ route('cliente.inicio') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div>
+<div class="vx-page-header"><h1 class="vx-page-title">Configurador de Vehículos</h1><div class="vx-page-actions"><a href="{{ route('cliente.inicio') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div></div>
 
 <div style="max-width:1000px;margin:0 auto;">
     {{-- PASO 1: Marca --}}
@@ -94,7 +94,7 @@
                     <button class="cfg-view" data-view="interior">Interior</button>
                     <button class="cfg-view" data-view="asientos">Asientos</button>
                 </div>
-                <div id="vehicleDisplay" style="background:var(--vx-bg);border-radius:12px;height:400px;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;">
+                <div id="vehicleDisplay" class="cfg-vehicle-display">
                     @if($hasImages)
                     <img id="vehicleImage" src="" alt="Vehículo" style="width:100%;height:100%;object-fit:contain;display:none;">
                     <div id="noImageMsg" style="display:none;text-align:center;color:var(--vx-text-muted);">
@@ -108,21 +108,25 @@
             </div>
 
             {{-- Versiones disponibles --}}
-            <h5 style="font-size:13px;font-weight:700;color:var(--vx-text-muted);margin-bottom:12px;">VERSIONES DISPONIBLES</h5>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--vx-border);">
+                <i class="bi bi-list-check" style="color:var(--vx-primary);"></i>
+                <h5 style="font-size:13px;font-weight:700;color:var(--vx-text-muted);margin:0;letter-spacing:0.5px;">VERSIONES DISPONIBLES</h5>
+                <span class="vx-badge vx-badge-info" style="font-size:10px;">{{ count($versiones) }}</span>
+            </div>
             <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;">
                 @foreach($versiones as $v)
-                <div style="padding:14px 16px;border:1px solid var(--vx-border);border-radius:8px;background:var(--vx-surface);">
-                    <div style="font-weight:700;font-size:13px;margin-bottom:4px;">{{ $v->version ?? $v->modelo }}</div>
-                    <div style="display:flex;gap:10px;font-size:11px;color:var(--vx-text-muted);margin-bottom:8px;">
+                <div class="cfg-version">
+                    <div class="cfg-version-name">{{ $v->version ?? $v->modelo }}</div>
+                    <div class="cfg-version-specs">
                         @if($v->combustible)<span><i class="bi bi-fuel-pump"></i> {{ $v->combustible }}</span>@endif
                         @if($v->potencia_cv)<span><i class="bi bi-speedometer2"></i> {{ $v->potencia_cv }} CV</span>@endif
                     </div>
-                    <div style="display:flex;align-items:baseline;gap:6px;">
+                    <div class="cfg-version-price">
                         @if($v->precio_oferta)
-                        <span style="font-size:18px;font-weight:800;color:var(--vx-success);font-family:var(--vx-font-mono);">{{ number_format($v->precio_oferta, 0, ',', '.') }}€</span>
-                        <span style="font-size:12px;text-decoration:line-through;color:var(--vx-text-muted);">{{ number_format($v->precio_base, 0, ',', '.') }}€</span>
+                        <span class="price-main" style="color:var(--vx-success);">{{ number_format($v->precio_oferta, 0, ',', '.') }}€</span>
+                        <span class="price-old">{{ number_format($v->precio_base, 0, ',', '.') }}€</span>
                         @else
-                        <span style="font-size:18px;font-weight:800;color:var(--vx-primary);font-family:var(--vx-font-mono);">{{ number_format($v->precio_base, 0, ',', '.') }}€</span>
+                        <span class="price-main" style="color:var(--vx-primary);">{{ number_format($v->precio_base, 0, ',', '.') }}€</span>
                         @endif
                     </div>
                 </div>
@@ -135,17 +139,30 @@
 
 @push('styles')
 <style>
-.cfg-step{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--vx-primary);color:white;font-size:12px;font-weight:700;margin-right:6px;}
-.cfg-brand{display:flex;align-items:center;justify-content:center;padding:16px 28px;border:2px solid var(--vx-border);border-radius:10px;text-decoration:none;color:var(--vx-text);transition:all 0.2s;cursor:pointer;}
-.cfg-brand:hover,.cfg-brand.active{border-color:var(--brand-color,var(--vx-primary));box-shadow:0 2px 12px rgba(0,0,0,0.1);transform:translateY(-2px);}
-.cfg-brand.active{background:var(--brand-color,var(--vx-primary));color:white;}
-.cfg-model{padding:10px 20px;border:1px solid var(--vx-border);border-radius:8px;text-decoration:none;color:var(--vx-text);font-size:13px;font-weight:600;transition:all 0.2s;display:flex;align-items:center;gap:6px;}
-.cfg-model:hover,.cfg-model.active{border-color:var(--vx-primary);background:var(--vx-primary);color:white;}
-.cfg-color{width:36px;height:36px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:all 0.2s;flex-shrink:0;}
-.cfg-color:hover{transform:scale(1.15);}
-.cfg-color.active{border-color:var(--vx-primary);box-shadow:0 0 0 3px rgba(51,170,221,0.3);}
-.cfg-view{padding:6px 14px;border:1px solid var(--vx-border);border-radius:6px;background:var(--vx-surface);color:var(--vx-text-muted);font-size:12px;cursor:pointer;transition:all 0.15s;}
-.cfg-view:hover,.cfg-view.active{background:var(--vx-primary);color:white;border-color:var(--vx-primary);}
+.cfg-step{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--vx-primary),#2980b9);color:white;font-size:13px;font-weight:700;margin-right:8px;box-shadow:0 2px 8px rgba(51,170,221,0.3);}
+.cfg-brand{display:flex;align-items:center;justify-content:center;padding:18px 30px;border:2px solid var(--vx-border);border-radius:12px;text-decoration:none;color:var(--vx-text);transition:all 0.25s cubic-bezier(0.4,0,0.2,1);cursor:pointer;background:var(--vx-surface);position:relative;overflow:hidden;}
+.cfg-brand::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent,rgba(255,255,255,0.05));opacity:0;transition:opacity 0.25s;}
+.cfg-brand:hover::before{opacity:1;}
+.cfg-brand:hover{border-color:var(--brand-color,var(--vx-primary));box-shadow:0 4px 20px rgba(0,0,0,0.12);transform:translateY(-3px);}
+.cfg-brand.active{background:var(--brand-color,var(--vx-primary));color:white;border-color:var(--brand-color,var(--vx-primary));box-shadow:0 4px 20px rgba(51,170,221,0.25);}
+.cfg-model{padding:12px 22px;border:2px solid var(--vx-border);border-radius:10px;text-decoration:none;color:var(--vx-text);font-size:13px;font-weight:600;transition:all 0.2s;display:flex;align-items:center;gap:8px;background:var(--vx-surface);}
+.cfg-model:hover{border-color:var(--vx-primary);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.08);}
+.cfg-model.active{border-color:var(--vx-primary);background:linear-gradient(135deg,var(--vx-primary),#2980b9);color:white;box-shadow:0 4px 16px rgba(51,170,221,0.25);}
+.cfg-color{width:40px;height:40px;border-radius:50%;border:3px solid transparent;cursor:pointer;transition:all 0.25s;flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,0.15);}
+.cfg-color:hover{transform:scale(1.2);box-shadow:0 4px 12px rgba(0,0,0,0.2);}
+.cfg-color.active{border-color:var(--vx-primary);box-shadow:0 0 0 3px rgba(51,170,221,0.3),0 4px 12px rgba(0,0,0,0.15);transform:scale(1.1);}
+.cfg-view{padding:8px 16px;border:2px solid var(--vx-border);border-radius:8px;background:var(--vx-surface);color:var(--vx-text-muted);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px;}
+.cfg-view:hover{border-color:var(--vx-primary);color:var(--vx-primary);}
+.cfg-view.active{background:var(--vx-primary);color:white;border-color:var(--vx-primary);box-shadow:0 2px 8px rgba(51,170,221,0.3);}
+.cfg-vehicle-display{background:var(--vx-bg);border-radius:16px;height:420px;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;border:1px solid var(--vx-border);box-shadow:inset 0 2px 8px rgba(0,0,0,0.04);}
+.cfg-version{padding:16px 20px;border:2px solid var(--vx-border);border-radius:12px;background:var(--vx-surface);transition:all 0.2s;position:relative;overflow:hidden;}
+.cfg-version:hover{border-color:var(--vx-primary);box-shadow:0 4px 16px rgba(0,0,0,0.08);transform:translateY(-2px);}
+.cfg-version-name{font-weight:700;font-size:14px;margin-bottom:6px;color:var(--vx-text);}
+.cfg-version-specs{display:flex;gap:12px;font-size:11px;color:var(--vx-text-muted);margin-bottom:10px;}
+.cfg-version-specs span{display:flex;align-items:center;gap:4px;}
+.cfg-version-price{display:flex;align-items:baseline;gap:8px;}
+.cfg-version-price .price-main{font-size:20px;font-weight:800;font-family:var(--vx-font-mono);line-height:1;}
+.cfg-version-price .price-old{font-size:12px;text-decoration:line-through;color:var(--vx-text-muted);}
 </style>
 @endpush
 

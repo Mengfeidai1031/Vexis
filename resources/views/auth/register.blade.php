@@ -12,7 +12,7 @@
             <div class="vx-card-body">
                 <form method="POST" action="{{ route('register') }}">
                     @csrf
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px;">
                         <div class="vx-form-group">
                             <label class="vx-label" for="nombre">Nombre <span class="required">*</span></label>
                             <input type="text" class="vx-input @error('nombre') is-invalid @enderror" id="nombre" name="nombre" value="{{ old('nombre') }}" required autofocus>

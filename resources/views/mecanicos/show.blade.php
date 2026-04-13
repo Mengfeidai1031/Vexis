@@ -5,7 +5,7 @@
     <h1 class="vx-page-title">{{ $mecanico->nombre_completo }}</h1>
     <div class="vx-page-actions">@can('editar mecanicos')<a href="{{ route('mecanicos.edit', $mecanico) }}" class="vx-btn vx-btn-warning"><i class="bi bi-pencil"></i> Editar</a>@endcan <a href="{{ route('mecanicos.index') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div>
 </div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:900px;">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:950px;">
     <div class="vx-card"><div class="vx-card-header"><h4>Información</h4></div><div class="vx-card-body">
         <div class="vx-info-row"><div class="vx-info-label">Nombre</div><div class="vx-info-value">{{ $mecanico->nombre }}</div></div>
         <div class="vx-info-row"><div class="vx-info-label">Apellidos</div><div class="vx-info-value">{{ $mecanico->apellidos }}</div></div>

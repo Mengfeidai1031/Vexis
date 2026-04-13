@@ -1,5 +1,14 @@
 @extends('layouts.app')
 @section('title', 'Citas Taller - VEXIS')
+@push('styles')
+<style>
+.vx-cal-confirmada { background: rgba(46, 204, 113, 0.12); border-left: 3px solid var(--vx-success); }
+.vx-cal-en-proceso { background: rgba(51, 170, 221, 0.12); border-left: 3px solid var(--vx-info); }
+.vx-cal-cancelada { background: rgba(231, 76, 60, 0.08); border-left: 3px solid var(--vx-danger); }
+.vx-cal-pendiente { background: rgba(255, 152, 0, 0.12); border-left: 3px solid var(--vx-warning); }
+.vx-cal-completada { background: rgba(149, 165, 166, 0.12); border-left: 3px solid var(--vx-gray, #95a5a6); }
+</style>
+@endpush
 @section('content')
 <div class="vx-page-header"><h1 class="vx-page-title">Citas de Taller</h1><div class="vx-page-actions">@can('crear citas')<a href="{{ route('citas.create') }}" class="vx-btn vx-btn-primary"><i class="bi bi-plus-circle"></i> Nueva Cita</a>@endcan</div></div>
 
@@ -33,7 +42,7 @@
                     @endphp
                     <td style="font-size:11px;vertical-align:top;padding:4px;">
                         @foreach($citasSlot as $c)
-                        <div style="background:{{ match($c->estado) { 'confirmada' => '#2ecc7130', 'en_curso' => '#3498db30', 'completada' => '#95a5a630', 'cancelada' => '#e74c3c20', default => '#f39c1230' } }};padding:3px 6px;border-radius:4px;margin-bottom:2px;border-left:3px solid {{ match($c->estado) { 'confirmada' => '#2ecc71', 'en_curso' => '#3498db', 'completada' => '#95a5a6', 'cancelada' => '#e74c3c', default => '#f39c12' } }};">
+                        <div class="{{ match($c->estado) { 'confirmada' => 'vx-cal-confirmada', 'en_curso' => 'vx-cal-en-proceso', 'completada' => 'vx-cal-completada', 'cancelada' => 'vx-cal-cancelada', default => 'vx-cal-pendiente' } }}" style="padding:3px 6px;border-radius:4px;margin-bottom:2px;">
                             <strong>{{ $c->mecanico->nombre ?? '' }}</strong><br>{{ Str::limit($c->cliente_nombre, 15) }}
                         </div>
                         @endforeach
@@ -48,11 +57,11 @@
 
 {{-- Leyenda + filtros --}}
 <div style="display:flex;gap:16px;margin-bottom:12px;font-size:11px;flex-wrap:wrap;">
-    <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#f39c12;margin-right:3px;"></span>Pendiente</span>
-    <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#2ecc71;margin-right:3px;"></span>Confirmada</span>
-    <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#3498db;margin-right:3px;"></span>En curso</span>
-    <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#95a5a6;margin-right:3px;"></span>Completada</span>
-    <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#e74c3c;margin-right:3px;"></span>Cancelada</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--vx-warning);margin-right:3px;"></span>Pendiente</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--vx-success);margin-right:3px;"></span>Confirmada</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--vx-info);margin-right:3px;"></span>En curso</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--vx-gray, #95a5a6);margin-right:3px;"></span>Completada</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--vx-danger);margin-right:3px;"></span>Cancelada</span>
 </div>
 
 <x-filtros-avanzados :action="route('citas.index')">

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Dataxis Facturas - VEXIS')
 @section('content')
-<div class="vx-page-header"><h1 class="vx-page-title"><i class="bi bi-receipt" style="color:var(--vx-danger);"></i> Dataxis — Facturas</h1><a href="{{ route('dataxis.inicio') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div>
+<div class="vx-page-header"><h1 class="vx-page-title">Dataxis — Facturas</h1><div class="vx-page-actions"><a href="{{ route('dataxis.inicio') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div></div>
 
 {{-- KPIs --}}
 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:24px;">
@@ -12,20 +12,11 @@
 </div>
 
 {{-- Gráficas --}}
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-    <div class="vx-card" style="grid-column:span 2;"><div class="vx-card-header"><h4>Facturación Mensual</h4></div><div class="vx-card-body"><canvas id="chartFactMes" height="140"></canvas></div></div>
-    <div class="vx-card"><div class="vx-card-header"><h4>Facturas por Estado</h4></div><div class="vx-card-body"><canvas id="chartFactEstado" height="220"></canvas></div></div>
-    <div class="vx-card"><div class="vx-card-header"><h4>Facturación por Marca</h4></div><div class="vx-card-body"><canvas id="chartFactMarca" height="220"></canvas></div></div>
+<div class="dx-grid">
+    <div class="vx-card dx-grid-full dx-chart-lg"><div class="vx-card-header"><h4>Facturación Mensual</h4></div><div class="vx-card-body"><canvas id="chartFactMes" height="120"></canvas></div></div>
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4>Facturas por Estado</h4></div><div class="vx-card-body"><canvas id="chartFactEstado" height="180"></canvas></div></div>
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4>Facturación por Marca</h4></div><div class="vx-card-body"><canvas id="chartFactMarca" height="180"></canvas></div></div>
 </div>
-
-@push('styles')
-<style>
-.dx-kpi{display:flex;align-items:center;gap:12px;padding:16px;background:var(--vx-surface);border:1px solid var(--vx-border);border-radius:var(--vx-radius-lg);}
-.dx-kpi-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
-.dx-kpi-val{font-size:20px;font-weight:800;font-family:var(--vx-font-mono);}
-.dx-kpi-lbl{font-size:11px;color:var(--vx-text-muted);}
-</style>
-@endpush
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -43,7 +34,7 @@ new Chart(document.getElementById('chartFactMes'), {
             { label: 'Importe (€)', data: {!! json_encode($facturasMes->pluck('importe')) !!}, type: 'line', borderColor: '#2ECC71', backgroundColor: 'rgba(46,204,113,0.1)', fill: true, tension: 0.4, yAxisID: 'y1', pointRadius: 5 }
         ]
     },
-    options: { scales: { y: { beginAtZero: true, position: 'left' }, y1: { beginAtZero: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { callback: v => (v/1000).toFixed(0)+'k€' } } } }
+    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, position: 'left' }, y1: { beginAtZero: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { callback: v => (v/1000).toFixed(0)+'k€' } } } }
 });
 
 new Chart(document.getElementById('chartFactEstado'), {
@@ -52,7 +43,7 @@ new Chart(document.getElementById('chartFactEstado'), {
         labels: {!! json_encode($facturasEstado->pluck('estado')) !!},
         datasets: [{ data: {!! json_encode($facturasEstado->pluck('total')) !!}, backgroundColor: ['#3498DB','#2ECC71','#E74C3C','#95A5A6'], borderWidth: 2, borderColor: isDark ? '#1F2937' : '#fff' }]
     },
-    options: { plugins: { legend: { position: 'bottom' } } }
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
 });
 
 new Chart(document.getElementById('chartFactMarca'), {
@@ -61,7 +52,7 @@ new Chart(document.getElementById('chartFactMarca'), {
         labels: {!! json_encode($facturasMarca->pluck('nombre')) !!},
         datasets: [{ label: 'Importe (€)', data: {!! json_encode($facturasMarca->pluck('importe')) !!}, backgroundColor: {!! json_encode($facturasMarca->pluck('color')->map(fn($c) => $c . '99')) !!}, borderColor: {!! json_encode($facturasMarca->pluck('color')) !!}, borderWidth: 2, borderRadius: 6 }]
     },
-    options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { ticks: { callback: v => (v/1000).toFixed(0)+'k€' } } } }
+    options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { ticks: { callback: v => (v/1000).toFixed(0)+'k€' } } } }
 });
 </script>
 @endpush

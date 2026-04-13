@@ -22,7 +22,7 @@
             <div>
                 <p style="font-size:11px;color:var(--vx-text-muted);margin:0;">Prioridad</p>
                 <p style="margin:2px 0;">@switch($incidencia->prioridad)
-                    @case('baja')<span class="vx-badge" style="background:#e8f5e9;color:#2e7d32;">Baja</span>@break
+                    @case('baja')<span class="vx-badge vx-badge-success">Baja</span>@break
                     @case('media')<span class="vx-badge vx-badge-info">Media</span>@break
                     @case('alta')<span class="vx-badge vx-badge-warning">Alta</span>@break
                     @case('critica')<span class="vx-badge vx-badge-danger">Crítica</span>@break
@@ -31,10 +31,10 @@
             <div>
                 <p style="font-size:11px;color:var(--vx-text-muted);margin:0;">Estado</p>
                 <p style="margin:2px 0;">@switch($incidencia->estado)
-                    @case('abierta')<span class="vx-badge" style="background:#fff3e0;color:#e65100;">Abierta</span>@break
+                    @case('abierta')<span class="vx-badge vx-badge-warning">Abierta</span>@break
                     @case('en_progreso')<span class="vx-badge vx-badge-info">En Progreso</span>@break
                     @case('resuelta')<span class="vx-badge vx-badge-success">Resuelta</span>@break
-                    @case('cerrada')<span class="vx-badge" style="background:#eee;color:#666;">Cerrada</span>@break
+                    @case('cerrada')<span class="vx-badge vx-badge-gray">Cerrada</span>@break
                 @endswitch</p>
             </div>
             <div>

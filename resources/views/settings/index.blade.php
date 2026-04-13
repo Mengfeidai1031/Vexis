@@ -2,7 +2,7 @@
 @section('title', 'Configuración - VEXIS')
 @section('content')
 <div class="vx-page-header">
-    <h1 class="vx-page-title"><i class="bi bi-gear" style="margin-right:6px;"></i> Configuración del Sistema</h1>
+    <h1 class="vx-page-title">Configuración del Sistema</h1>
 </div>
 
 <form action="{{ route('settings.update') }}" method="POST">@csrf @method('PUT')

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Lista de Precios - VEXIS')
 @section('content')
-<div class="vx-page-header"><h1 class="vx-page-title"><i class="bi bi-currency-euro" style="color:var(--vx-danger);"></i> Lista de Precios</h1><a href="{{ route('cliente.inicio') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div>
+<div class="vx-page-header"><h1 class="vx-page-title">Lista de Precios</h1><div class="vx-page-actions"><a href="{{ route('cliente.inicio') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div></div>
 
 <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
     @foreach($marcas as $m)
@@ -52,10 +52,14 @@
 
 @push('styles')
 <style>
+.vx-precios-modelo { transition: all 0.2s; }
+.vx-precios-modelo:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateY(-1px); }
 .vx-precios-modelo-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; cursor: pointer; user-select: none; transition: background 0.15s; }
 .vx-precios-modelo-header:hover { background: var(--vx-bg); }
 .vx-precios-versiones { display: none; border-top: 1px solid var(--vx-border); }
 .vx-precios-versiones .vx-table { border: none; border-radius: 0; }
+.vx-precios-versiones .vx-table td { font-size: 13px; }
+.vx-precios-versiones .vx-table th { font-size: 11px; letter-spacing: 0.3px; text-transform: uppercase; color: var(--vx-text-muted); }
 .vx-precios-modelo.open .vx-precios-versiones { display: block; }
 .vx-precios-modelo.open .vx-precios-chevron { transform: rotate(180deg); }
 </style>

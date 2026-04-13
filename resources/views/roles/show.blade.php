@@ -11,7 +11,7 @@
     </div>
 </div>
 
-<div style="max-width: 900px;">
+<div style="max-width: 800px;">
     <div class="vx-card" style="margin-bottom: 20px;">
         <div class="vx-card-header">
             <h3><i class="bi bi-shield-lock" style="color: var(--vx-primary); margin-right: 8px;"></i>{{ $role->name }}</h3>

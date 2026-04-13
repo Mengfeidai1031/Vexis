@@ -12,7 +12,7 @@
 </div>
 
 {{-- Dashboard Stats --}}
-<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:20px;">
     <div class="vx-card"><div class="vx-card-body" style="text-align:center;padding:16px;">
         <div style="font-size:28px;font-weight:800;color:var(--vx-primary);font-family:var(--vx-font-mono);">{{ $stats['total'] }}</div>
         <div style="font-size:11px;color:var(--vx-text-muted);">Total Registros</div>
@@ -56,15 +56,17 @@
             <td style="font-family:var(--vx-font-mono);font-weight:700;">{{ number_format($r->importe_total, 2) }}€</td>
             <td style="font-family:var(--vx-font-mono);font-size:9px;color:var(--vx-text-muted);" title="{{ $r->hash_registro }}">{{ substr($r->hash_registro, 0, 12) }}...</td>
             <td>@switch($r->estado)
-                @case('registrado')<span class="vx-badge" style="background:#e3f2fd;color:#1565c0;">Registrado</span>@break
+                @case('registrado')<span class="vx-badge vx-badge-info">Registrado</span>@break
                 @case('enviado')<span class="vx-badge vx-badge-info">Enviado</span>@break
                 @case('aceptado')<span class="vx-badge vx-badge-success">Aceptado</span>@break
                 @case('aceptado_errores')<span class="vx-badge vx-badge-warning">Aceptado c/errores</span>@break
                 @case('rechazado')<span class="vx-badge vx-badge-danger">Rechazado</span>@break
-                @case('anulado')<span class="vx-badge" style="background:#eee;color:#666;">Anulado</span>@break
+                @case('anulado')<span class="vx-badge vx-badge-gray">Anulado</span>@break
             @endswitch</td>
             <td style="font-size:12px;">{{ $r->fecha_registro->format('d/m/Y H:i') }}</td>
-            <td><a href="{{ route('verifactu.show', $r) }}" class="vx-btn vx-btn-primary" style="padding:4px 10px;font-size:11px;"><i class="bi bi-eye"></i></a></td>
+            <td><div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+                <a href="{{ route('verifactu.show', $r) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
+            </div></div></td>
         </tr>@endforeach</tbody>
     </table></div>
     <div style="padding:16px 20px;">{{ $registros->links('vendor.pagination.vexis') }}</div>
