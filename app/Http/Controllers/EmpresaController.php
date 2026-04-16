@@ -13,11 +13,21 @@ class EmpresaController extends Controller
         if ($request->filled('nombre')) {
             $query->where('nombre', $request->nombre);
         }
-        if ($request->filled('abreviatura')) $query->where('abreviatura', $request->abreviatura);
-        if ($request->filled('cif')) $query->where('cif', $request->cif);
-        if ($request->filled('codigo_postal')) $query->where('codigo_postal', $request->codigo_postal);
-        if ($request->filled('domicilio')) $query->where('domicilio', $request->domicilio);
-        if ($request->filled('telefono')) $query->where('telefono', $request->telefono);
+        if ($request->filled('abreviatura')) {
+            $query->where('abreviatura', $request->abreviatura);
+        }
+        if ($request->filled('cif')) {
+            $query->where('cif', $request->cif);
+        }
+        if ($request->filled('codigo_postal')) {
+            $query->where('codigo_postal', $request->codigo_postal);
+        }
+        if ($request->filled('domicilio')) {
+            $query->where('domicilio', $request->domicilio);
+        }
+        if ($request->filled('telefono')) {
+            $query->where('telefono', $request->telefono);
+        }
         // Sorting
         $sortable = ['id', 'nombre', 'abreviatura', 'cif', 'domicilio', 'codigo_postal', 'telefono'];
         if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
@@ -29,6 +39,7 @@ class EmpresaController extends Controller
         $empresas_all = Empresa::orderBy('nombre')->get();
         $abreviaturas = Empresa::whereNotNull('abreviatura')->distinct()->orderBy('abreviatura')->pluck('abreviatura');
         $codigos_postales = Empresa::whereNotNull('codigo_postal')->distinct()->orderBy('codigo_postal')->pluck('codigo_postal');
+
         return view('empresas.index', compact('empresas', 'empresas_all', 'abreviaturas', 'codigos_postales'));
     }
 
@@ -48,13 +59,15 @@ class EmpresaController extends Controller
             'telefono' => 'required|string|max:12',
         ]);
 
-        Empresa::create($request->all());
+        Empresa::create($request->only(['nombre', 'abreviatura', 'cif', 'domicilio', 'codigo_postal', 'telefono']));
+
         return redirect()->route('empresas.index')->with('success', 'Empresa creada correctamente.');
     }
 
     public function show(Empresa $empresa)
     {
         $empresa->loadCount(['centros', 'users']);
+
         return view('empresas.show', compact('empresa'));
     }
 
@@ -68,13 +81,14 @@ class EmpresaController extends Controller
         $request->validate([
             'nombre' => 'required|string|max:255',
             'abreviatura' => 'required|string|max:10',
-            'cif' => 'required|string|max:10|unique:empresas,cif,' . $empresa->id,
+            'cif' => 'required|string|max:10|unique:empresas,cif,'.$empresa->id,
             'domicilio' => 'required|string|max:255',
             'codigo_postal' => 'nullable|string|size:5',
             'telefono' => 'required|string|max:12',
         ]);
 
-        $empresa->update($request->all());
+        $empresa->update($request->only(['nombre', 'abreviatura', 'cif', 'domicilio', 'codigo_postal', 'telefono']));
+
         return redirect()->route('empresas.index')->with('success', 'Empresa actualizada correctamente.');
     }
 
@@ -84,6 +98,7 @@ class EmpresaController extends Controller
             return redirect()->route('empresas.index')->with('error', 'No se puede eliminar: tiene usuarios o centros asociados.');
         }
         $empresa->delete();
+
         return redirect()->route('empresas.index')->with('success', 'Empresa eliminada correctamente.');
     }
 }

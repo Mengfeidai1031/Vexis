@@ -15,14 +15,30 @@ class IncidenciaController extends Controller
     {
         $query = Incidencia::with(['usuario', 'tecnico']);
 
-        if ($request->filled('estado')) $query->where('estado', $request->estado);
-        if ($request->filled('prioridad')) $query->where('prioridad', $request->prioridad);
-        if ($request->filled('tecnico_id')) $query->where('tecnico_id', $request->tecnico_id);
-        if ($request->filled('usuario_id')) $query->where('user_id', $request->usuario_id);
-        if ($request->filled('fecha_desde')) $query->whereDate('fecha_apertura', '>=', $request->fecha_desde);
-        if ($request->filled('fecha_hasta')) $query->whereDate('fecha_apertura', '<=', $request->fecha_hasta);
-        if ($request->filled('codigo_incidencia')) $query->where('codigo_incidencia', $request->codigo_incidencia);
-        if ($request->filled('titulo')) $query->where('titulo', $request->titulo);
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+        if ($request->filled('prioridad')) {
+            $query->where('prioridad', $request->prioridad);
+        }
+        if ($request->filled('tecnico_id')) {
+            $query->where('tecnico_id', $request->tecnico_id);
+        }
+        if ($request->filled('usuario_id')) {
+            $query->where('usuario_id', $request->usuario_id);
+        }
+        if ($request->filled('fecha_desde')) {
+            $query->whereDate('fecha_apertura', '>=', $request->fecha_desde);
+        }
+        if ($request->filled('fecha_hasta')) {
+            $query->whereDate('fecha_apertura', '<=', $request->fecha_hasta);
+        }
+        if ($request->filled('codigo_incidencia')) {
+            $query->where('codigo_incidencia', $request->codigo_incidencia);
+        }
+        if ($request->filled('titulo')) {
+            $query->where('titulo', $request->titulo);
+        }
 
         // Sorting
         $sortable = ['id', 'codigo_incidencia', 'titulo', 'prioridad', 'estado', 'usuario_id', 'tecnico_id', 'fecha_apertura'];
@@ -54,6 +70,7 @@ class IncidenciaController extends Controller
     public function create()
     {
         $tecnicos = User::role(['Super Admin', 'Administrador'])->orderBy('nombre')->get();
+
         return view('incidencias.create', compact('tecnicos'));
     }
 
@@ -69,7 +86,7 @@ class IncidenciaController extends Controller
             'archivos_tecnico.*' => 'nullable|file|max:10240',
         ]);
 
-        $codigo = 'INC-' . date('Ym') . '-' . str_pad(
+        $codigo = 'INC-'.date('Ym').'-'.str_pad(
             Incidencia::whereYear('fecha_apertura', date('Y'))->count() + 1,
             4, '0', STR_PAD_LEFT
         );
@@ -94,7 +111,7 @@ class IncidenciaController extends Controller
         // Archivos del usuario
         if ($request->hasFile('archivos_usuario')) {
             foreach ($request->file('archivos_usuario') as $file) {
-                $path = $file->store('incidencias/' . $incidencia->id, 'public');
+                $path = $file->store('incidencias/'.$incidencia->id, 'public');
                 IncidenciaArchivo::create([
                     'incidencia_id' => $incidencia->id,
                     'user_id' => Auth::id(),
@@ -108,7 +125,7 @@ class IncidenciaController extends Controller
         // Archivos del técnico
         if ($request->hasFile('archivos_tecnico')) {
             foreach ($request->file('archivos_tecnico') as $file) {
-                $path = $file->store('incidencias/' . $incidencia->id, 'public');
+                $path = $file->store('incidencias/'.$incidencia->id, 'public');
                 IncidenciaArchivo::create([
                     'incidencia_id' => $incidencia->id,
                     'user_id' => Auth::id(),
@@ -127,6 +144,7 @@ class IncidenciaController extends Controller
     {
         $incidencia->load(['usuario', 'tecnico', 'archivos.user']);
         $tecnicos = User::role(['Super Admin', 'Administrador'])->orderBy('nombre')->get();
+
         return view('incidencias.show', compact('incidencia', 'tecnicos'));
     }
 
@@ -134,6 +152,7 @@ class IncidenciaController extends Controller
     {
         $incidencia->load(['usuario', 'tecnico', 'archivos']);
         $tecnicos = User::role(['Super Admin', 'Administrador'])->orderBy('nombre')->get();
+
         return view('incidencias.edit', compact('incidencia', 'tecnicos'));
     }
 
@@ -152,7 +171,7 @@ class IncidenciaController extends Controller
 
         $data = $request->only(['titulo', 'descripcion', 'prioridad', 'estado', 'tecnico_id', 'comentario_tecnico']);
 
-        if (in_array($request->estado, ['resuelta', 'cerrada']) && !$incidencia->fecha_cierre) {
+        if (in_array($request->estado, ['resuelta', 'cerrada']) && ! $incidencia->fecha_cierre) {
             $data['fecha_cierre'] = now();
         }
         if (in_array($request->estado, ['abierta', 'en_progreso'])) {
@@ -164,7 +183,7 @@ class IncidenciaController extends Controller
         // Archivos del usuario
         if ($request->hasFile('archivos_usuario')) {
             foreach ($request->file('archivos_usuario') as $file) {
-                $path = $file->store('incidencias/' . $incidencia->id, 'public');
+                $path = $file->store('incidencias/'.$incidencia->id, 'public');
                 IncidenciaArchivo::create([
                     'incidencia_id' => $incidencia->id,
                     'user_id' => Auth::id(),
@@ -178,7 +197,7 @@ class IncidenciaController extends Controller
         // Archivos del técnico
         if ($request->hasFile('archivos_tecnico')) {
             foreach ($request->file('archivos_tecnico') as $file) {
-                $path = $file->store('incidencias/' . $incidencia->id, 'public');
+                $path = $file->store('incidencias/'.$incidencia->id, 'public');
                 IncidenciaArchivo::create([
                     'incidencia_id' => $incidencia->id,
                     'user_id' => Auth::id(),
@@ -195,7 +214,11 @@ class IncidenciaController extends Controller
 
     public function destroy(Incidencia $incidencia)
     {
+        // Eager-load and delete each archivo individually to trigger model's deleting event (file cleanup)
+        $incidencia->archivos->each->delete();
+        Storage::disk('public')->deleteDirectory('incidencias/' . $incidencia->id);
         $incidencia->delete();
+
         return redirect()->route('incidencias.index')->with('success', 'Incidencia eliminada correctamente.');
     }
 
@@ -203,6 +226,7 @@ class IncidenciaController extends Controller
     {
         $incidencia = $archivo->incidencia;
         $archivo->delete();
+
         return redirect()->route('incidencias.show', $incidencia)->with('success', 'Archivo eliminado.');
     }
 }

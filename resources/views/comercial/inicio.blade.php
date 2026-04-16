@@ -17,7 +17,7 @@
 
 {{-- Gestión Administrativa --}}
 <div class="mod-section">
-    <h3 class="mod-section-title"><i class="bi bi-briefcase"></i> Gestión Administrativa</h3>
+    <h3 class="mod-section-title"><i class="bi bi-clipboard-data"></i> Gestión Administrativa</h3>
     <div class="mod-grid">
         @can('ver ofertas')
         <a href="{{ route('ofertas.index') }}" class="mod-card">
@@ -26,17 +26,24 @@
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan
-        @can('ver ventas')
-        <a href="{{ route('ventas.index') }}" class="mod-card">
-            <div class="mod-card-icon" style="background:linear-gradient(135deg,#2ECC71,#27AE60);"><i class="bi bi-cart-check"></i></div>
-            <div class="mod-card-info"><h4>Ventas</h4><p>Registro y seguimiento de ventas</p></div>
-            <i class="bi bi-arrow-right mod-card-arrow"></i>
-        </a>
-        @endcan
         @can('ver tasaciones')
         <a href="{{ route('tasaciones.index') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#9B59B6,#8E44AD);"><i class="bi bi-calculator"></i></div>
             <div class="mod-card-info"><h4>Tasaciones</h4><p>Tasaciones de vehículos</p></div>
+            <i class="bi bi-arrow-right mod-card-arrow"></i>
+        </a>
+        @endcan
+    </div>
+</div>
+
+{{-- Gestión Ventas --}}
+<div class="mod-section">
+    <h3 class="mod-section-title"><i class="bi bi-cart-check"></i> Gestión Ventas</h3>
+    <div class="mod-grid">
+        @can('ver ventas')
+        <a href="{{ route('ventas.index') }}" class="mod-card">
+            <div class="mod-card-icon" style="background:linear-gradient(135deg,#2ECC71,#27AE60);"><i class="bi bi-cart-check"></i></div>
+            <div class="mod-card-info"><h4>Ventas</h4><p>Registro y seguimiento de ventas</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Almacen;
+use App\Models\Centro;
+use App\Models\Empresa;
 use App\Models\Reparto;
 use App\Models\Stock;
-use App\Models\Almacen;
-use App\Models\Empresa;
-use App\Models\Centro;
 use Illuminate\Http\Request;
 
 class RepartoController extends Controller
@@ -14,14 +14,30 @@ class RepartoController extends Controller
     public function index(Request $request)
     {
         $query = Reparto::with(['stock', 'almacenOrigen', 'almacenDestino', 'empresa']);
-        if ($request->filled('estado')) $query->where('estado', $request->estado);
-        if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
-        if ($request->filled('almacen_origen_id')) $query->where('almacen_origen_id', $request->almacen_origen_id);
-        if ($request->filled('almacen_destino_id')) $query->where('almacen_destino_id', $request->almacen_destino_id);
-        if ($request->filled('fecha_desde')) $query->whereDate('fecha_solicitud', '>=', $request->fecha_desde);
-        if ($request->filled('fecha_hasta')) $query->whereDate('fecha_solicitud', '<=', $request->fecha_hasta);
-        if ($request->filled('codigo_reparto')) $query->where('codigo_reparto', $request->codigo_reparto);
-        if ($request->filled('stock_id')) $query->where('stock_id', $request->stock_id);
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+        if ($request->filled('empresa_id')) {
+            $query->where('empresa_id', $request->empresa_id);
+        }
+        if ($request->filled('almacen_origen_id')) {
+            $query->where('almacen_origen_id', $request->almacen_origen_id);
+        }
+        if ($request->filled('almacen_destino_id')) {
+            $query->where('almacen_destino_id', $request->almacen_destino_id);
+        }
+        if ($request->filled('fecha_desde')) {
+            $query->whereDate('fecha_solicitud', '>=', $request->fecha_desde);
+        }
+        if ($request->filled('fecha_hasta')) {
+            $query->whereDate('fecha_solicitud', '<=', $request->fecha_hasta);
+        }
+        if ($request->filled('codigo_reparto')) {
+            $query->where('codigo_reparto', $request->codigo_reparto);
+        }
+        if ($request->filled('stock_id')) {
+            $query->where('stock_id', $request->stock_id);
+        }
 
         // Sorting
         $sortable = ['id', 'codigo_reparto', 'stock_id', 'cantidad', 'almacen_origen_id', 'almacen_destino_id', 'estado', 'fecha_solicitud'];
@@ -35,6 +51,7 @@ class RepartoController extends Controller
         $almacenes = Almacen::orderBy('nombre')->get();
         $codigos_reparto = Reparto::distinct()->orderBy('codigo_reparto')->pluck('codigo_reparto');
         $stocks_reparto = Stock::orderBy('nombre_pieza')->get();
+
         return view('repartos.index', compact('repartos', 'empresas', 'almacenes', 'codigos_reparto', 'stocks_reparto'));
     }
 
@@ -44,6 +61,7 @@ class RepartoController extends Controller
         $almacenes = Almacen::where('activo', true)->orderBy('nombre')->get();
         $empresas = Empresa::orderBy('nombre')->get();
         $centros = Centro::orderBy('nombre')->get();
+
         return view('repartos.create', compact('stocks', 'almacenes', 'empresas', 'centros'));
     }
 
@@ -61,14 +79,16 @@ class RepartoController extends Controller
             'observaciones' => 'nullable|string',
         ]);
 
-        $codigo = 'REP-' . strtoupper(uniqid());
-        Reparto::create([...$request->all(), 'codigo_reparto' => $codigo, 'estado' => 'pendiente']);
+        $codigo = 'REP-'.strtoupper(uniqid());
+        Reparto::create([...$request->only(['stock_id', 'almacen_origen_id', 'almacen_destino_id', 'empresa_id', 'centro_id', 'cantidad', 'fecha_solicitud', 'solicitado_por', 'observaciones']), 'codigo_reparto' => $codigo, 'estado' => 'pendiente']);
+
         return redirect()->route('repartos.index')->with('success', 'Reparto creado correctamente.');
     }
 
     public function show(Reparto $reparto)
     {
         $reparto->load(['stock', 'almacenOrigen', 'almacenDestino', 'empresa', 'centro']);
+
         return view('repartos.show', compact('reparto'));
     }
 
@@ -78,6 +98,7 @@ class RepartoController extends Controller
         $almacenes = Almacen::where('activo', true)->orderBy('nombre')->get();
         $empresas = Empresa::orderBy('nombre')->get();
         $centros = Centro::orderBy('nombre')->get();
+
         return view('repartos.edit', compact('reparto', 'stocks', 'almacenes', 'empresas', 'centros'));
     }
 
@@ -96,13 +117,15 @@ class RepartoController extends Controller
             'solicitado_por' => 'nullable|string|max:255',
             'observaciones' => 'nullable|string',
         ]);
-        $reparto->update($request->all());
+        $reparto->update($request->only(['stock_id', 'almacen_origen_id', 'almacen_destino_id', 'empresa_id', 'centro_id', 'cantidad', 'estado', 'fecha_solicitud', 'fecha_entrega', 'solicitado_por', 'observaciones']));
+
         return redirect()->route('repartos.index')->with('success', 'Reparto actualizado correctamente.');
     }
 
     public function destroy(Reparto $reparto)
     {
         $reparto->delete();
+
         return redirect()->route('repartos.index')->with('success', 'Reparto eliminado correctamente.');
     }
 }

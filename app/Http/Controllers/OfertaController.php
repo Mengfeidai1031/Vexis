@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreOfertaRequest;
 use App\Models\OfertaCabecera;
 use App\Repositories\Interfaces\OfertaRepositoryInterface;
 use App\Services\OfertaPdfService;
@@ -11,6 +10,7 @@ use Illuminate\Http\Request;
 class OfertaController extends Controller
 {
     protected $ofertaRepository;
+
     protected $pdfService;
 
     public function __construct(
@@ -24,7 +24,7 @@ class OfertaController extends Controller
     public function index(Request $request)
     {
         $this->authorize('viewAny', OfertaCabecera::class);
-        
+
         // Recopilar todos los filtros
         $filters = [
             'fecha_desde' => $request->input('fecha_desde'),
@@ -36,7 +36,7 @@ class OfertaController extends Controller
         ];
 
         // Verificar si hay algún filtro activo
-        $hasFilters = !empty(array_filter($filters, function($value) {
+        $hasFilters = ! empty(array_filter($filters, function ($value) {
             return $value !== null && $value !== '';
         }));
 
@@ -65,14 +65,14 @@ class OfertaController extends Controller
     public function create()
     {
         $this->authorize('create', OfertaCabecera::class);
-        
+
         return view('ofertas.create');
     }
 
     public function store(Request $request)
     {
         $this->authorize('create', OfertaCabecera::class);
-        
+
         $request->validate([
             'marca' => 'required|in:nissan,renault_dacia',
             'pdf_file' => 'required|file|mimes:pdf|max:10240',
@@ -88,8 +88,8 @@ class OfertaController extends Controller
             $marca = $request->input('marca');
             $oferta = $this->pdfService->procesarPdf($request->file('pdf_file'), $marca);
 
-            $mensaje = 'Oferta procesada exitosamente. Se encontraron ' . $oferta->lineas->count() . ' líneas.';
-            if (!$oferta->vehiculo_id) {
+            $mensaje = 'Oferta procesada exitosamente. Se encontraron '.$oferta->lineas->count().' líneas.';
+            if (! $oferta->vehiculo_id) {
                 $mensaje .= ' (Documento informativo - sin vehículo registrado)';
             }
 
@@ -97,29 +97,29 @@ class OfertaController extends Controller
                 ->with('success', $mensaje);
         } catch (\Exception $e) {
             return back()->withInput()
-                ->with('error', 'Error al procesar el PDF: ' . $e->getMessage());
+                ->with('error', 'Error al procesar el PDF: '.$e->getMessage());
         }
     }
 
     public function show(OfertaCabecera $oferta)
     {
         $this->authorize('view', $oferta);
-        
+
         return view('ofertas.show', compact('oferta'));
     }
 
     public function destroy(OfertaCabecera $oferta)
     {
         $this->authorize('delete', $oferta);
-        
+
         try {
             $this->pdfService->eliminarOferta($oferta);
-            
+
             return redirect()->route('ofertas.index')
                 ->with('success', 'Oferta eliminada exitosamente.');
         } catch (\Exception $e) {
             return redirect()->route('ofertas.index')
-                ->with('error', 'Error al eliminar la oferta: ' . $e->getMessage());
+                ->with('error', 'Error al eliminar la oferta: '.$e->getMessage());
         }
     }
 }

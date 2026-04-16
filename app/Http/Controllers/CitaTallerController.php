@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\CitaTaller;
+use App\Models\Empresa;
+use App\Models\Marca;
 use App\Models\Mecanico;
 use App\Models\Taller;
-use App\Models\Marca;
-use App\Models\Empresa;
 use Illuminate\Http\Request;
 
 class CitaTallerController extends Controller
@@ -14,12 +14,24 @@ class CitaTallerController extends Controller
     public function index(Request $request)
     {
         $query = CitaTaller::with(['mecanico', 'taller', 'marca']);
-        if ($request->filled('taller_id')) $query->where('taller_id', $request->taller_id);
-        if ($request->filled('estado')) $query->where('estado', $request->estado);
-        if ($request->filled('fecha')) $query->whereDate('fecha', $request->fecha);
-        if ($request->filled('mecanico_id')) $query->where('mecanico_id', $request->mecanico_id);
-        if ($request->filled('marca_id')) $query->where('marca_id', $request->marca_id);
-        if ($request->filled('cliente_nombre')) $query->where('cliente_nombre', $request->cliente_nombre);
+        if ($request->filled('taller_id')) {
+            $query->where('taller_id', $request->taller_id);
+        }
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+        if ($request->filled('fecha')) {
+            $query->whereDate('fecha', $request->fecha);
+        }
+        if ($request->filled('mecanico_id')) {
+            $query->where('mecanico_id', $request->mecanico_id);
+        }
+        if ($request->filled('marca_id')) {
+            $query->where('marca_id', $request->marca_id);
+        }
+        if ($request->filled('cliente_nombre')) {
+            $query->where('cliente_nombre', $request->cliente_nombre);
+        }
         // Sorting
         $sortable = ['id', 'fecha', 'hora_inicio', 'hora_fin', 'cliente_nombre', 'vehiculo_info', 'mecanico_id', 'taller_id', 'estado'];
         if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
@@ -35,9 +47,9 @@ class CitaTallerController extends Controller
         $semanaFin = $semanaInicio->copy()->endOfWeek();
         $citasSemana = CitaTaller::with('mecanico')
             ->whereBetween('fecha', [$semanaInicio, $semanaFin])
-            ->when($request->filled('taller_id'), fn($q) => $q->where('taller_id', $request->taller_id))
+            ->when($request->filled('taller_id'), fn ($q) => $q->where('taller_id', $request->taller_id))
             ->orderBy('fecha')->orderBy('hora_inicio')->get()
-            ->groupBy(fn($c) => $c->fecha->format('Y-m-d'));
+            ->groupBy(fn ($c) => $c->fecha->format('Y-m-d'));
 
         $mecanicos = Mecanico::orderBy('nombre')->get();
         $marcas = Marca::orderBy('nombre')->get();
@@ -52,19 +64,22 @@ class CitaTallerController extends Controller
         $talleres = Taller::where('activo', true)->orderBy('nombre')->get();
         $marcas = Marca::where('activa', true)->orderBy('nombre')->get();
         $empresas = Empresa::orderBy('nombre')->get();
+
         return view('citas.create', compact('mecanicos', 'talleres', 'marcas', 'empresas'));
     }
 
     public function store(Request $request)
     {
-        $request->validate(['mecanico_id'=>'required|exists:mecanicos,id','taller_id'=>'required|exists:talleres,id','empresa_id'=>'required|exists:empresas,id','cliente_nombre'=>'required|max:255','fecha'=>'required|date','hora_inicio'=>'required','estado'=>'required|in:pendiente,confirmada,en_curso,completada,cancelada']);
-        CitaTaller::create($request->all());
+        $request->validate(['mecanico_id' => 'required|exists:mecanicos,id', 'taller_id' => 'required|exists:talleres,id', 'empresa_id' => 'required|exists:empresas,id', 'cliente_nombre' => 'required|max:255', 'fecha' => 'required|date', 'hora_inicio' => 'required', 'estado' => 'required|in:pendiente,confirmada,en_curso,completada,cancelada']);
+        CitaTaller::create($request->only(['mecanico_id', 'taller_id', 'marca_id', 'empresa_id', 'cliente_nombre', 'vehiculo_info', 'fecha', 'hora_inicio', 'hora_fin', 'descripcion', 'estado']));
+
         return redirect()->route('citas.index')->with('success', 'Cita creada correctamente.');
     }
 
     public function show(CitaTaller $cita)
     {
         $cita->load(['mecanico', 'taller', 'marca', 'empresa']);
+
         return view('citas.show', compact('cita'));
     }
 
@@ -74,19 +89,22 @@ class CitaTallerController extends Controller
         $talleres = Taller::where('activo', true)->orderBy('nombre')->get();
         $marcas = Marca::where('activa', true)->orderBy('nombre')->get();
         $empresas = Empresa::orderBy('nombre')->get();
+
         return view('citas.edit', compact('cita', 'mecanicos', 'talleres', 'marcas', 'empresas'));
     }
 
     public function update(Request $request, CitaTaller $cita)
     {
-        $request->validate(['mecanico_id'=>'required|exists:mecanicos,id','taller_id'=>'required|exists:talleres,id','empresa_id'=>'required|exists:empresas,id','cliente_nombre'=>'required|max:255','fecha'=>'required|date','hora_inicio'=>'required','estado'=>'required|in:pendiente,confirmada,en_curso,completada,cancelada']);
-        $cita->update($request->all());
+        $request->validate(['mecanico_id' => 'required|exists:mecanicos,id', 'taller_id' => 'required|exists:talleres,id', 'empresa_id' => 'required|exists:empresas,id', 'cliente_nombre' => 'required|max:255', 'fecha' => 'required|date', 'hora_inicio' => 'required', 'estado' => 'required|in:pendiente,confirmada,en_curso,completada,cancelada']);
+        $cita->update($request->only(['mecanico_id', 'taller_id', 'marca_id', 'empresa_id', 'cliente_nombre', 'vehiculo_info', 'fecha', 'hora_inicio', 'hora_fin', 'descripcion', 'estado']));
+
         return redirect()->route('citas.index')->with('success', 'Cita actualizada correctamente.');
     }
 
     public function destroy(CitaTaller $cita)
     {
         $cita->delete();
+
         return redirect()->route('citas.index')->with('success', 'Cita eliminada correctamente.');
     }
 }

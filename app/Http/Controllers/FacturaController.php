@@ -2,38 +2,58 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Factura;
-use App\Models\Setting;
-use App\Models\Verifactu;
-use App\Models\Venta;
+use App\Exports\FacturasExport;
+use App\Models\Centro;
 use App\Models\Cliente;
 use App\Models\Empresa;
-use App\Models\Centro;
+use App\Models\Factura;
 use App\Models\Marca;
+use App\Models\Setting;
+use App\Models\Venta;
+use App\Models\Verifactu;
 use App\Services\AeatVerifactuService;
-use App\Exports\FacturasExport;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class FacturaController extends Controller
 {
     public function index(Request $request)
     {
         $query = Factura::with(['venta', 'cliente', 'empresa', 'centro', 'marca', 'emisor']);
-        if ($request->filled('estado')) $query->where('estado', $request->estado);
-        if ($request->filled('marca_id')) $query->where('marca_id', $request->marca_id);
-        if ($request->filled('cliente_id')) $query->where('cliente_id', $request->cliente_id);
-        if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
-        if ($request->filled('fecha_desde')) $query->whereDate('fecha_factura', '>=', $request->fecha_desde);
-        if ($request->filled('fecha_hasta')) $query->whereDate('fecha_factura', '<=', $request->fecha_hasta);
-        if ($request->filled('concepto')) $query->where('concepto', $request->concepto);
-        if ($request->filled('codigo_factura')) $query->where('codigo_factura', $request->codigo_factura);
-        if ($request->filled('total_min')) $query->where('total', '>=', $request->total_min);
-        if ($request->filled('total_max')) $query->where('total', '<=', $request->total_max);
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+        if ($request->filled('marca_id')) {
+            $query->where('marca_id', $request->marca_id);
+        }
+        if ($request->filled('cliente_id')) {
+            $query->where('cliente_id', $request->cliente_id);
+        }
+        if ($request->filled('empresa_id')) {
+            $query->where('empresa_id', $request->empresa_id);
+        }
+        if ($request->filled('fecha_desde')) {
+            $query->whereDate('fecha_factura', '>=', $request->fecha_desde);
+        }
+        if ($request->filled('fecha_hasta')) {
+            $query->whereDate('fecha_factura', '<=', $request->fecha_hasta);
+        }
+        if ($request->filled('concepto')) {
+            $query->where('concepto', $request->concepto);
+        }
+        if ($request->filled('codigo_factura')) {
+            $query->where('codigo_factura', $request->codigo_factura);
+        }
+        if ($request->filled('total_min')) {
+            $query->where('total', '>=', $request->total_min);
+        }
+        if ($request->filled('total_max')) {
+            $query->where('total', '<=', $request->total_max);
+        }
         // Sorting
         $sortable = ['id', 'codigo_factura', 'cliente_id', 'marca_id', 'concepto', 'subtotal', 'iva_importe', 'total', 'estado', 'fecha_factura'];
         if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
@@ -47,6 +67,7 @@ class FacturaController extends Controller
         $empresas = Empresa::orderBy('nombre')->get();
         $codigos_factura = Factura::distinct()->orderBy('codigo_factura')->pluck('codigo_factura');
         $conceptos_factura = Factura::whereNotNull('concepto')->distinct()->orderBy('concepto')->pluck('concepto');
+
         return view('facturas.index', compact('facturas', 'marcas', 'clientes', 'empresas', 'codigos_factura', 'conceptos_factura'));
     }
 
@@ -58,6 +79,7 @@ class FacturaController extends Controller
         $centros = Centro::orderBy('nombre')->get();
         $marcas = Marca::where('activa', true)->orderBy('nombre')->get();
         $ventaPreseleccionada = $request->venta_id ? Venta::with(['cliente', 'empresa', 'centro', 'marca', 'conceptos'])->find($request->venta_id) : null;
+
         return view('facturas.create', compact('ventas', 'clientes', 'empresas', 'centros', 'marcas', 'ventaPreseleccionada'));
     }
 
@@ -79,10 +101,10 @@ class FacturaController extends Controller
         $ivaImporte = round($subtotal * $ivaPct / 100, 2);
         $total = round($subtotal + $ivaImporte, 2);
 
-        $codigo = 'FAC-' . date('Ym') . '-' . str_pad(Factura::whereYear('fecha_factura', date('Y'))->count() + 1, 4, '0', STR_PAD_LEFT);
+        $codigo = 'FAC-'.date('Ym').'-'.str_pad(Factura::whereYear('fecha_factura', date('Y'))->count() + 1, 4, '0', STR_PAD_LEFT);
 
         $factura = Factura::create([
-            ...$request->except(['_token', '_method']),
+            ...$request->only(['venta_id', 'cliente_id', 'empresa_id', 'centro_id', 'marca_id', 'fecha_factura', 'fecha_vencimiento', 'concepto', 'estado', 'observaciones']),
             'codigo_factura' => $codigo,
             'subtotal' => $subtotal,
             'iva_porcentaje' => $ivaPct,
@@ -96,20 +118,21 @@ class FacturaController extends Controller
         if (Setting::get('modulo_verifactu', true)) {
             try {
                 $factura->load(['empresa', 'cliente']);
-                $service = new AeatVerifactuService();
+                $service = new AeatVerifactuService;
                 $registro = $service->registrarFactura($factura, 'alta');
                 $verifactuMsg = " Registro Verifactu {$registro->codigo_registro} generado automáticamente.";
             } catch (\Exception $e) {
-                $verifactuMsg = ' (Error al registrar en Verifactu: ' . $e->getMessage() . ')';
+                $verifactuMsg = ' (Error al registrar en Verifactu: '.$e->getMessage().')';
             }
         }
 
-        return redirect()->route('facturas.index')->with('success', 'Factura creada correctamente.' . $verifactuMsg);
+        return redirect()->route('facturas.index')->with('success', 'Factura creada correctamente.'.$verifactuMsg);
     }
 
     public function show(Factura $factura)
     {
         $factura->load(['venta.vehiculo', 'venta.conceptos', 'cliente', 'empresa', 'centro', 'marca', 'emisor']);
+
         return view('facturas.show', compact('factura'));
     }
 
@@ -120,6 +143,7 @@ class FacturaController extends Controller
         $empresas = Empresa::orderBy('nombre')->get();
         $centros = Centro::orderBy('nombre')->get();
         $marcas = Marca::where('activa', true)->orderBy('nombre')->get();
+
         return view('facturas.edit', compact('factura', 'ventas', 'clientes', 'empresas', 'centros', 'marcas'));
     }
 
@@ -143,7 +167,7 @@ class FacturaController extends Controller
         $estadoAnterior = $factura->estado;
 
         $factura->update([
-            ...$request->except(['_token', '_method', 'subtotal', 'iva_porcentaje']),
+            ...$request->only(['venta_id', 'cliente_id', 'empresa_id', 'centro_id', 'marca_id', 'fecha_factura', 'fecha_vencimiento', 'concepto', 'estado', 'observaciones']),
             'subtotal' => $subtotal,
             'iva_porcentaje' => $ivaPct,
             'iva_importe' => $ivaImporte,
@@ -155,20 +179,21 @@ class FacturaController extends Controller
         if ($request->estado === 'anulada' && $estadoAnterior !== 'anulada' && Setting::get('modulo_verifactu', true)) {
             try {
                 $factura->load(['empresa', 'cliente']);
-                $service = new AeatVerifactuService();
+                $service = new AeatVerifactuService;
                 $registro = $service->registrarFactura($factura, 'anulacion');
                 $verifactuMsg = " Registro de anulación Verifactu {$registro->codigo_registro} generado.";
             } catch (\Exception $e) {
-                $verifactuMsg = ' (Error Verifactu: ' . $e->getMessage() . ')';
+                $verifactuMsg = ' (Error Verifactu: '.$e->getMessage().')';
             }
         }
 
-        return redirect()->route('facturas.index')->with('success', 'Factura actualizada correctamente.' . $verifactuMsg);
+        return redirect()->route('facturas.index')->with('success', 'Factura actualizada correctamente.'.$verifactuMsg);
     }
 
     public function destroy(Factura $factura)
     {
         $factura->delete();
+
         return redirect()->route('facturas.index')->with('success', 'Factura eliminada correctamente.');
     }
 
@@ -197,8 +222,8 @@ class FacturaController extends Controller
         $pdf = Pdf::loadView('facturas.factura-pdf', compact('factura', 'logoMarca', 'qrBase64', 'verifactuRegistro'))
             ->setPaper('a4', 'portrait');
 
-        $fileName = 'factura_' . $factura->codigo_factura . '.pdf';
-        $storagePath = 'facturas/' . $fileName;
+        $fileName = 'factura_'.$factura->codigo_factura.'.pdf';
+        $storagePath = 'facturas/'.$fileName;
         Storage::disk('public')->put($storagePath, $pdf->output());
 
         $factura->update(['pdf_path' => $storagePath]);
@@ -208,14 +233,16 @@ class FacturaController extends Controller
 
     public function export()
     {
-        $fileName = 'facturas_' . date('Y-m-d_His') . '.xlsx';
-        return Excel::download(new FacturasExport(), $fileName);
+        $fileName = 'facturas_'.date('Y-m-d_His').'.xlsx';
+
+        return Excel::download(new FacturasExport, $fileName);
     }
 
     public function exportPdf()
     {
         $facturas = Factura::with(['venta', 'cliente', 'empresa', 'marca'])->orderByDesc('fecha_factura')->get();
         $pdf = Pdf::loadView('facturas.pdf', compact('facturas'));
-        return $pdf->download('facturas_' . date('Y-m-d_His') . '.pdf');
+
+        return $pdf->download('facturas_'.date('Y-m-d_His').'.pdf');
     }
 }

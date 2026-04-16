@@ -118,13 +118,17 @@ class CampaniaController extends Controller
 
     public function destroyFoto(CampaniaFoto $foto)
     {
-        $foto->delete();
+        $foto->delete(); // Model's deleting event handles file cleanup
         return back()->with('success', 'Foto eliminada correctamente.');
     }
 
     public function destroy(Campania $campania)
     {
-        $campania->fotos->each->delete();
+        $campania->fotos->each(function ($foto) {
+            Storage::disk('public')->delete($foto->ruta);
+            $foto->delete();
+        });
+        Storage::disk('public')->deleteDirectory('campanias/' . $campania->id);
         $campania->delete();
         return redirect()->route('campanias.index')->with('success', 'Campaña eliminada correctamente.');
     }

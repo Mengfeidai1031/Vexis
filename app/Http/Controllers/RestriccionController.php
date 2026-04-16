@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\UserRestrictionHelper;
 use App\Models\User;
 use App\Models\UserRestriction;
 use App\Repositories\Interfaces\RestriccionRepositoryInterface;

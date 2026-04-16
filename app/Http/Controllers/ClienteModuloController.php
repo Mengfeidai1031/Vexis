@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Campania;
-use App\Models\CampaniaFoto;
 use App\Models\CatalogoPrecio;
 use App\Models\Centro;
 use App\Models\Cliente;

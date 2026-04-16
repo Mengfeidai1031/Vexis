@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\NamingPc;
 use App\Models\Centro;
 use App\Models\Empresa;
+use App\Models\NamingPc;
 use Illuminate\Http\Request;
 
 class NamingPcController extends Controller
@@ -12,14 +12,30 @@ class NamingPcController extends Controller
     public function index(Request $request)
     {
         $query = NamingPc::with(['centro', 'empresa']);
-        if ($request->filled('tipo')) $query->where('tipo', $request->tipo);
-        if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
-        if ($request->filled('centro_id')) $query->where('centro_id', $request->centro_id);
-        if ($request->filled('sistema_operativo')) $query->where('sistema_operativo', $request->sistema_operativo);
-        if ($request->filled('activo')) $query->where('activo', $request->activo);
-        if ($request->filled('nombre_equipo')) $query->where('nombre_equipo', $request->nombre_equipo);
-        if ($request->filled('direccion_ip')) $query->where('direccion_ip', $request->direccion_ip);
-        if ($request->filled('version_so')) $query->where('version_so', $request->version_so);
+        if ($request->filled('tipo')) {
+            $query->where('tipo', $request->tipo);
+        }
+        if ($request->filled('empresa_id')) {
+            $query->where('empresa_id', $request->empresa_id);
+        }
+        if ($request->filled('centro_id')) {
+            $query->where('centro_id', $request->centro_id);
+        }
+        if ($request->filled('sistema_operativo')) {
+            $query->where('sistema_operativo', $request->sistema_operativo);
+        }
+        if ($request->filled('activo')) {
+            $query->where('activo', $request->activo);
+        }
+        if ($request->filled('nombre_equipo')) {
+            $query->where('nombre_equipo', $request->nombre_equipo);
+        }
+        if ($request->filled('direccion_ip')) {
+            $query->where('direccion_ip', $request->direccion_ip);
+        }
+        if ($request->filled('version_so')) {
+            $query->where('version_so', $request->version_so);
+        }
         // Sorting
         $sortable = ['id', 'nombre_equipo', 'tipo', 'direccion_ip', 'empresa_id', 'centro_id', 'sistema_operativo', 'version_so', 'activo'];
         if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
@@ -33,6 +49,7 @@ class NamingPcController extends Controller
         $nombres_pc = NamingPc::distinct()->orderBy('nombre_equipo')->pluck('nombre_equipo');
         $ips_pc = NamingPc::whereNotNull('direccion_ip')->distinct()->orderBy('direccion_ip')->pluck('direccion_ip');
         $versiones_pc = NamingPc::whereNotNull('version_so')->distinct()->orderBy('version_so')->pluck('version_so');
+
         return view('naming-pcs.index', compact('namingPcs', 'empresas', 'centros', 'nombres_pc', 'ips_pc', 'versiones_pc'));
     }
 
@@ -40,6 +57,7 @@ class NamingPcController extends Controller
     {
         $empresas = Empresa::orderBy('nombre')->get();
         $centros = Centro::orderBy('nombre')->get();
+
         return view('naming-pcs.create', compact('empresas', 'centros'));
     }
 
@@ -53,13 +71,15 @@ class NamingPcController extends Controller
             'direccion_ip' => 'nullable|string|max:45',
             'direccion_mac' => 'nullable|string|max:17',
         ]);
-        NamingPc::create($request->all());
+        NamingPc::create($request->only(['nombre_equipo', 'tipo', 'ubicacion', 'centro_id', 'empresa_id', 'direccion_ip', 'direccion_mac', 'sistema_operativo', 'version_so', 'observaciones']));
+
         return redirect()->route('naming-pcs.index')->with('success', 'Equipo registrado correctamente.');
     }
 
     public function show(NamingPc $namingPc)
     {
         $namingPc->load(['centro', 'empresa']);
+
         return view('naming-pcs.show', compact('namingPc'));
     }
 
@@ -67,6 +87,7 @@ class NamingPcController extends Controller
     {
         $empresas = Empresa::orderBy('nombre')->get();
         $centros = Centro::orderBy('nombre')->get();
+
         return view('naming-pcs.edit', compact('namingPc', 'empresas', 'centros'));
     }
 
@@ -80,13 +101,15 @@ class NamingPcController extends Controller
             'direccion_ip' => 'nullable|string|max:45',
             'direccion_mac' => 'nullable|string|max:17',
         ]);
-        $namingPc->update([...$request->all(), 'activo' => $request->boolean('activo', true)]);
+        $namingPc->update([...$request->only(['nombre_equipo', 'tipo', 'ubicacion', 'centro_id', 'empresa_id', 'direccion_ip', 'direccion_mac', 'sistema_operativo', 'version_so', 'observaciones']), 'activo' => $request->boolean('activo', true)]);
+
         return redirect()->route('naming-pcs.index')->with('success', 'Equipo actualizado correctamente.');
     }
 
     public function destroy(NamingPc $namingPc)
     {
         $namingPc->delete();
+
         return redirect()->route('naming-pcs.index')->with('success', 'Equipo eliminado correctamente.');
     }
 }
