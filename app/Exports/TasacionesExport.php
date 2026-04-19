@@ -6,13 +6,13 @@ namespace App\Exports;
 
 use App\Models\Tasacion;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class TasacionesExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize, WithStyles
+class TasacionesExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping, WithStyles
 {
     public function collection()
     {
@@ -39,7 +39,7 @@ class TasacionesExport implements FromCollection, WithHeadings, WithMapping, Sho
             $tasacion->valor_estimado ?? 0,
             $tasacion->valor_final ?? 0,
             Tasacion::$estados[$tasacion->estado] ?? $tasacion->estado,
-            $tasacion->cliente ? $tasacion->cliente->nombre . ' ' . $tasacion->cliente->apellidos : '',
+            $tasacion->cliente ? $tasacion->cliente->nombre.' '.$tasacion->cliente->apellidos : '',
             $tasacion->empresa?->nombre ?? '',
             $tasacion->fecha_tasacion?->format('d/m/Y') ?? '',
             $tasacion->tasador?->name ?? '',

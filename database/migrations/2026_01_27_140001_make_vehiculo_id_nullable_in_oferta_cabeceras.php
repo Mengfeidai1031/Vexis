@@ -16,12 +16,12 @@ return new class extends Migration
         Schema::table('oferta_cabeceras', function (Blueprint $table) {
             // Hacer vehiculo_id nullable
             $table->unsignedBigInteger('vehiculo_id')->nullable()->change();
-            
+
             // Recrear la foreign key permitiendo null
             $table->foreign('vehiculo_id')
-                  ->references('id')
-                  ->on('vehiculos')
-                  ->onDelete('set null');
+                ->references('id')
+                ->on('vehiculos')
+                ->onDelete('set null');
         });
     }
 
@@ -34,9 +34,9 @@ return new class extends Migration
         Schema::table('oferta_cabeceras', function (Blueprint $table) {
             $table->unsignedBigInteger('vehiculo_id')->nullable(false)->change();
             $table->foreign('vehiculo_id')
-                  ->references('id')
-                  ->on('vehiculos')
-                  ->onDelete('cascade');
+                ->references('id')
+                ->on('vehiculos')
+                ->onDelete('cascade');
         });
     }
 };

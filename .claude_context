@@ -6,10 +6,10 @@
 
 ## Proyecto
 Laravel 12 + PHP 8.2 + MySQL 8 (`vexis_db`). App full-stack Blade (no monorepo) para Grupo DAI (automoción).
-Módulos: Gestión, Comercial (ofertas/ventas/tasaciones), Recambios, Talleres, Cliente portal.
+Módulos: Gestión, Comercial (ofertas/ventas/tasaciones/facturas/verifactu), Recambios, Talleres, Dataxis, Cliente portal.
 
 ## Stack
-- Blade + Tailwind 4 + Vite + Bootstrap Icons
+- Blade + Tailwind 4 + Vite + Bootstrap Icons + Chart.js
 - Spatie Permission (RBAC, 40+ permisos)
 - DomPDF, spatie/pdf-to-text, maatwebsite/excel, @google/generative-ai
 
@@ -26,7 +26,29 @@ Empresa → Centro → Departamento. Restricciones vía `UserRestriction` polim�
 `routes/web.php` (~596 líneas) organizado por módulo con middleware de permisos.
 
 ## Frontend design system
-`resources/views/layouts/app.blade.php`: CSS vars (primary #33AADD), dark mode `data-theme`, Plus Jakarta Sans, clases `.vx-card`, `.vx-dash-module`, `.vx-avatar`.
+`resources/views/layouts/app.blade.php`: CSS vars (primary #33AADD), dark mode `data-theme`, Plus Jakarta Sans.
+Sistemas de clases:
+- `.vx-*` base (cards, tables, forms, badges, alerts, pagination, avatars, actions)
+- `.mod-*` premium para vistas inicio de módulos (banner + secciones + grid + cards con icono gradiente y arrow hover)
+- `.dx-*` Dataxis (KPIs, charts responsive con `.dx-chart-sm`/`.dx-chart-lg`/`.dx-grid`/`.dx-grid-full`)
+- `.cli-*` portal cliente (premium, gradientes, hover elevation)
+Tablas con thead sticky (`position:sticky;top:0;z-index:5`).
+Flash messages globales (`success`/`error`/`warning`/`info`) inyectados antes de `@yield('content')`.
+
+## Convenciones
+- Filtros: usar `<x-filtros-avanzados>` con `<select>` + collections distintas. JS auto-convierte a dropdown searchable cuando >2 opciones.
+- Emails seeder: dominio `@grupo-dai.com`.
+- Form grids: `.vx-form-grid`, `.vx-form-grid-3`, `.vx-form-full`, gap 16px.
+- Show pages: max-width 800px (1 col) / 950px (2 col).
+- Charts Chart.js: `responsive:true, maintainAspectRatio:false` siempre. Doughnut/pie/polar/radar canvas 180px, line/bar full-width 120px.
+- Comercial inicio: 3 secciones (Gestión Administrativa / Gestión Ventas / Gestión de Vehículos) que coinciden con dropdown del menú.
+- Destroy con archivos: limpiar `Storage::disk('public')->deleteDirectory()` + eliminar registros relacionados.
+
+## Coherencia migraciones/seeders
+- Vehículos seeded deben referenciar modelos del catálogo.
+- Ventas/facturas/verifactu/repartos/stocks deben referenciar registros reales previamente seeded (vendedor, cliente, vehículo, factura, etc.).
+- Tasaciones excluidas (son externas, sin registro previo necesario).
+- Verifactu se genera desde factura (o al mismo tiempo si viene de venta).
 
 ## Comandos
 ```
@@ -36,6 +58,7 @@ npm run test     # phpunit
 php artisan test --filter=Nombre
 ./vendor/bin/pint
 npm run build
+php artisan migrate:fresh --seed
 ```
 
 ## Testing
@@ -47,3 +70,12 @@ Session/cache/queue = driver `database`.
 ## Git
 Branch actual: `develop`. Main para PRs: `main`.
 Últimos commits relevantes: Dataxis views, sort component reutilizable, reorganización menús Cliente (Noticias/Talleres), submenús Gestión Admin/Vehículos en Comercial, fix layout user/técnico en Incidencias.
+
+## Estado refactor 10 fases
+Fases 1-10 completadas:
+1-5: previas (controladores, policies, services, repositories, requests)
+6: shortcuts módulos en /welcome y /dashboard
+7: filtros searchable dropdown coherentes en todos los index
+8: migraciones/seeders coherentes (FKs reales, emails @grupo-dai.com)
+9: UI/UX polish (`.mod-*`, `.dx-*`, `.cli-*`, sticky thead, flash global)
+10: auditoría global (rutas, modelos, permisos, validación, security, dead code, file storage cleanup en destroys)

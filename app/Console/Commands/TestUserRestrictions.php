@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use App\Helpers\UserRestrictionHelper;
@@ -33,19 +35,22 @@ class TestUserRestrictions extends Command
     {
         $email = $this->argument('email');
 
-        if (!$email) {
+        if (! $email) {
             $this->showMenu();
+
             return 0;
         }
 
         $user = User::where('email', $email)->first();
 
-        if (!$user) {
+        if (! $user) {
             $this->error("Usuario no encontrado: {$email}");
+
             return 1;
         }
 
         $this->testUserRestrictions($user);
+
         return 0;
     }
 
@@ -115,13 +120,13 @@ class TestUserRestrictions extends Command
         // Probar repositorio
         $this->info('🔍 Probando repositorio de clientes:');
         Auth::login($user);
-        
+
         try {
-            $repo = new ClienteRepository();
+            $repo = new ClienteRepository;
             $clientes = $repo->all();
-            
+
             $this->line("  Total de clientes visibles: {$clientes->total()}");
-            
+
             if ($clientes->total() > 0) {
                 $this->line('  Primeros 5 clientes:');
                 foreach ($clientes->take(5) as $cliente) {
@@ -131,7 +136,7 @@ class TestUserRestrictions extends Command
         } catch (\Exception $e) {
             $this->error("  Error: {$e->getMessage()}");
         }
-        
+
         Auth::logout();
         $this->info('');
 

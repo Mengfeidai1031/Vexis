@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Setting;
@@ -10,6 +12,7 @@ class SettingController extends Controller
     public function index()
     {
         $settings = Setting::orderBy('group')->orderBy('key')->get()->groupBy('group');
+
         return view('settings.index', compact('settings'));
     }
 

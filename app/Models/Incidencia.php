@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -46,9 +48,28 @@ class Incidencia extends Model
         });
     }
 
-    public function usuario(): BelongsTo { return $this->belongsTo(User::class, 'usuario_id'); }
-    public function tecnico(): BelongsTo { return $this->belongsTo(User::class, 'tecnico_id'); }
-    public function archivos(): HasMany { return $this->hasMany(IncidenciaArchivo::class); }
-    public function archivosUsuario(): HasMany { return $this->hasMany(IncidenciaArchivo::class)->where('tipo', 'usuario'); }
-    public function archivosTecnico(): HasMany { return $this->hasMany(IncidenciaArchivo::class)->where('tipo', 'tecnico'); }
+    public function usuario(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'usuario_id');
+    }
+
+    public function tecnico(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'tecnico_id');
+    }
+
+    public function archivos(): HasMany
+    {
+        return $this->hasMany(IncidenciaArchivo::class);
+    }
+
+    public function archivosUsuario(): HasMany
+    {
+        return $this->hasMany(IncidenciaArchivo::class)->where('tipo', 'usuario');
+    }
+
+    public function archivosTecnico(): HasMany
+    {
+        return $this->hasMany(IncidenciaArchivo::class)->where('tipo', 'tecnico');
+    }
 }

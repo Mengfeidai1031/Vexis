@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Festivo;
+use Illuminate\Database\Seeder;
 
 class FestivoSeeder extends Seeder
 {

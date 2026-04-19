@@ -6,13 +6,13 @@ namespace App\Exports;
 
 use App\Models\Cliente;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class ClientesExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize, WithStyles
+class ClientesExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping, WithStyles
 {
     public function collection()
     {

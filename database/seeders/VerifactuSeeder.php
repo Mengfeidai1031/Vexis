@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\Empresa;
 use App\Models\Factura;
 use App\Models\Venta;
 use App\Models\Verifactu;
+use Illuminate\Database\Seeder;
 
 class VerifactuSeeder extends Seeder
 {
@@ -31,7 +30,7 @@ class VerifactuSeeder extends Seeder
                 $estado = $estados[$seq - 1] ?? 'emitida';
 
                 Factura::create([
-                    'codigo_factura' => 'FAC-' . date('Ym') . '-' . str_pad($seq, 4, '0', STR_PAD_LEFT),
+                    'codigo_factura' => 'FAC-'.date('Ym').'-'.str_pad($seq, 4, '0', STR_PAD_LEFT),
                     'venta_id' => $venta->id,
                     'cliente_id' => $venta->cliente_id,
                     'empresa_id' => $venta->empresa_id,
@@ -40,7 +39,7 @@ class VerifactuSeeder extends Seeder
                     'emisor_id' => $venta->vendedor_id,
                     'fecha_factura' => $venta->fecha_venta,
                     'fecha_vencimiento' => $venta->fecha_venta->addDays(30),
-                    'concepto' => 'Venta de vehículo ' . ($venta->vehiculo?->modelo ?? ''),
+                    'concepto' => 'Venta de vehículo '.($venta->vehiculo?->modelo ?? ''),
                     'subtotal' => $subtotal,
                     'iva_porcentaje' => $ivaPct,
                     'iva_importe' => $ivaImporte,
@@ -66,7 +65,7 @@ class VerifactuSeeder extends Seeder
                 $respuestaAeat = null;
                 if ($estado === 'validado') {
                     $respuestaAeat = [
-                        'codigo' => 'CSV-' . strtoupper(substr(md5("verifactu-{$factura->id}"), 0, 12)),
+                        'codigo' => 'CSV-'.strtoupper(substr(md5("verifactu-{$factura->id}"), 0, 12)),
                         'fecha_validacion' => $factura->fecha_factura->addDays(1)->format('Y-m-d H:i:s'),
                         'resultado' => 'Aceptado',
                     ];
@@ -79,7 +78,7 @@ class VerifactuSeeder extends Seeder
                 }
 
                 Verifactu::create([
-                    'codigo_registro' => 'VRF-' . date('Ym') . '-' . str_pad($seq, 5, '0', STR_PAD_LEFT),
+                    'codigo_registro' => 'VRF-'.date('Ym').'-'.str_pad($seq, 5, '0', STR_PAD_LEFT),
                     'factura_id' => $factura->id,
                     'hash_registro' => $hash,
                     'hash_anterior' => $hashAnterior,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCentroRequest;
@@ -25,11 +27,21 @@ class CentroController extends Controller
     {
         $query = Centro::with('empresa');
 
-        if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
-        if ($request->filled('municipio')) $query->where('municipio', $request->municipio);
-        if ($request->filled('provincia')) $query->where('provincia', $request->provincia);
-        if ($request->filled('nombre')) $query->where('nombre', $request->nombre);
-        if ($request->filled('direccion')) $query->where('direccion', $request->direccion);
+        if ($request->filled('empresa_id')) {
+            $query->where('empresa_id', $request->empresa_id);
+        }
+        if ($request->filled('municipio')) {
+            $query->where('municipio', $request->municipio);
+        }
+        if ($request->filled('provincia')) {
+            $query->where('provincia', $request->provincia);
+        }
+        if ($request->filled('nombre')) {
+            $query->where('nombre', $request->nombre);
+        }
+        if ($request->filled('direccion')) {
+            $query->where('direccion', $request->direccion);
+        }
 
         // Sorting
         $sortable = ['id', 'nombre', 'empresa_id', 'direccion', 'municipio', 'provincia'];
@@ -54,8 +66,9 @@ class CentroController extends Controller
     public function create()
     {
         $this->authorize('create', Centro::class);
-        
+
         $empresas = $this->centroRepository->getEmpresas();
+
         return view('centros.create', compact('empresas'));
     }
 
@@ -65,7 +78,7 @@ class CentroController extends Controller
     public function store(StoreCentroRequest $request)
     {
         $this->authorize('create', Centro::class);
-        
+
         $this->centroRepository->create($request->validated());
 
         return redirect()->route('centros.index')
@@ -78,7 +91,7 @@ class CentroController extends Controller
     public function show(Centro $centro)
     {
         $this->authorize('view', $centro);
-        
+
         return view('centros.show', compact('centro'));
     }
 
@@ -88,8 +101,9 @@ class CentroController extends Controller
     public function edit(Centro $centro)
     {
         $this->authorize('update', $centro);
-        
+
         $empresas = $this->centroRepository->getEmpresas();
+
         return view('centros.edit', compact('centro', 'empresas'));
     }
 
@@ -99,7 +113,7 @@ class CentroController extends Controller
     public function update(UpdateCentroRequest $request, Centro $centro)
     {
         $this->authorize('update', $centro);
-        
+
         $this->centroRepository->update($centro->id, $request->validated());
 
         return redirect()->route('centros.index')
@@ -112,9 +126,10 @@ class CentroController extends Controller
     public function destroy(Centro $centro)
     {
         $this->authorize('delete', $centro);
-        
+
         try {
             $this->centroRepository->delete($centro->id);
+
             return redirect()->route('centros.index')
                 ->with('success', 'Centro eliminado exitosamente.');
         } catch (\Exception $e) {

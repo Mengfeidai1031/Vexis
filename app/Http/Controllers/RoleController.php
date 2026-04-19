@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRoleRequest;
@@ -21,7 +23,7 @@ class RoleController extends Controller
         $roles = $this->roleRepository->all();
 
         if ($request->filled('nombre')) {
-            $roles = $roles->filter(fn($r) => $r->name === $request->nombre)->values();
+            $roles = $roles->filter(fn ($r) => $r->name === $request->nombre)->values();
         }
 
         // Sorting
@@ -42,6 +44,7 @@ class RoleController extends Controller
     public function create()
     {
         $permissions = $this->roleRepository->getAllPermissions();
+
         return view('roles.create', compact('permissions'));
     }
 
@@ -59,6 +62,7 @@ class RoleController extends Controller
     public function show(int $id)
     {
         $role = $this->roleRepository->find($id);
+
         return view('roles.show', compact('role'));
     }
 
@@ -66,6 +70,7 @@ class RoleController extends Controller
     {
         $role = $this->roleRepository->find($id);
         $permissions = $this->roleRepository->getAllPermissions();
+
         return view('roles.edit', compact('role', 'permissions'));
     }
 
@@ -85,6 +90,7 @@ class RoleController extends Controller
     {
         try {
             $this->roleRepository->delete($id);
+
             return redirect()->route('roles.index')
                 ->with('success', 'Rol eliminado exitosamente.');
         } catch (\Exception $e) {

@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
+use App\Models\CatalogoPrecio;
+use App\Models\CitaTaller;
+use App\Models\Cliente;
 use App\Models\Factura;
 use App\Models\Incidencia;
-use App\Models\Venta;
-use App\Models\Tasacion;
-use App\Models\Stock;
-use App\Models\CitaTaller;
-use App\Models\CatalogoPrecio;
 use App\Models\Marca;
-use App\Models\Cliente;
-use App\Models\Vehiculo;
+use App\Models\Stock;
+use App\Models\Tasacion;
 use App\Models\User;
+use App\Models\Vehiculo;
+use App\Models\Venta;
 use Illuminate\Support\Facades\DB;
 
 class DatAxisController extends Controller
@@ -26,10 +28,10 @@ class DatAxisController extends Controller
     {
         // Ventas por mes (últimos 6 meses)
         $ventasMes = Venta::select(
-                DB::raw("DATE_FORMAT(fecha_venta, '%Y-%m') as mes"),
-                DB::raw('COUNT(*) as total'),
-                DB::raw('SUM(precio_final) as importe')
-            )->where('fecha_venta', '>=', now()->subMonths(6))
+            DB::raw("DATE_FORMAT(fecha_venta, '%Y-%m') as mes"),
+            DB::raw('COUNT(*) as total'),
+            DB::raw('SUM(precio_final) as importe')
+        )->where('fecha_venta', '>=', now()->subMonths(6))
             ->groupBy('mes')->orderBy('mes')->get();
 
         // Ventas por estado
@@ -84,7 +86,7 @@ class DatAxisController extends Controller
             ->groupBy('estado')->get();
 
         // Citas por día de la semana
-        $citasDia = CitaTaller::select(DB::raw("DAYOFWEEK(fecha) as dia"), DB::raw('COUNT(*) as total'))
+        $citasDia = CitaTaller::select(DB::raw('DAYOFWEEK(fecha) as dia'), DB::raw('COUNT(*) as total'))
             ->groupBy('dia')->orderBy('dia')->get();
 
         // Carga por mecánico
@@ -103,10 +105,10 @@ class DatAxisController extends Controller
     {
         // Facturación mensual (últimos 6 meses)
         $facturasMes = Factura::select(
-                DB::raw("DATE_FORMAT(fecha_factura, '%Y-%m') as mes"),
-                DB::raw('COUNT(*) as total'),
-                DB::raw('SUM(total) as importe')
-            )->where('fecha_factura', '>=', now()->subMonths(6))
+            DB::raw("DATE_FORMAT(fecha_factura, '%Y-%m') as mes"),
+            DB::raw('COUNT(*) as total'),
+            DB::raw('SUM(total) as importe')
+        )->where('fecha_factura', '>=', now()->subMonths(6))
             ->groupBy('mes')->orderBy('mes')->get();
 
         // Facturas por estado
@@ -154,10 +156,10 @@ class DatAxisController extends Controller
 
         // Incidencias por mes (últimos 6 meses)
         $incidenciasMes = Incidencia::select(
-                DB::raw("DATE_FORMAT(fecha_apertura, '%Y-%m') as mes"),
-                DB::raw('COUNT(*) as total'),
-                DB::raw("SUM(CASE WHEN estado IN ('resuelta','cerrada') THEN 1 ELSE 0 END) as cerradas")
-            )->where('fecha_apertura', '>=', now()->subMonths(6))
+            DB::raw("DATE_FORMAT(fecha_apertura, '%Y-%m') as mes"),
+            DB::raw('COUNT(*) as total'),
+            DB::raw("SUM(CASE WHEN estado IN ('resuelta','cerrada') THEN 1 ELSE 0 END) as cerradas")
+        )->where('fecha_apertura', '>=', now()->subMonths(6))
             ->groupBy('mes')->orderBy('mes')->get();
 
         // KPIs
@@ -190,9 +192,9 @@ class DatAxisController extends Controller
 
         // Clientes últimos 6 meses
         $clientesMes = Cliente::select(
-                DB::raw("DATE_FORMAT(created_at, '%Y-%m') as mes"),
-                DB::raw('COUNT(*) as total')
-            )->where('created_at', '>=', now()->subMonths(6))
+            DB::raw("DATE_FORMAT(created_at, '%Y-%m') as mes"),
+            DB::raw('COUNT(*) as total')
+        )->where('created_at', '>=', now()->subMonths(6))
             ->groupBy('mes')->orderBy('mes')->get();
 
         return view('dataxis.general', compact(

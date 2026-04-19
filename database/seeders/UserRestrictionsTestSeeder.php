@@ -22,6 +22,7 @@ class UserRestrictionsTestSeeder extends Seeder
         $empresas = Empresa::all();
         if ($empresas->isEmpty()) {
             $this->command->error('No hay empresas en la base de datos. Crea al menos 2 empresas primero.');
+
             return;
         }
 
@@ -32,8 +33,9 @@ class UserRestrictionsTestSeeder extends Seeder
         $departamento = \App\Models\Departamento::first();
         $centro = \App\Models\Centro::first();
 
-        if (!$departamento || !$centro) {
+        if (! $departamento || ! $centro) {
             $this->command->error('Necesitas crear al menos un departamento y un centro.');
+
             return;
         }
 
@@ -111,7 +113,7 @@ class UserRestrictionsTestSeeder extends Seeder
                 UserRestrictionHelper::addRestriction($user4, UserRestrictionHelper::TYPE_CLIENTE, $cliente);
             }
             $clienteNombres = $clientes->pluck('nombre_completo')->toArray();
-            $this->command->info("Usuario 4 creado: {$user4->email} (solo clientes: " . implode(', ', $clienteNombres) . ")");
+            $this->command->info("Usuario 4 creado: {$user4->email} (solo clientes: ".implode(', ', $clienteNombres).')');
         }
 
         // 5. Usuario con restricción de VEHÍCULO (ejemplo adicional con morph)
@@ -133,7 +135,7 @@ class UserRestrictionsTestSeeder extends Seeder
                 UserRestrictionHelper::addRestriction($user5, UserRestrictionHelper::TYPE_VEHICULO, $vehiculo);
             }
             $vehiculoModelos = $vehiculos->pluck('modelo')->toArray();
-            $this->command->info("Usuario 5 creado: {$user5->email} (solo vehículos: " . implode(', ', $vehiculoModelos) . ")");
+            $this->command->info("Usuario 5 creado: {$user5->email} (solo vehículos: ".implode(', ', $vehiculoModelos).')');
         }
 
         // 6. Usuario con restricción de CENTRO (ejemplo adicional con morph)
@@ -155,7 +157,7 @@ class UserRestrictionsTestSeeder extends Seeder
                 UserRestrictionHelper::addRestriction($user6, UserRestrictionHelper::TYPE_CENTRO, $centroModel);
             }
             $centroNombres = $centros->pluck('nombre')->toArray();
-            $this->command->info("Usuario 6 creado: {$user6->email} (solo centros: " . implode(', ', $centroNombres) . ")");
+            $this->command->info("Usuario 6 creado: {$user6->email} (solo centros: ".implode(', ', $centroNombres).')');
         }
 
         // 7. Usuario con MÚLTIPLES tipos de restricciones (ejemplo avanzado con morph)
@@ -183,9 +185,9 @@ class UserRestrictionsTestSeeder extends Seeder
         $this->command->info('Usuarios de prueba creados (usando sistema MORPH):');
         $this->command->info('═══════════════════════════════════════════════════════');
         $this->command->info('1. sin-restricciones@test.com | Password: password | Ve: TODO');
-        $this->command->info('2. empresa-1@test.com | Password: password | Ve: Solo empresa ' . $empresa1->nombre);
+        $this->command->info('2. empresa-1@test.com | Password: password | Ve: Solo empresa '.$empresa1->nombre);
         if ($empresa2) {
-            $this->command->info('3. multi-empresa@test.com | Password: password | Ve: Empresas ' . $empresa1->nombre . ' y ' . $empresa2->nombre);
+            $this->command->info('3. multi-empresa@test.com | Password: password | Ve: Empresas '.$empresa1->nombre.' y '.$empresa2->nombre);
         }
         if ($clientes->isNotEmpty()) {
             $this->command->info('4. clientes-especificos@test.com | Password: password | Ve: Solo clientes específicos');

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories;
 
 use App\Models\Centro;
@@ -18,13 +20,13 @@ class CentroRepository implements CentroRepositoryInterface
     public function search($searchTerm)
     {
         return Centro::with('empresa')
-            ->where(function($query) use ($searchTerm) {
+            ->where(function ($query) use ($searchTerm) {
                 $query->where('nombre', 'like', "%{$searchTerm}%")
                     ->orWhere('direccion', 'like', "%{$searchTerm}%")
                     ->orWhere('provincia', 'like', "%{$searchTerm}%")
                     ->orWhere('municipio', 'like', "%{$searchTerm}%");
             })
-            ->orWhereHas('empresa', function($query) use ($searchTerm) {
+            ->orWhereHas('empresa', function ($query) use ($searchTerm) {
                 $query->where('nombre', 'like', "%{$searchTerm}%");
             })
             ->orderBy('nombre', 'asc')
@@ -45,12 +47,14 @@ class CentroRepository implements CentroRepositoryInterface
     {
         $centro = Centro::findOrFail($id);
         $centro->update($data);
+
         return $centro;
     }
 
     public function delete(int $id)
     {
         $centro = Centro::findOrFail($id);
+
         return $centro->delete();
     }
 

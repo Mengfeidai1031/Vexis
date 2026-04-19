@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -44,10 +46,33 @@ class Factura extends Model
         });
     }
 
-    public function venta(): BelongsTo { return $this->belongsTo(Venta::class); }
-    public function cliente(): BelongsTo { return $this->belongsTo(Cliente::class); }
-    public function empresa(): BelongsTo { return $this->belongsTo(Empresa::class); }
-    public function centro(): BelongsTo { return $this->belongsTo(Centro::class); }
-    public function marca(): BelongsTo { return $this->belongsTo(Marca::class); }
-    public function emisor(): BelongsTo { return $this->belongsTo(User::class, 'emisor_id'); }
+    public function venta(): BelongsTo
+    {
+        return $this->belongsTo(Venta::class);
+    }
+
+    public function cliente(): BelongsTo
+    {
+        return $this->belongsTo(Cliente::class);
+    }
+
+    public function empresa(): BelongsTo
+    {
+        return $this->belongsTo(Empresa::class);
+    }
+
+    public function centro(): BelongsTo
+    {
+        return $this->belongsTo(Centro::class);
+    }
+
+    public function marca(): BelongsTo
+    {
+        return $this->belongsTo(Marca::class);
+    }
+
+    public function emisor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'emisor_id');
+    }
 }

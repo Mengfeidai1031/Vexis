@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Vacacion;
@@ -15,7 +17,7 @@ class VacacionController extends Controller
         $isSuperAdmin = $user->hasRole('Super Admin') || $user->hasRole('Administrador');
 
         $query = Vacacion::with('user');
-        if (!$isSuperAdmin) {
+        if (! $isSuperAdmin) {
             $query->where('user_id', $user->id);
         }
         if ($request->filled('estado')) {
@@ -41,13 +43,13 @@ class VacacionController extends Controller
         // Eventos para calendario
         $eventos = Vacacion::with('user')
             ->whereYear('fecha_inicio', $anio)
-            ->when(!$isSuperAdmin, fn($q) => $q->where('user_id', $user->id))
+            ->when(! $isSuperAdmin, fn ($q) => $q->where('user_id', $user->id))
             ->get()
-            ->map(fn($v) => [
-                'title' => ($isSuperAdmin ? $v->user->nombre . ' ' : '') . $v->dias_solicitados . 'd',
+            ->map(fn ($v) => [
+                'title' => ($isSuperAdmin ? $v->user->nombre.' ' : '').$v->dias_solicitados.'d',
                 'start' => $v->fecha_inicio->format('Y-m-d'),
                 'end' => $v->fecha_fin->addDay()->format('Y-m-d'),
-                'color' => match($v->estado) {
+                'color' => match ($v->estado) {
                     'aprobada' => '#2ecc71',
                     'rechazada' => '#e74c3c',
                     default => '#f39c12',
@@ -65,6 +67,7 @@ class VacacionController extends Controller
     {
         $diasUsados = Vacacion::diasUsados(Auth::id());
         $diasDisponibles = Vacacion::DIAS_TOTALES - $diasUsados;
+
         return view('vacaciones.create', compact('diasUsados', 'diasDisponibles'));
     }
 
@@ -82,7 +85,7 @@ class VacacionController extends Controller
 
         $diasUsados = Vacacion::diasUsados(Auth::id());
         if ($diasUsados + $dias > Vacacion::DIAS_TOTALES) {
-            return back()->with('error', "No tienes suficientes días disponibles. Solicitas $dias días pero solo te quedan " . (Vacacion::DIAS_TOTALES - $diasUsados) . ".")->withInput();
+            return back()->with('error', "No tienes suficientes días disponibles. Solicitas $dias días pero solo te quedan ".(Vacacion::DIAS_TOTALES - $diasUsados).'.')->withInput();
         }
 
         Vacacion::create([
@@ -111,6 +114,7 @@ class VacacionController extends Controller
         ]);
 
         $accion = $request->estado === 'aprobada' ? 'aprobada' : 'rechazada';
+
         return back()->with('success', "Solicitud $accion correctamente.");
     }
 
@@ -119,10 +123,11 @@ class VacacionController extends Controller
         if ($vacacion->estado !== 'pendiente') {
             return back()->with('error', 'Solo se pueden eliminar solicitudes pendientes.');
         }
-        if ($vacacion->user_id !== Auth::id() && !Auth::user()->hasAnyRole(['Super Admin', 'Administrador'])) {
+        if ($vacacion->user_id !== Auth::id() && ! Auth::user()->hasAnyRole(['Super Admin', 'Administrador'])) {
             return back()->with('error', 'No tienes permiso para eliminar esta solicitud.');
         }
         $vacacion->delete();
+
         return back()->with('success', 'Solicitud eliminada correctamente.');
     }
 }

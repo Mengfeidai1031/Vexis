@@ -1,45 +1,77 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use App\Models\Venta;
-use App\Models\VentaConcepto;
-use App\Models\Vehiculo;
+use App\Exports\VentasExport;
+use App\Http\Requests\StoreVentaRequest;
+use App\Http\Requests\UpdateVentaRequest;
+use App\Models\CatalogoPrecio;
+use App\Models\Centro;
 use App\Models\Cliente;
 use App\Models\Empresa;
-use App\Models\Centro;
 use App\Models\Marca;
-use App\Models\CatalogoPrecio;
-use App\Models\Factura;
-use App\Models\Setting;
-use App\Services\AeatVerifactuService;
-use App\Exports\VentasExport;
+use App\Models\User;
+use App\Models\Vehiculo;
+use App\Models\Venta;
+use App\Models\VentaConcepto;
+use App\Services\FacturaCreationService;
+use App\Services\ImpuestoService;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class VentaController extends Controller
 {
+    public function __construct(
+        private readonly ImpuestoService $impuestoService,
+        private readonly FacturaCreationService $facturaCreationService,
+    ) {}
+
     public function index(Request $request)
     {
         $query = Venta::with(['vehiculo', 'cliente', 'empresa', 'marca', 'vendedor']);
-        if ($request->filled('estado')) $query->where('estado', $request->estado);
-        if ($request->filled('marca_id')) $query->where('marca_id', $request->marca_id);
-        if ($request->filled('forma_pago')) $query->where('forma_pago', $request->forma_pago);
-        if ($request->filled('cliente_id')) $query->where('cliente_id', $request->cliente_id);
-        if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
-        if ($request->filled('fecha_desde')) $query->whereDate('fecha_venta', '>=', $request->fecha_desde);
-        if ($request->filled('fecha_hasta')) $query->whereDate('fecha_venta', '<=', $request->fecha_hasta);
-        if ($request->filled('vendedor_id')) $query->where('vendedor_id', $request->vendedor_id);
-        if ($request->filled('vehiculo_modelo')) {
-            $query->whereHas('vehiculo', fn($q) => $q->where('modelo', $request->vehiculo_modelo));
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
         }
-        if ($request->filled('precio_min')) $query->where('precio_final', '>=', $request->precio_min);
-        if ($request->filled('precio_max')) $query->where('precio_final', '<=', $request->precio_max);
-        if ($request->filled('codigo_venta')) $query->where('codigo_venta', $request->codigo_venta);
-        // Sorting
+        if ($request->filled('marca_id')) {
+            $query->where('marca_id', $request->marca_id);
+        }
+        if ($request->filled('forma_pago')) {
+            $query->where('forma_pago', $request->forma_pago);
+        }
+        if ($request->filled('cliente_id')) {
+            $query->where('cliente_id', $request->cliente_id);
+        }
+        if ($request->filled('empresa_id')) {
+            $query->where('empresa_id', $request->empresa_id);
+        }
+        if ($request->filled('fecha_desde')) {
+            $query->whereDate('fecha_venta', '>=', $request->fecha_desde);
+        }
+        if ($request->filled('fecha_hasta')) {
+            $query->whereDate('fecha_venta', '<=', $request->fecha_hasta);
+        }
+        if ($request->filled('vendedor_id')) {
+            $query->where('vendedor_id', $request->vendedor_id);
+        }
+        if ($request->filled('vehiculo_modelo')) {
+            $query->whereHas('vehiculo', fn ($q) => $q->where('modelo', $request->vehiculo_modelo));
+        }
+        if ($request->filled('precio_min')) {
+            $query->where('precio_final', '>=', $request->precio_min);
+        }
+        if ($request->filled('precio_max')) {
+            $query->where('precio_final', '<=', $request->precio_max);
+        }
+        if ($request->filled('codigo_venta')) {
+            $query->where('codigo_venta', $request->codigo_venta);
+        }
+
         $sortable = ['id', 'codigo_venta', 'vehiculo_id', 'cliente_id', 'marca_id', 'precio_final', 'forma_pago', 'estado', 'fecha_venta'];
         if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
             $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
@@ -50,9 +82,10 @@ class VentaController extends Controller
         $marcas = Marca::where('activa', true)->orderBy('nombre')->get();
         $clientes = Cliente::orderBy('nombre')->get();
         $empresas = Empresa::orderBy('nombre')->get();
-        $vendedores = \App\Models\User::orderBy('nombre')->get();
+        $vendedores = User::orderBy('nombre')->get();
         $modelos_vehiculo = Vehiculo::distinct()->orderBy('modelo')->pluck('modelo');
         $codigos_venta = Venta::distinct()->orderBy('codigo_venta')->pluck('codigo_venta');
+
         return view('ventas.index', compact('ventas', 'marcas', 'clientes', 'empresas', 'vendedores', 'modelos_vehiculo', 'codigos_venta'));
     }
 
@@ -64,50 +97,29 @@ class VentaController extends Controller
         $centros = Centro::orderBy('nombre')->get();
         $marcas = Marca::where('activa', true)->orderBy('nombre')->get();
         $preciosCatalogo = CatalogoPrecio::select('marca_id', 'modelo', 'version', 'precio_base')->get()
-            ->keyBy(fn($c) => $c->marca_id . '|' . $c->modelo . '|' . $c->version);
+            ->keyBy(fn ($c) => $c->marca_id.'|'.$c->modelo.'|'.$c->version);
+
         return view('ventas.create', compact('vehiculos', 'clientes', 'empresas', 'centros', 'marcas', 'preciosCatalogo'));
     }
 
-    public function store(Request $request)
+    public function store(StoreVentaRequest $request): RedirectResponse
     {
-        $request->validate([
-            'vehiculo_id' => 'required|exists:vehiculos,id',
-            'empresa_id' => 'required|exists:empresas,id',
-            'centro_id' => 'required|exists:centros,id',
-            'precio_venta' => 'required|numeric|min:0',
-            'forma_pago' => 'required|in:contado,financiado,leasing,renting',
-            'fecha_venta' => 'required|date',
-            'conceptos.*.tipo' => 'required_with:conceptos|in:extra,descuento',
-            'conceptos.*.descripcion' => 'required_with:conceptos|string|max:255',
-            'conceptos.*.importe' => 'required_with:conceptos|numeric|min:0',
-        ]);
-
-        // Server-side tax calculation
-        $empresa = Empresa::findOrFail($request->empresa_id);
-        $cp = $empresa->codigo_postal ?? '';
-        $esCanarias = str_starts_with($cp, '35') || str_starts_with($cp, '38');
-        $impNombre = $esCanarias ? 'IGIC' : 'IVA';
-        $impPct = $esCanarias ? 7 : 21;
-
-        $precioVenta = (float) $request->precio_venta;
-        $descuento = (float) ($request->descuento ?? 0);
+        $empresa = Empresa::findOrFail($request->validated('empresa_id'));
         $conceptos = $request->input('conceptos', []);
 
-        $sumExtras = 0;
-        $sumDescuentos = 0;
-        foreach ($conceptos as $c) {
-            if ($c['tipo'] === 'extra') $sumExtras += (float) $c['importe'];
-            if ($c['tipo'] === 'descuento') $sumDescuentos += (float) $c['importe'];
-        }
+        $calculo = $this->impuestoService->calcularVenta(
+            $empresa,
+            (float) $request->validated('precio_venta'),
+            (float) ($request->descuento ?? 0),
+            $conceptos,
+        );
 
-        $precioFinal = $precioVenta - $descuento + $sumExtras - $sumDescuentos;
-        $subtotal = $precioFinal;
-        $impImporte = round($subtotal * $impPct / 100, 2);
-        $total = round($subtotal + $impImporte, 2);
+        $codigo = 'VTA-'.date('Ym').'-'.str_pad(
+            (string) (Venta::whereYear('fecha_venta', date('Y'))->count() + 1),
+            4, '0', STR_PAD_LEFT
+        );
 
-        $codigo = 'VTA-' . date('Ym') . '-' . str_pad(Venta::whereYear('fecha_venta', date('Y'))->count() + 1, 4, '0', STR_PAD_LEFT);
-
-        $venta = DB::transaction(function () use ($request, $codigo, $precioFinal, $subtotal, $impNombre, $impPct, $impImporte, $total, $conceptos, $descuento) {
+        $venta = DB::transaction(function () use ($request, $codigo, $calculo, $conceptos) {
             $venta = Venta::create([
                 'codigo_venta' => $codigo,
                 'vehiculo_id' => $request->vehiculo_id,
@@ -117,13 +129,13 @@ class VentaController extends Controller
                 'marca_id' => $request->marca_id,
                 'vendedor_id' => Auth::id(),
                 'precio_venta' => $request->precio_venta,
-                'descuento' => $descuento,
-                'precio_final' => $precioFinal,
-                'subtotal' => $subtotal,
-                'impuesto_nombre' => $impNombre,
-                'impuesto_porcentaje' => $impPct,
-                'impuesto_importe' => $impImporte,
-                'total' => $total,
+                'descuento' => $request->descuento ?? 0,
+                'precio_final' => $calculo['precio_final'],
+                'subtotal' => $calculo['subtotal'],
+                'impuesto_nombre' => $calculo['impuesto_nombre'],
+                'impuesto_porcentaje' => $calculo['impuesto_porcentaje'],
+                'impuesto_importe' => $calculo['impuesto_importe'],
+                'total' => $calculo['total'],
                 'forma_pago' => $request->forma_pago,
                 'estado' => 'reservada',
                 'fecha_venta' => $request->fecha_venta,
@@ -143,9 +155,11 @@ class VentaController extends Controller
             return $venta;
         });
 
-        // Auto-create factura if requested
         if ($request->filled('crear_factura')) {
-            return $this->crearFacturaDesdeVenta($venta);
+            $result = $this->facturaCreationService->crearDesdeVenta($venta);
+
+            return redirect()->route('facturas.show', $result['factura'])
+                ->with('success', 'Venta registrada y factura '.$result['factura']->codigo_factura.' creada correctamente.'.$result['verifactu_msg']);
         }
 
         return redirect()->route('ventas.index')->with('success', 'Venta registrada correctamente.');
@@ -154,6 +168,7 @@ class VentaController extends Controller
     public function show(Venta $venta)
     {
         $venta->load(['vehiculo', 'cliente', 'empresa', 'centro', 'marca', 'vendedor', 'conceptos']);
+
         return view('ventas.show', compact('venta'));
     }
 
@@ -166,47 +181,24 @@ class VentaController extends Controller
         $centros = Centro::orderBy('nombre')->get();
         $marcas = Marca::where('activa', true)->orderBy('nombre')->get();
         $preciosCatalogo = CatalogoPrecio::select('marca_id', 'modelo', 'version', 'precio_base')->get()
-            ->keyBy(fn($c) => $c->marca_id . '|' . $c->modelo . '|' . $c->version);
+            ->keyBy(fn ($c) => $c->marca_id.'|'.$c->modelo.'|'.$c->version);
+
         return view('ventas.edit', compact('venta', 'vehiculos', 'clientes', 'empresas', 'centros', 'marcas', 'preciosCatalogo'));
     }
 
-    public function update(Request $request, Venta $venta)
+    public function update(UpdateVentaRequest $request, Venta $venta): RedirectResponse
     {
-        $request->validate([
-            'vehiculo_id' => 'required|exists:vehiculos,id',
-            'empresa_id' => 'required|exists:empresas,id',
-            'centro_id' => 'required|exists:centros,id',
-            'precio_venta' => 'required|numeric|min:0',
-            'estado' => 'required|in:reservada,pendiente_entrega,entregada,cancelada',
-            'fecha_venta' => 'required|date',
-            'conceptos.*.tipo' => 'required_with:conceptos|in:extra,descuento',
-            'conceptos.*.descripcion' => 'required_with:conceptos|string|max:255',
-            'conceptos.*.importe' => 'required_with:conceptos|numeric|min:0',
-        ]);
-
-        $empresa = Empresa::findOrFail($request->empresa_id);
-        $cp = $empresa->codigo_postal ?? '';
-        $esCanarias = str_starts_with($cp, '35') || str_starts_with($cp, '38');
-        $impNombre = $esCanarias ? 'IGIC' : 'IVA';
-        $impPct = $esCanarias ? 7 : 21;
-
-        $precioVenta = (float) $request->precio_venta;
-        $descuento = (float) ($request->descuento ?? 0);
+        $empresa = Empresa::findOrFail($request->validated('empresa_id'));
         $conceptos = $request->input('conceptos', []);
 
-        $sumExtras = 0;
-        $sumDescuentos = 0;
-        foreach ($conceptos as $c) {
-            if ($c['tipo'] === 'extra') $sumExtras += (float) $c['importe'];
-            if ($c['tipo'] === 'descuento') $sumDescuentos += (float) $c['importe'];
-        }
+        $calculo = $this->impuestoService->calcularVenta(
+            $empresa,
+            (float) $request->validated('precio_venta'),
+            (float) ($request->descuento ?? 0),
+            $conceptos,
+        );
 
-        $precioFinal = $precioVenta - $descuento + $sumExtras - $sumDescuentos;
-        $subtotal = $precioFinal;
-        $impImporte = round($subtotal * $impPct / 100, 2);
-        $total = round($subtotal + $impImporte, 2);
-
-        DB::transaction(function () use ($request, $venta, $precioFinal, $subtotal, $impNombre, $impPct, $impImporte, $total, $conceptos, $descuento) {
+        DB::transaction(function () use ($request, $venta, $calculo, $conceptos) {
             $venta->update([
                 'vehiculo_id' => $request->vehiculo_id,
                 'cliente_id' => $request->cliente_id,
@@ -215,13 +207,13 @@ class VentaController extends Controller
                 'marca_id' => $request->marca_id,
                 'vendedor_id' => Auth::id(),
                 'precio_venta' => $request->precio_venta,
-                'descuento' => $descuento,
-                'precio_final' => $precioFinal,
-                'subtotal' => $subtotal,
-                'impuesto_nombre' => $impNombre,
-                'impuesto_porcentaje' => $impPct,
-                'impuesto_importe' => $impImporte,
-                'total' => $total,
+                'descuento' => $request->descuento ?? 0,
+                'precio_final' => $calculo['precio_final'],
+                'subtotal' => $calculo['subtotal'],
+                'impuesto_nombre' => $calculo['impuesto_nombre'],
+                'impuesto_porcentaje' => $calculo['impuesto_porcentaje'],
+                'impuesto_importe' => $calculo['impuesto_importe'],
+                'total' => $calculo['total'],
                 'forma_pago' => $request->forma_pago,
                 'estado' => $request->estado,
                 'fecha_venta' => $request->fecha_venta,
@@ -229,7 +221,6 @@ class VentaController extends Controller
                 'observaciones' => $request->observaciones,
             ]);
 
-            // Replace conceptos
             $venta->conceptos()->delete();
             foreach ($conceptos as $c) {
                 VentaConcepto::create([
@@ -244,61 +235,25 @@ class VentaController extends Controller
         return redirect()->route('ventas.index')->with('success', 'Venta actualizada correctamente.');
     }
 
-    public function destroy(Venta $venta)
+    public function destroy(Venta $venta): RedirectResponse
     {
         $venta->delete();
+
         return redirect()->route('ventas.index')->with('success', 'Venta eliminada correctamente.');
     }
 
     public function export()
     {
-        $fileName = 'ventas_' . date('Y-m-d_His') . '.xlsx';
-        return Excel::download(new VentasExport(), $fileName);
+        $fileName = 'ventas_'.date('Y-m-d_His').'.xlsx';
+
+        return Excel::download(new VentasExport, $fileName);
     }
 
     public function exportPdf()
     {
         $ventas = Venta::with(['vehiculo', 'cliente', 'empresa', 'marca'])->orderByDesc('fecha_venta')->get();
         $pdf = Pdf::loadView('ventas.pdf', compact('ventas'));
-        $fileName = 'ventas_' . date('Y-m-d_His') . '.pdf';
-        return $pdf->download($fileName);
-    }
 
-    private function crearFacturaDesdeVenta(Venta $venta): \Illuminate\Http\RedirectResponse
-    {
-        $codigoFactura = 'FAC-' . date('Ym') . '-' . str_pad(Factura::whereYear('fecha_factura', date('Y'))->count() + 1, 4, '0', STR_PAD_LEFT);
-
-        $factura = Factura::create([
-            'codigo_factura' => $codigoFactura,
-            'venta_id' => $venta->id,
-            'cliente_id' => $venta->cliente_id,
-            'empresa_id' => $venta->empresa_id,
-            'centro_id' => $venta->centro_id,
-            'marca_id' => $venta->marca_id,
-            'emisor_id' => Auth::id(),
-            'fecha_factura' => now(),
-            'fecha_vencimiento' => now()->addDays(30),
-            'concepto' => 'Venta vehículo - ' . $venta->codigo_venta,
-            'subtotal' => $venta->subtotal,
-            'iva_porcentaje' => $venta->impuesto_porcentaje,
-            'iva_importe' => $venta->impuesto_importe,
-            'total' => $venta->total,
-            'estado' => 'emitida',
-        ]);
-
-        // Auto-register in Verifactu if module enabled
-        $verifactuMsg = '';
-        if (Setting::get('modulo_verifactu', true)) {
-            try {
-                $factura->load(['empresa', 'cliente']);
-                $service = new AeatVerifactuService();
-                $registro = $service->registrarFactura($factura, 'alta');
-                $verifactuMsg = " Registro Verifactu {$registro->codigo_registro} generado.";
-            } catch (\Exception $e) {
-                $verifactuMsg = ' (Error Verifactu: ' . $e->getMessage() . ')';
-            }
-        }
-
-        return redirect()->route('facturas.show', $factura)->with('success', 'Venta registrada y factura ' . $factura->codigo_factura . ' creada correctamente.' . $verifactuMsg);
+        return $pdf->download('ventas_'.date('Y-m-d_His').'.pdf');
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -72,7 +74,10 @@ class Verifactu extends Model
         '15' => '15 - Factura con IVA pendiente de devengo (tracto sucesivo)',
     ];
 
-    public function factura(): BelongsTo { return $this->belongsTo(Factura::class); }
+    public function factura(): BelongsTo
+    {
+        return $this->belongsTo(Factura::class);
+    }
 
     /**
      * Generate hash according to Real Decreto 1007/2023 art. 12.
@@ -83,14 +88,14 @@ class Verifactu extends Model
         $fechaHoraHuella = $fechaHoraHuella ?? now()->format('Y-m-d\TH:i:s');
 
         $data = implode('&', [
-            'IDEmisorFactura=' . ($factura->empresa?->cif ?? ''),
-            'NumSerieFactura=' . $factura->codigo_factura,
-            'FechaExpedicionFactura=' . $factura->fecha_factura->format('d-m-Y'),
-            'TipoFactura=' . ($factura->tipo_factura ?? 'F1'),
-            'CuotaTotal=' . number_format((float) $factura->iva_importe, 2, '.', ''),
-            'ImporteTotal=' . number_format((float) $factura->total, 2, '.', ''),
-            'Huella=' . ($hashAnterior ?? ''),
-            'FechaHoraHuella=' . $fechaHoraHuella,
+            'IDEmisorFactura='.($factura->empresa?->cif ?? ''),
+            'NumSerieFactura='.$factura->codigo_factura,
+            'FechaExpedicionFactura='.$factura->fecha_factura->format('d-m-Y'),
+            'TipoFactura='.($factura->tipo_factura ?? 'F1'),
+            'CuotaTotal='.number_format((float) $factura->iva_importe, 2, '.', ''),
+            'ImporteTotal='.number_format((float) $factura->total, 2, '.', ''),
+            'Huella='.($hashAnterior ?? ''),
+            'FechaHoraHuella='.$fechaHoraHuella,
         ]);
 
         return hash('sha256', $data);
@@ -113,7 +118,7 @@ class Verifactu extends Model
             'importe' => number_format((float) $factura->total, 2, '.', ''),
         ]);
 
-        return $baseUrl . '?' . $params;
+        return $baseUrl.'?'.$params;
     }
 
     /**
@@ -125,78 +130,78 @@ class Verifactu extends Model
         $empresa = $factura?->empresa;
         $cliente = $factura?->cliente;
 
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-        $xml .= '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:siiLR="https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tike/cont/ws/SusrtroLRFacturasEmitidas.xsd">' . "\n";
-        $xml .= '<soapenv:Body>' . "\n";
-        $xml .= '<siiLR:RegistroFactura>' . "\n";
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
+        $xml .= '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:siiLR="https://www2.agenciatributaria.gob.es/static_files/common/internet/dep/aplicaciones/es/aeat/tike/cont/ws/SusrtroLRFacturasEmitidas.xsd">'."\n";
+        $xml .= '<soapenv:Body>'."\n";
+        $xml .= '<siiLR:RegistroFactura>'."\n";
 
         // Cabecera
-        $xml .= '  <Cabecera>' . "\n";
-        $xml .= '    <ObligadoEmision>' . "\n";
-        $xml .= '      <NombreRazon>' . htmlspecialchars($empresa?->nombre ?? '') . '</NombreRazon>' . "\n";
-        $xml .= '      <NIF>' . htmlspecialchars($empresa?->cif ?? '') . '</NIF>' . "\n";
-        $xml .= '    </ObligadoEmision>' . "\n";
-        $xml .= '  </Cabecera>' . "\n";
+        $xml .= '  <Cabecera>'."\n";
+        $xml .= '    <ObligadoEmision>'."\n";
+        $xml .= '      <NombreRazon>'.htmlspecialchars($empresa?->nombre ?? '').'</NombreRazon>'."\n";
+        $xml .= '      <NIF>'.htmlspecialchars($empresa?->cif ?? '').'</NIF>'."\n";
+        $xml .= '    </ObligadoEmision>'."\n";
+        $xml .= '  </Cabecera>'."\n";
 
         // Registro alta factura
-        $xml .= '  <RegistroAlta>' . "\n";
-        $xml .= '    <IDFactura>' . "\n";
-        $xml .= '      <IDEmisorFactura>' . htmlspecialchars($empresa?->cif ?? '') . '</IDEmisorFactura>' . "\n";
-        $xml .= '      <NumSerieFactura>' . htmlspecialchars($factura?->codigo_factura ?? '') . '</NumSerieFactura>' . "\n";
-        $xml .= '      <FechaExpedicionFactura>' . ($factura?->fecha_factura?->format('d-m-Y') ?? '') . '</FechaExpedicionFactura>' . "\n";
-        $xml .= '    </IDFactura>' . "\n";
-        $xml .= '    <NombreRazonEmisor>' . htmlspecialchars($empresa?->nombre ?? '') . '</NombreRazonEmisor>' . "\n";
-        $xml .= '    <TipoFactura>' . htmlspecialchars($this->tipo_factura) . '</TipoFactura>' . "\n";
-        $xml .= '    <ClaveRegimenIvaEsp>' . htmlspecialchars($this->clave_regimen) . '</ClaveRegimenIvaEsp>' . "\n";
-        $xml .= '    <DescripcionOperacion>' . htmlspecialchars($this->descripcion_operacion ?? 'Venta') . '</DescripcionOperacion>' . "\n";
+        $xml .= '  <RegistroAlta>'."\n";
+        $xml .= '    <IDFactura>'."\n";
+        $xml .= '      <IDEmisorFactura>'.htmlspecialchars($empresa?->cif ?? '').'</IDEmisorFactura>'."\n";
+        $xml .= '      <NumSerieFactura>'.htmlspecialchars($factura?->codigo_factura ?? '').'</NumSerieFactura>'."\n";
+        $xml .= '      <FechaExpedicionFactura>'.($factura?->fecha_factura?->format('d-m-Y') ?? '').'</FechaExpedicionFactura>'."\n";
+        $xml .= '    </IDFactura>'."\n";
+        $xml .= '    <NombreRazonEmisor>'.htmlspecialchars($empresa?->nombre ?? '').'</NombreRazonEmisor>'."\n";
+        $xml .= '    <TipoFactura>'.htmlspecialchars($this->tipo_factura).'</TipoFactura>'."\n";
+        $xml .= '    <ClaveRegimenIvaEsp>'.htmlspecialchars($this->clave_regimen).'</ClaveRegimenIvaEsp>'."\n";
+        $xml .= '    <DescripcionOperacion>'.htmlspecialchars($this->descripcion_operacion ?? 'Venta').'</DescripcionOperacion>'."\n";
 
         // Destinatario
         if ($cliente) {
-            $xml .= '    <Destinatarios>' . "\n";
-            $xml .= '      <IDDestinatario>' . "\n";
-            $xml .= '        <NombreRazon>' . htmlspecialchars($cliente->nombre . ' ' . $cliente->apellidos) . '</NombreRazon>' . "\n";
-            $xml .= '        <NIF>' . htmlspecialchars($cliente->dni ?? '') . '</NIF>' . "\n";
-            $xml .= '      </IDDestinatario>' . "\n";
-            $xml .= '    </Destinatarios>' . "\n";
+            $xml .= '    <Destinatarios>'."\n";
+            $xml .= '      <IDDestinatario>'."\n";
+            $xml .= '        <NombreRazon>'.htmlspecialchars($cliente->nombre.' '.$cliente->apellidos).'</NombreRazon>'."\n";
+            $xml .= '        <NIF>'.htmlspecialchars($cliente->dni ?? '').'</NIF>'."\n";
+            $xml .= '      </IDDestinatario>'."\n";
+            $xml .= '    </Destinatarios>'."\n";
         }
 
         // Desglose
-        $xml .= '    <Desglose>' . "\n";
-        $xml .= '      <DetalleDesglose>' . "\n";
-        $xml .= '        <ClaveImpuesto>01</ClaveImpuesto>' . "\n"; // 01=IVA
-        $xml .= '        <TipoImpositivo>' . number_format((float) $this->tipo_impositivo, 2, '.', '') . '</TipoImpositivo>' . "\n";
-        $xml .= '        <BaseImponible>' . number_format((float) $this->base_imponible, 2, '.', '') . '</BaseImponible>' . "\n";
-        $xml .= '        <CuotaRepercutida>' . number_format((float) $this->cuota_tributaria, 2, '.', '') . '</CuotaRepercutida>' . "\n";
-        $xml .= '      </DetalleDesglose>' . "\n";
-        $xml .= '    </Desglose>' . "\n";
+        $xml .= '    <Desglose>'."\n";
+        $xml .= '      <DetalleDesglose>'."\n";
+        $xml .= '        <ClaveImpuesto>01</ClaveImpuesto>'."\n"; // 01=IVA
+        $xml .= '        <TipoImpositivo>'.number_format((float) $this->tipo_impositivo, 2, '.', '').'</TipoImpositivo>'."\n";
+        $xml .= '        <BaseImponible>'.number_format((float) $this->base_imponible, 2, '.', '').'</BaseImponible>'."\n";
+        $xml .= '        <CuotaRepercutida>'.number_format((float) $this->cuota_tributaria, 2, '.', '').'</CuotaRepercutida>'."\n";
+        $xml .= '      </DetalleDesglose>'."\n";
+        $xml .= '    </Desglose>'."\n";
 
-        $xml .= '    <CuotaTotal>' . number_format((float) $this->cuota_tributaria, 2, '.', '') . '</CuotaTotal>' . "\n";
-        $xml .= '    <ImporteTotal>' . number_format((float) $this->importe_total, 2, '.', '') . '</ImporteTotal>' . "\n";
+        $xml .= '    <CuotaTotal>'.number_format((float) $this->cuota_tributaria, 2, '.', '').'</CuotaTotal>'."\n";
+        $xml .= '    <ImporteTotal>'.number_format((float) $this->importe_total, 2, '.', '').'</ImporteTotal>'."\n";
 
         // Huella
-        $xml .= '    <Encadenamiento>' . "\n";
+        $xml .= '    <Encadenamiento>'."\n";
         if ($this->hash_anterior) {
-            $xml .= '      <RegistroAnterior>' . "\n";
-            $xml .= '        <Huella>' . $this->hash_anterior . '</Huella>' . "\n";
-            $xml .= '      </RegistroAnterior>' . "\n";
+            $xml .= '      <RegistroAnterior>'."\n";
+            $xml .= '        <Huella>'.$this->hash_anterior.'</Huella>'."\n";
+            $xml .= '      </RegistroAnterior>'."\n";
         } else {
-            $xml .= '      <PrimerRegistro>S</PrimerRegistro>' . "\n";
+            $xml .= '      <PrimerRegistro>S</PrimerRegistro>'."\n";
         }
-        $xml .= '    </Encadenamiento>' . "\n";
+        $xml .= '    </Encadenamiento>'."\n";
 
-        $xml .= '    <SistemaInformatico>' . "\n";
-        $xml .= '      <NombreSistema>' . htmlspecialchars($this->sistema_informatico) . '</NombreSistema>' . "\n";
-        $xml .= '      <Version>' . htmlspecialchars($this->version_sistema) . '</Version>' . "\n";
-        $xml .= '      <NombreDesarrollador>Meng Fei Dai</NombreDesarrollador>' . "\n";
-        $xml .= '      <NIF>00000000T</NIF>' . "\n"; // Developer NIF placeholder
-        $xml .= '    </SistemaInformatico>' . "\n";
+        $xml .= '    <SistemaInformatico>'."\n";
+        $xml .= '      <NombreSistema>'.htmlspecialchars($this->sistema_informatico).'</NombreSistema>'."\n";
+        $xml .= '      <Version>'.htmlspecialchars($this->version_sistema).'</Version>'."\n";
+        $xml .= '      <NombreDesarrollador>Meng Fei Dai</NombreDesarrollador>'."\n";
+        $xml .= '      <NIF>00000000T</NIF>'."\n"; // Developer NIF placeholder
+        $xml .= '    </SistemaInformatico>'."\n";
 
-        $xml .= '    <FechaHoraHuella>' . $this->fecha_registro->format('Y-m-d\TH:i:s') . '</FechaHoraHuella>' . "\n";
-        $xml .= '    <Huella>' . $this->hash_registro . '</Huella>' . "\n";
+        $xml .= '    <FechaHoraHuella>'.$this->fecha_registro->format('Y-m-d\TH:i:s').'</FechaHoraHuella>'."\n";
+        $xml .= '    <Huella>'.$this->hash_registro.'</Huella>'."\n";
 
-        $xml .= '  </RegistroAlta>' . "\n";
-        $xml .= '</siiLR:RegistroFactura>' . "\n";
-        $xml .= '</soapenv:Body>' . "\n";
+        $xml .= '  </RegistroAlta>'."\n";
+        $xml .= '</siiLR:RegistroFactura>'."\n";
+        $xml .= '</soapenv:Body>'."\n";
         $xml .= '</soapenv:Envelope>';
 
         return $xml;

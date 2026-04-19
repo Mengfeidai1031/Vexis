@@ -2,20 +2,18 @@
 
 /**
  * Script para preparar usuarios de prueba para las políticas
- * 
+ *
  * Uso: php artisan tinker < scripts/preparar_usuarios_prueba.php
  * O copiar y pegar el contenido en tinker
  */
 
-use App\Models\User;
-use App\Models\Empresa;
-use App\Models\Cliente;
-use App\Models\Vehiculo;
-use App\Models\Centro;
-use App\Models\Departamento;
 use App\Helpers\UserRestrictionHelper;
+use App\Models\Centro;
+use App\Models\Cliente;
+use App\Models\Empresa;
+use App\Models\User;
+use App\Models\Vehiculo;
 use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 
 echo "=== Preparando usuarios de prueba ===\n\n";
 
@@ -23,7 +21,7 @@ echo "=== Preparando usuarios de prueba ===\n\n";
 $empresa1 = Empresa::first();
 $empresa2 = Empresa::skip(1)->first();
 
-if (!$empresa1 || !$empresa2) {
+if (! $empresa1 || ! $empresa2) {
     echo "ERROR: Necesitas al menos 2 empresas en la base de datos\n";
     exit;
 }
@@ -36,7 +34,7 @@ echo "- Empresa 2: {$empresa2->nombre} (ID: {$empresa2->id})\n\n";
 $adminRole = Role::where('name', 'Administrador')->first();
 $userRole = Role::where('name', 'Usuario')->first();
 
-if (!$adminRole) {
+if (! $adminRole) {
     echo "ERROR: No se encontró el rol 'Administrador'\n";
     exit;
 }
@@ -219,14 +217,14 @@ echo "   Puede: Nada (debe ser denegado)\n\n";
 
 echo "=== DATOS DE PRUEBA ===\n\n";
 echo "Empresa 1: {$empresa1->nombre} (ID: {$empresa1->id})\n";
-echo "  - Clientes: " . Cliente::where('empresa_id', $empresa1->id)->count() . "\n";
-echo "  - Vehículos: " . Vehiculo::where('empresa_id', $empresa1->id)->count() . "\n";
-echo "  - Centros: " . Centro::where('empresa_id', $empresa1->id)->count() . "\n\n";
+echo '  - Clientes: '.Cliente::where('empresa_id', $empresa1->id)->count()."\n";
+echo '  - Vehículos: '.Vehiculo::where('empresa_id', $empresa1->id)->count()."\n";
+echo '  - Centros: '.Centro::where('empresa_id', $empresa1->id)->count()."\n\n";
 
 echo "Empresa 2: {$empresa2->nombre} (ID: {$empresa2->id})\n";
-echo "  - Clientes: " . Cliente::where('empresa_id', $empresa2->id)->count() . "\n";
-echo "  - Vehículos: " . Vehiculo::where('empresa_id', $empresa2->id)->count() . "\n";
-echo "  - Centros: " . Centro::where('empresa_id', $empresa2->id)->count() . "\n\n";
+echo '  - Clientes: '.Cliente::where('empresa_id', $empresa2->id)->count()."\n";
+echo '  - Vehículos: '.Vehiculo::where('empresa_id', $empresa2->id)->count()."\n";
+echo '  - Centros: '.Centro::where('empresa_id', $empresa2->id)->count()."\n\n";
 
 echo "Usuarios de prueba preparados correctamente!\n";
 echo "\nSiguiente paso: Seguir la guía GUIA_PRUEBAS_POLITICAS.md\n";

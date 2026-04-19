@@ -1,26 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Exports\FacturasExport;
+use App\Http\Requests\StoreFacturaRequest;
+use App\Http\Requests\UpdateFacturaRequest;
 use App\Models\Centro;
 use App\Models\Cliente;
 use App\Models\Empresa;
 use App\Models\Factura;
 use App\Models\Marca;
-use App\Models\Setting;
 use App\Models\Venta;
-use App\Models\Verifactu;
 use App\Services\AeatVerifactuService;
+use App\Services\FacturaCreationService;
+use App\Services\ImpuestoService;
+use App\Services\VerifactuRegistrationService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 
 class FacturaController extends Controller
 {
+    public function __construct(
+        private readonly ImpuestoService $impuestoService,
+        private readonly FacturaCreationService $facturaCreationService,
+        private readonly VerifactuRegistrationService $verifactuRegistration,
+    ) {}
+
     public function index(Request $request)
     {
         $query = Factura::with(['venta', 'cliente', 'empresa', 'centro', 'marca', 'emisor']);
@@ -54,7 +65,7 @@ class FacturaController extends Controller
         if ($request->filled('total_max')) {
             $query->where('total', '<=', $request->total_max);
         }
-        // Sorting
+
         $sortable = ['id', 'codigo_factura', 'cliente_id', 'marca_id', 'concepto', 'subtotal', 'iva_importe', 'total', 'estado', 'fecha_factura'];
         if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
             $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
@@ -78,55 +89,30 @@ class FacturaController extends Controller
         $empresas = Empresa::orderBy('nombre')->get();
         $centros = Centro::orderBy('nombre')->get();
         $marcas = Marca::where('activa', true)->orderBy('nombre')->get();
-        $ventaPreseleccionada = $request->venta_id ? Venta::with(['cliente', 'empresa', 'centro', 'marca', 'conceptos'])->find($request->venta_id) : null;
+        $ventaPreseleccionada = $request->venta_id
+            ? Venta::with(['cliente', 'empresa', 'centro', 'marca', 'conceptos'])->find($request->venta_id)
+            : null;
 
         return view('facturas.create', compact('ventas', 'clientes', 'empresas', 'centros', 'marcas', 'ventaPreseleccionada'));
     }
 
-    public function store(Request $request)
+    public function store(StoreFacturaRequest $request): RedirectResponse
     {
-        $request->validate([
-            'venta_id' => 'required|exists:ventas,id',
-            'empresa_id' => 'required|exists:empresas,id',
-            'centro_id' => 'required|exists:centros,id',
-            'fecha_factura' => 'required|date',
-            'subtotal' => 'required|numeric|min:0',
-            'iva_porcentaje' => 'required|numeric|min:0|max:100',
-        ]);
-
-        // Get amounts from the venta (server-side, not from form)
-        $venta = Venta::findOrFail($request->venta_id);
+        $venta = Venta::findOrFail($request->validated('venta_id'));
         $subtotal = (float) ($venta->subtotal ?? $venta->precio_final);
-        $ivaPct = (float) ($venta->impuesto_porcentaje ?? $request->iva_porcentaje);
-        $ivaImporte = round($subtotal * $ivaPct / 100, 2);
-        $total = round($subtotal + $ivaImporte, 2);
+        $ivaPct = (float) ($venta->impuesto_porcentaje ?? $request->validated('iva_porcentaje'));
+        $recalculo = $this->impuestoService->recalcularFactura($subtotal, $ivaPct);
 
-        $codigo = 'FAC-'.date('Ym').'-'.str_pad(Factura::whereYear('fecha_factura', date('Y'))->count() + 1, 4, '0', STR_PAD_LEFT);
-
-        $factura = Factura::create([
+        $result = $this->facturaCreationService->crearDesdeDatos([
             ...$request->only(['venta_id', 'cliente_id', 'empresa_id', 'centro_id', 'marca_id', 'fecha_factura', 'fecha_vencimiento', 'concepto', 'estado', 'observaciones']),
-            'codigo_factura' => $codigo,
             'subtotal' => $subtotal,
             'iva_porcentaje' => $ivaPct,
-            'iva_importe' => $ivaImporte,
-            'total' => $total,
-            'emisor_id' => Auth::id(),
+            'iva_importe' => $recalculo['iva_importe'],
+            'total' => $recalculo['total'],
         ]);
 
-        // Auto-register in Verifactu if module is enabled
-        $verifactuMsg = '';
-        if (Setting::get('modulo_verifactu', true)) {
-            try {
-                $factura->load(['empresa', 'cliente']);
-                $service = new AeatVerifactuService;
-                $registro = $service->registrarFactura($factura, 'alta');
-                $verifactuMsg = " Registro Verifactu {$registro->codigo_registro} generado automáticamente.";
-            } catch (\Exception $e) {
-                $verifactuMsg = ' (Error al registrar en Verifactu: '.$e->getMessage().')';
-            }
-        }
-
-        return redirect()->route('facturas.index')->with('success', 'Factura creada correctamente.'.$verifactuMsg);
+        return redirect()->route('facturas.index')
+            ->with('success', 'Factura creada correctamente.'.$result['verifactu_msg']);
     }
 
     public function show(Factura $factura)
@@ -147,22 +133,12 @@ class FacturaController extends Controller
         return view('facturas.edit', compact('factura', 'ventas', 'clientes', 'empresas', 'centros', 'marcas'));
     }
 
-    public function update(Request $request, Factura $factura)
+    public function update(UpdateFacturaRequest $request, Factura $factura): RedirectResponse
     {
-        $request->validate([
-            'venta_id' => 'required|exists:ventas,id',
-            'empresa_id' => 'required|exists:empresas,id',
-            'centro_id' => 'required|exists:centros,id',
-            'fecha_factura' => 'required|date',
-            'estado' => 'required|in:emitida,pagada,vencida,anulada',
-        ]);
-
-        // Sync amounts from venta
-        $venta = Venta::findOrFail($request->venta_id);
+        $venta = Venta::findOrFail($request->validated('venta_id'));
         $subtotal = (float) ($venta->subtotal ?? $venta->precio_final);
         $ivaPct = (float) ($venta->impuesto_porcentaje ?? 7);
-        $ivaImporte = round($subtotal * $ivaPct / 100, 2);
-        $total = round($subtotal + $ivaImporte, 2);
+        $recalculo = $this->impuestoService->recalcularFactura($subtotal, $ivaPct);
 
         $estadoAnterior = $factura->estado;
 
@@ -170,27 +146,20 @@ class FacturaController extends Controller
             ...$request->only(['venta_id', 'cliente_id', 'empresa_id', 'centro_id', 'marca_id', 'fecha_factura', 'fecha_vencimiento', 'concepto', 'estado', 'observaciones']),
             'subtotal' => $subtotal,
             'iva_porcentaje' => $ivaPct,
-            'iva_importe' => $ivaImporte,
-            'total' => $total,
+            'iva_importe' => $recalculo['iva_importe'],
+            'total' => $recalculo['total'],
         ]);
 
-        // Auto-register anulación in Verifactu when factura changes to anulada
         $verifactuMsg = '';
-        if ($request->estado === 'anulada' && $estadoAnterior !== 'anulada' && Setting::get('modulo_verifactu', true)) {
-            try {
-                $factura->load(['empresa', 'cliente']);
-                $service = new AeatVerifactuService;
-                $registro = $service->registrarFactura($factura, 'anulacion');
-                $verifactuMsg = " Registro de anulación Verifactu {$registro->codigo_registro} generado.";
-            } catch (\Exception $e) {
-                $verifactuMsg = ' (Error Verifactu: '.$e->getMessage().')';
-            }
+        if ($request->validated('estado') === 'anulada' && $estadoAnterior !== 'anulada') {
+            $verifactuMsg = $this->verifactuRegistration->registrarAnulacion($factura);
         }
 
-        return redirect()->route('facturas.index')->with('success', 'Factura actualizada correctamente.'.$verifactuMsg);
+        return redirect()->route('facturas.index')
+            ->with('success', 'Factura actualizada correctamente.'.$verifactuMsg);
     }
 
-    public function destroy(Factura $factura)
+    public function destroy(Factura $factura): RedirectResponse
     {
         $factura->delete();
 
@@ -210,12 +179,9 @@ class FacturaController extends Controller
             }
         }
 
-        // Get Verifactu registro and QR code if exists
-        $verifactuRegistro = Verifactu::where('factura_id', $factura->id)
-            ->whereNotIn('estado', ['anulado', 'rechazado'])
-            ->first();
+        $verifactuRegistro = $this->verifactuRegistration->registroActivoDeFactura($factura);
         $qrBase64 = null;
-        if ($verifactuRegistro && $verifactuRegistro->url_qr) {
+        if ($verifactuRegistro?->url_qr) {
             $qrBase64 = AeatVerifactuService::generateQrImage($verifactuRegistro->url_qr);
         }
 
@@ -225,7 +191,6 @@ class FacturaController extends Controller
         $fileName = 'factura_'.$factura->codigo_factura.'.pdf';
         $storagePath = 'facturas/'.$fileName;
         Storage::disk('public')->put($storagePath, $pdf->output());
-
         $factura->update(['pdf_path' => $storagePath]);
 
         return $pdf->download($fileName);
@@ -233,9 +198,7 @@ class FacturaController extends Controller
 
     public function export()
     {
-        $fileName = 'facturas_'.date('Y-m-d_His').'.xlsx';
-
-        return Excel::download(new FacturasExport, $fileName);
+        return Excel::download(new FacturasExport, 'facturas_'.date('Y-m-d_His').'.xlsx');
     }
 
     public function exportPdf()

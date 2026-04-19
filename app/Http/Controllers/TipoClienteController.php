@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\TipoCliente;
@@ -12,9 +14,15 @@ class TipoClienteController extends Controller
     {
         $query = TipoCliente::withCount('clientes');
 
-        if ($request->filled('nombre')) $query->where('nombre', $request->nombre);
-        if ($request->filled('descripcion')) $query->where('descripcion', $request->descripcion);
-        if ($request->filled('activo')) $query->where('activo', $request->activo);
+        if ($request->filled('nombre')) {
+            $query->where('nombre', $request->nombre);
+        }
+        if ($request->filled('descripcion')) {
+            $query->where('descripcion', $request->descripcion);
+        }
+        if ($request->filled('activo')) {
+            $query->where('activo', $request->activo);
+        }
 
         $sortable = ['id', 'nombre', 'slug', 'activo', 'clientes_count'];
         if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
@@ -26,6 +34,7 @@ class TipoClienteController extends Controller
 
         $tipos = $query->paginate(15)->withQueryString();
         $tipos_all = TipoCliente::orderBy('nombre')->get();
+
         return view('tipos_cliente.index', compact('tipos', 'tipos_all'));
     }
 
@@ -54,6 +63,7 @@ class TipoClienteController extends Controller
     public function update(Request $request, TipoCliente $tipoCliente)
     {
         $tipoCliente->update($this->validated($request, $tipoCliente->id));
+
         return redirect()->route('tipos-cliente.index')->with('success', 'Tipo de cliente actualizado.');
     }
 
@@ -63,6 +73,7 @@ class TipoClienteController extends Controller
             return redirect()->route('tipos-cliente.index')->with('error', 'No se puede eliminar: tiene clientes asociados.');
         }
         $tipoCliente->delete();
+
         return redirect()->route('tipos-cliente.index')->with('success', 'Tipo de cliente eliminado.');
     }
 
@@ -77,6 +88,7 @@ class TipoClienteController extends Controller
         $data['slug'] = Str::slug($data['nombre']);
         $data['activo'] = $request->boolean('activo', true);
         $data['color'] = $data['color'] ?? '#33AADD';
+
         return $data;
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests;
 
 use App\Helpers\UserRestrictionHelper;
@@ -16,7 +18,7 @@ class StoreVehiculoRequest extends FormRequest
     public function rules(): array
     {
         $user = Auth::user();
-        
+
         return [
             'chasis' => 'required|string|size:17|unique:vehiculos,chasis',
             'matricula' => 'nullable|string|max:10|unique:vehiculos,matricula',
@@ -30,7 +32,7 @@ class StoreVehiculoRequest extends FormRequest
                 'exists:empresas,id',
                 function ($attribute, $value, $fail) use ($user) {
                     if ($user && UserRestrictionHelper::hasRestrictionsOfType($user, UserRestrictionHelper::TYPE_EMPRESA)) {
-                        if (!UserRestrictionHelper::canAccess($user, UserRestrictionHelper::TYPE_EMPRESA, $value)) {
+                        if (! UserRestrictionHelper::canAccess($user, UserRestrictionHelper::TYPE_EMPRESA, $value)) {
                             $fail('No tienes permiso para asignar vehículos a esta empresa.');
                         }
                     }

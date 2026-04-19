@@ -1,10 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreIncidenciaRequest;
+use App\Http\Requests\UpdateIncidenciaRequest;
 use App\Models\Incidencia;
 use App\Models\IncidenciaArchivo;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -40,7 +45,6 @@ class IncidenciaController extends Controller
             $query->where('titulo', $request->titulo);
         }
 
-        // Sorting
         $sortable = ['id', 'codigo_incidencia', 'titulo', 'prioridad', 'estado', 'usuario_id', 'tecnico_id', 'fecha_apertura'];
         if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
             $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
@@ -49,18 +53,17 @@ class IncidenciaController extends Controller
 
         $incidencias = $query->paginate(15)->withQueryString();
 
-        $stats = [
-            'total' => Incidencia::count(),
-            'abiertas' => Incidencia::where('estado', 'abierta')->count(),
-            'en_progreso' => Incidencia::where('estado', 'en_progreso')->count(),
-            'resueltas' => Incidencia::whereIn('estado', ['resuelta', 'cerrada'])->count(),
-            'criticas' => Incidencia::where('prioridad', 'critica')->whereNotIn('estado', ['resuelta', 'cerrada'])->count(),
-        ];
+        // Consolidar 5 COUNT queries en 1 sola
+        $stats = Incidencia::query()
+            ->selectRaw('COUNT(*) as total')
+            ->selectRaw("SUM(CASE WHEN estado = 'abierta' THEN 1 ELSE 0 END) as abiertas")
+            ->selectRaw("SUM(CASE WHEN estado = 'en_progreso' THEN 1 ELSE 0 END) as en_progreso")
+            ->selectRaw("SUM(CASE WHEN estado IN ('resuelta','cerrada') THEN 1 ELSE 0 END) as resueltas")
+            ->selectRaw("SUM(CASE WHEN prioridad = 'critica' AND estado NOT IN ('resuelta','cerrada') THEN 1 ELSE 0 END) as criticas")
+            ->first();
 
         $tecnicos = User::role(['Super Admin', 'Administrador'])->orderBy('nombre')->get();
-
         $usuarios = User::orderBy('nombre')->get();
-
         $codigos_incidencia = Incidencia::distinct()->orderBy('codigo_incidencia')->pluck('codigo_incidencia');
         $titulos_incidencia = Incidencia::distinct()->orderBy('titulo')->pluck('titulo');
 
@@ -74,67 +77,31 @@ class IncidenciaController extends Controller
         return view('incidencias.create', compact('tecnicos'));
     }
 
-    public function store(Request $request)
+    public function store(StoreIncidenciaRequest $request): RedirectResponse
     {
-        $request->validate([
-            'titulo' => 'required|string|max:255',
-            'descripcion' => 'required|string',
-            'prioridad' => 'required|in:baja,media,alta,critica',
-            'estado' => 'required|in:abierta,en_progreso,resuelta,cerrada',
-            'tecnico_id' => 'nullable|exists:users,id',
-            'archivos_usuario.*' => 'nullable|file|max:10240',
-            'archivos_tecnico.*' => 'nullable|file|max:10240',
-        ]);
-
         $codigo = 'INC-'.date('Ym').'-'.str_pad(
-            Incidencia::whereYear('fecha_apertura', date('Y'))->count() + 1,
+            (string) (Incidencia::whereYear('fecha_apertura', date('Y'))->count() + 1),
             4, '0', STR_PAD_LEFT
         );
 
         $data = [
             'codigo_incidencia' => $codigo,
-            'titulo' => $request->titulo,
-            'descripcion' => $request->descripcion,
-            'prioridad' => $request->prioridad,
-            'estado' => $request->estado,
+            'titulo' => $request->validated('titulo'),
+            'descripcion' => $request->validated('descripcion'),
+            'prioridad' => $request->validated('prioridad'),
+            'estado' => $request->validated('estado'),
             'usuario_id' => Auth::id(),
-            'tecnico_id' => $request->tecnico_id,
+            'tecnico_id' => $request->validated('tecnico_id'),
             'fecha_apertura' => now(),
         ];
 
-        if (in_array($request->estado, ['resuelta', 'cerrada'])) {
+        if (in_array($request->validated('estado'), ['resuelta', 'cerrada'])) {
             $data['fecha_cierre'] = now();
         }
 
         $incidencia = Incidencia::create($data);
 
-        // Archivos del usuario
-        if ($request->hasFile('archivos_usuario')) {
-            foreach ($request->file('archivos_usuario') as $file) {
-                $path = $file->store('incidencias/'.$incidencia->id, 'public');
-                IncidenciaArchivo::create([
-                    'incidencia_id' => $incidencia->id,
-                    'user_id' => Auth::id(),
-                    'ruta' => $path,
-                    'nombre_original' => $file->getClientOriginalName(),
-                    'tipo' => 'usuario',
-                ]);
-            }
-        }
-
-        // Archivos del técnico
-        if ($request->hasFile('archivos_tecnico')) {
-            foreach ($request->file('archivos_tecnico') as $file) {
-                $path = $file->store('incidencias/'.$incidencia->id, 'public');
-                IncidenciaArchivo::create([
-                    'incidencia_id' => $incidencia->id,
-                    'user_id' => Auth::id(),
-                    'ruta' => $path,
-                    'nombre_original' => $file->getClientOriginalName(),
-                    'tipo' => 'tecnico',
-                ]);
-            }
-        }
+        $this->guardarArchivos($incidencia, $request);
 
         return redirect()->route('incidencias.show', $incidencia)
             ->with('success', "Incidencia {$codigo} creada correctamente.");
@@ -156,77 +123,62 @@ class IncidenciaController extends Controller
         return view('incidencias.edit', compact('incidencia', 'tecnicos'));
     }
 
-    public function update(Request $request, Incidencia $incidencia)
+    public function update(UpdateIncidenciaRequest $request, Incidencia $incidencia): RedirectResponse
     {
-        $request->validate([
-            'titulo' => 'required|string|max:255',
-            'descripcion' => 'required|string',
-            'prioridad' => 'required|in:baja,media,alta,critica',
-            'estado' => 'required|in:abierta,en_progreso,resuelta,cerrada',
-            'tecnico_id' => 'nullable|exists:users,id',
-            'comentario_tecnico' => 'nullable|string',
-            'archivos_usuario.*' => 'nullable|file|max:10240',
-            'archivos_tecnico.*' => 'nullable|file|max:10240',
-        ]);
-
         $data = $request->only(['titulo', 'descripcion', 'prioridad', 'estado', 'tecnico_id', 'comentario_tecnico']);
 
-        if (in_array($request->estado, ['resuelta', 'cerrada']) && ! $incidencia->fecha_cierre) {
+        if (in_array($request->validated('estado'), ['resuelta', 'cerrada']) && ! $incidencia->fecha_cierre) {
             $data['fecha_cierre'] = now();
         }
-        if (in_array($request->estado, ['abierta', 'en_progreso'])) {
+        if (in_array($request->validated('estado'), ['abierta', 'en_progreso'])) {
             $data['fecha_cierre'] = null;
         }
 
         $incidencia->update($data);
 
-        // Archivos del usuario
-        if ($request->hasFile('archivos_usuario')) {
-            foreach ($request->file('archivos_usuario') as $file) {
-                $path = $file->store('incidencias/'.$incidencia->id, 'public');
-                IncidenciaArchivo::create([
-                    'incidencia_id' => $incidencia->id,
-                    'user_id' => Auth::id(),
-                    'ruta' => $path,
-                    'nombre_original' => $file->getClientOriginalName(),
-                    'tipo' => 'usuario',
-                ]);
-            }
-        }
-
-        // Archivos del técnico
-        if ($request->hasFile('archivos_tecnico')) {
-            foreach ($request->file('archivos_tecnico') as $file) {
-                $path = $file->store('incidencias/'.$incidencia->id, 'public');
-                IncidenciaArchivo::create([
-                    'incidencia_id' => $incidencia->id,
-                    'user_id' => Auth::id(),
-                    'ruta' => $path,
-                    'nombre_original' => $file->getClientOriginalName(),
-                    'tipo' => 'tecnico',
-                ]);
-            }
-        }
+        $this->guardarArchivos($incidencia, $request);
 
         return redirect()->route('incidencias.show', $incidencia)
             ->with('success', 'Incidencia actualizada correctamente.');
     }
 
-    public function destroy(Incidencia $incidencia)
+    public function destroy(Incidencia $incidencia): RedirectResponse
     {
-        // Eager-load and delete each archivo individually to trigger model's deleting event (file cleanup)
         $incidencia->archivos->each->delete();
-        Storage::disk('public')->deleteDirectory('incidencias/' . $incidencia->id);
+        Storage::disk('public')->deleteDirectory('incidencias/'.$incidencia->id);
         $incidencia->delete();
 
         return redirect()->route('incidencias.index')->with('success', 'Incidencia eliminada correctamente.');
     }
 
-    public function eliminarArchivo(IncidenciaArchivo $archivo)
+    public function eliminarArchivo(IncidenciaArchivo $archivo): RedirectResponse
     {
         $incidencia = $archivo->incidencia;
         $archivo->delete();
 
         return redirect()->route('incidencias.show', $incidencia)->with('success', 'Archivo eliminado.');
+    }
+
+    /**
+     * Almacena archivos adjuntos de usuario y técnico (DRY: extrae lógica duplicada de store/update).
+     */
+    private function guardarArchivos(Incidencia $incidencia, Request $request): void
+    {
+        foreach (['archivos_usuario' => 'usuario', 'archivos_tecnico' => 'tecnico'] as $field => $tipo) {
+            if (! $request->hasFile($field)) {
+                continue;
+            }
+
+            foreach ($request->file($field) as $file) {
+                $path = $file->store('incidencias/'.$incidencia->id, 'public');
+                IncidenciaArchivo::create([
+                    'incidencia_id' => $incidencia->id,
+                    'user_id' => Auth::id(),
+                    'ruta' => $path,
+                    'nombre_original' => $file->getClientOriginalName(),
+                    'tipo' => $tipo,
+                ]);
+            }
+        }
     }
 }

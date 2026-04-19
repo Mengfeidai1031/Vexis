@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +18,10 @@ class Setting extends Model
     {
         return Cache::remember("setting.{$key}", 3600, function () use ($key, $default) {
             $setting = static::where('key', $key)->first();
-            if (!$setting) return $default;
+            if (! $setting) {
+                return $default;
+            }
+
             return self::castValue($setting->value, $setting->type);
         });
     }

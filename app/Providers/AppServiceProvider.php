@@ -1,41 +1,43 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use App\Repositories\Interfaces\UserRepositoryInterface;
-use App\Repositories\UserRepository;
-use App\Repositories\Interfaces\DepartamentoRepositoryInterface;
+use App\Models\Centro;
+use App\Models\Cliente;
+use App\Models\Departamento;
+use App\Models\Empresa;
+use App\Models\OfertaCabecera;
+use App\Models\User;
+use App\Models\UserRestriction;
+use App\Models\Vehiculo;
+use App\Policies\CentroPolicy;
+use App\Policies\ClientePolicy;
+use App\Policies\DepartamentoPolicy;
+use App\Policies\EmpresaPolicy;
+use App\Policies\OfertaPolicy;
+use App\Policies\UserPolicy;
+use App\Policies\UserRestrictionPolicy;
+use App\Policies\VehiculoPolicy;
+use App\Repositories\CentroRepository;
+use App\Repositories\ClienteRepository;
 use App\Repositories\DepartamentoRepository;
 use App\Repositories\Interfaces\CentroRepositoryInterface;
-use App\Repositories\CentroRepository;
-use App\Repositories\Interfaces\RoleRepositoryInterface;
-use App\Repositories\RoleRepository;
 use App\Repositories\Interfaces\ClienteRepositoryInterface;
-use App\Repositories\ClienteRepository;
-use App\Repositories\Interfaces\VehiculoRepositoryInterface;
-use App\Repositories\VehiculoRepository;
+use App\Repositories\Interfaces\DepartamentoRepositoryInterface;
 use App\Repositories\Interfaces\OfertaRepositoryInterface;
-use App\Repositories\OfertaRepository;
 use App\Repositories\Interfaces\RestriccionRepositoryInterface;
+use App\Repositories\Interfaces\RoleRepositoryInterface;
+use App\Repositories\Interfaces\UserRepositoryInterface;
+use App\Repositories\Interfaces\VehiculoRepositoryInterface;
+use App\Repositories\OfertaRepository;
 use App\Repositories\RestriccionRepository;
+use App\Repositories\RoleRepository;
+use App\Repositories\UserRepository;
+use App\Repositories\VehiculoRepository;
 use Illuminate\Support\Facades\Gate;
-use App\Models\Cliente;
-use App\Models\Vehiculo;
-use App\Models\OfertaCabecera;
-use App\Models\UserRestriction;
-use App\Models\Centro;
-use App\Models\Departamento;
-use App\Models\User;
-use App\Models\Empresa;
-use App\Policies\ClientePolicy;
-use App\Policies\VehiculoPolicy;
-use App\Policies\OfertaPolicy;
-use App\Policies\UserRestrictionPolicy;
-use App\Policies\CentroPolicy;
-use App\Policies\DepartamentoPolicy;
-use App\Policies\UserPolicy;
-use App\Policies\EmpresaPolicy;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {

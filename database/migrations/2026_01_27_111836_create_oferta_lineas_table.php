@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('descripcion', 255);
             $table->double('precio', 10, 2);
             $table->timestamps();
-        
+
             // Relación
             $table->foreign('oferta_cabecera_id')->references('id')->on('oferta_cabeceras')->onDelete('cascade');
         });

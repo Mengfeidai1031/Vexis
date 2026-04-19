@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Exports\VehiculosExport;
@@ -7,14 +9,14 @@ use App\Http\Requests\StoreVehiculoRequest;
 use App\Http\Requests\UpdateVehiculoRequest;
 use App\Models\CatalogoPrecio;
 use App\Models\Centro;
-use App\Models\Marca;
 use App\Models\Empresa;
+use App\Models\Marca;
 use App\Models\Vehiculo;
 use App\Repositories\Interfaces\VehiculoRepositoryInterface;
 use App\Services\MatriculaService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class VehiculoController extends Controller
 {
@@ -29,14 +31,30 @@ class VehiculoController extends Controller
     {
         $query = Vehiculo::with(['marca', 'empresa']);
 
-        if ($request->filled('marca_id')) $query->where('marca_id', $request->marca_id);
-        if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
-        if ($request->filled('modelo')) $query->where('modelo', $request->modelo);
-        if ($request->filled('version')) $query->where('version', $request->version);
-        if ($request->filled('color_externo')) $query->where('color_externo', $request->color_externo);
-        if ($request->filled('color_interno')) $query->where('color_interno', $request->color_interno);
-        if ($request->filled('matricula')) $query->where('matricula', $request->matricula);
-        if ($request->filled('chasis')) $query->where('chasis', $request->chasis);
+        if ($request->filled('marca_id')) {
+            $query->where('marca_id', $request->marca_id);
+        }
+        if ($request->filled('empresa_id')) {
+            $query->where('empresa_id', $request->empresa_id);
+        }
+        if ($request->filled('modelo')) {
+            $query->where('modelo', $request->modelo);
+        }
+        if ($request->filled('version')) {
+            $query->where('version', $request->version);
+        }
+        if ($request->filled('color_externo')) {
+            $query->where('color_externo', $request->color_externo);
+        }
+        if ($request->filled('color_interno')) {
+            $query->where('color_interno', $request->color_interno);
+        }
+        if ($request->filled('matricula')) {
+            $query->where('matricula', $request->matricula);
+        }
+        if ($request->filled('chasis')) {
+            $query->where('chasis', $request->chasis);
+        }
 
         // Sorting
         $sortable = ['id', 'chasis', 'matricula', 'marca_id', 'modelo', 'version', 'color_externo', 'color_interno', 'empresa_id'];
@@ -70,13 +88,14 @@ class VehiculoController extends Controller
             ->orderBy('modelo')->orderBy('version')
             ->get()
             ->groupBy('marca_id');
+
         return view('vehiculos.create', compact('empresas', 'marcas', 'centros', 'catalogoModelos'));
     }
 
     public function store(StoreVehiculoRequest $request)
     {
         $this->authorize('create', Vehiculo::class);
-        
+
         $this->vehiculoRepository->create($request->validated());
 
         return redirect()->route('vehiculos.index')
@@ -86,7 +105,7 @@ class VehiculoController extends Controller
     public function show(Vehiculo $vehiculo)
     {
         $this->authorize('view', $vehiculo);
-        
+
         return view('vehiculos.show', compact('vehiculo'));
     }
 
@@ -102,13 +121,14 @@ class VehiculoController extends Controller
             ->orderBy('modelo')->orderBy('version')
             ->get()
             ->groupBy('marca_id');
+
         return view('vehiculos.edit', compact('vehiculo', 'empresas', 'marcas', 'centros', 'catalogoModelos'));
     }
 
     public function update(UpdateVehiculoRequest $request, Vehiculo $vehiculo)
     {
         $this->authorize('update', $vehiculo);
-        
+
         $this->vehiculoRepository->update($vehiculo->id, $request->validated());
 
         return redirect()->route('vehiculos.index')
@@ -118,9 +138,10 @@ class VehiculoController extends Controller
     public function destroy(Vehiculo $vehiculo)
     {
         $this->authorize('delete', $vehiculo);
-        
+
         try {
             $this->vehiculoRepository->delete($vehiculo->id);
+
             return redirect()->route('vehiculos.index')
                 ->with('success', 'Vehículo eliminado exitosamente.');
         } catch (\Exception $e) {
@@ -141,7 +162,7 @@ class VehiculoController extends Controller
             ->get();
 
         $modelos = $catalogo->pluck('modelo')->unique()->values();
-        $versiones = $catalogo->groupBy('modelo')->map(fn($items) => $items->pluck('version')->unique()->values());
+        $versiones = $catalogo->groupBy('modelo')->map(fn ($items) => $items->pluck('version')->unique()->values());
 
         return response()->json(['modelos' => $modelos, 'versiones' => $versiones]);
     }
@@ -151,8 +172,9 @@ class VehiculoController extends Controller
      */
     public function generarMatricula()
     {
-        $service = new MatriculaService();
+        $service = new MatriculaService;
         $matricula = $service->generarSiguiente();
+
         return response()->json(['matricula' => $matricula]);
     }
 
@@ -163,9 +185,9 @@ class VehiculoController extends Controller
      */
     public function export()
     {
-        $fileName = 'vehiculos_' . date('Y-m-d_His') . '.xlsx';
-        
-        return Excel::download(new VehiculosExport(), $fileName);
+        $fileName = 'vehiculos_'.date('Y-m-d_His').'.xlsx';
+
+        return Excel::download(new VehiculosExport, $fileName);
     }
 
     /**
@@ -176,21 +198,21 @@ class VehiculoController extends Controller
     public function exportPdf()
     {
         $userEmpresaId = \Illuminate\Support\Facades\Auth::user()?->empresa_id;
-        
+
         $query = \App\Models\Vehiculo::with(['empresa', 'marca']);
-        
+
         if ($userEmpresaId) {
             $query->where('empresa_id', $userEmpresaId);
         }
-        
+
         $vehiculos = $query->orderBy('modelo', 'asc')
             ->orderBy('version', 'asc')
             ->get();
-        
-        $fileName = 'vehiculos_' . date('Y-m-d_His') . '.pdf';
-        
+
+        $fileName = 'vehiculos_'.date('Y-m-d_His').'.pdf';
+
         $pdf = Pdf::loadView('vehiculos.pdf', compact('vehiculos'));
-        
+
         return $pdf->download($fileName);
     }
 }

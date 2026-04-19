@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use App\Models\Verifactu;
 use App\Models\Factura;
+use App\Models\Verifactu;
 use App\Services\AeatVerifactuService;
-use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
 
 class VerifactuController extends Controller
 {
@@ -14,12 +16,24 @@ class VerifactuController extends Controller
     {
         $query = Verifactu::with(['factura.cliente', 'factura.empresa', 'factura.marca']);
 
-        if ($request->filled('estado')) $query->where('estado', $request->estado);
-        if ($request->filled('tipo_operacion')) $query->where('tipo_operacion', $request->tipo_operacion);
-        if ($request->filled('codigo_registro')) $query->where('codigo_registro', $request->codigo_registro);
-        if ($request->filled('factura_id')) $query->where('factura_id', $request->factura_id);
-        if ($request->filled('fecha_desde')) $query->whereDate('fecha_registro', '>=', $request->fecha_desde);
-        if ($request->filled('fecha_hasta')) $query->whereDate('fecha_registro', '<=', $request->fecha_hasta);
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+        if ($request->filled('tipo_operacion')) {
+            $query->where('tipo_operacion', $request->tipo_operacion);
+        }
+        if ($request->filled('codigo_registro')) {
+            $query->where('codigo_registro', $request->codigo_registro);
+        }
+        if ($request->filled('factura_id')) {
+            $query->where('factura_id', $request->factura_id);
+        }
+        if ($request->filled('fecha_desde')) {
+            $query->whereDate('fecha_registro', '>=', $request->fecha_desde);
+        }
+        if ($request->filled('fecha_hasta')) {
+            $query->whereDate('fecha_registro', '<=', $request->fecha_hasta);
+        }
 
         // Sorting
         $sortable = ['id', 'codigo_registro', 'factura_id', 'tipo_operacion', 'tipo_factura', 'nombre_emisor', 'importe_total', 'estado', 'fecha_registro'];
@@ -38,7 +52,7 @@ class VerifactuController extends Controller
         ];
 
         $codigos_verifactu = Verifactu::distinct()->orderBy('codigo_registro')->pluck('codigo_registro');
-        $facturas_verifactu = Factura::orderBy('codigo_factura')->get(['id','codigo_factura']);
+        $facturas_verifactu = Factura::orderBy('codigo_factura')->get(['id', 'codigo_factura']);
 
         return view('verifactu.index', compact('registros', 'stats', 'codigos_verifactu', 'facturas_verifactu'));
     }
@@ -84,10 +98,10 @@ class VerifactuController extends Controller
 
         if ($existente && $request->tipo_operacion === 'alta') {
             return redirect()->route('verifactu.index')
-                ->with('error', 'Esta factura ya tiene un registro Verifactu activo (' . $existente->codigo_registro . ').');
+                ->with('error', 'Esta factura ya tiene un registro Verifactu activo ('.$existente->codigo_registro.').');
         }
 
-        $service = new AeatVerifactuService();
+        $service = new AeatVerifactuService;
         $registro = $service->registrarFactura($factura, $request->tipo_operacion, $request->observaciones);
 
         return redirect()->route('verifactu.show', $registro)
@@ -99,20 +113,20 @@ class VerifactuController extends Controller
      */
     public function enviarAeat(Verifactu $verifactu)
     {
-        if (!in_array($verifactu->estado, ['registrado', 'rechazado'])) {
+        if (! in_array($verifactu->estado, ['registrado', 'rechazado'])) {
             return redirect()->route('verifactu.show', $verifactu)
                 ->with('error', 'Solo se pueden enviar registros en estado "Registrado" o "Rechazado".');
         }
 
         $verifactu->update(['estado' => 'enviado']);
 
-        $service = new AeatVerifactuService();
+        $service = new AeatVerifactuService;
         $resultado = $service->enviarAeat($verifactu);
 
         $estado = $resultado['estado'] ?? 'rechazado';
         $msg = $estado === 'aceptado'
-            ? "Registro {$verifactu->codigo_registro} aceptado por AEAT. CSV: " . ($resultado['csv'] ?? '—')
-            : "Registro rechazado por AEAT: " . ($resultado['errores'][0]['descripcion'] ?? $resultado['descripcion'] ?? 'Error desconocido');
+            ? "Registro {$verifactu->codigo_registro} aceptado por AEAT. CSV: ".($resultado['csv'] ?? '—')
+            : 'Registro rechazado por AEAT: '.($resultado['errores'][0]['descripcion'] ?? $resultado['descripcion'] ?? 'Error desconocido');
 
         return redirect()->route('verifactu.show', $verifactu)
             ->with($estado === 'aceptado' ? 'success' : 'error', $msg);
@@ -130,7 +144,7 @@ class VerifactuController extends Controller
         $verifactu->update(['estado' => $request->estado]);
 
         return redirect()->route('verifactu.show', $verifactu)
-            ->with('success', 'Estado actualizado a: ' . Verifactu::$estados[$request->estado]);
+            ->with('success', 'Estado actualizado a: '.Verifactu::$estados[$request->estado]);
     }
 
     public function declaracion()
@@ -148,7 +162,7 @@ class VerifactuController extends Controller
         $pdf = Pdf::loadView('verifactu.declaracion-pdf', compact('stats'))
             ->setPaper('a4', 'portrait');
 
-        return $pdf->download('declaracion_responsable_verifactu_' . date('Y-m-d') . '.pdf');
+        return $pdf->download('declaracion_responsable_verifactu_'.date('Y-m-d').'.pdf');
     }
 
     public function cumplimiento()
@@ -169,7 +183,7 @@ class VerifactuController extends Controller
         $pdf = Pdf::loadView('verifactu.cumplimiento-pdf', compact('stats'))
             ->setPaper('a4', 'portrait');
 
-        return $pdf->download('cumplimiento_tecnico_verifactu_' . date('Y-m-d') . '.pdf');
+        return $pdf->download('cumplimiento_tecnico_verifactu_'.date('Y-m-d').'.pdf');
     }
 
     public function verificarCadena()
@@ -198,7 +212,7 @@ class VerifactuController extends Controller
     public function descargarXml(Verifactu $verifactu)
     {
         $xml = $verifactu->buildAeatXml();
-        $filename = 'verifactu_' . $verifactu->codigo_registro . '.xml';
+        $filename = 'verifactu_'.$verifactu->codigo_registro.'.xml';
 
         return response($xml, 200, [
             'Content-Type' => 'application/xml',

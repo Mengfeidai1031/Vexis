@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
@@ -13,6 +15,7 @@ use Spatie\Permission\Models\Role;
 class UserController extends Controller
 {
     protected $userRepository;
+
     protected $restriccionRepository;
 
     /**
@@ -34,16 +37,28 @@ class UserController extends Controller
         $query = User::with(['empresa', 'departamento', 'centro'])
             ->withCount('restrictions');
 
-        if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
-        if ($request->filled('centro_id')) $query->where('centro_id', $request->centro_id);
-        if ($request->filled('departamento_id')) $query->where('departamento_id', $request->departamento_id);
-        if ($request->filled('rol')) $query->role($request->rol);
+        if ($request->filled('empresa_id')) {
+            $query->where('empresa_id', $request->empresa_id);
+        }
+        if ($request->filled('centro_id')) {
+            $query->where('centro_id', $request->centro_id);
+        }
+        if ($request->filled('departamento_id')) {
+            $query->where('departamento_id', $request->departamento_id);
+        }
+        if ($request->filled('rol')) {
+            $query->role($request->rol);
+        }
         if ($request->filled('nombre')) {
             $nombre = $request->nombre;
             $query->whereRaw("CONCAT(nombre, ' ', apellidos) = ?", [$nombre]);
         }
-        if ($request->filled('email')) $query->where('email', $request->email);
-        if ($request->filled('telefono')) $query->where('telefono', $request->telefono);
+        if ($request->filled('email')) {
+            $query->where('email', $request->email);
+        }
+        if ($request->filled('telefono')) {
+            $query->where('telefono', $request->telefono);
+        }
 
         // Sorting
         $sortable = ['id', 'nombre', 'apellidos', 'email', 'empresa_id', 'departamento_id', 'centro_id', 'telefono'];
@@ -68,7 +83,7 @@ class UserController extends Controller
     public function create()
     {
         $this->authorize('create', User::class);
-        
+
         $empresas = $this->userRepository->getEmpresas();
         $departamentos = $this->userRepository->getDepartamentos();
         $centros = $this->userRepository->getCentros();
@@ -84,7 +99,7 @@ class UserController extends Controller
     public function store(StoreUserRequest $request)
     {
         $this->authorize('create', User::class);
-        
+
         $user = $this->userRepository->create($request->validated());
 
         // Asignar roles si se proporcionaron
@@ -116,7 +131,7 @@ class UserController extends Controller
     public function show(User $user)
     {
         $this->authorize('view', $user);
-        
+
         return view('users.show', compact('user'));
     }
 
@@ -126,7 +141,7 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $this->authorize('update', $user);
-        
+
         $empresas = $this->userRepository->getEmpresas();
         $departamentos = $this->userRepository->getDepartamentos();
         $centros = $this->userRepository->getCentros();
@@ -143,9 +158,9 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, User $user)
     {
         $this->authorize('update', $user);
-        
+
         $user = $this->userRepository->update($user->id, $request->validated());
-        
+
         // Sincronizar roles
         if ($request->has('roles')) {
             // Convertir IDs a instancias de Role
@@ -164,7 +179,7 @@ class UserController extends Controller
             'departamentos' => $request->input('restrictions.departamentos', []),
         ];
         $this->restriccionRepository->syncUserRestrictions($user->id, $restrictions);
-    
+
         return redirect()->route('users.index')
             ->with('success', 'Usuario actualizado exitosamente.');
     }
@@ -175,7 +190,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $this->authorize('delete', $user);
-        
+
         $this->userRepository->delete($user->id);
 
         return redirect()->route('users.index')
@@ -188,6 +203,7 @@ class UserController extends Controller
     public function getCentrosByEmpresa(Request $request)
     {
         $centros = $this->userRepository->getCentrosByEmpresa($request->empresa_id);
+
         return response()->json($centros);
     }
 }

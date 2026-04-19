@@ -42,8 +42,9 @@ final class PrepararUsuariosPrueba extends Command
         $empresa1 = Empresa::first();
         $empresa2 = Empresa::skip(1)->first();
 
-        if (!$empresa1 || !$empresa2) {
+        if (! $empresa1 || ! $empresa2) {
             $this->error('❌ ERROR: Necesitas al menos 2 empresas en la base de datos');
+
             return Command::FAILURE;
         }
 
@@ -51,12 +52,13 @@ final class PrepararUsuariosPrueba extends Command
         $departamento = Departamento::first();
         $centro = Centro::where('empresa_id', $empresa1->id)->first();
 
-        if (!$departamento || !$centro) {
+        if (! $departamento || ! $centro) {
             $this->error('❌ ERROR: Necesitas al menos 1 departamento y 1 centro en la base de datos');
+
             return Command::FAILURE;
         }
 
-        $this->info("Empresas encontradas:");
+        $this->info('Empresas encontradas:');
         $this->line("  - Empresa 1: {$empresa1->nombre} (ID: {$empresa1->id})");
         $this->line("  - Empresa 2: {$empresa2->nombre} (ID: {$empresa2->id})");
         $this->newLine();
@@ -65,8 +67,9 @@ final class PrepararUsuariosPrueba extends Command
         $adminRole = Role::where('name', 'Administrador')->first();
         $userRole = Role::where('name', 'Usuario')->first();
 
-        if (!$adminRole) {
+        if (! $adminRole) {
             $this->error('❌ ERROR: No se encontró el rol "Administrador"');
+
             return Command::FAILURE;
         }
 
@@ -141,7 +144,7 @@ final class PrepararUsuariosPrueba extends Command
         // Añadir restricción: solo puede ver empresa 1
         // Esto permitirá ver TODOS los clientes, vehículos, etc. de esa empresa
         UserRestrictionHelper::addRestriction($userRestricted, 'empresa', $empresa1->id);
-        
+
         // NOTA: No añadimos restricciones de cliente/vehículo específicos porque
         // queremos que vea TODOS los recursos de la empresa, no solo uno específico
 
@@ -265,15 +268,15 @@ final class PrepararUsuariosPrueba extends Command
         $this->newLine();
 
         $this->line("Empresa 1: {$empresa1->nombre} (ID: {$empresa1->id})");
-        $this->line('  - Clientes: ' . Cliente::where('empresa_id', $empresa1->id)->count());
-        $this->line('  - Vehículos: ' . Vehiculo::where('empresa_id', $empresa1->id)->count());
-        $this->line('  - Centros: ' . Centro::where('empresa_id', $empresa1->id)->count());
+        $this->line('  - Clientes: '.Cliente::where('empresa_id', $empresa1->id)->count());
+        $this->line('  - Vehículos: '.Vehiculo::where('empresa_id', $empresa1->id)->count());
+        $this->line('  - Centros: '.Centro::where('empresa_id', $empresa1->id)->count());
         $this->newLine();
 
         $this->line("Empresa 2: {$empresa2->nombre} (ID: {$empresa2->id})");
-        $this->line('  - Clientes: ' . Cliente::where('empresa_id', $empresa2->id)->count());
-        $this->line('  - Vehículos: ' . Vehiculo::where('empresa_id', $empresa2->id)->count());
-        $this->line('  - Centros: ' . Centro::where('empresa_id', $empresa2->id)->count());
+        $this->line('  - Clientes: '.Cliente::where('empresa_id', $empresa2->id)->count());
+        $this->line('  - Vehículos: '.Vehiculo::where('empresa_id', $empresa2->id)->count());
+        $this->line('  - Centros: '.Centro::where('empresa_id', $empresa2->id)->count());
         $this->newLine();
 
         $this->info('✅ Usuarios de prueba preparados correctamente!');

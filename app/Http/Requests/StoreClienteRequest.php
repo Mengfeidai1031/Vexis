@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests;
 
 use App\Helpers\UserRestrictionHelper;
@@ -16,7 +18,7 @@ class StoreClienteRequest extends FormRequest
     public function rules(): array
     {
         $user = Auth::user();
-        
+
         return [
             'nombre' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
@@ -25,7 +27,7 @@ class StoreClienteRequest extends FormRequest
                 'exists:empresas,id',
                 function ($attribute, $value, $fail) use ($user) {
                     if ($user && UserRestrictionHelper::hasRestrictionsOfType($user, UserRestrictionHelper::TYPE_EMPRESA)) {
-                        if (!UserRestrictionHelper::canAccess($user, UserRestrictionHelper::TYPE_EMPRESA, $value)) {
+                        if (! UserRestrictionHelper::canAccess($user, UserRestrictionHelper::TYPE_EMPRESA, $value)) {
                             $fail('No tienes permiso para asignar clientes a esta empresa.');
                         }
                     }

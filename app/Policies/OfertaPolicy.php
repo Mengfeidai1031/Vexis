@@ -7,7 +7,6 @@ namespace App\Policies;
 use App\Helpers\UserRestrictionHelper;
 use App\Models\OfertaCabecera;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 final class OfertaPolicy
 {
@@ -26,17 +25,17 @@ final class OfertaPolicy
     public function view(User $user, OfertaCabecera $oferta): bool
     {
         // Verificar permiso general
-        if (!$user->can('ver ofertas')) {
+        if (! $user->can('ver ofertas')) {
             return false;
         }
 
         // Si el usuario no tiene restricciones, puede ver todas las ofertas
-        if (!UserRestrictionHelper::hasRestrictions($user)) {
+        if (! UserRestrictionHelper::hasRestrictions($user)) {
             return true;
         }
 
         // Cargar la relación cliente si no está cargada
-        if (!$oferta->relationLoaded('cliente') && $oferta->cliente_id) {
+        if (! $oferta->relationLoaded('cliente') && $oferta->cliente_id) {
             $oferta->load('cliente');
         }
 
@@ -67,17 +66,17 @@ final class OfertaPolicy
     public function update(User $user, OfertaCabecera $oferta): bool
     {
         // Verificar permiso general
-        if (!$user->can('editar ofertas')) {
+        if (! $user->can('editar ofertas')) {
             return false;
         }
 
         // Si el usuario no tiene restricciones, puede editar todas las ofertas
-        if (!UserRestrictionHelper::hasRestrictions($user)) {
+        if (! UserRestrictionHelper::hasRestrictions($user)) {
             return true;
         }
 
         // Cargar la relación cliente si no está cargada
-        if (!$oferta->relationLoaded('cliente') && $oferta->cliente_id) {
+        if (! $oferta->relationLoaded('cliente') && $oferta->cliente_id) {
             $oferta->load('cliente');
         }
 
@@ -97,17 +96,17 @@ final class OfertaPolicy
     public function delete(User $user, OfertaCabecera $oferta): bool
     {
         // Verificar permiso general
-        if (!$user->can('eliminar ofertas')) {
+        if (! $user->can('eliminar ofertas')) {
             return false;
         }
 
         // Si el usuario no tiene restricciones, puede eliminar todas las ofertas
-        if (!UserRestrictionHelper::hasRestrictions($user)) {
+        if (! UserRestrictionHelper::hasRestrictions($user)) {
             return true;
         }
 
         // Cargar la relación cliente si no está cargada
-        if (!$oferta->relationLoaded('cliente') && $oferta->cliente_id) {
+        if (! $oferta->relationLoaded('cliente') && $oferta->cliente_id) {
             $oferta->load('cliente');
         }
 
@@ -119,21 +118,5 @@ final class OfertaPolicy
 
         // Si la oferta no tiene cliente pero el usuario tiene restricciones, denegar acceso
         return false;
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, OfertaCabecera $oferta): bool
-    {
-        return false; // No implementado
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, OfertaCabecera $oferta): bool
-    {
-        return false; // No implementado
     }
 }

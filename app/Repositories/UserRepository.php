@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories;
 
-use App\Models\User;
-use App\Models\Empresa;
-use App\Models\Departamento;
 use App\Models\Centro;
+use App\Models\Departamento;
+use App\Models\Empresa;
+use App\Models\User;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
 
@@ -29,20 +31,20 @@ class UserRepository implements UserRepositoryInterface
     {
         return User::with(['empresa', 'departamento', 'centro'])
             ->withCount('restrictions')
-            ->where(function($query) use ($searchTerm) {
+            ->where(function ($query) use ($searchTerm) {
                 $query->where('nombre', 'like', "%{$searchTerm}%")
                     ->orWhere('apellidos', 'like', "%{$searchTerm}%")
                     ->orWhere('email', 'like', "%{$searchTerm}%")
                     ->orWhere('telefono', 'like', "%{$searchTerm}%")
                     ->orWhere('extension', 'like', "%{$searchTerm}%");
             })
-            ->orWhereHas('empresa', function($query) use ($searchTerm) {
+            ->orWhereHas('empresa', function ($query) use ($searchTerm) {
                 $query->where('nombre', 'like', "%{$searchTerm}%");
             })
-            ->orWhereHas('departamento', function($query) use ($searchTerm) {
+            ->orWhereHas('departamento', function ($query) use ($searchTerm) {
                 $query->where('nombre', 'like', "%{$searchTerm}%");
             })
-            ->orWhereHas('centro', function($query) use ($searchTerm) {
+            ->orWhereHas('centro', function ($query) use ($searchTerm) {
                 $query->where('nombre', 'like', "%{$searchTerm}%");
             })
             ->orderBy('created_at', 'desc')
@@ -76,7 +78,7 @@ class UserRepository implements UserRepositoryInterface
         $user = User::findOrFail($id);
 
         // Solo encriptar si se proporciona una nueva contraseña
-        if (isset($data['password']) && !empty($data['password'])) {
+        if (isset($data['password']) && ! empty($data['password'])) {
             $data['password'] = Hash::make($data['password']);
         } else {
             unset($data['password']);
@@ -93,6 +95,7 @@ class UserRepository implements UserRepositoryInterface
     public function delete(int $id)
     {
         $user = User::findOrFail($id);
+
         return $user->delete();
     }
 
@@ -127,7 +130,7 @@ class UserRepository implements UserRepositoryInterface
     {
         return Centro::where('empresa_id', $empresaId)->get();
     }
-    
+
     /**
      * Obtener todos los roles para el formulario
      */

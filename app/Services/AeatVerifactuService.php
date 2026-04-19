@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\Factura;
@@ -15,6 +17,7 @@ use Illuminate\Support\Facades\Log;
 class AeatVerifactuService
 {
     private bool $sandbox;
+
     private string $endpointUrl;
 
     public function __construct()
@@ -41,7 +44,7 @@ class AeatVerifactuService
 
         $qrUrl = Verifactu::generateQrUrl($factura, $this->sandbox);
 
-        $codigo = 'VRF-' . date('Ym') . '-' . str_pad(
+        $codigo = 'VRF-'.date('Ym').'-'.str_pad(
             Verifactu::whereYear('fecha_registro', date('Y'))->count() + 1,
             5, '0', STR_PAD_LEFT
         );
@@ -65,7 +68,7 @@ class AeatVerifactuService
             'nif_emisor' => $factura->empresa?->cif,
             'nombre_emisor' => $factura->empresa?->nombre,
             'nif_destinatario' => $factura->cliente?->dni,
-            'nombre_destinatario' => $factura->cliente ? $factura->cliente->nombre . ' ' . $factura->cliente->apellidos : null,
+            'nombre_destinatario' => $factura->cliente ? $factura->cliente->nombre.' '.$factura->cliente->apellidos : null,
             'importe_total' => $factura->total,
             'base_imponible' => $factura->subtotal,
             'cuota_tributaria' => $factura->iva_importe,
@@ -100,7 +103,7 @@ class AeatVerifactuService
             $response = Http::withHeaders([
                 'Content-Type' => 'application/xml',
             ])->withBody($xml, 'application/xml')
-              ->post($this->endpointUrl);
+                ->post($this->endpointUrl);
 
             if ($response->successful()) {
                 $responseData = $this->parseAeatResponse($response->body());
@@ -109,25 +112,28 @@ class AeatVerifactuService
                     'csv_aeat' => $responseData['csv'] ?? null,
                     'respuesta_aeat' => $responseData,
                 ]);
+
                 return $responseData;
             }
 
             $errorData = [
                 'estado' => 'rechazado',
-                'codigo_error' => 'HTTP-' . $response->status(),
+                'codigo_error' => 'HTTP-'.$response->status(),
                 'descripcion' => 'Error de comunicación con AEAT',
                 'fecha_respuesta' => now()->format('Y-m-d H:i:s'),
             ];
             $registro->update(['estado' => 'rechazado', 'respuesta_aeat' => $errorData]);
+
             return $errorData;
         } catch (\Exception $e) {
-            Log::error('Verifactu AEAT error: ' . $e->getMessage());
+            Log::error('Verifactu AEAT error: '.$e->getMessage());
             $errorData = [
                 'estado' => 'registrado',
                 'error' => $e->getMessage(),
                 'fecha_intento' => now()->format('Y-m-d H:i:s'),
             ];
             $registro->update(['respuesta_aeat' => $errorData]);
+
             return $errorData;
         }
     }
@@ -149,7 +155,7 @@ class AeatVerifactuService
             $errores[] = ['codigo' => '2000', 'descripcion' => 'Importe total debe ser mayor que 0'];
         }
 
-        if (!empty($errores)) {
+        if (! empty($errores)) {
             $responseData = [
                 'estado' => 'rechazado',
                 'csv' => null,
@@ -159,16 +165,17 @@ class AeatVerifactuService
                 'entorno' => 'sandbox',
             ];
             $registro->update(['estado' => 'rechazado', 'respuesta_aeat' => $responseData]);
+
             return $responseData;
         }
 
-        $csv = 'CSV' . strtoupper(substr(hash('sha256', $registro->hash_registro . now()->toString()), 0, 16));
+        $csv = 'CSV'.strtoupper(substr(hash('sha256', $registro->hash_registro.now()->toString()), 0, 16));
 
         $responseData = [
             'estado' => 'aceptado',
             'csv' => $csv,
             'resultado' => 'Correcto',
-            'codigo_registro_aeat' => 'AEAT-' . date('Y') . '-' . str_pad(rand(1, 999999), 6, '0', STR_PAD_LEFT),
+            'codigo_registro_aeat' => 'AEAT-'.date('Y').'-'.str_pad(rand(1, 999999), 6, '0', STR_PAD_LEFT),
             'fecha_respuesta' => now()->format('Y-m-d H:i:s'),
             'entorno' => 'sandbox',
             'detalle' => 'Registro aceptado correctamente en entorno de pruebas',
@@ -201,7 +208,7 @@ class AeatVerifactuService
     public static function generateQrImage(string $url): string
     {
         $builder = new Builder(
-            writer: new PngWriter(),
+            writer: new PngWriter,
             data: $url,
             encoding: new Encoding('UTF-8'),
             errorCorrectionLevel: ErrorCorrectionLevel::Medium,

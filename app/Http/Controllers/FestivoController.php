@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Festivo;
@@ -29,10 +31,10 @@ class FestivoController extends Controller
         $festivos = $query->paginate(20)->withQueryString();
 
         // Datos para calendario
-        $eventos = Festivo::where('anio', $anio)->get()->map(fn($f) => [
+        $eventos = Festivo::where('anio', $anio)->get()->map(fn ($f) => [
             'title' => $f->nombre,
             'start' => $f->fecha->format('Y-m-d'),
-            'color' => match($f->ambito) {
+            'color' => match ($f->ambito) {
                 'nacional' => '#e74c3c',
                 'autonomico' => '#3498db',
                 default => '#2ecc71',
@@ -93,6 +95,7 @@ class FestivoController extends Controller
     public function destroy(Festivo $festivo)
     {
         $festivo->delete();
+
         return redirect()->route('festivos.index')->with('success', 'Festivo eliminado correctamente.');
     }
 }

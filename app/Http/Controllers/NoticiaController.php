@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Noticia;
@@ -21,6 +23,7 @@ class NoticiaController extends Controller
             $query->where('categoria', $request->categoria);
         }
         $noticias = $query->orderByDesc('fecha_publicacion')->paginate(10)->withQueryString();
+
         return view('noticias.index', compact('noticias'));
     }
 
@@ -53,6 +56,7 @@ class NoticiaController extends Controller
     public function show(Noticia $noticia)
     {
         $noticia->load('autor');
+
         return view('noticias.show', compact('noticia'));
     }
 
@@ -81,6 +85,7 @@ class NoticiaController extends Controller
     public function destroy(Noticia $noticia)
     {
         $noticia->delete();
+
         return redirect()->route('noticias.index')->with('success', 'Noticia eliminada correctamente.');
     }
 }

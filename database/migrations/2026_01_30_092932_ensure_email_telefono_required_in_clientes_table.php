@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -16,11 +16,11 @@ return new class extends Migration
         DB::table('clientes')
             ->whereNull('email')
             ->update(['email' => 'sin-email@ejemplo.com']);
-        
+
         DB::table('clientes')
             ->whereNull('telefono')
             ->update(['telefono' => '000000000']);
-        
+
         // Luego, hacer los campos NOT NULL
         Schema::table('clientes', function (Blueprint $table) {
             $table->string('email')->nullable(false)->change();

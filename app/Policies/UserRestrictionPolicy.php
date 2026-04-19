@@ -6,7 +6,6 @@ namespace App\Policies;
 
 use App\Models\User;
 use App\Models\UserRestriction;
-use Illuminate\Auth\Access\Response;
 
 final class UserRestrictionPolicy
 {
@@ -53,21 +52,5 @@ final class UserRestrictionPolicy
     {
         // Verificar permiso general
         return $user->can('eliminar restricciones');
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, UserRestriction $userRestriction): bool
-    {
-        return false; // No implementado
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, UserRestriction $userRestriction): bool
-    {
-        return false; // No implementado
     }
 }

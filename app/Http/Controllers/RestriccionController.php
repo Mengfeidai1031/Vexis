@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\User;
@@ -24,10 +26,10 @@ class RestriccionController extends Controller
         $restricciones = $this->restriccionRepository->all();
 
         if ($request->filled('user_id')) {
-            $restricciones = $restricciones->filter(fn($r) => $r->user_id == $request->user_id)->values();
+            $restricciones = $restricciones->filter(fn ($r) => $r->user_id == $request->user_id)->values();
         }
         if ($request->filled('tipo')) {
-            $restricciones = $restricciones->filter(fn($r) => $r->restrictable_type === $request->tipo)->values();
+            $restricciones = $restricciones->filter(fn ($r) => $r->restrictable_type === $request->tipo)->values();
         }
 
         // Sorting
@@ -53,10 +55,10 @@ class RestriccionController extends Controller
     public function create()
     {
         $this->authorize('create', UserRestriction::class);
-        
+
         $users = $this->restriccionRepository->getUsers();
         $availableRestrictions = $this->restriccionRepository->getAvailableRestrictions();
-        
+
         return view('restricciones.create', compact('users', 'availableRestrictions'));
     }
 
@@ -66,7 +68,7 @@ class RestriccionController extends Controller
     public function store(Request $request)
     {
         $this->authorize('create', UserRestriction::class);
-        
+
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'restriction_type' => 'required|in:empresa,cliente,vehiculo,centro,departamento',
@@ -89,7 +91,7 @@ class RestriccionController extends Controller
     public function show(UserRestriction $restriccion)
     {
         $this->authorize('view', $restriccion);
-        
+
         return view('restricciones.show', compact('restriccion'));
     }
 
@@ -99,10 +101,10 @@ class RestriccionController extends Controller
     public function edit(UserRestriction $restriccion)
     {
         $this->authorize('update', $restriccion);
-        
+
         $users = $this->restriccionRepository->getUsers();
         $availableRestrictions = $this->restriccionRepository->getAvailableRestrictions();
-        
+
         return view('restricciones.edit', compact('restriccion', 'users', 'availableRestrictions'));
     }
 
@@ -112,7 +114,7 @@ class RestriccionController extends Controller
     public function update(Request $request, UserRestriction $restriccion)
     {
         $this->authorize('update', $restriccion);
-        
+
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'restriction_type' => 'required|in:empresa,cliente,vehiculo,centro,departamento',
@@ -135,9 +137,9 @@ class RestriccionController extends Controller
     public function destroy(UserRestriction $restriccion)
     {
         $this->authorize('delete', $restriccion);
-        
+
         $this->restriccionRepository->delete($restriccion->id);
-        
+
         return redirect()->route('restricciones.index')
             ->with('success', 'Restricción eliminada exitosamente.');
     }

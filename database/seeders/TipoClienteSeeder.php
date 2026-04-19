@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\TipoCliente;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
 class TipoClienteSeeder extends Seeder

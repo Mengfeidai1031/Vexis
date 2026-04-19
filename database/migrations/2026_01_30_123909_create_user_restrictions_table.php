@@ -17,10 +17,10 @@ return new class extends Migration
             $table->string('restriction_type', 50); // empresa, centro, vehiculo, cliente, departamento
             $table->unsignedBigInteger('restriction_value'); // ID del registro
             $table->timestamps();
-            
+
             // Índice único para evitar duplicados
             $table->unique(['user_id', 'restriction_type', 'restriction_value'], 'user_restriction_unique');
-            
+
             // Índices para búsquedas rápidas
             $table->index('user_id');
             $table->index(['restriction_type', 'restriction_value']);

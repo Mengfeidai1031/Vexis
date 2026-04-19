@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Almacen;
+use Illuminate\Database\Seeder;
 
 class AlmacenSeeder extends Seeder
 {

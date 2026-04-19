@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
+use App\Exports\ClientesExport;
 use App\Http\Requests\StoreClienteRequest;
 use App\Http\Requests\UpdateClienteRequest;
 use App\Models\Cliente;
-use App\Exports\ClientesExport;
 use App\Repositories\Interfaces\ClienteRepositoryInterface;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class ClienteController extends Controller
 {
@@ -24,18 +26,32 @@ class ClienteController extends Controller
     {
         $query = Cliente::with(['empresa', 'tipoCliente']);
 
-        if ($request->filled('tipo_cliente_id')) $query->where('tipo_cliente_id', $request->tipo_cliente_id);
+        if ($request->filled('tipo_cliente_id')) {
+            $query->where('tipo_cliente_id', $request->tipo_cliente_id);
+        }
 
-        if ($request->filled('empresa_id')) $query->where('empresa_id', $request->empresa_id);
+        if ($request->filled('empresa_id')) {
+            $query->where('empresa_id', $request->empresa_id);
+        }
         if ($request->filled('nombre')) {
             $nombre = $request->nombre;
             $query->whereRaw("CONCAT(nombre, ' ', apellidos) = ?", [$nombre]);
         }
-        if ($request->filled('dni')) $query->where('dni', $request->dni);
-        if ($request->filled('codigo_postal')) $query->where('codigo_postal', $request->codigo_postal);
-        if ($request->filled('domicilio')) $query->where('domicilio', $request->domicilio);
-        if ($request->filled('email')) $query->where('email', $request->email);
-        if ($request->filled('telefono')) $query->where('telefono', $request->telefono);
+        if ($request->filled('dni')) {
+            $query->where('dni', $request->dni);
+        }
+        if ($request->filled('codigo_postal')) {
+            $query->where('codigo_postal', $request->codigo_postal);
+        }
+        if ($request->filled('domicilio')) {
+            $query->where('domicilio', $request->domicilio);
+        }
+        if ($request->filled('email')) {
+            $query->where('email', $request->email);
+        }
+        if ($request->filled('telefono')) {
+            $query->where('telefono', $request->telefono);
+        }
 
         // Sorting
         $sortable = ['id', 'nombre', 'apellidos', 'dni', 'empresa_id', 'domicilio', 'codigo_postal', 'tipo_cliente_id', 'email', 'telefono'];
@@ -59,13 +75,14 @@ class ClienteController extends Controller
 
         $empresas = $this->clienteRepository->getEmpresas();
         $tipos_cliente = \App\Models\TipoCliente::where('activo', true)->orderBy('nombre')->get();
+
         return view('clientes.create', compact('empresas', 'tipos_cliente'));
     }
 
     public function store(StoreClienteRequest $request)
     {
         $this->authorize('create', Cliente::class);
-        
+
         $this->clienteRepository->create($request->validated());
 
         return redirect()->route('clientes.index')
@@ -75,23 +92,24 @@ class ClienteController extends Controller
     public function show(Cliente $cliente)
     {
         $this->authorize('view', $cliente);
-        
+
         return view('clientes.show', compact('cliente'));
     }
 
     public function edit(Cliente $cliente)
     {
         $this->authorize('update', $cliente);
-        
+
         $empresas = $this->clienteRepository->getEmpresas();
         $tipos_cliente = \App\Models\TipoCliente::where('activo', true)->orderBy('nombre')->get();
+
         return view('clientes.edit', compact('cliente', 'empresas', 'tipos_cliente'));
     }
 
     public function update(UpdateClienteRequest $request, Cliente $cliente)
     {
         $this->authorize('update', $cliente);
-        
+
         $this->clienteRepository->update($cliente->id, $request->validated());
 
         return redirect()->route('clientes.index')
@@ -104,6 +122,7 @@ class ClienteController extends Controller
 
         try {
             $this->clienteRepository->delete($cliente->id);
+
             return redirect()->route('clientes.index')
                 ->with('success', 'Cliente eliminado exitosamente.');
         } catch (\Exception $e) {
@@ -114,15 +133,17 @@ class ClienteController extends Controller
 
     public function export()
     {
-        $fileName = 'clientes_' . date('Y-m-d_His') . '.xlsx';
-        return Excel::download(new ClientesExport(), $fileName);
+        $fileName = 'clientes_'.date('Y-m-d_His').'.xlsx';
+
+        return Excel::download(new ClientesExport, $fileName);
     }
 
     public function exportPdf()
     {
         $clientes = Cliente::with('empresa')->orderBy('apellidos')->get();
         $pdf = Pdf::loadView('clientes.pdf', compact('clientes'));
-        $fileName = 'clientes_' . date('Y-m-d_His') . '.pdf';
+        $fileName = 'clientes_'.date('Y-m-d_His').'.pdf';
+
         return $pdf->download($fileName);
     }
 }

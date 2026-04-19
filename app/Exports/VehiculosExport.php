@@ -7,13 +7,13 @@ namespace App\Exports;
 use App\Models\Vehiculo;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class VehiculosExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize, WithStyles
+class VehiculosExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping, WithStyles
 {
     /**
      * @return \Illuminate\Support\Collection
@@ -21,13 +21,13 @@ class VehiculosExport implements FromCollection, WithHeadings, WithMapping, Shou
     public function collection()
     {
         $userEmpresaId = Auth::user()?->empresa_id;
-        
+
         $query = Vehiculo::with(['empresa', 'marca']);
-        
+
         if ($userEmpresaId) {
             $query->where('empresa_id', $userEmpresaId);
         }
-        
+
         return $query->orderBy('modelo', 'asc')
             ->orderBy('version', 'asc')
             ->get();
@@ -35,8 +35,6 @@ class VehiculosExport implements FromCollection, WithHeadings, WithMapping, Shou
 
     /**
      * Define los encabezados de las columnas
-     *
-     * @return array
      */
     public function headings(): array
     {
@@ -57,8 +55,7 @@ class VehiculosExport implements FromCollection, WithHeadings, WithMapping, Shou
     /**
      * Mapea cada fila de datos
      *
-     * @param Vehiculo $vehiculo
-     * @return array
+     * @param  Vehiculo  $vehiculo
      */
     public function map($vehiculo): array
     {
@@ -78,9 +75,6 @@ class VehiculosExport implements FromCollection, WithHeadings, WithMapping, Shou
 
     /**
      * Aplica estilos a la hoja de cálculo
-     *
-     * @param Worksheet $sheet
-     * @return array
      */
     public function styles(Worksheet $sheet): array
     {

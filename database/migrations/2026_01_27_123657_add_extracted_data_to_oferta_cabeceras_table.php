@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('cliente_dni_pdf')->nullable()->after('cliente_nombre_pdf');
             $table->string('vehiculo_modelo_pdf')->nullable()->after('cliente_dni_pdf');
             $table->string('vehiculo_chasis_pdf')->nullable()->after('vehiculo_modelo_pdf');
-            
+
             // Datos de cálculo
             $table->decimal('base_imponible', 10, 2)->nullable()->after('pdf_path');
             $table->decimal('impuestos', 10, 2)->nullable()->after('base_imponible');

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('provincia', 255);
             $table->string('municipio', 255);
             $table->timestamps();
-        
+
             // Relación con empresas
             $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');
         });

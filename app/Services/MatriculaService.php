@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\Vehiculo;
@@ -8,7 +10,7 @@ use Illuminate\Support\Facades\Http;
 
 class MatriculaService
 {
-    private const LETRAS = ['B','C','D','F','G','H','J','K','L','M','N','P','R','S','T','V','W','X','Y','Z'];
+    private const LETRAS = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'R', 'S', 'T', 'V', 'W', 'X', 'Y', 'Z'];
 
     /**
      * Genera la siguiente matrícula disponible.
@@ -35,6 +37,7 @@ class MatriculaService
         }
 
         $mayor = $this->obtenerMayor($candidatas);
+
         return $this->calcularSiguiente($mayor);
     }
 
@@ -45,7 +48,7 @@ class MatriculaService
     {
         $vehiculo = Vehiculo::whereNotNull('matricula')
             ->where('matricula', '!=', '')
-            ->orderByRaw("SUBSTRING(matricula, -3) DESC, CAST(SUBSTRING(matricula, 1, 4) AS UNSIGNED) DESC")
+            ->orderByRaw('SUBSTRING(matricula, -3) DESC, CAST(SUBSTRING(matricula, 1, 4) AS UNSIGNED) DESC')
             ->first();
 
         return $vehiculo?->matricula;
@@ -63,7 +66,7 @@ class MatriculaService
 
                 if ($response->successful()) {
                     $data = $response->json();
-                    if (!empty($data['plate'])) {
+                    if (! empty($data['plate'])) {
                         $plate = strtoupper(trim($data['plate']));
                         if (self::validarFormato($plate)) {
                             return self::formatear($plate);
@@ -98,7 +101,7 @@ class MatriculaService
         $l2 = min((int) floor(($comboActual % ($totalLetras * $totalLetras)) / $totalLetras), $totalLetras - 1);
         $l3 = min($comboActual % $totalLetras, $totalLetras - 1);
 
-        $letras = self::LETRAS[$l1] . self::LETRAS[$l2] . self::LETRAS[$l3];
+        $letras = self::LETRAS[$l1].self::LETRAS[$l2].self::LETRAS[$l3];
 
         return "0000 {$letras}";
     }
@@ -115,7 +118,9 @@ class MatriculaService
     private function matriculaToIndex(string $matricula): int
     {
         $clean = str_replace(' ', '', strtoupper(trim($matricula)));
-        if (strlen($clean) < 7) return 0;
+        if (strlen($clean) < 7) {
+            return 0;
+        }
 
         $numeros = (int) substr($clean, 0, 4);
         $letras = substr($clean, -3);
@@ -124,9 +129,12 @@ class MatriculaService
         $l2 = array_search($letras[1], self::LETRAS);
         $l3 = array_search($letras[2], self::LETRAS);
 
-        if ($l1 === false || $l2 === false || $l3 === false) return 0;
+        if ($l1 === false || $l2 === false || $l3 === false) {
+            return 0;
+        }
 
         $totalLetras = count(self::LETRAS);
+
         return ($l1 * $totalLetras * $totalLetras + $l2 * $totalLetras + $l3) * 10000 + $numeros;
     }
 
@@ -168,7 +176,7 @@ class MatriculaService
         }
 
         $num = str_pad($numeros, 4, '0', STR_PAD_LEFT);
-        $let = self::LETRAS[$l1] . self::LETRAS[$l2] . self::LETRAS[$l3];
+        $let = self::LETRAS[$l1].self::LETRAS[$l2].self::LETRAS[$l3];
 
         return "{$num} {$let}";
     }
@@ -176,6 +184,7 @@ class MatriculaService
     public static function validarFormato(string $matricula): bool
     {
         $clean = str_replace(' ', '', strtoupper(trim($matricula)));
+
         return (bool) preg_match('/^\d{4}[BCDFGHJKLMNPRSTVWXYZ]{3}$/', $clean);
     }
 
@@ -183,8 +192,9 @@ class MatriculaService
     {
         $clean = str_replace(' ', '', strtoupper(trim($matricula)));
         if (strlen($clean) === 7) {
-            return substr($clean, 0, 4) . ' ' . substr($clean, 4, 3);
+            return substr($clean, 0, 4).' '.substr($clean, 4, 3);
         }
+
         return strtoupper(trim($matricula));
     }
 }

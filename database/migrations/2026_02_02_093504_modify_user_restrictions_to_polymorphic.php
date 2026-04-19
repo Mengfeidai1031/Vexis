@@ -16,7 +16,7 @@ return new class extends Migration
             ->whereNull('restriction_type')
             ->whereNull('restriction_value')
             ->delete();
-        
+
         // Eliminar duplicados basados en user_id, restriction_type y restriction_value
         \DB::statement('
             DELETE r1 FROM user_restrictions r1
@@ -34,7 +34,7 @@ return new class extends Migration
             } catch (\Exception $e) {
                 // El índice puede no existir
             }
-            
+
             try {
                 $table->dropIndex(['restriction_type', 'restriction_value']);
             } catch (\Exception $e) {
@@ -45,7 +45,7 @@ return new class extends Migration
         // Verificar si las columnas antiguas existen antes de eliminarlas
         $columns = \DB::select('SHOW COLUMNS FROM user_restrictions');
         $hasOldColumns = collect($columns)->pluck('Field')->contains('restriction_type');
-        
+
         if ($hasOldColumns) {
             Schema::table('user_restrictions', function (Blueprint $table) {
                 // Eliminar columnas antiguas
@@ -55,8 +55,8 @@ return new class extends Migration
 
         // Verificar si las columnas nuevas ya existen
         $hasNewColumns = collect($columns)->pluck('Field')->contains('restrictable_type');
-        
-        if (!$hasNewColumns) {
+
+        if (! $hasNewColumns) {
             Schema::table('user_restrictions', function (Blueprint $table) {
                 // Añadir columnas polimórficas
                 $table->morphs('restrictable'); // Crea restrictable_type y restrictable_id
@@ -82,15 +82,15 @@ return new class extends Migration
         Schema::table('user_restrictions', function (Blueprint $table) {
             // Verificar si el índice único ya existe
             $indexes = \DB::select("SHOW INDEX FROM user_restrictions WHERE Key_name = 'user_restrictable_unique'");
-            
+
             if (empty($indexes)) {
                 // Nuevo índice único para evitar duplicados
                 $table->unique(['user_id', 'restrictable_type', 'restrictable_id'], 'user_restrictable_unique');
             }
-            
+
             // Verificar si el índice de búsqueda ya existe
             $searchIndexes = \DB::select("SHOW INDEX FROM user_restrictions WHERE Key_name LIKE 'user_restrictions_restrictable%'");
-            
+
             if (empty($searchIndexes)) {
                 // Índice para búsquedas rápidas
                 $table->index(['restrictable_type', 'restrictable_id']);
@@ -114,7 +114,7 @@ return new class extends Migration
             // Restaurar columnas antiguas
             $table->string('restriction_type', 50);
             $table->unsignedBigInteger('restriction_value');
-            
+
             // Restaurar índices
             $table->unique(['user_id', 'restriction_type', 'restriction_value'], 'user_restriction_unique');
             $table->index(['restriction_type', 'restriction_value']);

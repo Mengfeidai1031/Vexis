@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Noticia;
+use Illuminate\Database\Seeder;
 
 class NoticiaSeeder extends Seeder
 {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -24,6 +26,13 @@ class IncidenciaArchivo extends Model
         });
     }
 
-    public function incidencia(): BelongsTo { return $this->belongsTo(Incidencia::class); }
-    public function user(): BelongsTo { return $this->belongsTo(User::class); }
+    public function incidencia(): BelongsTo
+    {
+        return $this->belongsTo(Incidencia::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

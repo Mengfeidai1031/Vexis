@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -17,11 +19,30 @@ class Reparto extends Model
 
     protected $casts = ['fecha_solicitud' => 'date', 'fecha_entrega' => 'date'];
 
-    public function stock(): BelongsTo { return $this->belongsTo(Stock::class); }
-    public function almacenOrigen(): BelongsTo { return $this->belongsTo(Almacen::class, 'almacen_origen_id'); }
-    public function almacenDestino(): BelongsTo { return $this->belongsTo(Almacen::class, 'almacen_destino_id'); }
-    public function empresa(): BelongsTo { return $this->belongsTo(Empresa::class); }
-    public function centro(): BelongsTo { return $this->belongsTo(Centro::class); }
+    public function stock(): BelongsTo
+    {
+        return $this->belongsTo(Stock::class);
+    }
+
+    public function almacenOrigen(): BelongsTo
+    {
+        return $this->belongsTo(Almacen::class, 'almacen_origen_id');
+    }
+
+    public function almacenDestino(): BelongsTo
+    {
+        return $this->belongsTo(Almacen::class, 'almacen_destino_id');
+    }
+
+    public function empresa(): BelongsTo
+    {
+        return $this->belongsTo(Empresa::class);
+    }
+
+    public function centro(): BelongsTo
+    {
+        return $this->belongsTo(Centro::class);
+    }
 
     public static $estados = [
         'pendiente' => 'Pendiente',

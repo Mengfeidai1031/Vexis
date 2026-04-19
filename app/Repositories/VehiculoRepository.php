@@ -1,151 +1,112 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories;
 
 use App\Helpers\UserRestrictionHelper;
-use App\Models\Vehiculo;
 use App\Models\Empresa;
+use App\Models\Vehiculo;
 use App\Repositories\Interfaces\VehiculoRepositoryInterface;
 use App\Traits\FiltersByEmpresa;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Collection;
 
 class VehiculoRepository implements VehiculoRepositoryInterface
 {
     use FiltersByEmpresa;
 
-    public function all()
+    public function all(): LengthAwarePaginator
     {
         $query = Vehiculo::with(['empresa', 'marca']);
-        $user = $this->getAuthUser();
-        
-        // Si tiene restricciones de vehículo específico, usar solo esas (prioridad)
-        if ($user && UserRestrictionHelper::hasRestrictionsOfType($user, UserRestrictionHelper::TYPE_VEHICULO)) {
-            $allowedVehiculoIds = UserRestrictionHelper::getRestrictionValues($user, UserRestrictionHelper::TYPE_VEHICULO);
-            if (!empty($allowedVehiculoIds)) {
-                $query->whereIn('id', $allowedVehiculoIds);
-            } else {
-                // Si no hay vehículos permitidos, no mostrar nada
-                $query->whereRaw('1 = 0');
-            }
-        } 
-        // Si NO tiene restricciones de vehículo pero SÍ tiene restricciones de empresa, filtrar por empresa
-        elseif ($user && UserRestrictionHelper::hasRestrictionsOfType($user, UserRestrictionHelper::TYPE_EMPRESA)) {
-            $query = $this->filterByUserRestrictions($query, UserRestrictionHelper::TYPE_EMPRESA, 'empresa_id');
-        }
-        // Si no tiene restricciones, mostrar todo (no aplicar filtros)
-        
-        return $query->orderBy('modelo', 'asc')
-            ->paginate(10);
+        $this->applyRestrictionPriority($query, UserRestrictionHelper::TYPE_VEHICULO, 'id');
+
+        return $query->orderBy('modelo')->paginate(10);
     }
 
-    public function search($searchTerm)
+    public function search(string $searchTerm): LengthAwarePaginator
     {
         $query = Vehiculo::with(['empresa', 'marca'])
-            ->where(function($query) use ($searchTerm) {
-                $query->where('chasis', 'like', "%{$searchTerm}%")
+            ->where(function ($q) use ($searchTerm) {
+                $q->where('chasis', 'like', "%{$searchTerm}%")
                     ->orWhere('matricula', 'like', "%{$searchTerm}%")
                     ->orWhere('modelo', 'like', "%{$searchTerm}%")
                     ->orWhere('version', 'like', "%{$searchTerm}%")
                     ->orWhere('color_externo', 'like', "%{$searchTerm}%")
                     ->orWhere('color_interno', 'like', "%{$searchTerm}%");
             })
-            ->orWhereHas('empresa', function($query) use ($searchTerm) {
-                $query->where('nombre', 'like', "%{$searchTerm}%");
+            ->orWhereHas('empresa', function ($q) use ($searchTerm) {
+                $q->where('nombre', 'like', "%{$searchTerm}%");
             });
-        
-        $user = $this->getAuthUser();
-        
-        // Si tiene restricciones de vehículo específico, usar solo esas (prioridad)
-        if ($user && UserRestrictionHelper::hasRestrictionsOfType($user, UserRestrictionHelper::TYPE_VEHICULO)) {
-            $allowedVehiculoIds = UserRestrictionHelper::getRestrictionValues($user, UserRestrictionHelper::TYPE_VEHICULO);
-            if (!empty($allowedVehiculoIds)) {
-                $query->whereIn('id', $allowedVehiculoIds);
-            } else {
-                // Si no hay vehículos permitidos, no mostrar nada
-                $query->whereRaw('1 = 0');
-            }
-        } 
-        // Si NO tiene restricciones de vehículo pero SÍ tiene restricciones de empresa, filtrar por empresa
-        elseif ($user && UserRestrictionHelper::hasRestrictionsOfType($user, UserRestrictionHelper::TYPE_EMPRESA)) {
-            $query = $this->filterByUserRestrictions($query, UserRestrictionHelper::TYPE_EMPRESA, 'empresa_id');
-        }
-        // Si no tiene restricciones, mostrar todo (no aplicar filtros)
-        
-        return $query->orderBy('modelo', 'asc')
-            ->paginate(10);
+
+        $this->applyRestrictionPriority($query, UserRestrictionHelper::TYPE_VEHICULO, 'id');
+
+        return $query->orderBy('modelo')->paginate(10);
     }
 
-    public function find(int $id)
+    public function find(int $id): Vehiculo
     {
         $vehiculo = Vehiculo::with(['empresa', 'marca'])->findOrFail($id);
-        
-        // Verificar acceso por empresa y vehículo
-        if (!$this->canAccessEmpresa($vehiculo->empresa_id) || !$this->canAccessVehiculo($vehiculo->id)) {
+
+        if (! $this->canAccessEmpresa($vehiculo->empresa_id) || ! $this->canAccessVehiculo($vehiculo->id)) {
             throw new ModelNotFoundException('Vehículo no encontrado o no tienes permiso para acceder.');
         }
-        
+
         return $vehiculo;
     }
 
-    public function create(array $data)
+    public function create(array $data): Vehiculo
     {
-        // Si hay restricciones de empresa, validar que la empresa esté permitida
-        $user = $this->getAuthUser();
-        if ($user && UserRestrictionHelper::hasRestrictionsOfType($user, UserRestrictionHelper::TYPE_EMPRESA)) {
-            if (!UserRestrictionHelper::canAccess($user, UserRestrictionHelper::TYPE_EMPRESA, $data['empresa_id'])) {
-                throw new \Exception('No tienes permiso para crear vehículos en esta empresa.');
-            }
-        }
-        
+        $this->assertCanAssignEmpresa(
+            isset($data['empresa_id']) ? (int) $data['empresa_id'] : null,
+            'No tienes permiso para crear vehículos en esta empresa.'
+        );
+
         return Vehiculo::create($data);
     }
 
-    public function update(int $id, array $data)
+    public function update(int $id, array $data): Vehiculo
     {
         $vehiculo = Vehiculo::findOrFail($id);
-        
-        // Verificar acceso
-        if (!$this->canAccessEmpresa($vehiculo->empresa_id) || !$this->canAccessVehiculo($vehiculo->id)) {
+
+        if (! $this->canAccessEmpresa($vehiculo->empresa_id) || ! $this->canAccessVehiculo($vehiculo->id)) {
             throw new ModelNotFoundException('Vehículo no encontrado o no tienes permiso para acceder.');
         }
-        
-        // Si hay restricciones de empresa, validar que la nueva empresa esté permitida
-        if (isset($data['empresa_id'])) {
-            $user = $this->getAuthUser();
-            if ($user && UserRestrictionHelper::hasRestrictionsOfType($user, UserRestrictionHelper::TYPE_EMPRESA)) {
-                if (!UserRestrictionHelper::canAccess($user, UserRestrictionHelper::TYPE_EMPRESA, $data['empresa_id'])) {
-                    throw new \Exception('No tienes permiso para asignar vehículos a esta empresa.');
-                }
-            }
+
+        if (array_key_exists('empresa_id', $data)) {
+            $this->assertCanAssignEmpresa(
+                (int) $data['empresa_id'],
+                'No tienes permiso para asignar vehículos a esta empresa.'
+            );
         }
-        
+
         $vehiculo->update($data);
+
         return $vehiculo;
     }
 
-    public function delete(int $id)
+    public function delete(int $id): bool
     {
         $vehiculo = Vehiculo::findOrFail($id);
-        
-        // Verificar acceso
-        if (!$this->canAccessEmpresa($vehiculo->empresa_id) || !$this->canAccessVehiculo($vehiculo->id)) {
+
+        if (! $this->canAccessEmpresa($vehiculo->empresa_id) || ! $this->canAccessVehiculo($vehiculo->id)) {
             throw new ModelNotFoundException('Vehículo no encontrado o no tienes permiso para acceder.');
         }
-        
-        return $vehiculo->delete();
+
+        return (bool) $vehiculo->delete();
     }
 
-    public function getEmpresas()
+    public function getEmpresas(): Collection
     {
         $user = $this->getAuthUser();
-        
-        // Si no tiene restricciones de empresa, devolver todas
-        if (!$user || !UserRestrictionHelper::hasRestrictionsOfType($user, UserRestrictionHelper::TYPE_EMPRESA)) {
+
+        if (! $user || ! UserRestrictionHelper::hasRestrictionsOfType($user, UserRestrictionHelper::TYPE_EMPRESA)) {
             return Empresa::all();
         }
-        
-        // Si tiene restricciones, devolver solo las permitidas
+
         $allowedEmpresaIds = UserRestrictionHelper::getRestrictionValues($user, UserRestrictionHelper::TYPE_EMPRESA);
+
         return Empresa::whereIn('id', $allowedEmpresaIds)->get();
     }
 }

@@ -6,13 +6,13 @@ namespace App\Exports;
 
 use App\Models\Factura;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class FacturasExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize, WithStyles
+class FacturasExport implements FromCollection, ShouldAutoSize, WithHeadings, WithMapping, WithStyles
 {
     public function collection()
     {
@@ -30,7 +30,7 @@ class FacturasExport implements FromCollection, WithHeadings, WithMapping, Shoul
         return [
             $factura->codigo_factura,
             $factura->venta?->codigo_venta ?? '',
-            $factura->cliente ? $factura->cliente->nombre . ' ' . $factura->cliente->apellidos : '',
+            $factura->cliente ? $factura->cliente->nombre.' '.$factura->cliente->apellidos : '',
             $factura->marca?->nombre ?? '',
             $factura->empresa?->nombre ?? '',
             $factura->centro?->nombre ?? '',

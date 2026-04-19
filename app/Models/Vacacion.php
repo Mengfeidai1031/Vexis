@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -40,6 +42,7 @@ class Vacacion extends Model
     public static function diasUsados(int $userId, ?int $anio = null): int
     {
         $anio = $anio ?? now()->year;
+
         return static::where('user_id', $userId)
             ->where('estado', 'aprobada')
             ->whereYear('fecha_inicio', $anio)
