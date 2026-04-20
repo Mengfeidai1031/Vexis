@@ -11,20 +11,22 @@ return new class extends Migration
         Schema::create('stocks', function (Blueprint $table) {
             $table->id();
             $table->string('referencia', 50);
-            $table->string('nombre_pieza', 255);
+            $table->string('nombre_pieza', 200);
             $table->string('descripcion', 500)->nullable();
-            $table->string('marca_pieza', 100)->nullable();
-            $table->integer('cantidad')->default(0);
-            $table->integer('stock_minimo')->default(1);
+            $table->string('marca_pieza', 80)->nullable();
+            $table->unsignedInteger('cantidad')->default(0);
+            $table->unsignedInteger('stock_minimo')->default(1);
             $table->decimal('precio_unitario', 10, 2)->default(0);
             $table->string('ubicacion_almacen', 100)->nullable();
-            $table->foreignId('almacen_id')->constrained('almacenes')->onDelete('cascade');
-            $table->foreignId('empresa_id')->constrained('empresas')->onDelete('cascade');
-            $table->foreignId('centro_id')->constrained('centros')->onDelete('cascade');
+            $table->foreignId('almacen_id')->constrained('almacenes')->cascadeOnDelete();
+            $table->foreignId('empresa_id')->constrained('empresas')->cascadeOnDelete();
+            $table->foreignId('centro_id')->constrained('centros')->cascadeOnDelete();
             $table->boolean('activo')->default(true);
             $table->timestamps();
 
             $table->index('referencia');
+            $table->index(['almacen_id', 'activo']);
+            $table->index(['empresa_id', 'centro_id']);
         });
     }
 

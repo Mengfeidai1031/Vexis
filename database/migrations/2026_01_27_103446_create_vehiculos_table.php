@@ -6,29 +6,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('vehiculos', function (Blueprint $table) {
             $table->id();
             $table->string('chasis', 17)->unique();
-            $table->string('modelo', 255);
-            $table->string('version', 255);
-            $table->string('color_externo', 255);
-            $table->string('color_interno', 255);
-            $table->unsignedBigInteger('empresa_id');
+            $table->string('matricula', 10)->nullable()->unique();
+            $table->string('modelo', 100);
+            $table->string('version', 150);
+            $table->string('color_externo', 100);
+            $table->string('color_interno', 100);
+            $table->foreignId('empresa_id')->constrained('empresas')->cascadeOnDelete();
+            $table->foreignId('marca_id')->nullable()->constrained('marcas')->nullOnDelete();
             $table->timestamps();
+            $table->softDeletes();
 
-            // Relación con empresas
-            $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');
+            $table->index(['empresa_id', 'marca_id']);
+            $table->index('modelo');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('vehiculos');

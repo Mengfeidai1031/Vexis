@@ -6,28 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('centros', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre', 255);
-            $table->unsignedBigInteger('empresa_id');
+            $table->string('nombre', 150);
+            $table->foreignId('empresa_id')->constrained('empresas')->cascadeOnDelete();
             $table->string('direccion', 255);
-            $table->string('provincia', 255);
-            $table->string('municipio', 255);
+            $table->string('provincia', 100);
+            $table->string('municipio', 100);
             $table->timestamps();
 
-            // Relación con empresas
-            $table->foreign('empresa_id')->references('id')->on('empresas')->onDelete('cascade');
+            $table->index(['empresa_id', 'provincia']);
+            $table->index('municipio');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('centros');

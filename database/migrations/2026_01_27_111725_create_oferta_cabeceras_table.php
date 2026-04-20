@@ -6,28 +6,35 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('oferta_cabeceras', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('cliente_id');
-            $table->unsignedBigInteger('vehiculo_id');
-            $table->datetime('fecha');
-            $table->string('pdf_path')->nullable(); // Ruta del PDF original
+            $table->foreignId('cliente_id')->constrained('clientes')->cascadeOnDelete();
+            $table->foreignId('vehiculo_id')->nullable()->constrained('vehiculos')->nullOnDelete();
+            $table->dateTime('fecha');
+
+            // Datos extraídos del PDF de oferta
+            $table->string('cliente_nombre_pdf', 255)->nullable();
+            $table->string('cliente_dni_pdf', 15)->nullable();
+            $table->string('vehiculo_modelo_pdf', 150)->nullable();
+            $table->string('vehiculo_chasis_pdf', 17)->nullable();
+
+            $table->string('pdf_path', 500)->nullable();
+
+            // Totales de cálculo
+            $table->decimal('base_imponible', 12, 2)->nullable();
+            $table->decimal('impuestos', 12, 2)->nullable();
+            $table->decimal('total_sin_impuestos', 12, 2)->nullable();
+            $table->decimal('total_con_impuestos', 12, 2)->nullable();
+
             $table->timestamps();
 
-            // Relaciones
-            $table->foreign('cliente_id')->references('id')->on('clientes')->onDelete('cascade');
-            $table->foreign('vehiculo_id')->references('id')->on('vehiculos')->onDelete('cascade');
+            $table->index(['cliente_id', 'fecha']);
+            $table->index('fecha');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('oferta_cabeceras');

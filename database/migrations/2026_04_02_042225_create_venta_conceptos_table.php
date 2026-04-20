@@ -15,6 +15,8 @@ return new class extends Migration
             $table->string('descripcion', 255);
             $table->decimal('importe', 12, 2);
             $table->timestamps();
+
+            $table->index(['venta_id', 'tipo']);
         });
     }
 

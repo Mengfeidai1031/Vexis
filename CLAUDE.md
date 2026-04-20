@@ -89,3 +89,61 @@ PHPUnit with in-memory SQLite (configured in `phpunit.xml`). Test suites: Unit a
 ### Session, Cache, Queue
 
 All three use the `database` driver.
+
+## Modo operación de Claude
+
+- **Cero cortesía**: sin saludos, despedidas ni transiciones sociales.
+- **Output directo**: si se pide código, entregar solo el código; si es corrección, aplicar el cambio.
+- **Explicaciones mínimas**: solo ante breaking changes críticos o errores de lógica graves. Viñetas breves, nunca párrafos.
+- **Búsquedas web cavernícola**: keywords inconexas, lenguaje simplificado (ej: `react-router docs v7 breaking changes`).
+- **Prioridad técnica**: eficiencia y precisión por encima de brevedad; eliminar solo la "capa social".
+
+## Verificaciones ejecutadas
+
+### Verificación 1 — Auditoría de Código y Refactorización (Clean Code / SOLID / Patrones)
+Commit: `5038a10 refactor: audit and refactor the code to ensure it complies with Clean Code, SOLID and design patterns`.
+Alcance cubierto:
+- Eliminación de código duplicado (DRY) en controllers/services.
+- Extracción de lógica de negocio de controllers a Services, Actions y Repositories.
+- Validación centralizada en Form Requests (`app/Http/Requests/`, 12 clases).
+- Normalización de nombres (variables, métodos, clases, rutas) según convenciones Laravel.
+- Eliminación de código muerto, imports no usados, comentarios obsoletos, `dd()/dump()`.
+- Tipado estricto PHP 8.2: `declare(strict_types=1)`, return types y property types.
+- `php artisan optimize` + Larastan nivel 6+.
+- Uso correcto de Eloquent: `with()`, `withCount()` para evitar N+1.
+
+Prohibiciones respetadas: no se tocaron vistas Blade visualmente, no se cambiaron nombres de rutas públicas, no se alteraron migraciones ya ejecutadas (esto cambió en V2), no se añadieron dependencias nuevas.
+
+### Verificación 2 — Auditoría de Base de Datos e Integridad (DBA Senior)
+Refactor agresivo aprovechando entorno pre-producción (migrate:fresh permitido).
+
+**Consolidación de migraciones**: 11 ALTER eliminadas y plegadas en sus CREATE. Orden corregido (marcas y tipos_cliente creados antes de vehiculos/clientes). `create_tipos_cliente_table` movido a `2026_01_26_200000`, `create_marcas_table` movido a `2026_01_26_210000`.
+
+**FKs**: todas las `unsignedBigInteger` manuales → `foreignId().constrained()` con `cascadeOnDelete` / `nullOnDelete` coherente. `user_restrictions` usa morph nativo (`morphs('restrictable')`).
+
+**Índices añadidos** (cubren todos los filtros y agregaciones de Dataxis): `users(empresa_id,centro_id)`, `clientes(empresa_id,tipo_cliente_id)`, `vehiculos(empresa_id,marca_id)`, `ventas(empresa_id,estado)` + `(fecha_venta,empresa_id)` + `(vendedor_id,fecha_venta)`, `facturas(empresa_id,estado)` + `(fecha_factura,empresa_id)`, `citas_taller(fecha,mecanico_id)` + `(taller_id,fecha)`, `stocks(referencia)` + `(almacen_id,activo)`, `repartos(empresa_id,estado)` + `(fecha_solicitud,estado)`, `verifactus(factura_id,estado)` + `(fecha_registro,estado)`, `incidencias(estado,prioridad)`, etc.
+
+**Tipos optimizados**: `decimal(12,2)` en importes (antes `double`), `enum` nativo MySQL en estados (facturas, verifactus, oferta_lineas.tipo, naming_pcs.tipo, settings.type, tasaciones.combustible, catalogo_precios.combustible), `unsignedInteger`/`unsignedSmallInteger` en contadores y años.
+
+**SoftDeletes**: añadido en `Cliente` y `Vehiculo` (histórico preservado, requisito del ERP).
+
+**Unique constraints nuevos**: `empresas.cif`, `departamentos.abreviatura`, `naming_pcs.nombre_equipo`.
+
+**Charset**: `utf8mb4_unicode_ci` (default de conexión `mysql`/`mariadb` en `config/database.php`).
+
+**Seeders**:
+- Super Admin único: **Meng Fei Dai** — `mengfei.dai@grupo-dai.com` / `password` (nombre: Meng Fei, apellidos: Dai). NO crear otros Super Admins.
+- Usuarios restringidos (morph polimórfico): `laura.martin@grupo-dai.com` (empresa 2 Tenerife) y `antonio.ramirez@grupo-dai.com` (centros 1,2 Gran Canaria).
+- Email domain: `@grupo-dai.com` (formato `nombre.apellido@grupo-dai.com`).
+- Rango histórico ampliado para Dataxis: **2024-01-01 → 2026-04-20**. Volúmenes: 120 ventas, 120 facturas, 120 verifactu encadenados por `fecha_factura`, 50 tasaciones, 150 citas, 80 repartos, 25 incidencias, 26 clientes (cubriendo 6 tipos), 28 vehículos, 59 catálogo precios, noticias y festivos distribuidos 2024-2026.
+- Orden `DatabaseSeeder`: Empresa → Departamento → Centro → RolePermission → TipoCliente → Marca → User → Cliente → Vehiculo → CatalogoPrecio → Noticia → Festivo → Taller → Almacen → DatosEjemplo → Verifactu → Setting.
+
+**Archivos eliminados**:
+- `app/Console/Commands/PrepararUsuariosPrueba.php`
+- `app/Console/Commands/TestUserRestrictions.php`
+- `scripts/preparar_usuarios_prueba.php` (y directorio `scripts/`)
+- `database/seeders/UserRestrictionsTestSeeder.php`
+
+**Empresa y ámbito**: Grupo DAI, sede en Canarias, 3 empresas (DAI Motor Gran Canaria/Tenerife/Lanzarote), 7 centros, fiscalidad **IGIC 7%** (CP `35xxx`/`38xxx`) vs IVA 21% peninsular, clave régimen Verifactu `08` en Canarias.
+
+**Verificado**: `php artisan migrate:fresh --seed` ejecuta limpio.

@@ -6,30 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('user_restrictions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('restriction_type', 50); // empresa, centro, vehiculo, cliente, departamento
-            $table->unsignedBigInteger('restriction_value'); // ID del registro
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->morphs('restrictable');
             $table->timestamps();
 
-            // Índice único para evitar duplicados
-            $table->unique(['user_id', 'restriction_type', 'restriction_value'], 'user_restriction_unique');
-
-            // Índices para búsquedas rápidas
-            $table->index('user_id');
-            $table->index(['restriction_type', 'restriction_value']);
+            $table->unique(['user_id', 'restrictable_type', 'restrictable_id'], 'user_restrictable_unique');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('user_restrictions');

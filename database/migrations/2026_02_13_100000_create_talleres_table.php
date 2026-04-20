@@ -16,14 +16,18 @@ return new class extends Migration
             $table->string('codigo_postal', 5)->nullable();
             $table->string('localidad', 100)->nullable();
             $table->string('isla', 50)->nullable();
-            $table->string('telefono', 12)->nullable();
-            $table->foreignId('empresa_id')->constrained('empresas')->onDelete('cascade');
-            $table->foreignId('centro_id')->constrained('centros')->onDelete('cascade');
-            $table->foreignId('marca_id')->nullable()->constrained('marcas')->onDelete('set null');
-            $table->integer('capacidad_diaria')->default(10);
+            $table->string('telefono', 15)->nullable();
+            $table->foreignId('empresa_id')->constrained('empresas')->cascadeOnDelete();
+            $table->foreignId('centro_id')->constrained('centros')->cascadeOnDelete();
+            $table->foreignId('marca_id')->nullable()->constrained('marcas')->nullOnDelete();
+            $table->unsignedSmallInteger('capacidad_diaria')->default(10);
             $table->boolean('activo')->default(true);
             $table->text('observaciones')->nullable();
             $table->timestamps();
+
+            $table->index(['empresa_id', 'centro_id']);
+            $table->index(['isla', 'activo']);
+            $table->index('marca_id');
         });
     }
 

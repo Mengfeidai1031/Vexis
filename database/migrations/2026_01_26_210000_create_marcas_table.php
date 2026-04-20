@@ -12,10 +12,12 @@ return new class extends Migration
             $table->id();
             $table->string('nombre', 100);
             $table->string('slug', 50)->unique();
-            $table->string('color', 7)->default('#333333');
+            $table->string('color', 9)->default('#333333');
             $table->string('logo_url', 255)->nullable();
             $table->boolean('activa')->default(true);
             $table->timestamps();
+
+            $table->index('activa');
         });
     }
 

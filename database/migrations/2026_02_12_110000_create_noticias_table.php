@@ -16,9 +16,12 @@ return new class extends Migration
             $table->enum('categoria', ['general', 'empresa', 'comercial', 'rrhh', 'tecnologia'])->default('general');
             $table->boolean('destacada')->default(false);
             $table->boolean('publicada')->default(true);
-            $table->foreignId('autor_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('autor_id')->constrained('users')->cascadeOnDelete();
             $table->timestamp('fecha_publicacion')->useCurrent();
             $table->timestamps();
+
+            $table->index(['publicada', 'fecha_publicacion']);
+            $table->index(['categoria', 'destacada']);
         });
     }
 

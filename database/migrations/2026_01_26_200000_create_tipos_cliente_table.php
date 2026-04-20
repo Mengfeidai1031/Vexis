@@ -17,19 +17,10 @@ return new class extends Migration
             $table->boolean('activo')->default(true);
             $table->timestamps();
         });
-
-        Schema::table('clientes', function (Blueprint $table) {
-            $table->foreignId('tipo_cliente_id')->nullable()->after('empresa_id')
-                ->constrained('tipos_cliente')->nullOnDelete();
-        });
     }
 
     public function down(): void
     {
-        Schema::table('clientes', function (Blueprint $table) {
-            $table->dropForeign(['tipo_cliente_id']);
-            $table->dropColumn('tipo_cliente_id');
-        });
         Schema::dropIfExists('tipos_cliente');
     }
 };

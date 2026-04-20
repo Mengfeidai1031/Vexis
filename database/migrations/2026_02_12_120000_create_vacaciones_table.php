@@ -10,15 +10,18 @@ return new class extends Migration
     {
         Schema::create('vacaciones', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->date('fecha_inicio');
             $table->date('fecha_fin');
-            $table->integer('dias_solicitados');
+            $table->unsignedSmallInteger('dias_solicitados');
             $table->enum('estado', ['pendiente', 'aprobada', 'rechazada'])->default('pendiente');
             $table->text('motivo')->nullable();
             $table->text('respuesta')->nullable();
-            $table->foreignId('aprobado_por')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('aprobado_por')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
+
+            $table->index(['user_id', 'estado']);
+            $table->index(['fecha_inicio', 'fecha_fin']);
         });
     }
 

@@ -3,9 +3,10 @@
 ## Modo operación
 - Modo Ejecución Pura: cero cortesía, output directo, explicaciones mínimas (solo breaking changes o errores graves), viñetas breves.
 - Prioridad: eficiencia técnica y precisión. Sin capa social.
+- Búsquedas web: keywords cavernícola (ej: `react-router docs v7 breaking changes`).
 
 ## Proyecto
-Laravel 12 + PHP 8.2 + MySQL 8 (`vexis_db`). App full-stack Blade (no monorepo) para Grupo DAI (automoción).
+Laravel 12 + PHP 8.2 + MySQL 8 (`vexis_db`). App full-stack Blade (no monorepo) para **Grupo DAI** (automoción, Canarias).
 Módulos: Gestión, Comercial (ofertas/ventas/tasaciones/facturas/verifactu), Recambios, Talleres, Dataxis, Cliente portal.
 
 ## Stack
@@ -15,40 +16,46 @@ Módulos: Gestión, Comercial (ofertas/ventas/tasaciones/facturas/verifactu), Re
 
 ## Patrones
 - Repository Pattern: `app/Repositories/` bind en `AppServiceProvider` (Users, Clientes, Vehiculos, Ofertas, Restricciones)
-- Policies en `app/Policies/` (8). `UserRestrictionHelper` = acceso polimórfico (empresa/cliente/vehiculo)
+- Policies en `app/Policies/` (8). `UserRestrictionHelper` = acceso polimórfico (empresa/cliente/vehiculo/centro/departamento)
 - Services en `app/Services/` (ej. `OfertaPdfService` Nissan/Renault con transacciones)
 - FormRequests en `app/Http/Requests/` (12)
+- SoftDeletes en Cliente y Vehiculo (histórico)
 
 ## Jerarquía multi-tenant
-Empresa → Centro → Departamento. Restricciones vía `UserRestriction` polimórfico.
+Empresa → Centro → Departamento. Restricciones vía `UserRestriction` polimórfico (`morphs('restrictable')`).
+3 empresas seeded: DAI Motor Gran Canaria / Tenerife / Lanzarote. 7 centros.
+
+## Fiscalidad
+IGIC 7% en Canarias (CP `35xxx` / `38xxx`) vs IVA 21% peninsular. Verifactu clave régimen `08` en Canarias, `01` resto.
 
 ## Rutas
 `routes/web.php` (~596 líneas) organizado por módulo con middleware de permisos.
 
 ## Frontend design system
 `resources/views/layouts/app.blade.php`: CSS vars (primary #33AADD), dark mode `data-theme`, Plus Jakarta Sans.
-Sistemas de clases:
-- `.vx-*` base (cards, tables, forms, badges, alerts, pagination, avatars, actions)
-- `.mod-*` premium para vistas inicio de módulos (banner + secciones + grid + cards con icono gradiente y arrow hover)
-- `.dx-*` Dataxis (KPIs, charts responsive con `.dx-chart-sm`/`.dx-chart-lg`/`.dx-grid`/`.dx-grid-full`)
-- `.cli-*` portal cliente (premium, gradientes, hover elevation)
-Tablas con thead sticky (`position:sticky;top:0;z-index:5`).
-Flash messages globales (`success`/`error`/`warning`/`info`) inyectados antes de `@yield('content')`.
+Clases: `.vx-*` base (cards, tables, forms, badges, alerts, pagination, avatars, actions) · `.mod-*` inicio módulos · `.dx-*` Dataxis · `.cli-*` portal cliente.
+Tablas con thead sticky (`position:sticky;top:0;z-index:5`). Flash messages globales en layout.
 
 ## Convenciones
-- Filtros: usar `<x-filtros-avanzados>` con `<select>` + collections distintas. JS auto-convierte a dropdown searchable cuando >2 opciones.
-- Emails seeder: dominio `@grupo-dai.com`.
+- Filtros: `<x-filtros-avanzados>` con `<select>` + collections distintas. JS auto-convierte a dropdown searchable cuando >2 opciones.
+- Emails: dominio `@grupo-dai.com` (formato `nombre.apellido@grupo-dai.com`).
 - Form grids: `.vx-form-grid`, `.vx-form-grid-3`, `.vx-form-full`, gap 16px.
 - Show pages: max-width 800px (1 col) / 950px (2 col).
-- Charts Chart.js: `responsive:true, maintainAspectRatio:false` siempre. Doughnut/pie/polar/radar canvas 180px, line/bar full-width 120px.
-- Comercial inicio: 3 secciones (Gestión Administrativa / Gestión Ventas / Gestión de Vehículos) que coinciden con dropdown del menú.
+- Charts Chart.js: `responsive:true, maintainAspectRatio:false`. Doughnut/pie/polar/radar canvas 180px, line/bar full-width 120px.
 - Destroy con archivos: limpiar `Storage::disk('public')->deleteDirectory()` + eliminar registros relacionados.
 
+## Super Admin único
+**Meng Fei Dai** — `mengfei.dai@grupo-dai.com` / `password`. Nombre: Meng Fei / Apellidos: Dai. Departamento Informática, empresa 1, centro 1. **No crear otros Super Admins**.
+Usuarios con restricciones (morph): `laura.martin@grupo-dai.com` (empresa 2 TF), `antonio.ramirez@grupo-dai.com` (centros 1 y 2 GC).
+
 ## Coherencia migraciones/seeders
-- Vehículos seeded deben referenciar modelos del catálogo.
-- Ventas/facturas/verifactu/repartos/stocks deben referenciar registros reales previamente seeded (vendedor, cliente, vehículo, factura, etc.).
-- Tasaciones excluidas (son externas, sin registro previo necesario).
-- Verifactu se genera desde factura (o al mismo tiempo si viene de venta).
+- Vehículos seeded referencian catálogo real (marca_id, modelo, version).
+- Ventas/facturas/verifactu/repartos/stocks referencian registros reales previamente seeded.
+- Tasaciones excluidas (externas).
+- Verifactu se genera desde factura (encadenado por hash `fecha_factura` → `hash_anterior`).
+- Orden DatabaseSeeder: Empresa → Departamento → Centro → RolePermission → TipoCliente → Marca → User → Cliente → Vehiculo → CatalogoPrecio → Noticia → Festivo → Taller → Almacen → DatosEjemplo → Verifactu → Setting.
+- Rango histórico seeded: **2024-01-01 → 2026-04-20** (para visualización Dataxis).
+- Volúmenes aproximados: 120 ventas, 120 facturas, 120 verifactu, 50 tasaciones, 150 citas, 80 repartos, 25 incidencias, 26 clientes, 28 vehículos, 59 catálogo.
 
 ## Comandos
 ```
@@ -65,17 +72,46 @@ php artisan migrate:fresh --seed
 PHPUnit + SQLite in-memory (`phpunit.xml`). Suites Unit/Feature.
 
 ## Infra
-Session/cache/queue = driver `database`.
+Session/cache/queue = driver `database`. Charset `utf8mb4_unicode_ci`.
 
 ## Git
 Branch actual: `develop`. Main para PRs: `main`.
-Últimos commits relevantes: Dataxis views, sort component reutilizable, reorganización menús Cliente (Noticias/Talleres), submenús Gestión Admin/Vehículos en Comercial, fix layout user/técnico en Incidencias.
+Últimos commits relevantes: refactor SOLID/Clean Code (V1), consistency audit, redesign views, migraciones/seeders coherentes, filtros searchable.
 
-## Estado refactor 10 fases
-Fases 1-10 completadas:
-1-5: previas (controladores, policies, services, repositories, requests)
-6: shortcuts módulos en /welcome y /dashboard
-7: filtros searchable dropdown coherentes en todos los index
-8: migraciones/seeders coherentes (FKs reales, emails @grupo-dai.com)
-9: UI/UX polish (`.mod-*`, `.dx-*`, `.cli-*`, sticky thead, flash global)
-10: auditoría global (rutas, modelos, permisos, validación, security, dead code, file storage cleanup en destroys)
+## Estado refactor 10 fases (previo)
+Fases 1-10 completadas: controladores, policies, services, repositories, requests, shortcuts /welcome, filtros searchable, migraciones/seeders coherentes, UI/UX polish (`.mod-*`/`.dx-*`/`.cli-*`/sticky thead/flash global), auditoría global.
+
+## Verificación 1 — Auditoría Código (Clean Code/SOLID/Patrones)
+Commit `5038a10`. Alcance ejecutado:
+- DRY: eliminado duplicado en controllers/services.
+- Lógica de negocio extraída de controllers a Services/Actions/Repositories.
+- Validación en Form Requests (12 clases existentes).
+- Nombres normalizados (convenciones Laravel) en variables, métodos, clases, rutas.
+- Código muerto, imports no usados, comentarios obsoletos y `dd()/dump()` eliminados.
+- Tipado estricto PHP 8.2: `declare(strict_types=1)`, return types, property types.
+- `php artisan optimize` + Larastan 6+.
+- Eloquent: `with()` / `withCount()` para N+1.
+Prohibiciones respetadas: vistas Blade intactas visualmente, rutas públicas sin cambios, sin nuevas dependencias.
+
+## Verificación 2 — Auditoría BD (DBA Senior)
+Refactor pre-producción (migrate:fresh permitido).
+
+**Migraciones consolidadas**: 11 ALTER plegadas en sus CREATE. `create_tipos_cliente_table` → `2026_01_26_200000`, `create_marcas_table` → `2026_01_26_210000` (antes de vehiculos/clientes).
+
+**FKs**: todas con `foreignId().constrained()` + `cascadeOnDelete` / `nullOnDelete`. `user_restrictions` usa `morphs('restrictable')` directo.
+
+**Índices clave**: `users(empresa_id,centro_id)`, `clientes(empresa_id,tipo_cliente_id)`, `vehiculos(empresa_id,marca_id)`, `ventas(fecha_venta,empresa_id)` + `(vendedor_id,fecha_venta)`, `facturas(fecha_factura,empresa_id)`, `citas_taller(fecha,mecanico_id)`, `stocks(referencia)`, `verifactus(factura_id,estado)`, `incidencias(estado,prioridad)`, etc.
+
+**Tipos optimizados**: `decimal(12,2)` en importes (reemplazó `double`), enums MySQL en estados (facturas, verifactus, oferta_lineas, naming_pcs, settings, combustibles), `unsigned*Integer` en contadores.
+
+**SoftDeletes**: Cliente, Vehiculo (histórico requerido).
+
+**Uniques nuevos**: `empresas.cif`, `departamentos.abreviatura`, `naming_pcs.nombre_equipo`.
+
+**Eliminados**:
+- `app/Console/Commands/PrepararUsuariosPrueba.php`
+- `app/Console/Commands/TestUserRestrictions.php`
+- `scripts/preparar_usuarios_prueba.php` (directorio `scripts/` vaciado)
+- `database/seeders/UserRestrictionsTestSeeder.php`
+
+**Verificado**: `php artisan migrate:fresh --seed` ejecuta limpio.
