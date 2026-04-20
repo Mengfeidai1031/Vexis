@@ -49,3 +49,7 @@ Thumbs.db
 *.swp
 *.swo
 *~
+
+# Archivos de contexto de asistentes
+.claude_cotext
+CLAUDE.md
