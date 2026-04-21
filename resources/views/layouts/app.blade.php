@@ -567,6 +567,9 @@
                 <button type="button" onclick="setViewMode('dev'); closeMobileToolsMenu();"><i class="bi bi-code-slash"></i> Vista desarrollador</button>
                 <button type="button" onclick="setViewMode('client'); closeMobileToolsMenu();"><i class="bi bi-person"></i> Vista cliente</button>
                 @auth
+                    @role('Super Admin')
+                    <a href="{{ route('logs.index') }}"><i class="bi bi-journal-text"></i> Visor de logs</a>
+                    @endrole
                     <button type="button" onclick="toggleNotifications(); closeMobileToolsMenu();"><i class="bi bi-bell"></i> Notificaciones</button>
                     <a href="{{ route('dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
                     <a href="{{ route('profile.edit') }}"><i class="bi bi-person-gear"></i> Editar Perfil</a>
@@ -589,6 +592,15 @@
             <button class="vx-icon-btn" onclick="toggleTheme()" title="Cambiar tema" id="themeToggle">
                 <i class="bi bi-moon"></i>
             </button>
+
+            @auth
+                @role('Super Admin')
+                <!-- Log Viewer (Super Admin) -->
+                <a href="{{ route('logs.index') }}" class="vx-icon-btn" title="Visor de logs">
+                    <i class="bi bi-journal-text"></i>
+                </a>
+                @endrole
+            @endauth
 
             @auth
             <!-- Notifications -->

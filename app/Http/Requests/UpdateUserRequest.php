@@ -6,6 +6,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 
 class UpdateUserRequest extends FormRequest
 {
@@ -32,7 +33,7 @@ class UpdateUserRequest extends FormRequest
             ],
             'telefono' => 'nullable|string|max:12',
             'extension' => 'nullable|string|max:10',
-            'password' => 'nullable|string|min:6|confirmed',
+            'password' => ['nullable', 'string', 'confirmed', Password::min(8)->letters()],
             'roles' => 'nullable|array',
             'roles.*' => 'exists:roles,id',
         ];
@@ -49,7 +50,7 @@ class UpdateUserRequest extends FormRequest
             'email.required' => 'El email es obligatorio.',
             'email.email' => 'El email debe ser una dirección válida.',
             'email.unique' => 'Este email ya está registrado.',
-            'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
         ];
     }

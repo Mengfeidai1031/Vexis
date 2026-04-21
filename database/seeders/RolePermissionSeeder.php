@@ -185,9 +185,10 @@ class RolePermissionSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'subir documentos vehiculos']);
         Permission::firstOrCreate(['name' => 'eliminar documentos vehiculos']);
 
-        // Rol Mecánico / Recepción Taller
+        // Rol Mecánico / Recepción Taller / Cliente (registro público)
         Role::firstOrCreate(['name' => 'Mecánico']);
         Role::firstOrCreate(['name' => 'Recepción Taller']);
+        Role::firstOrCreate(['name' => 'Cliente']);
 
         // Crear rol de Super Admin (tiene todos los permisos)
         $superAdminRole = Role::firstOrCreate(['name' => 'Super Admin']);
@@ -268,6 +269,10 @@ class RolePermissionSeeder extends Seeder
             'ver vehículos', 'ver historial vehiculos', 'subir documentos vehiculos',
             'ver incidencias', 'crear incidencias',
         ]);
+
+        // Rol Cliente (registro público — sólo accede a módulo cliente, sin permisos de CRUD)
+        $clienteRole = Role::findByName('Cliente');
+        $clienteRole->syncPermissions([]);
 
         // Crear rol de Consultor (solo lectura)
         $consultorRole = Role::firstOrCreate(['name' => 'Consultor']);

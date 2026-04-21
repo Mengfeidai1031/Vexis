@@ -72,6 +72,13 @@
             <div class="mod-card-info"><h4>Política</h4><p>Política de seguridad del sistema</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
+        @role('Super Admin')
+        <a href="{{ route('logs.index') }}" class="mod-card">
+            <div class="mod-card-icon" style="background:linear-gradient(135deg,#E67E22,#C0392B);"><i class="bi bi-journal-text"></i></div>
+            <div class="mod-card-info"><h4>Logs del sistema</h4><p>Monitor de errores y eventos de seguridad</p></div>
+            <i class="bi bi-arrow-right mod-card-arrow"></i>
+        </a>
+        @endrole
     </div>
 </div>
 @endcanany

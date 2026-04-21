@@ -133,8 +133,9 @@
                     </button>
                 </form>
 
+                @if(app()->environment('local'))
                 <div class="vx-test-users">
-                    <h5><i class="bi bi-info-circle"></i> Usuarios de prueba</h5>
+                    <h5><i class="bi bi-info-circle"></i> Usuarios de prueba (solo entorno local)</h5>
                     <div class="vx-test-user">
                         <span>Super Admin</span>
                         <code>superadmin@grupodai.com</code>
@@ -159,6 +160,7 @@
                         Contraseña para todos: <code>password</code>
                     </div>
                 </div>
+                @endif
                 <div style="text-align: center; margin-top: 16px;">
                     <span style="font-size: 13px; color: var(--vx-text-muted);">¿No tienes cuenta? <a href="{{ route('register') }}" style="color: var(--vx-primary); font-weight: 600;">Registrarse</a></span>
                 </div>

@@ -10,6 +10,8 @@ use App\Models\User;
 use App\Repositories\Interfaces\RestriccionRepositoryInterface;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
@@ -102,10 +104,9 @@ class UserController extends Controller
 
         $user = $this->userRepository->create($request->validated());
 
-        // Asignar roles si se proporcionaron
+        // Asignar roles si se proporcionaron (bloquea escalada a Super Admin salvo Super Admin).
         if ($request->has('roles')) {
-            // Convertir IDs a instancias de Role
-            $roles = Role::whereIn('id', $request->roles)->get();
+            $roles = $this->filterAssignableRoles($request->roles);
             $user->syncRoles($roles);
         }
 
@@ -161,13 +162,17 @@ class UserController extends Controller
 
         $user = $this->userRepository->update($user->id, $request->validated());
 
-        // Sincronizar roles
+        // Sincronizar roles (bloquea escalada a Super Admin salvo Super Admin; preserva Super Admin existente).
         if ($request->has('roles')) {
-            // Convertir IDs a instancias de Role
-            $roles = Role::whereIn('id', $request->roles)->get();
+            $roles = $this->filterAssignableRoles($request->roles, $user);
             $user->syncRoles($roles);
         } else {
-            $user->syncRoles([]);
+            // No permitir que un no-Super-Admin revoque el rol Super Admin de otro usuario.
+            if ($user->hasRole('Super Admin') && ! Auth::user()?->hasRole('Super Admin')) {
+                // No tocar roles si no es Super Admin quien edita.
+            } else {
+                $user->syncRoles([]);
+            }
         }
 
         // Gestionar restricciones
@@ -205,5 +210,51 @@ class UserController extends Controller
         $centros = $this->userRepository->getCentrosByEmpresa($request->empresa_id);
 
         return response()->json($centros);
+    }
+
+    /**
+     * Filtra IDs de roles asegurando que:
+     * - Solo Super Admin puede asignar el rol "Super Admin".
+     * - Solo Super Admin puede asignar el rol "Administrador".
+     * - Nunca se asigna el rol "Cliente" desde el panel admin (es de uso exclusivo registro público).
+     * - Al editar a un Super Admin existente, si el actor no es Super Admin, preserva ese rol.
+     */
+    private function filterAssignableRoles(array $roleIds, ?User $target = null): \Illuminate\Support\Collection
+    {
+        $currentUser = Auth::user();
+        $isSuperAdmin = $currentUser?->hasRole('Super Admin') ?? false;
+
+        $roles = Role::whereIn('id', $roleIds)->get();
+
+        $filtered = $roles->reject(function (Role $role) use ($isSuperAdmin, $currentUser) {
+            if ($role->name === 'Cliente') {
+                Log::channel('security')->warning('role.assignment.blocked.cliente', [
+                    'actor_id' => $currentUser?->id,
+                    'role' => $role->name,
+                ]);
+
+                return true;
+            }
+            if (in_array($role->name, ['Super Admin', 'Administrador'], true) && ! $isSuperAdmin) {
+                Log::channel('security')->warning('role.assignment.privilege_escalation_attempt', [
+                    'actor_id' => $currentUser?->id,
+                    'role' => $role->name,
+                ]);
+
+                return true;
+            }
+
+            return false;
+        })->values();
+
+        // Preservar Super Admin si el actor no es Super Admin y el objetivo lo tiene.
+        if ($target && $target->hasRole('Super Admin') && ! $isSuperAdmin) {
+            $superAdminRole = Role::where('name', 'Super Admin')->first();
+            if ($superAdminRole) {
+                $filtered = $filtered->push($superAdminRole)->unique('id')->values();
+            }
+        }
+
+        return $filtered;
     }
 }

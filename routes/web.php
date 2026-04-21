@@ -15,6 +15,7 @@ use App\Http\Controllers\EmpresaController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\FestivoController;
 use App\Http\Controllers\IncidenciaController;
+use App\Http\Controllers\LogViewerController;
 use App\Http\Controllers\MecanicoController;
 use App\Http\Controllers\NamingPcController;
 use App\Http\Controllers\NoticiaController;
@@ -46,9 +47,9 @@ Route::get('/', function () {
 // Rutas de autenticación (públicas)
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10,1');
     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
-    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:5,1');
 });
 
 // Rutas protegidas (requieren autenticación)
@@ -435,6 +436,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/permisos/create', [PermissionController::class, 'create'])->name('permisos.create');
         Route::post('/permisos', [PermissionController::class, 'store'])->name('permisos.store');
         Route::delete('/permisos/{permiso}', [PermissionController::class, 'destroy'])->name('permisos.destroy');
+
+        // Visor de Logs (monitor tiempo real de seguridad y errores)
+        Route::get('/gestion/logs', [LogViewerController::class, 'index'])->name('logs.index');
+        Route::get('/gestion/logs/stream', [LogViewerController::class, 'stream'])->middleware('throttle:60,1')->name('logs.stream');
+        Route::get('/gestion/logs/download', [LogViewerController::class, 'download'])->name('logs.download');
+        Route::post('/gestion/logs/clear', [LogViewerController::class, 'clear'])->name('logs.clear');
     });
 
     // === DATAXIS (Análisis de datos) ===
@@ -449,11 +456,11 @@ Route::middleware('auth')->group(function () {
     // === MÓDULO CLIENTE ===
     Route::get('/cliente', [ClienteModuloController::class, 'inicio'])->name('cliente.inicio');
     Route::get('/cliente/chatbot', [ClienteModuloController::class, 'chatbot'])->name('cliente.chatbot');
-    Route::post('/cliente/chatbot/query', [ClienteModuloController::class, 'chatbotQuery'])->name('cliente.chatbot.query');
+    Route::post('/cliente/chatbot/query', [ClienteModuloController::class, 'chatbotQuery'])->middleware('throttle:20,1')->name('cliente.chatbot.query');
     Route::get('/cliente/pretasacion', [ClienteModuloController::class, 'pretasacion'])->name('cliente.pretasacion');
-    Route::post('/cliente/pretasacion/query', [ClienteModuloController::class, 'pretasacionQuery'])->name('cliente.pretasacion.query');
+    Route::post('/cliente/pretasacion/query', [ClienteModuloController::class, 'pretasacionQuery'])->middleware('throttle:10,1')->name('cliente.pretasacion.query');
     Route::get('/cliente/tasacion', [ClienteModuloController::class, 'tasacion'])->name('cliente.tasacion');
-    Route::post('/cliente/tasacion', [ClienteModuloController::class, 'tasacionStore'])->name('cliente.tasacion.store');
+    Route::post('/cliente/tasacion', [ClienteModuloController::class, 'tasacionStore'])->middleware('throttle:5,1')->name('cliente.tasacion.store');
     Route::get('/cliente/campanias', [ClienteModuloController::class, 'campanias'])->name('cliente.campanias');
     Route::get('/cliente/concesionarios', [ClienteModuloController::class, 'concesionarios'])->name('cliente.concesionarios');
     Route::get('/cliente/precios', [ClienteModuloController::class, 'precios'])->name('cliente.precios');
