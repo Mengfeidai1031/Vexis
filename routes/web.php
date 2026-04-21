@@ -19,6 +19,7 @@ use App\Http\Controllers\MecanicoController;
 use App\Http\Controllers\NamingPcController;
 use App\Http\Controllers\NoticiaController;
 use App\Http\Controllers\OfertaController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RepartoController;
 use App\Http\Controllers\RestriccionController;
@@ -31,6 +32,8 @@ use App\Http\Controllers\TipoClienteController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VacacionController;
 use App\Http\Controllers\VehiculoController;
+use App\Http\Controllers\VehiculoDocumentoController;
+use App\Http\Controllers\VehiculoDocumentoGeneradorController;
 use App\Http\Controllers\VentaController;
 use App\Http\Controllers\VerifactuController;
 use Illuminate\Support\Facades\Route;
@@ -156,6 +159,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/vacaciones', [VacacionController::class, 'index'])->name('vacaciones.index');
     Route::get('/vacaciones/create', [VacacionController::class, 'create'])->name('vacaciones.create');
     Route::post('/vacaciones', [VacacionController::class, 'store'])->name('vacaciones.store');
+    Route::get('/vacaciones/{vacacion}', [VacacionController::class, 'show'])->name('vacaciones.show');
     Route::patch('/vacaciones/{vacacion}/gestionar', [VacacionController::class, 'gestionar'])->name('vacaciones.gestionar');
     Route::delete('/vacaciones/{vacacion}', [VacacionController::class, 'destroy'])->name('vacaciones.destroy');
 
@@ -166,6 +170,7 @@ Route::middleware('auth')->group(function () {
     });
     Route::middleware(['permission:ver festivos'])->group(function () {
         Route::get('/festivos', [FestivoController::class, 'index'])->name('festivos.index');
+        Route::get('/festivos/{festivo}', [FestivoController::class, 'show'])->name('festivos.show');
     });
     Route::middleware(['permission:editar festivos'])->group(function () {
         Route::get('/festivos/{festivo}/edit', [FestivoController::class, 'edit'])->name('festivos.edit');
@@ -317,6 +322,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/ventas/export/excel', [VentaController::class, 'export'])->name('ventas.export');
         Route::get('/ventas/export/pdf', [VentaController::class, 'exportPdf'])->name('ventas.exportPdf');
         Route::get('/ventas/{venta}', [VentaController::class, 'show'])->name('ventas.show');
+        Route::get('/ventas/{venta}/contrato-pdf', [VentaController::class, 'contratoPdf'])->name('ventas.contratoPdf');
     });
     Route::middleware(['permission:editar ventas'])->group(function () {
         Route::get('/ventas/{venta}/edit', [VentaController::class, 'edit'])->name('ventas.edit');
@@ -336,6 +342,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/tasaciones/export/excel', [TasacionController::class, 'export'])->name('tasaciones.export');
         Route::get('/tasaciones/export/pdf', [TasacionController::class, 'exportPdf'])->name('tasaciones.exportPdf');
         Route::get('/tasaciones/{tasacion}', [TasacionController::class, 'show'])->name('tasaciones.show');
+        Route::get('/tasaciones/{tasacion}/pdf', [TasacionController::class, 'singlePdf'])->name('tasaciones.singlePdf');
     });
     Route::middleware(['permission:editar tasaciones'])->group(function () {
         Route::get('/tasaciones/{tasacion}/edit', [TasacionController::class, 'edit'])->name('tasaciones.edit');
@@ -422,6 +429,12 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['role:Super Admin'])->group(function () {
         Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
         Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
+
+        // CRUD de Permisos (Sólo Super Admin)
+        Route::get('/permisos', [PermissionController::class, 'index'])->name('permisos.index');
+        Route::get('/permisos/create', [PermissionController::class, 'create'])->name('permisos.create');
+        Route::post('/permisos', [PermissionController::class, 'store'])->name('permisos.store');
+        Route::delete('/permisos/{permiso}', [PermissionController::class, 'destroy'])->name('permisos.destroy');
     });
 
     // === DATAXIS (Análisis de datos) ===
@@ -683,6 +696,25 @@ Route::middleware('auth')->group(function () {
             ->name('vehiculos.destroy');
     });
 
+    // Documentos de vehículo
+    Route::middleware(['permission:subir documentos vehiculos'])->group(function () {
+        Route::post('/vehiculos/{vehiculo}/documentos', [VehiculoDocumentoController::class, 'store'])->name('vehiculos.documentos.store');
+    });
+    Route::middleware(['permission:ver vehículos'])->group(function () {
+        Route::get('/vehiculos/documentos/{documento}/download', [VehiculoDocumentoController::class, 'download'])->name('vehiculos.documentos.download');
+    });
+    Route::middleware(['permission:eliminar documentos vehiculos'])->group(function () {
+        Route::delete('/vehiculos/documentos/{documento}', [VehiculoDocumentoController::class, 'destroy'])->name('vehiculos.documentos.destroy');
+    });
+
+    // Generador de documentos PDF profesionales
+    Route::middleware(['permission:subir documentos vehiculos'])->group(function () {
+        Route::get('/vehiculos/documentos/generar', [VehiculoDocumentoGeneradorController::class, 'hub'])->name('vehiculos.documentos.hub');
+        Route::get('/vehiculos/documentos/generar-codigo/{tipo}', [VehiculoDocumentoGeneradorController::class, 'ajaxCodigo'])->name('vehiculos.documentos.generarCodigo');
+        Route::get('/vehiculos/{vehiculo}/documentos/generar/{tipo}', [VehiculoDocumentoGeneradorController::class, 'form'])->name('vehiculos.documentos.generar.form');
+        Route::post('/vehiculos/{vehiculo}/documentos/generar/{tipo}', [VehiculoDocumentoGeneradorController::class, 'generate'])->name('vehiculos.documentos.generar');
+    });
+
     // CRUD de ofertas - Solo con permisos
     Route::middleware(['permission:crear ofertas'])->group(function () {
         Route::get('/ofertas/create', [OfertaController::class, 'create'])->name('ofertas.create');
@@ -691,9 +723,21 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['permission:ver ofertas'])->group(function () {
         Route::get('/ofertas', [OfertaController::class, 'index'])->name('ofertas.index');
+        Route::get('/ofertas/{oferta}/presupuesto-pdf', [OfertaController::class, 'presupuestoPdf'])
+            ->middleware('can:view,oferta')
+            ->name('ofertas.presupuestoPdf');
         Route::get('/ofertas/{oferta}', [OfertaController::class, 'show'])
             ->middleware('can:view,oferta')
             ->name('ofertas.show');
+    });
+
+    Route::middleware(['permission:editar ofertas'])->group(function () {
+        Route::get('/ofertas/{oferta}/edit', [OfertaController::class, 'edit'])
+            ->middleware('can:update,oferta')
+            ->name('ofertas.edit');
+        Route::put('/ofertas/{oferta}', [OfertaController::class, 'update'])
+            ->middleware('can:update,oferta')
+            ->name('ofertas.update');
     });
 
     Route::middleware(['permission:eliminar ofertas'])->group(function () {

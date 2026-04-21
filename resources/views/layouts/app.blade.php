@@ -821,6 +821,9 @@
                             @can('ver vehículos')
                             <a href="{{ route('vehiculos.index') }}" class="vx-dropdown-item"><i class="bi bi-truck"></i> Vehículos</a>
                             @endcan
+                            @can('subir documentos vehiculos')
+                            <a href="{{ route('vehiculos.documentos.hub') }}" class="vx-dropdown-item"><i class="bi bi-file-earmark-pdf"></i> Generar documentos</a>
+                            @endcan
                             @can('ver catalogo-precios')
                             <a href="{{ route('catalogo-precios.index') }}" class="vx-dropdown-item"><i class="bi bi-currency-euro"></i> Catálogo</a>
                             @endcan

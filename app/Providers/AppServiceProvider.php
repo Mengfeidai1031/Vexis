@@ -12,6 +12,7 @@ use App\Models\OfertaCabecera;
 use App\Models\User;
 use App\Models\UserRestriction;
 use App\Models\Vehiculo;
+use App\Observers\VehiculoObserver;
 use App\Policies\CentroPolicy;
 use App\Policies\ClientePolicy;
 use App\Policies\DepartamentoPolicy;
@@ -71,5 +72,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Departamento::class, DepartamentoPolicy::class);
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Empresa::class, EmpresaPolicy::class);
+
+        // Observer: historial de cambios en vehículos
+        Vehiculo::observe(VehiculoObserver::class);
     }
 }

@@ -11,6 +11,7 @@ use App\Models\CatalogoPrecio;
 use App\Models\Centro;
 use App\Models\Empresa;
 use App\Models\Marca;
+use App\Models\User;
 use App\Models\Vehiculo;
 use App\Repositories\Interfaces\VehiculoRepositoryInterface;
 use App\Services\MatriculaService;
@@ -29,7 +30,7 @@ class VehiculoController extends Controller
 
     public function index(Request $request)
     {
-        $query = Vehiculo::with(['marca', 'empresa']);
+        $query = Vehiculo::with(['marca', 'empresa', 'responsable']);
 
         if ($request->filled('marca_id')) {
             $query->where('marca_id', $request->marca_id);
@@ -55,9 +56,15 @@ class VehiculoController extends Controller
         if ($request->filled('chasis')) {
             $query->where('chasis', $request->chasis);
         }
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+        if ($request->filled('responsable_id')) {
+            $query->where('responsable_id', $request->responsable_id);
+        }
 
         // Sorting
-        $sortable = ['id', 'chasis', 'matricula', 'marca_id', 'modelo', 'version', 'color_externo', 'color_interno', 'empresa_id'];
+        $sortable = ['id', 'chasis', 'matricula', 'marca_id', 'modelo', 'version', 'color_externo', 'color_interno', 'empresa_id', 'estado', 'responsable_id'];
         if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
             $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
             $query->reorder()->orderBy($request->sort_by, $dir);
@@ -72,8 +79,9 @@ class VehiculoController extends Controller
         $colores_int = Vehiculo::whereNotNull('color_interno')->where('color_interno', '!=', '')->distinct()->orderBy('color_interno')->pluck('color_interno');
         $matriculas = Vehiculo::whereNotNull('matricula')->distinct()->orderBy('matricula')->pluck('matricula');
         $chasis_list = Vehiculo::whereNotNull('chasis')->distinct()->orderBy('chasis')->pluck('chasis');
+        $responsables = User::orderBy('nombre')->get(['id', 'nombre', 'apellidos']);
 
-        return view('vehiculos.index', compact('vehiculos', 'marcas', 'empresas', 'modelos', 'versiones', 'colores_ext', 'colores_int', 'matriculas', 'chasis_list'));
+        return view('vehiculos.index', compact('vehiculos', 'marcas', 'empresas', 'modelos', 'versiones', 'colores_ext', 'colores_int', 'matriculas', 'chasis_list', 'responsables'));
     }
 
     public function create()

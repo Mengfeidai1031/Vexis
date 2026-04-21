@@ -18,6 +18,7 @@ use App\Models\Venta;
 use App\Models\VentaConcepto;
 use App\Services\FacturaCreationService;
 use App\Services\ImpuestoService;
+use App\Services\VehiculoEstadoService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -30,6 +31,7 @@ class VentaController extends Controller
     public function __construct(
         private readonly ImpuestoService $impuestoService,
         private readonly FacturaCreationService $facturaCreationService,
+        private readonly VehiculoEstadoService $vehiculoEstadoService,
     ) {}
 
     public function index(Request $request)
@@ -155,6 +157,11 @@ class VentaController extends Controller
             return $venta;
         });
 
+        $venta->loadMissing('vehiculo');
+        if ($venta->vehiculo) {
+            $this->vehiculoEstadoService->sincronizarConVenta($venta->vehiculo, $venta->estado);
+        }
+
         if ($request->filled('crear_factura')) {
             $result = $this->facturaCreationService->crearDesdeVenta($venta);
 
@@ -232,12 +239,21 @@ class VentaController extends Controller
             }
         });
 
+        $venta->loadMissing('vehiculo');
+        if ($venta->vehiculo) {
+            $this->vehiculoEstadoService->sincronizarConVenta($venta->vehiculo, $venta->estado);
+        }
+
         return redirect()->route('ventas.index')->with('success', 'Venta actualizada correctamente.');
     }
 
     public function destroy(Venta $venta): RedirectResponse
     {
+        $vehiculo = $venta->vehiculo;
         $venta->delete();
+        if ($vehiculo) {
+            $this->vehiculoEstadoService->cambiarEstado($vehiculo, 'disponible', 'Venta '.$venta->codigo_venta.' eliminada');
+        }
 
         return redirect()->route('ventas.index')->with('success', 'Venta eliminada correctamente.');
     }
@@ -255,5 +271,14 @@ class VentaController extends Controller
         $pdf = Pdf::loadView('ventas.pdf', compact('ventas'));
 
         return $pdf->download('ventas_'.date('Y-m-d_His').'.pdf');
+    }
+
+    public function contratoPdf(Venta $venta)
+    {
+        $venta->load(['vehiculo', 'cliente', 'empresa', 'centro', 'marca', 'vendedor', 'conceptos']);
+
+        $pdf = Pdf::loadView('ventas.contrato-pdf', compact('venta'))->setPaper('a4', 'portrait');
+
+        return $pdf->download('contrato_'.$venta->codigo_venta.'.pdf');
     }
 }

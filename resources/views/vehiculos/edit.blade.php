@@ -80,6 +80,28 @@
                     @error('color_interno')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
                 </div>
             </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px;">
+                <div class="vx-form-group">
+                    <label class="vx-label" for="estado">Estado <span class="required">*</span></label>
+                    <select class="vx-select @error('estado') is-invalid @enderror" id="estado" name="estado" required>
+                        @foreach(\App\Models\Vehiculo::$estados as $k => $v)
+                            <option value="{{ $k }}" {{ old('estado', $vehiculo->estado) === $k ? 'selected' : '' }}>{{ $v }}</option>
+                        @endforeach
+                    </select>
+                    @error('estado')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
+                    <div class="vx-form-hint">Se registra en el historial. El cambio por venta es automático.</div>
+                </div>
+                <div class="vx-form-group">
+                    <label class="vx-label" for="responsable_id">Responsable</label>
+                    <select class="vx-select" id="responsable_id" name="responsable_id">
+                        <option value="">— Sin asignar —</option>
+                        @foreach(\App\Models\User::orderBy('nombre')->get() as $u)
+                            <option value="{{ $u->id }}" {{ old('responsable_id', $vehiculo->responsable_id) == $u->id ? 'selected' : '' }}>{{ $u->nombre }} {{ $u->apellidos }}</option>
+                        @endforeach
+                    </select>
+                    <a href="{{ route('users.create') }}" class="vx-select-create" target="_blank"><i class="bi bi-plus-circle"></i> Crear nuevo usuario</a>
+                </div>
+            </div>
             <div style="display: flex; justify-content: flex-end; gap: 8px;">
                 <a href="{{ route('vehiculos.index') }}" class="vx-btn vx-btn-secondary">Cancelar</a>
                 <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-check-lg"></i> Actualizar</button>

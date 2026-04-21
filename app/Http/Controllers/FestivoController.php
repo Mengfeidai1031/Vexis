@@ -70,6 +70,11 @@ class FestivoController extends Controller
         return redirect()->route('festivos.index')->with('success', 'Festivo creado correctamente.');
     }
 
+    public function show(Festivo $festivo)
+    {
+        return view('festivos.show', compact('festivo'));
+    }
+
     public function edit(Festivo $festivo)
     {
         return view('festivos.edit', compact('festivo'));

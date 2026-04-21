@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\Cliente;
 use App\Models\OfertaCabecera;
+use App\Models\Vehiculo;
 use App\Repositories\Interfaces\OfertaRepositoryInterface;
 use App\Services\OfertaPdfService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class OfertaController extends Controller
@@ -108,6 +111,50 @@ class OfertaController extends Controller
         $this->authorize('view', $oferta);
 
         return view('ofertas.show', compact('oferta'));
+    }
+
+    public function edit(OfertaCabecera $oferta)
+    {
+        $this->authorize('update', $oferta);
+
+        $oferta->load('lineas');
+        $clientes = Cliente::orderBy('nombre')->get();
+        $vehiculos = Vehiculo::orderBy('modelo')->get();
+
+        return view('ofertas.edit', compact('oferta', 'clientes', 'vehiculos'));
+    }
+
+    public function update(Request $request, OfertaCabecera $oferta)
+    {
+        $this->authorize('update', $oferta);
+
+        $request->validate([
+            'cliente_id' => 'nullable|exists:clientes,id',
+            'vehiculo_id' => 'nullable|exists:vehiculos,id',
+            'fecha' => 'required|date',
+            'base_imponible' => 'nullable|numeric|min:0',
+            'impuestos' => 'nullable|numeric|min:0',
+            'total_sin_impuestos' => 'nullable|numeric|min:0',
+            'total_con_impuestos' => 'nullable|numeric|min:0',
+        ]);
+
+        $oferta->update($request->only([
+            'cliente_id', 'vehiculo_id', 'fecha',
+            'base_imponible', 'impuestos', 'total_sin_impuestos', 'total_con_impuestos',
+        ]));
+
+        return redirect()->route('ofertas.show', $oferta)
+            ->with('success', 'Oferta actualizada correctamente.');
+    }
+
+    public function presupuestoPdf(OfertaCabecera $oferta)
+    {
+        $this->authorize('view', $oferta);
+
+        $oferta->load(['cliente', 'vehiculo.marca', 'lineas']);
+        $pdf = Pdf::loadView('ofertas.presupuesto-pdf', compact('oferta'))->setPaper('a4', 'portrait');
+
+        return $pdf->download('presupuesto_oferta_'.$oferta->id.'.pdf');
     }
 
     public function destroy(OfertaCabecera $oferta)

@@ -18,10 +18,13 @@ return new class extends Migration
             $table->string('color_interno', 100);
             $table->foreignId('empresa_id')->constrained('empresas')->cascadeOnDelete();
             $table->foreignId('marca_id')->nullable()->constrained('marcas')->nullOnDelete();
+            $table->enum('estado', ['disponible', 'reservado', 'vendido', 'taller', 'baja'])->default('disponible');
+            $table->foreignId('responsable_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();
 
             $table->index(['empresa_id', 'marca_id']);
+            $table->index(['empresa_id', 'estado']);
             $table->index('modelo');
         });
     }

@@ -100,6 +100,18 @@ class VacacionController extends Controller
         return redirect()->route('vacaciones.index')->with('success', "Solicitud de $dias días creada correctamente.");
     }
 
+    public function show(Vacacion $vacacion)
+    {
+        $user = Auth::user();
+        $isSuperAdmin = $user->hasRole('Super Admin') || $user->hasRole('Administrador');
+        if (! $isSuperAdmin && $vacacion->user_id !== $user->id) {
+            abort(403);
+        }
+        $vacacion->load(['user', 'aprobador']);
+
+        return view('vacaciones.show', compact('vacacion'));
+    }
+
     public function gestionar(Request $request, Vacacion $vacacion)
     {
         $request->validate([

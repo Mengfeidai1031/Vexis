@@ -79,6 +79,13 @@
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan
+        @can('subir documentos vehiculos')
+        <a href="{{ route('vehiculos.documentos.hub') }}" class="mod-card">
+            <div class="mod-card-icon" style="background:linear-gradient(135deg,#F39C12,#D68910);"><i class="bi bi-file-earmark-pdf"></i></div>
+            <div class="mod-card-info"><h4>Generar documentos</h4><p>Ficha técnica, ITV, permiso, seguro, contrato en PDF</p></div>
+            <i class="bi bi-arrow-right mod-card-arrow"></i>
+        </a>
+        @endcan
         @can('ver catalogo-precios')
         <a href="{{ route('catalogo-precios.index') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#E74C3C,#C0392B);"><i class="bi bi-currency-euro"></i></div>

@@ -27,6 +27,8 @@ class StoreVehiculoRequest extends FormRequest
             'version' => 'required|string|max:255',
             'color_externo' => 'required|string|max:255',
             'color_interno' => 'required|string|max:255',
+            'estado' => 'nullable|in:disponible,reservado,vendido,taller,baja',
+            'responsable_id' => 'nullable|exists:users,id',
             'empresa_id' => [
                 'required',
                 'exists:empresas,id',

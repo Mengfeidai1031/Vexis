@@ -175,6 +175,20 @@ class RolePermissionSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'editar incidencias']);
         Permission::firstOrCreate(['name' => 'eliminar incidencias']);
 
+        // Permisos sobre permisos (solo Super Admin)
+        Permission::firstOrCreate(['name' => 'ver permisos']);
+        Permission::firstOrCreate(['name' => 'crear permisos']);
+        Permission::firstOrCreate(['name' => 'eliminar permisos']);
+
+        // Permisos vehículo: documentos e historial
+        Permission::firstOrCreate(['name' => 'ver historial vehiculos']);
+        Permission::firstOrCreate(['name' => 'subir documentos vehiculos']);
+        Permission::firstOrCreate(['name' => 'eliminar documentos vehiculos']);
+
+        // Rol Mecánico / Recepción Taller
+        Role::firstOrCreate(['name' => 'Mecánico']);
+        Role::firstOrCreate(['name' => 'Recepción Taller']);
+
         // Crear rol de Super Admin (tiene todos los permisos)
         $superAdminRole = Role::firstOrCreate(['name' => 'Super Admin']);
         $superAdminRole->syncPermissions(Permission::all());
@@ -206,6 +220,7 @@ class RolePermissionSeeder extends Seeder
             'ver verifactu', 'crear verifactu', 'editar verifactu', 'eliminar verifactu',
             'ver incidencias', 'crear incidencias', 'editar incidencias', 'eliminar incidencias',
             'ver tipos-cliente', 'crear tipos-cliente', 'editar tipos-cliente', 'eliminar tipos-cliente',
+            'ver historial vehiculos', 'subir documentos vehiculos', 'eliminar documentos vehiculos',
         ]);
 
         // Crear rol de Gerente (puede ver y gestionar clientes, vehículos y ofertas)
@@ -219,6 +234,7 @@ class RolePermissionSeeder extends Seeder
             'ver vehículos', 'crear vehículos', 'editar vehículos', 'eliminar vehículos',
             'ver ofertas', 'crear ofertas', 'editar ofertas', 'eliminar ofertas',
             'ver incidencias', 'crear incidencias',
+            'ver historial vehiculos', 'subir documentos vehiculos',
         ]);
 
         // Crear rol de Vendedor (gestión de clientes y ofertas)
@@ -228,6 +244,28 @@ class RolePermissionSeeder extends Seeder
             'ver tipos-cliente', 'crear tipos-cliente',
             'ver vehículos',
             'ver ofertas', 'crear ofertas', 'editar ofertas',
+            'ver incidencias', 'crear incidencias',
+        ]);
+
+        // Rol Mecánico — acceso limitado a taller y citas
+        $mecanicoRole = Role::findByName('Mecánico');
+        $mecanicoRole->syncPermissions([
+            'ver citas', 'editar citas',
+            'ver talleres',
+            'ver mecanicos',
+            'ver coches-sustitucion',
+            'ver vehículos', 'ver historial vehiculos',
+            'ver incidencias', 'crear incidencias',
+        ]);
+
+        // Rol Recepción Taller — gestiona citas, coches sustitución, clientes lectura
+        $recepcionRole = Role::findByName('Recepción Taller');
+        $recepcionRole->syncPermissions([
+            'ver citas', 'crear citas', 'editar citas', 'eliminar citas',
+            'ver talleres', 'ver mecanicos',
+            'ver coches-sustitucion', 'crear coches-sustitucion', 'editar coches-sustitucion',
+            'ver clientes', 'crear clientes', 'editar clientes',
+            'ver vehículos', 'ver historial vehiculos', 'subir documentos vehiculos',
             'ver incidencias', 'crear incidencias',
         ]);
 

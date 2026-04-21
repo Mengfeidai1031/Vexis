@@ -147,4 +147,12 @@ class TasacionController extends Controller
 
         return $pdf->download($fileName);
     }
+
+    public function singlePdf(Tasacion $tasacion)
+    {
+        $tasacion->load(['cliente', 'empresa', 'marca', 'tasador']);
+        $pdf = Pdf::loadView('tasaciones.single-pdf', compact('tasacion'))->setPaper('a4', 'portrait');
+
+        return $pdf->download('tasacion_'.$tasacion->codigo_tasacion.'.pdf');
+    }
 }
