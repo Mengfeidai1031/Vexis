@@ -51,5 +51,7 @@ Thumbs.db
 *~
 
 # Archivos de contexto de asistentes
-.claude_cotext
+.claude_context
 CLAUDE.md
+
+/entregable
