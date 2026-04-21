@@ -104,14 +104,14 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px;">
                     <div class="vx-form-group">
                         <label class="vx-label" for="password">Contraseña <span class="required">*</span></label>
-                        <input type="password" class="vx-input @error('password') is-invalid @enderror" id="password" name="password" required>
+                        <input type="password" class="vx-input @error('password') is-invalid @enderror" id="password" name="password" minlength="8" required>
                         @error('password')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
-                        <div class="vx-form-hint">Mínimo 6 caracteres</div>
+                        <div class="vx-form-hint">Mínimo 8 caracteres</div>
                     </div>
 
                     <div class="vx-form-group">
                         <label class="vx-label" for="password_confirmation">Confirmar Contraseña <span class="required">*</span></label>
-                        <input type="password" class="vx-input" id="password_confirmation" name="password_confirmation" required>
+                        <input type="password" class="vx-input" id="password_confirmation" name="password_confirmation" minlength="8" required>
                     </div>
                 </div>
 

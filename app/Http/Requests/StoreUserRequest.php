@@ -31,7 +31,7 @@ class StoreUserRequest extends FormRequest
             'email' => 'required|email|unique:users,email|max:255',
             'telefono' => 'nullable|string|max:12',
             'extension' => 'nullable|string|max:10',
-            'password' => ['required', 'string', 'confirmed', Password::min(8)->letters()],
+            'password' => ['required', 'string', 'confirmed', Password::min(8)],
             'roles' => 'nullable|array',
             'roles.*' => 'exists:roles,id',
         ];

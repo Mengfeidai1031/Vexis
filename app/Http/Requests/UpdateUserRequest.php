@@ -33,7 +33,7 @@ class UpdateUserRequest extends FormRequest
             ],
             'telefono' => 'nullable|string|max:12',
             'extension' => 'nullable|string|max:10',
-            'password' => ['nullable', 'string', 'confirmed', Password::min(8)->letters()],
+            'password' => ['nullable', 'string', 'confirmed', Password::min(8)],
             'roles' => 'nullable|array',
             'roles.*' => 'exists:roles,id',
         ];

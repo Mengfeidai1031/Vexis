@@ -16,7 +16,7 @@
     <div class="vx-card" style="margin-bottom:16px;">
         <div class="vx-card-header"><h4><i class="bi bi-key" style="color:var(--vx-warning);"></i> Contraseñas</h4></div>
         <div class="vx-card-body" style="font-size:14px;line-height:1.7;color:var(--vx-text-secondary);">
-            <p>Las contraseñas se almacenan con hash bcrypt y nunca en texto plano. Se recomienda un mínimo de 6 caracteres. Los usuarios pueden cambiar su contraseña desde su perfil verificando la contraseña actual.</p>
+            <p>Las contraseñas se almacenan con hash bcrypt (coste 12) y nunca en texto plano. Se requiere un mínimo de 8 caracteres (letras, números o combinación). Los usuarios pueden cambiar su contraseña desde su perfil verificando la contraseña actual. Los intentos fallidos de login se limitan por IP y email (5 intentos / 60 s) y quedan registrados en el canal de seguridad.</p>
         </div>
     </div>
     <div class="vx-card" style="margin-bottom:16px;">
