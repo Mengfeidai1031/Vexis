@@ -39,6 +39,9 @@ class UserController extends Controller
         $query = User::with(['empresa', 'departamento', 'centro'])
             ->withCount('restrictions');
 
+        if ($request->filled('id')) {
+            $query->where('id', (int) $request->id);
+        }
         if ($request->filled('empresa_id')) {
             $query->where('empresa_id', $request->empresa_id);
         }

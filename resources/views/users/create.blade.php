@@ -138,6 +138,7 @@
                 option.style.display = (option.getAttribute('data-empresa') === empresaId) ? '' : 'none';
             }
         });
+        if (window.VexisFormSelect) window.VexisFormSelect.refresh(centroSelect);
     });
 
     document.addEventListener('DOMContentLoaded', function() {

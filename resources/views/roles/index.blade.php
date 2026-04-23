@@ -11,7 +11,11 @@
 </div>
 
 <x-filtros-avanzados :action="route('roles.index')">
+    <div class="vx-filtro" data-filtro="id"><label class="vx-filtro-label">ID</label><input type="number" name="id" class="vx-input" value="{{ request('id') }}" placeholder="#"></div>
     <div class="vx-filtro" data-filtro="nombre"><label class="vx-filtro-label">Nombre</label><select name="nombre" class="vx-select"><option value="">Todos</option>@foreach($roles as $r)<option value="{{ $r->name }}" {{ request('nombre') == $r->name ? 'selected' : '' }}>{{ $r->name }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="permisos_min"><label class="vx-filtro-label">Permisos (mín.)</label><input type="number" name="permisos_min" class="vx-input" value="{{ request('permisos_min') }}" min="0" placeholder="0"></div>
+    <div class="vx-filtro" data-filtro="usuarios_min"><label class="vx-filtro-label">Usuarios (mín.)</label><input type="number" name="usuarios_min" class="vx-input" value="{{ request('usuarios_min') }}" min="0" placeholder="0"></div>
+    <div class="vx-filtro" data-filtro="creado_desde"><label class="vx-filtro-label">Creado (desde)</label><input type="date" name="creado_desde" class="vx-input" value="{{ request('creado_desde') }}"></div>
 </x-filtros-avanzados>
 
 <div class="vx-card">

@@ -11,8 +11,10 @@
 </div>
 
 <x-filtros-avanzados :action="route('departamentos.index')">
+    <div class="vx-filtro" data-filtro="id"><label class="vx-filtro-label">ID</label><input type="number" name="id" class="vx-input" value="{{ request('id') }}" placeholder="#"></div>
     <div class="vx-filtro" data-filtro="nombre"><label class="vx-filtro-label">Nombre</label><select name="nombre" class="vx-select"><option value="">Todos</option>@foreach($departamentos as $d)<option value="{{ $d->nombre }}" {{ request('nombre') == $d->nombre ? 'selected' : '' }}>{{ $d->nombre }}</option>@endforeach</select></div>
     <div class="vx-filtro" data-filtro="abreviatura"><label class="vx-filtro-label">Abreviatura</label><select name="abreviatura" class="vx-select"><option value="">Todas</option>@foreach($departamentos as $d)<option value="{{ $d->abreviatura }}" {{ request('abreviatura') == $d->abreviatura ? 'selected' : '' }}>{{ $d->abreviatura }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="creado"><label class="vx-filtro-label">Creado (desde)</label><input type="date" name="creado_desde" class="vx-input" value="{{ request('creado_desde') }}"></div>
 </x-filtros-avanzados>
 
 <div class="vx-card">

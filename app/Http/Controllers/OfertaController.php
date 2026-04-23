@@ -32,6 +32,7 @@ class OfertaController extends Controller
 
         // Recopilar todos los filtros
         $filters = [
+            'id' => $request->input('id'),
             'fecha_desde' => $request->input('fecha_desde'),
             'fecha_hasta' => $request->input('fecha_hasta'),
             'cliente_id' => $request->input('cliente_id'),

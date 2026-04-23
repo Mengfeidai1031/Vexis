@@ -11,8 +11,11 @@
 </div>
 
 <x-filtros-avanzados :action="route('tipos-cliente.index')">
+    <div class="vx-filtro" data-filtro="id"><label class="vx-filtro-label">ID</label><input type="number" name="id" class="vx-input" value="{{ request('id') }}" placeholder="#"></div>
+    <div class="vx-filtro" data-filtro="color"><label class="vx-filtro-label">Color</label><select name="color" class="vx-select"><option value="">Todos</option>@foreach($tipos_all->pluck('color')->filter()->unique() as $c)<option value="{{ $c }}" {{ request('color') == $c ? 'selected' : '' }}>{{ $c }}</option>@endforeach</select></div>
     <div class="vx-filtro" data-filtro="nombre"><label class="vx-filtro-label">Nombre</label><select name="nombre" class="vx-select"><option value="">Todos</option>@foreach($tipos_all as $t)<option value="{{ $t->nombre }}" {{ request('nombre') == $t->nombre ? 'selected' : '' }}>{{ $t->nombre }}</option>@endforeach</select></div>
     <div class="vx-filtro" data-filtro="descripcion"><label class="vx-filtro-label">Descripcion</label><select name="descripcion" class="vx-select"><option value="">Todas</option>@foreach($tipos_all as $t)@if($t->descripcion)<option value="{{ $t->descripcion }}" {{ request('descripcion') == $t->descripcion ? 'selected' : '' }}>{{ $t->descripcion }}</option>@endif @endforeach</select></div>
+    <div class="vx-filtro" data-filtro="clientes_min"><label class="vx-filtro-label">Clientes (mín.)</label><input type="number" name="clientes_min" class="vx-input" value="{{ request('clientes_min') }}" min="0" placeholder="0"></div>
     <div class="vx-filtro" data-filtro="activo"><label class="vx-filtro-label">Estado</label><select name="activo" class="vx-select"><option value="">Todos</option><option value="1" @selected(request('activo')==='1')>Activos</option><option value="0" @selected(request('activo')==='0')>Inactivos</option></select></div>
 </x-filtros-avanzados>
 

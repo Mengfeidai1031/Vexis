@@ -27,6 +27,9 @@ class CentroController extends Controller
     {
         $query = Centro::with('empresa');
 
+        if ($request->filled('id')) {
+            $query->where('id', (int) $request->id);
+        }
         if ($request->filled('empresa_id')) {
             $query->where('empresa_id', $request->empresa_id);
         }

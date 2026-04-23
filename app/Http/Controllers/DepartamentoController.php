@@ -26,11 +26,18 @@ class DepartamentoController extends Controller
     {
         $departamentos = $this->departamentoRepository->all();
 
+        if ($request->filled('id')) {
+            $departamentos = $departamentos->filter(fn ($d) => (int) $d->id === (int) $request->id)->values();
+        }
         if ($request->filled('nombre')) {
             $departamentos = $departamentos->filter(fn ($d) => $d->nombre === $request->nombre)->values();
         }
         if ($request->filled('abreviatura')) {
             $departamentos = $departamentos->filter(fn ($d) => $d->abreviatura === $request->abreviatura)->values();
+        }
+        if ($request->filled('creado_desde')) {
+            $desde = $request->creado_desde;
+            $departamentos = $departamentos->filter(fn ($d) => $d->created_at && $d->created_at->format('Y-m-d') >= $desde)->values();
         }
 
         // Sorting

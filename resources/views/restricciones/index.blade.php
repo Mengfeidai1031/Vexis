@@ -11,8 +11,10 @@
 </div>
 
 <x-filtros-avanzados :action="route('restricciones.index')">
+    <div class="vx-filtro" data-filtro="id"><label class="vx-filtro-label">ID</label><input type="number" name="id" class="vx-input" value="{{ request('id') }}" placeholder="#"></div>
     <div class="vx-filtro" data-filtro="usuario"><label class="vx-filtro-label">Usuario</label><select name="user_id" class="vx-select"><option value="">Todos</option>@foreach($usuarios as $u)<option value="{{ $u->id }}" {{ request('user_id') == $u->id ? 'selected' : '' }}>{{ $u->nombre_completo }}</option>@endforeach</select></div>
     <div class="vx-filtro" data-filtro="tipo"><label class="vx-filtro-label">Tipo</label><select name="tipo" class="vx-select"><option value="">Todos</option><option value="App\Models\Empresa" {{ request('tipo') == 'App\Models\Empresa' ? 'selected' : '' }}>Empresa</option><option value="App\Models\Cliente" {{ request('tipo') == 'App\Models\Cliente' ? 'selected' : '' }}>Cliente</option><option value="App\Models\Vehiculo" {{ request('tipo') == 'App\Models\Vehiculo' ? 'selected' : '' }}>Vehículo</option><option value="App\Models\Centro" {{ request('tipo') == 'App\Models\Centro' ? 'selected' : '' }}>Centro</option><option value="App\Models\Departamento" {{ request('tipo') == 'App\Models\Departamento' ? 'selected' : '' }}>Departamento</option></select></div>
+    <div class="vx-filtro" data-filtro="creado_desde"><label class="vx-filtro-label">Creado (desde)</label><input type="date" name="creado_desde" class="vx-input" value="{{ request('creado_desde') }}"></div>
 </x-filtros-avanzados>
 
 <div class="vx-card">

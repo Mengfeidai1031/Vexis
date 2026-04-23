@@ -18,6 +18,9 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
+    <!-- VEXIS Design Tokens (V5) -->
+    <link rel="stylesheet" href="{{ asset('css/design-tokens.css') }}?v=5">
+
     <style>
         /* ============================================
            VEXIS Design System - CSS Variables
@@ -152,8 +155,8 @@
         .vx-client-mode .vx-module-item-dev { display: none !important; }
         .vx-client-mode .vx-module-label-default { display: none; }
         .vx-client-mode .vx-module-label-client { display: inline; }
-        .vx-preview-stage { width: 100%; }
-        .vx-preview-device { width: 100%; }
+        .vx-preview-stage { width: 100%; display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+        .vx-preview-device { width: 100%; display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
         .vx-force-mobile { background: #10151f; }
         .vx-force-mobile .vx-preview-stage { min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; padding: 14px; overflow: auto; }
         .vx-force-mobile .vx-preview-device { width: 390px; max-width: 390px; background: var(--vx-bg); border-radius: 22px; border: 8px solid #0b0f17; box-shadow: 0 20px 50px rgba(0,0,0,0.45); overflow: hidden; transform-origin: top center; transform: scale(var(--vx-mobile-preview-scale, 1)); }
@@ -181,10 +184,13 @@
 
         /* Tables */
         .vx-table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; position: relative; }
-        .vx-table { width: 100%; border-collapse: separate; border-spacing: 0; }
-        .vx-table thead th { padding: 10px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--vx-text-muted); background: var(--vx-gray-50); border-bottom: 2px solid var(--vx-border); white-space: nowrap; text-align: left; position: sticky; top: 0; z-index: 5; }
+        .vx-table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: auto; }
+        .vx-table thead th { padding: 9px 10px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--vx-text-muted); background: var(--vx-gray-50); border-bottom: 2px solid var(--vx-border); white-space: nowrap; text-align: left; position: sticky; top: 0; z-index: 5; }
         [data-theme="dark"] .vx-table thead th { background: var(--vx-gray-100); }
-        .vx-table tbody td { padding: 12px 14px; font-size: 13px; border-bottom: 1px solid var(--vx-border); color: var(--vx-text); vertical-align: middle; }
+        .vx-table tbody td { padding: 10px 10px; font-size: 13px; border-bottom: 1px solid var(--vx-border); color: var(--vx-text); vertical-align: middle; overflow-wrap: break-word; max-width: 320px; }
+        .vx-table tbody td a { overflow-wrap: break-word; }
+        .vx-table tbody td .vx-avatar { flex-shrink: 0; }
+        .vx-table tbody td .vx-badge { white-space: nowrap; }
         .vx-table tbody tr { transition: background 0.15s; }
         .vx-table tbody tr:hover { background: var(--vx-surface-hover); }
         .vx-table tbody tr:last-child td { border-bottom: none; }
@@ -229,10 +235,11 @@
         .mod-card-arrow{margin-left:auto;font-size:16px;color:var(--vx-primary);opacity:0;transform:translateX(-8px);transition:all 0.25s;}
 
         /* Dataxis KPIs */
-        .dx-kpi{display:flex;align-items:center;gap:12px;padding:16px;background:var(--vx-surface);border:1px solid var(--vx-border);border-radius:var(--vx-radius-lg);box-shadow:var(--vx-shadow-sm);transition:transform 0.2s,box-shadow 0.2s;}
+        .dx-kpi{display:flex;align-items:center;gap:12px;padding:16px;background:var(--vx-surface);border:1px solid var(--vx-border);border-radius:var(--vx-radius-lg);box-shadow:var(--vx-shadow-sm);transition:transform 0.2s,box-shadow 0.2s;min-width:0;}
         .dx-kpi:hover{transform:translateY(-2px);box-shadow:var(--vx-shadow);}
+        .dx-kpi > div:last-child{min-width:0;flex:1;}
         .dx-kpi-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
-        .dx-kpi-val{font-size:22px;font-weight:800;font-family:var(--vx-font-mono);line-height:1.2;}
+        .dx-kpi-val{font-size:18px;font-weight:800;font-family:var(--vx-font-mono);line-height:1.2;white-space:nowrap;}
         .dx-kpi-lbl{font-size:11px;color:var(--vx-text-muted);margin-top:2px;}
 
         /* Dataxis charts */
@@ -310,7 +317,7 @@
         .vx-checkbox input[type="checkbox"] { width: 16px; height: 16px; border-radius: 4px; accent-color: var(--vx-primary); cursor: pointer; }
 
         /* Badges */
-        .vx-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 100px; font-size: 11px; font-weight: 600; letter-spacing: 0.2px; }
+        .vx-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 100px; font-size: 11px; font-weight: 600; letter-spacing: 0.2px; white-space: nowrap; }
         .vx-badge-primary { background: rgba(51,170,221,0.12); color: var(--vx-primary); }
         .vx-badge-success { background: rgba(46,204,113,0.12); color: var(--vx-success); }
         .vx-badge-warning { background: rgba(243,156,18,0.12); color: var(--vx-warning); }
@@ -351,8 +358,12 @@
 
         /* Page Header */
         .vx-page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; gap: 16px; flex-wrap: wrap; }
-        .vx-page-title { font-size: 22px; font-weight: 800; color: var(--vx-text); letter-spacing: -0.3px; }
-        .vx-page-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .vx-page-title { font-size: 22px; font-weight: 800; color: var(--vx-text); letter-spacing: -0.3px; line-height: 1.2; }
+        .vx-page-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        @media (max-width: 768px) {
+            .vx-page-actions .vx-btn span.hide-sm, .vx-page-actions .vx-btn .label-sm { display: none; }
+            .vx-page-actions { width: 100%; }
+        }
 
         /* Search Box */
         .vx-search-box { display: flex; gap: 8px; margin-bottom: 20px; }
@@ -512,6 +523,31 @@
         .vx-search-modal input::placeholder { color: var(--vx-text-muted); }
         .vx-search-hint { padding: 12px 20px; border-top: 1px solid var(--vx-border); font-size: 11px; color: var(--vx-text-muted); }
         .vx-search-hint kbd { background: var(--vx-gray-200); padding: 1px 6px; border-radius: 4px; font-size: 10px; font-family: var(--vx-font-mono); }
+
+        /* ============================================
+           Global Searchable Select (form FK dropdowns)
+           Auto-applied to every <select.vx-select> inside forms (opt-out with data-no-search)
+           ============================================ */
+        .vx-fs { position: relative; width: 100%; }
+        .vx-fs-display { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 8px 10px; background: var(--vx-surface); color: var(--vx-text); border: 1px solid var(--vx-border); border-radius: var(--vx-radius); cursor: pointer; font-size: 14px; font-family: var(--vx-font); min-height: 38px; box-sizing: border-box; transition: border-color 0.15s, box-shadow 0.15s; }
+        .vx-fs-display:hover { border-color: var(--vx-primary-light); }
+        .vx-fs.open .vx-fs-display { border-color: var(--vx-primary); box-shadow: 0 0 0 3px rgba(51,170,221,0.15); }
+        .vx-fs-display .vx-fs-text { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; flex: 1; }
+        .vx-fs-display .vx-fs-text.placeholder { color: var(--vx-text-muted); }
+        .vx-fs-display .vx-fs-arrow { color: var(--vx-text-muted); font-size: 11px; margin-left: 8px; flex-shrink: 0; transition: transform 0.2s; }
+        .vx-fs.open .vx-fs-display .vx-fs-arrow { transform: rotate(180deg); }
+        .vx-fs-panel { display: none; position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 80; background: var(--vx-surface); border: 1px solid var(--vx-border); border-radius: var(--vx-radius); box-shadow: var(--vx-shadow-lg); max-height: 280px; overflow: hidden; flex-direction: column; }
+        .vx-fs.open .vx-fs-panel { display: flex; }
+        .vx-fs-search { padding: 8px 10px; border: none; border-bottom: 1px solid var(--vx-border); font-size: 13px; font-family: var(--vx-font); background: transparent; color: var(--vx-text); outline: none; width: 100%; box-sizing: border-box; }
+        .vx-fs-search::placeholder { color: var(--vx-text-muted); }
+        .vx-fs-list { overflow-y: auto; max-height: 230px; padding: 4px 0; }
+        .vx-fs-opt { padding: 8px 12px; font-size: 13px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--vx-text); }
+        .vx-fs-opt:hover { background: rgba(51,170,221,0.12); }
+        .vx-fs-opt.selected { background: rgba(51,170,221,0.18); font-weight: 600; color: var(--vx-primary-dark); }
+        .vx-fs-opt.hidden { display: none; }
+        .vx-fs-empty { padding: 12px; font-size: 12px; color: var(--vx-text-muted); text-align: center; }
+        /* Keep the original select in the DOM for form submission + validation, but visually hidden */
+        select.vx-fs-native { position: absolute; opacity: 0; pointer-events: none; height: 1px; width: 1px; left: 0; top: 0; }
     </style>
     @stack('styles')
 </head>
@@ -1285,6 +1321,186 @@
 
     window.addEventListener('resize', repositionOpenActionsMenus);
     window.addEventListener('scroll', repositionOpenActionsMenus, true);
+
+    /* ============================================
+       Global Searchable Select (for form FK dropdowns)
+       - Activates on every <select> inside a <form> EXCEPT:
+           · selects inside .vx-filtros-form (handled by filter component)
+           · selects with attribute data-no-search
+           · selects with [multiple]
+           · selects with 5 or fewer options
+       - Keeps the native <select> in the DOM so:
+           · form submission is unchanged
+           · external change listeners keep working
+           · required validation keeps working
+       - Exposes window.VexisFormSelect.refresh(selectEl) so cascading
+         dropdowns can repaint the UI after changing options/visibility.
+       ============================================ */
+    (function(){
+        window.VexisFormSelect = { refresh: null };
+        const MIN_OPTIONS = 5; // skip tiny dropdowns
+
+        function shouldEnhance(sel) {
+            if (!sel || sel.dataset.fsApplied === '1') return false;
+            if (sel.multiple) return false;
+            if (sel.hasAttribute('data-no-search')) return false;
+            if (!sel.closest('form')) return false;
+            if (sel.closest('.vx-filtros-form')) return false;
+            if (sel.closest('.vx-searchable')) return false; // skip component-built searchables
+            if (sel.options.length < MIN_OPTIONS) return false;
+            return true;
+        }
+
+        function currentLabel(sel) {
+            const opt = sel.options[sel.selectedIndex];
+            return opt ? opt.text : '';
+        }
+
+        function enhance(sel) {
+            sel.dataset.fsApplied = '1';
+
+            const wrap = document.createElement('div');
+            wrap.className = 'vx-fs';
+            sel.parentNode.insertBefore(wrap, sel);
+            wrap.appendChild(sel);
+            sel.classList.add('vx-fs-native');
+
+            const display = document.createElement('div');
+            display.className = 'vx-fs-display';
+            display.tabIndex = 0;
+            const textSpan = document.createElement('span');
+            textSpan.className = 'vx-fs-text';
+            const arrow = document.createElement('span');
+            arrow.className = 'vx-fs-arrow';
+            arrow.innerHTML = '&#9662;';
+            display.appendChild(textSpan);
+            display.appendChild(arrow);
+            wrap.appendChild(display);
+
+            const panel = document.createElement('div');
+            panel.className = 'vx-fs-panel';
+            const search = document.createElement('input');
+            search.type = 'text';
+            search.className = 'vx-fs-search';
+            search.placeholder = 'Escribir para buscar…';
+            search.setAttribute('autocomplete', 'off');
+            const list = document.createElement('div');
+            list.className = 'vx-fs-list';
+            const empty = document.createElement('div');
+            empty.className = 'vx-fs-empty';
+            empty.textContent = 'Sin resultados';
+            empty.style.display = 'none';
+            panel.appendChild(search);
+            panel.appendChild(list);
+            panel.appendChild(empty);
+            wrap.appendChild(panel);
+
+            function renderText() {
+                const label = currentLabel(sel);
+                const isPlaceholder = !sel.value && sel.options[sel.selectedIndex] && !sel.options[sel.selectedIndex].value;
+                textSpan.textContent = label || '';
+                textSpan.classList.toggle('placeholder', isPlaceholder || !label);
+            }
+
+            function renderOptions() {
+                list.innerHTML = '';
+                Array.from(sel.options).forEach((opt) => {
+                    // Respect options hidden by cascading logic (option.style.display = 'none' or hidden attr)
+                    if (opt.hidden || opt.style.display === 'none') return;
+                    const div = document.createElement('div');
+                    div.className = 'vx-fs-opt' + (opt.selected && opt.value ? ' selected' : '');
+                    div.textContent = opt.text;
+                    div.dataset.value = opt.value;
+                    div.addEventListener('mousedown', (e) => {
+                        e.preventDefault();
+                        sel.value = opt.value;
+                        renderText();
+                        list.querySelectorAll('.vx-fs-opt').forEach(o => o.classList.remove('selected'));
+                        if (opt.value) div.classList.add('selected');
+                        wrap.classList.remove('open');
+                        search.value = '';
+                        applyFilter('');
+                        sel.dispatchEvent(new Event('change', { bubbles: true }));
+                        sel.dispatchEvent(new Event('input', { bubbles: true }));
+                    });
+                    list.appendChild(div);
+                });
+            }
+
+            function applyFilter(q) {
+                q = (q || '').toLowerCase().trim();
+                let visible = 0;
+                list.querySelectorAll('.vx-fs-opt').forEach(o => {
+                    const match = !q || o.textContent.toLowerCase().indexOf(q) !== -1;
+                    o.classList.toggle('hidden', !match);
+                    if (match) visible++;
+                });
+                empty.style.display = visible === 0 ? '' : 'none';
+            }
+
+            search.addEventListener('input', () => applyFilter(search.value));
+            search.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') { wrap.classList.remove('open'); display.focus(); }
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const first = list.querySelector('.vx-fs-opt:not(.hidden)');
+                    if (first) first.dispatchEvent(new Event('mousedown'));
+                }
+            });
+
+            display.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (sel.disabled) return;
+                document.querySelectorAll('.vx-fs.open').forEach(o => { if (o !== wrap) o.classList.remove('open'); });
+                wrap.classList.toggle('open');
+                if (wrap.classList.contains('open')) {
+                    renderOptions();
+                    search.value = '';
+                    applyFilter('');
+                    setTimeout(() => search.focus(), 30);
+                }
+            });
+
+            display.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); display.click(); }
+            });
+
+            // When cascading logic or anything else changes the underlying select,
+            // keep the display label in sync.
+            sel.addEventListener('change', renderText);
+
+            renderText();
+        }
+
+        function refresh(sel) {
+            if (!sel || sel.dataset.fsApplied !== '1') return;
+            const wrap = sel.closest('.vx-fs');
+            if (!wrap) return;
+            const textSpan = wrap.querySelector('.vx-fs-text');
+            const opt = sel.options[sel.selectedIndex];
+            if (textSpan) {
+                textSpan.textContent = opt ? opt.text : '';
+                textSpan.classList.toggle('placeholder', !sel.value);
+            }
+        }
+        window.VexisFormSelect.refresh = refresh;
+
+        function enhanceAll(root) {
+            (root || document).querySelectorAll('form select').forEach(sel => {
+                if (shouldEnhance(sel)) enhance(sel);
+            });
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.vx-fs')) {
+                document.querySelectorAll('.vx-fs.open').forEach(w => w.classList.remove('open'));
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => enhanceAll());
+        // If additional forms are injected later (modals), allow manual trigger:
+        window.VexisFormSelect.enhanceAll = enhanceAll;
+    })();
     </script>
     @stack('scripts')
 </body>

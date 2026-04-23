@@ -4,9 +4,9 @@
 <div class="vx-page-header"><h1 class="vx-page-title">Dataxis — General</h1><div class="vx-page-actions"><a href="{{ route('dataxis.inicio') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div></div>
 
 {{-- KPIs --}}
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:24px;">
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:24px;">
     <div class="dx-kpi"><div class="dx-kpi-icon" style="background:rgba(46,204,113,0.1);color:var(--vx-success);"><i class="bi bi-cart-check"></i></div><div><div class="dx-kpi-val">{{ $totalVentas }}</div><div class="dx-kpi-lbl">Ventas</div></div></div>
-    <div class="dx-kpi"><div class="dx-kpi-icon" style="background:rgba(51,170,221,0.1);color:var(--vx-primary);"><i class="bi bi-currency-euro"></i></div><div><div class="dx-kpi-val">{{ number_format($importeVentas, 0, ',', '.') }}€</div><div class="dx-kpi-lbl">Facturado</div></div></div>
+    <div class="dx-kpi"><div class="dx-kpi-icon" style="background:rgba(51,170,221,0.1);color:var(--vx-primary);"><i class="bi bi-currency-euro"></i></div><div><div class="dx-kpi-val">{{ number_format($importeVentas, 0, ',', '.') }}€</div><div class="dx-kpi-lbl">Importe Ventas</div></div></div>
     <div class="dx-kpi"><div class="dx-kpi-icon" style="background:rgba(155,89,182,0.1);color:#9B59B6;"><i class="bi bi-people"></i></div><div><div class="dx-kpi-val">{{ $totalClientes }}</div><div class="dx-kpi-lbl">Clientes</div></div></div>
     <div class="dx-kpi"><div class="dx-kpi-icon" style="background:rgba(231,76,60,0.1);color:var(--vx-danger);"><i class="bi bi-car-front"></i></div><div><div class="dx-kpi-val">{{ $totalVehiculos }}</div><div class="dx-kpi-lbl">Vehículos</div></div></div>
     <div class="dx-kpi"><div class="dx-kpi-icon" style="background:rgba(243,156,18,0.1);color:var(--vx-warning);"><i class="bi bi-box2"></i></div><div><div class="dx-kpi-val">{{ number_format($totalStock, 0, ',', '.') }}</div><div class="dx-kpi-lbl">Uds. Stock</div></div></div>

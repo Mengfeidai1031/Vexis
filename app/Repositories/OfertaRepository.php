@@ -102,6 +102,10 @@ class OfertaRepository implements OfertaRepositoryInterface
         $query = OfertaCabecera::with(['cliente.empresa', 'vehiculo', 'lineas']);
         $this->applyRestrictionPriority($query, UserRestrictionHelper::TYPE_CLIENTE, 'cliente_id', 'cliente');
 
+        if (! empty($filters['id'])) {
+            $query->where('id', (int) $filters['id']);
+        }
+
         if (! empty($filters['fecha_desde'])) {
             $query->whereDate('fecha', '>=', $filters['fecha_desde']);
         }

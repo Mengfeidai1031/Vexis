@@ -15,6 +15,7 @@
 </div>
 
 <x-filtros-avanzados :action="route('users.index')">
+    <div class="vx-filtro" data-filtro="id"><label class="vx-filtro-label">ID</label><input type="number" name="id" class="vx-input" value="{{ request('id') }}" placeholder="#"></div>
     <div class="vx-filtro" data-filtro="nombre"><label class="vx-filtro-label">Nombre</label><select name="nombre" class="vx-select"><option value="">Todos</option>@foreach($users_all as $u)<option value="{{ $u->nombre_completo }}" {{ request('nombre') == $u->nombre_completo ? 'selected' : '' }}>{{ $u->nombre_completo }}</option>@endforeach</select></div>
     <div class="vx-filtro" data-filtro="email"><label class="vx-filtro-label">Email</label><select name="email" class="vx-select"><option value="">Todos</option>@foreach($users_all as $u)<option value="{{ $u->email }}" {{ request('email') == $u->email ? 'selected' : '' }}>{{ $u->email }}</option>@endforeach</select></div>
     <div class="vx-filtro" data-filtro="empresa"><label class="vx-filtro-label">Empresa</label><select name="empresa_id" class="vx-select"><option value="">Todas</option>@foreach($empresas as $e)<option value="{{ $e->id }}" {{ request('empresa_id') == $e->id ? 'selected' : '' }}>{{ $e->nombre }}</option>@endforeach</select></div>

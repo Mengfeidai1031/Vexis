@@ -22,8 +22,23 @@ class RoleController extends Controller
     {
         $roles = $this->roleRepository->all();
 
+        if ($request->filled('id')) {
+            $roles = $roles->filter(fn ($r) => (int) $r->id === (int) $request->id)->values();
+        }
         if ($request->filled('nombre')) {
             $roles = $roles->filter(fn ($r) => $r->name === $request->nombre)->values();
+        }
+        if ($request->filled('permisos_min')) {
+            $min = (int) $request->permisos_min;
+            $roles = $roles->filter(fn ($r) => $r->permissions_count >= $min)->values();
+        }
+        if ($request->filled('usuarios_min')) {
+            $min = (int) $request->usuarios_min;
+            $roles = $roles->filter(fn ($r) => $r->users_count >= $min)->values();
+        }
+        if ($request->filled('creado_desde')) {
+            $desde = $request->creado_desde;
+            $roles = $roles->filter(fn ($r) => $r->created_at && $r->created_at->format('Y-m-d') >= $desde)->values();
         }
 
         // Sorting

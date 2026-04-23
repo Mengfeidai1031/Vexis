@@ -14,11 +14,20 @@ class TipoClienteController extends Controller
     {
         $query = TipoCliente::withCount('clientes');
 
+        if ($request->filled('id')) {
+            $query->where('id', (int) $request->id);
+        }
+        if ($request->filled('color')) {
+            $query->where('color', $request->color);
+        }
         if ($request->filled('nombre')) {
             $query->where('nombre', $request->nombre);
         }
         if ($request->filled('descripcion')) {
             $query->where('descripcion', $request->descripcion);
+        }
+        if ($request->filled('clientes_min')) {
+            $query->has('clientes', '>=', (int) $request->clientes_min);
         }
         if ($request->filled('activo')) {
             $query->where('activo', $request->activo);

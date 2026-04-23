@@ -4,7 +4,7 @@
 <div class="vx-page-header"><h1 class="vx-page-title">Dataxis — Facturas</h1><div class="vx-page-actions"><a href="{{ route('dataxis.inicio') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div></div>
 
 {{-- KPIs --}}
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:24px;">
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:24px;">
     <div class="dx-kpi"><div class="dx-kpi-icon" style="background:rgba(51,170,221,0.1);color:var(--vx-primary);"><i class="bi bi-receipt"></i></div><div><div class="dx-kpi-val">{{ $totalFacturas }}</div><div class="dx-kpi-lbl">Total Facturas</div></div></div>
     <div class="dx-kpi"><div class="dx-kpi-icon" style="background:rgba(46,204,113,0.1);color:var(--vx-success);"><i class="bi bi-currency-euro"></i></div><div><div class="dx-kpi-val">{{ number_format($totalFacturado, 0, ',', '.') }}€</div><div class="dx-kpi-lbl">Total Facturado</div></div></div>
     <div class="dx-kpi"><div class="dx-kpi-icon" style="background:rgba(243,156,18,0.1);color:var(--vx-warning);"><i class="bi bi-percent"></i></div><div><div class="dx-kpi-val">{{ number_format($totalIva, 0, ',', '.') }}€</div><div class="dx-kpi-lbl">IVA/IGIC Recaudado</div></div></div>

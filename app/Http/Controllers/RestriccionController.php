@@ -25,11 +25,18 @@ class RestriccionController extends Controller
     {
         $restricciones = $this->restriccionRepository->all();
 
+        if ($request->filled('id')) {
+            $restricciones = $restricciones->filter(fn ($r) => (int) $r->id === (int) $request->id)->values();
+        }
         if ($request->filled('user_id')) {
             $restricciones = $restricciones->filter(fn ($r) => $r->user_id == $request->user_id)->values();
         }
         if ($request->filled('tipo')) {
             $restricciones = $restricciones->filter(fn ($r) => $r->restrictable_type === $request->tipo)->values();
+        }
+        if ($request->filled('creado_desde')) {
+            $desde = $request->creado_desde;
+            $restricciones = $restricciones->filter(fn ($r) => $r->created_at && $r->created_at->format('Y-m-d') >= $desde)->values();
         }
 
         // Sorting

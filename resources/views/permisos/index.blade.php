@@ -11,6 +11,12 @@
 
 <p style="color:var(--vx-text-muted);margin-bottom:16px;">Gestión del catálogo de permisos Spatie. Sólo accesible para Super Admin.</p>
 
+<x-filtros-avanzados :action="route('permisos.index')">
+    <div class="vx-filtro" data-filtro="id"><label class="vx-filtro-label">ID</label><input type="number" name="id" class="vx-input" value="{{ request('id') }}" placeholder="#"></div>
+    <div class="vx-filtro" data-filtro="nombre"><label class="vx-filtro-label">Nombre</label><select name="nombre" class="vx-select"><option value="">Todos</option>@foreach($permissions_all as $n)<option value="{{ $n }}" {{ request('nombre') == $n ? 'selected' : '' }}>{{ $n }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="roles_min"><label class="vx-filtro-label">Roles (mín.)</label><input type="number" name="roles_min" class="vx-input" value="{{ request('roles_min') }}" min="0" placeholder="0"></div>
+</x-filtros-avanzados>
+
 <div class="vx-card">
     <div class="vx-card-body" style="padding:0;">
         <table class="vx-table">

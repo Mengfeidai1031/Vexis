@@ -10,11 +10,24 @@ use Spatie\Permission\Models\Permission;
 
 class PermissionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $permissions = Permission::orderBy('name')->paginate(30);
+        $query = Permission::withCount('roles')->orderBy('name');
 
-        return view('permisos.index', compact('permissions'));
+        if ($request->filled('id')) {
+            $query->where('id', (int) $request->id);
+        }
+        if ($request->filled('nombre')) {
+            $query->where('name', 'like', '%' . $request->nombre . '%');
+        }
+        if ($request->filled('roles_min')) {
+            $query->has('roles', '>=', (int) $request->roles_min);
+        }
+
+        $permissions = $query->paginate(30)->withQueryString();
+        $permissions_all = Permission::orderBy('name')->pluck('name', 'name');
+
+        return view('permisos.index', compact('permissions', 'permissions_all'));
     }
 
     public function create()
