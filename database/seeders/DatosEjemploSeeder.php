@@ -98,8 +98,6 @@ class DatosEjemploSeeder extends Seeder
         if ($almacenes->isEmpty()) {
             return;
         }
-        $empresa = Empresa::first();
-        $centro = Centro::first();
 
         $piezas = [
             ['ref' => 'FLT-ACE-001', 'nombre' => 'Filtro de aceite Nissan', 'marca' => 'Nissan', 'precio' => 12.50, 'cant' => 45, 'min' => 10],
@@ -127,13 +125,14 @@ class DatosEjemploSeeder extends Seeder
         ];
 
         foreach ($piezas as $i => $p) {
+            $almacen = $almacenes[$i % $almacenes->count()];
             Stock::firstOrCreate(
                 ['referencia' => $p['ref']],
                 [
                     'referencia' => $p['ref'], 'nombre_pieza' => $p['nombre'], 'marca_pieza' => $p['marca'],
                     'precio_unitario' => $p['precio'], 'cantidad' => $p['cant'], 'stock_minimo' => $p['min'],
-                    'almacen_id' => $almacenes[$i % $almacenes->count()]->id,
-                    'empresa_id' => $empresa->id, 'centro_id' => $centro->id, 'activo' => true,
+                    'almacen_id' => $almacen->id,
+                    'empresa_id' => $almacen->empresa_id, 'centro_id' => $almacen->centro_id, 'activo' => true,
                 ]
             );
         }
@@ -146,21 +145,23 @@ class DatosEjemploSeeder extends Seeder
         if ($stocks->count() < 2 || $almacenes->count() < 2) {
             return;
         }
-        $empresa = Empresa::first();
-        $centro = Centro::first();
         $estados = ['pendiente', 'en_transito', 'entregado', 'cancelado'];
 
         for ($i = 1; $i <= 80; $i++) {
             $fecha = $this->fechaAleatoria();
             $estado = $estados[array_rand($estados)];
+            $origen = $almacenes->random();
+            $destino = $almacenes->where('id', '!=', $origen->id)->random();
+            $stockOrigen = $stocks->where('almacen_id', $origen->id);
+            $stock = $stockOrigen->isNotEmpty() ? $stockOrigen->random() : $stocks->random();
             Reparto::firstOrCreate(
                 ['codigo_reparto' => 'REP-'.$fecha->format('Ym').'-'.str_pad((string) $i, 4, '0', STR_PAD_LEFT)],
                 [
                     'codigo_reparto' => 'REP-'.$fecha->format('Ym').'-'.str_pad((string) $i, 4, '0', STR_PAD_LEFT),
-                    'stock_id' => $stocks->random()->id,
-                    'almacen_origen_id' => $almacenes[0]->id,
-                    'almacen_destino_id' => $almacenes[rand(1, $almacenes->count() - 1)]->id,
-                    'empresa_id' => $empresa->id, 'centro_id' => $centro->id,
+                    'stock_id' => $stock->id,
+                    'almacen_origen_id' => $origen->id,
+                    'almacen_destino_id' => $destino->id,
+                    'empresa_id' => $origen->empresa_id, 'centro_id' => $origen->centro_id,
                     'cantidad' => rand(1, 20),
                     'estado' => $estado,
                     'fecha_solicitud' => $fecha->toDateString(),
