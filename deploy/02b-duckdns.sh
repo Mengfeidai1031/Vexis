@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# 02b — (Opcional) Dominio con nombre via DuckDNS: vexis.duckdns.org
-#       Solo actua si DUCKDNS_SUBDOMAIN y DUCKDNS_TOKEN estan definidos en deploy.conf.
+# 02b — Dominio via DuckDNS (ej: vexis.duckdns.org).
 #       Apunta el dominio a la IP publica y lo mantiene actualizado cada 5 min.
+#       Se omite solo si usas un dominio propio (APP_DOMAIN en deploy.conf).
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib.sh"
 require_root
 init
@@ -10,8 +10,11 @@ init
 prompt_domain
 
 if [ -z "$DUCKDNS_SUBDOMAIN" ] || [ -z "$DUCKDNS_TOKEN" ]; then
-  warn "DuckDNS no configurado en deploy.conf — se usara sslip.io. (02b omitido)"
-  exit 0
+  if [ -n "$APP_DOMAIN" ]; then
+    warn "Usando dominio propio (APP_DOMAIN=${APP_DOMAIN}); 02b-duckdns omitido."
+    exit 0
+  fi
+  die "DuckDNS no configurado. Define DUCKDNS_SUBDOMAIN y DUCKDNS_TOKEN en deploy/deploy.conf."
 fi
 
 IP="$(public_ip)"

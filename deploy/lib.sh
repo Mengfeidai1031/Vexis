@@ -16,10 +16,9 @@ ENV_FILE="$APP_DIR/.env"
 # Valores por defecto (sobreescribibles desde deploy.conf)
 PHP_VER="${PHP_VER:-8.3}"
 WEB_USER_OVERRIDE="${WEB_USER:-}"
-APP_DOMAIN="${APP_DOMAIN:-}"        # vacio = autodetectar sslip.io desde IP publica
 DUCKDNS_SUBDOMAIN="${DUCKDNS_SUBDOMAIN:-}"  # p.ej. "vexis" -> vexis.duckdns.org
 DUCKDNS_TOKEN="${DUCKDNS_TOKEN:-}"
-DOMAIN_MODE="${DOMAIN_MODE:-}"      # marca interna: "sslip" cuando el usuario elige IP
+APP_DOMAIN="${APP_DOMAIN:-}"        # override avanzado: dominio propio (DNS A -> IP)
 ENABLE_SSL="${ENABLE_SSL:-true}"
 TIMEZONE="${TIMEZONE:-Atlantic/Canary}"
 FPM_SOCK="/run/php-fpm-vexis.sock"  # socket fijo (lo configuramos en el pool)
@@ -75,7 +74,7 @@ detect_php() {
 selinux_enforcing() { command -v getenforce >/dev/null 2>&1 && [ "$(getenforce 2>/dev/null)" = "Enforcing" ]; }
 
 # ---------------------------------------------------------------------------
-# IP publica / dominio sslip.io
+# IP publica / dominio
 # ---------------------------------------------------------------------------
 public_ip() {
   local ip=""
@@ -89,11 +88,9 @@ public_ip() {
 }
 
 resolve_domain() {
-  if [ -n "$APP_DOMAIN" ]; then echo "$APP_DOMAIN"; return; fi
   if [ -n "$DUCKDNS_SUBDOMAIN" ]; then echo "${DUCKDNS_SUBDOMAIN}.duckdns.org"; return; fi
-  local ip; ip="$(public_ip)"
-  [ -n "$ip" ] || die "No pude detectar la IP publica. Define APP_DOMAIN en deploy/deploy.conf."
-  echo "${ip}.sslip.io"
+  if [ -n "$APP_DOMAIN" ]; then echo "$APP_DOMAIN"; return; fi
+  die "No hay dominio configurado. Define DUCKDNS_SUBDOMAIN y DUCKDNS_TOKEN en deploy/deploy.conf (o ejecuta deploy.sh para configurarlo)."
 }
 
 # ---------------------------------------------------------------------------
@@ -129,49 +126,37 @@ persist_conf() {
   mv "$tmp" "$file"
 }
 
-# Pregunta interactiva por el dominio (solo si aun no esta decidido). Idempotente.
+# Pregunta interactiva por el dominio DuckDNS (solo si aun no esta configurado). Idempotente.
 prompt_domain() {
-  # Ya decidido (deploy.conf o re-ejecucion): no preguntar.
-  if [ -n "$APP_DOMAIN" ] || [ -n "$DUCKDNS_SUBDOMAIN" ] || [ "$DOMAIN_MODE" = "sslip" ]; then
+  # Ya configurado (deploy.conf, dominio propio o re-ejecucion): no preguntar.
+  if [ -n "$DUCKDNS_SUBDOMAIN" ] || [ -n "$APP_DOMAIN" ]; then
     return
   fi
-  # Sin terminal interactiva -> fallback automatico a sslip.io
+  # Sin terminal interactiva no se puede preguntar: hay que configurarlo en deploy.conf.
   if [ ! -t 0 ]; then
-    warn "Sin terminal interactiva; usando dominio automatico sslip.io."
-    return
+    die "Dominio DuckDNS no configurado y sin terminal interactiva. Define DUCKDNS_SUBDOMAIN y DUCKDNS_TOKEN en deploy/deploy.conf."
   fi
 
   echo
   echo "============================================================"
-  echo " Dominio publico de tu web"
+  echo " Dominio DuckDNS de tu web (ej: vexis -> vexis.duckdns.org)"
+  echo " Crea cuenta gratis y obten el token en https://www.duckdns.org"
   echo "============================================================"
-  echo " 1) DuckDNS  -> nombre bonito, ej: vexis.duckdns.org   [recomendado]"
-  echo "    (requiere crear cuenta gratis en https://www.duckdns.org y un token)"
-  echo " 2) sslip.io -> automatico con la IP, ej: 1.2.3.4.sslip.io  (cero pasos)"
-  echo "------------------------------------------------------------"
-  local opt; read -rp " Elige opcion [1/2] (Enter = 2): " opt
-
-  if [ "$opt" = "1" ]; then
-    local sub tok
-    while :; do
-      read -rp " Subdominio DuckDNS (sin .duckdns.org), ej 'vexis': " sub
-      [ -n "$sub" ] && break
-      echo "  El subdominio no puede estar vacio."
-    done
-    while :; do
-      read -rp " Token DuckDNS: " tok
-      [ -n "$tok" ] && break
-      echo "  El token no puede estar vacio."
-    done
-    persist_conf DUCKDNS_SUBDOMAIN "$sub"
-    persist_conf DUCKDNS_TOKEN "$tok"
-    DUCKDNS_SUBDOMAIN="$sub"; DUCKDNS_TOKEN="$tok"
-    ok "Dominio elegido: ${sub}.duckdns.org"
-  else
-    persist_conf DOMAIN_MODE "sslip"
-    DOMAIN_MODE="sslip"
-    ok "Dominio elegido: automatico (sslip.io)."
-  fi
+  local sub tok
+  while :; do
+    read -rp " Subdominio DuckDNS (sin .duckdns.org): " sub
+    [ -n "$sub" ] && break
+    echo "  El subdominio no puede estar vacio."
+  done
+  while :; do
+    read -rp " Token DuckDNS: " tok
+    [ -n "$tok" ] && break
+    echo "  El token no puede estar vacio."
+  done
+  persist_conf DUCKDNS_SUBDOMAIN "$sub"
+  persist_conf DUCKDNS_TOKEN "$tok"
+  DUCKDNS_SUBDOMAIN="$sub"; DUCKDNS_TOKEN="$tok"
+  ok "Dominio configurado: ${sub}.duckdns.org"
   echo
 }
 

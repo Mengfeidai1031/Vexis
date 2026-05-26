@@ -17,7 +17,7 @@ pero el de red (Security List) **solo se abre desde la consola**:
    - Source `0.0.0.0/0`, IP Protocol `TCP`, Destination Port **80**
    - Source `0.0.0.0/0`, IP Protocol `TCP`, Destination Port **443**
 3. (Recomendado) *Instance → Reserved Public IP* para que la IP no cambie al reiniciar
-   (si cambia, cambia tu dominio `sslip.io` — ver más abajo).
+   (DuckDNS se reactualiza solo cada 5 min, pero una IP fija evita cortes de DNS).
 
 Sin este paso, la web no será accesible desde fuera y Let's Encrypt fallará.
 
@@ -57,22 +57,25 @@ sudo bash deploy/06-keepalive.sh       # anti-reclamación idle de Oracle
 
 ## Dominio y HTTPS
 
-**El propio `deploy.sh` te lo pregunta por terminal** al arrancar (no hace falta editar nada):
+El dominio se gestiona con **DuckDNS** (`https://vexis.duckdns.org`).
+
+**Requisito previo (~2 min):** entra en https://www.duckdns.org, login con Google/GitHub, crea el
+subdominio y copia el **token**.
+
+**El propio `deploy.sh` te pide subdominio y token por terminal** al arrancar:
 
 ```
- Dominio publico de tu web
- 1) DuckDNS  -> nombre bonito, ej: vexis.duckdns.org   [recomendado]
- 2) sslip.io -> automatico con la IP, ej: 1.2.3.4.sslip.io  (cero pasos)
- Elige opcion [1/2] (Enter = 2):
+ Dominio DuckDNS de tu web (ej: vexis -> vexis.duckdns.org)
+ Subdominio DuckDNS (sin .duckdns.org): vexis
+ Token DuckDNS: ........
 ```
 
-- **Opción 1 — DuckDNS** (`https://vexis.duckdns.org`): te pide el **subdominio** y luego el **token**.
-  Requisito previo (~2 min): entra en https://www.duckdns.org, login con Google/GitHub, crea el
-  subdominio y copia el token. El script (`02b-duckdns.sh`) apunta el dominio a tu IP y lo mantiene
-  actualizado cada 5 min vía systemd timer. Tu respuesta se guarda en `deploy.conf` (no vuelve a preguntar).
-- **Opción 2 — sslip.io** (Enter): `https://<IP_PÚBLICA>.sslip.io`, sin cuenta ni token.
-- **Dominio propio** (opcional): si prefieres saltarte la pregunta, pon `APP_DOMAIN="tu.dominio.com"`
-  en `deploy.conf` (con registro DNS **A** → IP del servidor) y no se preguntará.
+`02b-duckdns.sh` apunta el dominio a tu IP y lo mantiene actualizado cada 5 min vía systemd timer.
+Tu respuesta se guarda en `deploy.conf` (no vuelve a preguntar). También puedes rellenar
+`DUCKDNS_SUBDOMAIN` y `DUCKDNS_TOKEN` en `deploy.conf` antes de ejecutar.
+
+- **Dominio propio** (opcional/avanzado): pon `APP_DOMAIN="tu.dominio.com"` en `deploy.conf`
+  (con registro DNS **A** → IP del servidor); en ese caso se omite DuckDNS.
 - Si Let's Encrypt falla (rate limit, propagación), el sitio queda en **HTTP** y se reintenta con:
   ```bash
   sudo certbot --nginx -d <tu-dominio>

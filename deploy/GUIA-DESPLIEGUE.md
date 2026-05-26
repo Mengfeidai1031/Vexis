@@ -56,17 +56,15 @@ sudo vi .env          # pegas el contenido y guardas con :wq
 sudo bash deploy/deploy.sh
 ```
 
-**Nada más arrancar, `deploy.sh` te pregunta el dominio por terminal:**
+**Nada más arrancar, `deploy.sh` te pide el dominio DuckDNS por terminal:**
 
 ```
- Dominio publico de tu web
- 1) DuckDNS  -> nombre bonito, ej: vexis.duckdns.org   [recomendado]
- 2) sslip.io -> automatico con la IP, ej: 1.2.3.4.sslip.io  (cero pasos)
- Elige opcion [1/2] (Enter = 2):
+ Dominio DuckDNS de tu web (ej: vexis -> vexis.duckdns.org)
+ Subdominio DuckDNS (sin .duckdns.org): vexis
+ Token DuckDNS: ........
 ```
 
-- Si eliges **1)**, te pide el **subdominio** y luego el **token** de DuckDNS (créalos antes, ~2 min, en https://www.duckdns.org).
-- Si pulsas **Enter** (opción 2), usa el dominio automático con IP.
+Créalos antes (~2 min) en https://www.duckdns.org: login con Google/GitHub, crea el subdominio y copia el token.
 
 A partir de ahí continúa **todo solo**: instala, configura, migra y publica. Al terminar verás la URL pública y el login del Super Admin.
 
@@ -100,10 +98,7 @@ La regla que creas significa: *"permite que cualquiera de Internet entre por el 
 ## 4. Decisiones técnicas clave
 
 - **MariaDB** (no MySQL 8): es 100% compatible con `DB_CONNECTION=mysql` y permite crear la BD/usuario igual en Ubuntu y en Oracle Linux, sin la contraseña temporal ni `validate_password` de MySQL 8.
-- **Dominio**: el script **pregunta por terminal** al arrancar (no hay que editar nada):
-  - **DuckDNS** (recomendado, `vexis.duckdns.org`): te pide subdominio y token (créalos antes, ~2 min). `02b-duckdns.sh` automatiza el resto.
-  - **sslip.io** (Enter): `<IP_PÚBLICA>.sslip.io`, cero pasos, pero con la IP en el nombre.
-  - **Dominio propio** (opcional): defínelo en `deploy.conf` → `APP_DOMAIN` (DNS A → IP) y no preguntará.
+- **Dominio (DuckDNS)**: el script **pide subdominio y token por terminal** al arrancar (créalos antes, ~2 min, en https://www.duckdns.org). `02b-duckdns.sh` apunta el dominio a tu IP y lo reactualiza cada 5 min. Alternativa avanzada: dominio propio en `deploy.conf` → `APP_DOMAIN` (DNS A → IP), que omite DuckDNS.
 - **Keep-alive**: ráfaga de CPU de baja prioridad (`nice 19`) ~4 min cada 25 min. Mantiene el percentil 95 de CPU por encima del 20% que exige Oracle para no marcar la instancia como *idle*, **sin frenar la web** (cede la CPU en cuanto la app la necesita).
 
 ---
