@@ -5,23 +5,20 @@
     <h1 class="vx-page-title">Repartos</h1>
     <div class="vx-page-actions">@can('crear repartos')<a href="{{ route('repartos.create') }}" class="vx-btn vx-btn-primary"><i class="bi bi-plus-circle"></i> Nuevo Reparto</a>@endcan</div>
 </div>
-<form action="{{ route('repartos.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar por código o solicitante..." value="{{ request('search') }}" style="flex:1;">
-    <select name="estado" class="vx-select" style="width:auto;">
-        <option value="">Todos los estados</option>
-        @foreach(\App\Models\Reparto::$estados as $k => $v)<option value="{{ $k }}" {{ request('estado') == $k ? 'selected' : '' }}>{{ $v }}</option>@endforeach
-    </select>
-    <select name="empresa_id" class="vx-select" style="width:auto;">
-        <option value="">Todas las empresas</option>
-        @foreach($empresas as $e)<option value="{{ $e->id }}" {{ request('empresa_id') == $e->id ? 'selected' : '' }}>{{ $e->nombre }}</option>@endforeach
-    </select>
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i></button>
-    @if(request()->anyFilled(['search','estado','empresa_id']))<a href="{{ route('repartos.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>@endif
-</form>
+<x-filtros-avanzados :action="route('repartos.index')">
+    <div class="vx-filtro" data-filtro="codigo"><label class="vx-filtro-label">Código</label><select name="codigo_reparto" class="vx-select"><option value="">Todos</option>@foreach($codigos_reparto as $c)<option value="{{ $c }}" {{ request('codigo_reparto') == $c ? 'selected' : '' }}>{{ $c }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="pieza"><label class="vx-filtro-label">Pieza</label><select name="stock_id" class="vx-select"><option value="">Todas</option>@foreach($stocks_reparto as $s)<option value="{{ $s->id }}" {{ request('stock_id') == $s->id ? 'selected' : '' }}>{{ $s->nombre_pieza }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="origen"><label class="vx-filtro-label">Almacén Origen</label><select name="almacen_origen_id" class="vx-select"><option value="">Todos</option>@foreach($almacenes as $a)<option value="{{ $a->id }}" {{ request('almacen_origen_id') == $a->id ? 'selected' : '' }}>{{ $a->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="destino"><label class="vx-filtro-label">Almacén Destino</label><select name="almacen_destino_id" class="vx-select"><option value="">Todos</option>@foreach($almacenes as $a)<option value="{{ $a->id }}" {{ request('almacen_destino_id') == $a->id ? 'selected' : '' }}>{{ $a->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="estado"><label class="vx-filtro-label">Estado</label><select name="estado" class="vx-select"><option value="">Todos</option>@foreach(\App\Models\Reparto::$estados as $k => $v)<option value="{{ $k }}" {{ request('estado') == $k ? 'selected' : '' }}>{{ $v }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="empresa"><label class="vx-filtro-label">Empresa</label><select name="empresa_id" class="vx-select"><option value="">Todas</option>@foreach($empresas as $e)<option value="{{ $e->id }}" {{ request('empresa_id') == $e->id ? 'selected' : '' }}>{{ $e->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="desde"><label class="vx-filtro-label">Fecha desde</label><input type="date" name="fecha_desde" class="vx-input" value="{{ request('fecha_desde') }}"></div>
+    <div class="vx-filtro" data-filtro="hasta"><label class="vx-filtro-label">Fecha hasta</label><input type="date" name="fecha_hasta" class="vx-input" value="{{ request('fecha_hasta') }}"></div>
+</x-filtros-avanzados>
 <div class="vx-card"><div class="vx-card-body" style="padding:0;">
     @if($repartos->count() > 0)
     <div class="vx-table-wrapper"><table class="vx-table">
-        <thead><tr><th>Código</th><th>Pieza</th><th>Cantidad</th><th>Origen</th><th>Destino</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead>
+        <thead><tr><x-columna-ordenable campo="codigo_reparto" label="Código" /><x-columna-ordenable campo="stock_id" label="Pieza" /><x-columna-ordenable campo="cantidad" label="Cantidad" /><x-columna-ordenable campo="almacen_origen_id" label="Origen" /><x-columna-ordenable campo="almacen_destino_id" label="Destino" /><x-columna-ordenable campo="estado" label="Estado" /><x-columna-ordenable campo="fecha_solicitud" label="Fecha" /><th>Acciones</th></tr></thead>
         <tbody>
             @foreach($repartos as $r)
             <tr>
@@ -40,7 +37,7 @@
                 </td>
                 <td style="font-size:12px;">{{ $r->fecha_solicitud->format('d/m/Y') }}</td>
                 <td>
-                    <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+                    <div class="vx-actions"><button class="vx-actions-toggle" aria-label="Abrir acciones" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button><div class="vx-actions-menu">
                         <a href="{{ route('repartos.show', $r) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
                         @can('editar repartos')<a href="{{ route('repartos.edit', $r) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>@endcan
                         @can('eliminar repartos')

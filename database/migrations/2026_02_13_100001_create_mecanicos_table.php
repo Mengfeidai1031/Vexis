@@ -13,9 +13,11 @@ return new class extends Migration
             $table->string('nombre', 100);
             $table->string('apellidos', 150);
             $table->string('especialidad', 100)->nullable();
-            $table->foreignId('taller_id')->constrained('talleres')->onDelete('cascade');
+            $table->foreignId('taller_id')->constrained('talleres')->cascadeOnDelete();
             $table->boolean('activo')->default(true);
             $table->timestamps();
+
+            $table->index(['taller_id', 'activo']);
         });
     }
 

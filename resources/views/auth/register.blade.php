@@ -1,6 +1,8 @@
 @extends('layouts.app')
 @section('title', 'Registro - VEXIS')
 @section('content')
+<x-test-users-modal />
+
 <div style="min-height: calc(100vh - var(--vx-navbar-height) - 60px); display: flex; align-items: center; justify-content: center;">
     <div style="width: 100%; max-width: 420px; padding: 20px;">
         <div style="text-align: center; margin-bottom: 28px;">
@@ -12,7 +14,7 @@
             <div class="vx-card-body">
                 <form method="POST" action="{{ route('register') }}">
                     @csrf
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px;">
                         <div class="vx-form-group">
                             <label class="vx-label" for="nombre">Nombre <span class="required">*</span></label>
                             <input type="text" class="vx-input @error('nombre') is-invalid @enderror" id="nombre" name="nombre" value="{{ old('nombre') }}" required autofocus>
@@ -31,8 +33,9 @@
                     </div>
                     <div class="vx-form-group">
                         <label class="vx-label" for="password">Contraseña <span class="required">*</span></label>
-                        <input type="password" class="vx-input @error('password') is-invalid @enderror" id="password" name="password" required>
+                        <input type="password" class="vx-input @error('password') is-invalid @enderror" id="password" name="password" minlength="8" required>
                         @error('password')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
+                        <div class="vx-form-hint">Mínimo 8 caracteres</div>
                     </div>
                     <div class="vx-form-group">
                         <label class="vx-label" for="password_confirmation">Confirmar Contraseña <span class="required">*</span></label>

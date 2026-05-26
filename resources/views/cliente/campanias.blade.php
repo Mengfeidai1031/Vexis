@@ -1,12 +1,12 @@
 @extends('layouts.app')
 @section('title', 'Campañas - VEXIS')
 @section('content')
-<div class="vx-page-header"><h1 class="vx-page-title"><i class="bi bi-megaphone" style="color:var(--vx-warning);"></i> Campañas y Promociones</h1><a href="{{ route('cliente.inicio') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div>
+<div class="vx-page-header"><h1 class="vx-page-title">Campañas y Promociones</h1><div class="vx-page-actions"><a href="{{ route('cliente.inicio') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div></div>
 
 @if($campanias->count() > 0)
 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(350px,1fr));gap:20px;">
     @foreach($campanias as $c)
-    <div class="vx-card" style="overflow:hidden;">
+    <div class="vx-card cli-cmp-card" style="overflow:hidden;">
         @if($c->fotos->count() > 0)
         <div class="cli-cmp-carousel">
             <div class="cli-cmp-track" id="cliCmpTrack{{ $c->id }}">
@@ -50,17 +50,20 @@
 @endif
 @push('styles')
 <style>
-.cli-cmp-carousel { position: relative; overflow: hidden; height: 210px; background: var(--vx-gray-100); }
-.cli-cmp-track { display: flex; transition: transform 0.35s ease; height: 100%; }
+.cli-cmp-card { transition: all 0.25s cubic-bezier(0.4,0,0.2,1); }
+.cli-cmp-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+.cli-cmp-carousel { position: relative; overflow: hidden; height: 220px; background: var(--vx-gray-100); border-bottom: 1px solid var(--vx-border); }
+.cli-cmp-track { display: flex; transition: transform 0.4s cubic-bezier(0.4,0,0.2,1); height: 100%; }
 .cli-cmp-slide { min-width: 100%; height: 100%; }
 .cli-cmp-image { width: 100%; height: 100%; object-fit: cover; }
-.cli-cmp-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.7); background: rgba(0,0,0,0.45); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2; }
+.cli-cmp-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border-radius: 50%; border: none; background: rgba(0,0,0,0.5); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2; backdrop-filter: blur(4px); transition: all 0.2s; }
 .cli-cmp-prev { left: 10px; }
 .cli-cmp-next { right: 10px; }
-.cli-cmp-arrow:hover { background: rgba(0,0,0,0.62); }
-.cli-cmp-dots { position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); display: flex; gap: 6px; }
-.cli-cmp-dot { width: 7px; height: 7px; border-radius: 50%; border: none; background: rgba(255,255,255,0.55); cursor: pointer; padding: 0; }
-.cli-cmp-dot.active { width: 18px; border-radius: 4px; background: #fff; }
+.cli-cmp-arrow:hover { background: rgba(0,0,0,0.7); transform: translateY(-50%) scale(1.1); }
+.cli-cmp-dots { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); display: flex; gap: 6px; }
+.cli-cmp-dot { width: 8px; height: 8px; border-radius: 50%; border: none; background: rgba(255,255,255,0.5); cursor: pointer; padding: 0; transition: all 0.2s; }
+.cli-cmp-dot:hover { background: rgba(255,255,255,0.8); }
+.cli-cmp-dot.active { width: 20px; border-radius: 4px; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
 </style>
 @endpush
 @push('scripts')

@@ -12,7 +12,7 @@
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px;">
                 <div class="vx-form-group">
                     <label class="vx-label">Nombre del Equipo <span class="required">*</span></label>
-                    <input type="text" class="vx-input @error('nombre_equipo') is-invalid @enderror" name="nombre_equipo" value="{{ old('nombre_equipo') }}" required placeholder="ARI-PC-001">
+                    <input type="text" class="vx-input @error('nombre_equipo') is-invalid @enderror" name="nombre_equipo" value="{{ old('nombre_equipo') }}" required placeholder="DAI-PC-001">
                     @error('nombre_equipo')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="vx-form-group">

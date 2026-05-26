@@ -11,7 +11,7 @@
     </div>
 </div>
 
-<div style="max-width: 900px;">
+<div style="max-width: 800px;">
     <div class="vx-card" style="margin-bottom: 20px;">
         <div class="vx-card-header">
             <h3><i class="bi bi-shield-lock" style="color: var(--vx-primary); margin-right: 8px;"></i>{{ $role->name }}</h3>
@@ -29,7 +29,7 @@
     {{-- Permisos agrupados --}}
     @if($role->permissions->count() > 0)
     <div class="vx-card" style="margin-bottom: 20px;">
-        <div class="vx-card-header"><h4>Permisos Asignados</h4></div>
+        <div class="vx-card-header"><h2>Permisos Asignados</h2></div>
         <div class="vx-card-body">
             @php
                 $groupedPermissions = $role->permissions->groupBy(function($permission) {
@@ -63,7 +63,7 @@
     {{-- Usuarios con este rol --}}
     @if($role->users->count() > 0)
     <div class="vx-card">
-        <div class="vx-card-header"><h4>Usuarios con este Rol</h4></div>
+        <div class="vx-card-header"><h2>Usuarios con este Rol</h2></div>
         <div class="vx-card-body" style="padding: 0;">
             <div class="vx-table-wrapper">
                 <table class="vx-table">

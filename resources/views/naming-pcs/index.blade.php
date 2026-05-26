@@ -9,29 +9,22 @@
         @endcan
     </div>
 </div>
-<form action="{{ route('naming-pcs.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar por nombre, IP o ubicación..." value="{{ request('search') }}" style="flex:1;">
-    <select name="tipo" class="vx-select" style="width:auto;">
-        <option value="">Todos los tipos</option>
-        @foreach(\App\Models\NamingPc::$tipos as $t)
-            <option value="{{ $t }}" {{ request('tipo') == $t ? 'selected' : '' }}>{{ $t }}</option>
-        @endforeach
-    </select>
-    <select name="empresa_id" class="vx-select" style="width:auto;">
-        <option value="">Todas las empresas</option>
-        @foreach($empresas as $e)
-            <option value="{{ $e->id }}" {{ request('empresa_id') == $e->id ? 'selected' : '' }}>{{ $e->nombre }}</option>
-        @endforeach
-    </select>
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i></button>
-    @if(request()->anyFilled(['search','tipo','empresa_id']))<a href="{{ route('naming-pcs.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>@endif
-</form>
+<x-filtros-avanzados :action="route('naming-pcs.index')">
+    <div class="vx-filtro" data-filtro="nombre"><label class="vx-filtro-label">Nombre</label><select name="nombre_equipo" class="vx-select"><option value="">Todos</option>@foreach($nombres_pc as $n)<option value="{{ $n }}" {{ request('nombre_equipo') == $n ? 'selected' : '' }}>{{ $n }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="tipo"><label class="vx-filtro-label">Tipo</label><select name="tipo" class="vx-select"><option value="">Todos</option>@foreach(\App\Models\NamingPc::$tipos as $t)<option value="{{ $t }}" {{ request('tipo') == $t ? 'selected' : '' }}>{{ $t }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="ip"><label class="vx-filtro-label">IP</label><select name="direccion_ip" class="vx-select"><option value="">Todas</option>@foreach($ips_pc as $ip)<option value="{{ $ip }}" {{ request('direccion_ip') == $ip ? 'selected' : '' }}>{{ $ip }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="empresa"><label class="vx-filtro-label">Empresa</label><select name="empresa_id" class="vx-select"><option value="">Todas</option>@foreach($empresas as $e)<option value="{{ $e->id }}" {{ request('empresa_id') == $e->id ? 'selected' : '' }}>{{ $e->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="centro"><label class="vx-filtro-label">Centro</label><select name="centro_id" class="vx-select"><option value="">Todos</option>@foreach($centros as $c)<option value="{{ $c->id }}" {{ request('centro_id') == $c->id ? 'selected' : '' }}>{{ $c->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="so"><label class="vx-filtro-label">Sist. Operativo</label><select name="sistema_operativo" class="vx-select"><option value="">Todos</option>@foreach(\App\Models\NamingPc::$sistemasOperativos as $so)<option value="{{ $so }}" {{ request('sistema_operativo') == $so ? 'selected' : '' }}>{{ $so }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="version"><label class="vx-filtro-label">Versión SO</label><select name="version_so" class="vx-select"><option value="">Todas</option>@foreach($versiones_pc as $v)<option value="{{ $v }}" {{ request('version_so') == $v ? 'selected' : '' }}>{{ $v }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="activo"><label class="vx-filtro-label">Estado</label><select name="activo" class="vx-select"><option value="">Todos</option><option value="1" {{ request('activo') === '1' ? 'selected' : '' }}>Activo</option><option value="0" {{ request('activo') === '0' ? 'selected' : '' }}>Inactivo</option></select></div>
+</x-filtros-avanzados>
 <div class="vx-card">
     <div class="vx-card-body" style="padding:0;">
         @if($namingPcs->count() > 0)
         <div class="vx-table-wrapper">
             <table class="vx-table">
-                <thead><tr><th>Nombre</th><th>Tipo</th><th>IP</th><th>Empresa</th><th>Centro</th><th>SO</th><th>Versión</th><th>Estado</th><th>Acciones</th></tr></thead>
+                <thead><tr><x-columna-ordenable campo="nombre_equipo" label="Nombre" /><x-columna-ordenable campo="tipo" label="Tipo" /><x-columna-ordenable campo="direccion_ip" label="IP" /><x-columna-ordenable campo="empresa_id" label="Empresa" /><x-columna-ordenable campo="centro_id" label="Centro" /><x-columna-ordenable campo="sistema_operativo" label="SO" /><x-columna-ordenable campo="version_so" label="Versión" /><x-columna-ordenable campo="activo" label="Estado" /><th>Acciones</th></tr></thead>
                 <tbody>
                     @foreach($namingPcs as $pc)
                     <tr>
@@ -48,7 +41,7 @@
                             @else<span class="vx-badge vx-badge-gray">Inactivo</span>@endif
                         </td>
                         <td>
-                            <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+                            <div class="vx-actions"><button class="vx-actions-toggle" aria-label="Abrir acciones" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button><div class="vx-actions-menu">
                                 <a href="{{ route('naming-pcs.show', $pc) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
                                 @can('editar naming-pcs')<a href="{{ route('naming-pcs.edit', $pc) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>@endcan
                                 @can('eliminar naming-pcs')

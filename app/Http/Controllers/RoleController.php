@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRoleRequest;
@@ -18,10 +20,37 @@ class RoleController extends Controller
 
     public function index(Request $request)
     {
-        if ($request->has('search') && !empty($request->search)) {
-            $roles = $this->roleRepository->search($request->search);
-        } else {
-            $roles = $this->roleRepository->all();
+        $roles = $this->roleRepository->all();
+
+        if ($request->filled('id')) {
+            $roles = $roles->filter(fn ($r) => (int) $r->id === (int) $request->id)->values();
+        }
+        if ($request->filled('nombre')) {
+            $roles = $roles->filter(fn ($r) => $r->name === $request->nombre)->values();
+        }
+        if ($request->filled('permisos_min')) {
+            $min = (int) $request->permisos_min;
+            $roles = $roles->filter(fn ($r) => $r->permissions_count >= $min)->values();
+        }
+        if ($request->filled('usuarios_min')) {
+            $min = (int) $request->usuarios_min;
+            $roles = $roles->filter(fn ($r) => $r->users_count >= $min)->values();
+        }
+        if ($request->filled('creado_desde')) {
+            $desde = $request->creado_desde;
+            $roles = $roles->filter(fn ($r) => $r->created_at && $r->created_at->format('Y-m-d') >= $desde)->values();
+        }
+
+        // Sorting
+        $sortable = ['id', 'name', 'created_at'];
+        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
+            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+            if ($roles instanceof \Illuminate\Pagination\AbstractPaginator) {
+                $sorted = $roles->getCollection()->sortBy($request->sort_by, SORT_REGULAR, $dir === 'desc')->values();
+                $roles->setCollection($sorted);
+            } else {
+                $roles = $roles->sortBy($request->sort_by, SORT_REGULAR, $dir === 'desc')->values();
+            }
         }
 
         return view('roles.index', compact('roles'));
@@ -30,6 +59,7 @@ class RoleController extends Controller
     public function create()
     {
         $permissions = $this->roleRepository->getAllPermissions();
+
         return view('roles.create', compact('permissions'));
     }
 
@@ -47,6 +77,7 @@ class RoleController extends Controller
     public function show(int $id)
     {
         $role = $this->roleRepository->find($id);
+
         return view('roles.show', compact('role'));
     }
 
@@ -54,6 +85,7 @@ class RoleController extends Controller
     {
         $role = $this->roleRepository->find($id);
         $permissions = $this->roleRepository->getAllPermissions();
+
         return view('roles.edit', compact('role', 'permissions'));
     }
 
@@ -73,6 +105,7 @@ class RoleController extends Controller
     {
         try {
             $this->roleRepository->delete($id);
+
             return redirect()->route('roles.index')
                 ->with('success', 'Rol eliminado exitosamente.');
         } catch (\Exception $e) {

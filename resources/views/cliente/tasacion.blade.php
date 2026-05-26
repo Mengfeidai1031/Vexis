@@ -15,11 +15,11 @@
 
 <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:16px;">
     <div class="vx-card">
-        <div class="vx-card-header"><h4><i class="bi bi-send"></i> Nueva solicitud</h4></div>
+        <div class="vx-card-header"><h2><i class="bi bi-send"></i> Nueva solicitud</h2></div>
         <div class="vx-card-body">
             <form action="{{ route('cliente.tasacion.store') }}" method="POST">
                 @csrf
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 12px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px;">
                     <div class="vx-form-group">
                         <label class="vx-label">Marca vehículo <span class="required">*</span></label>
                         <input type="text" class="vx-input @error('vehiculo_marca') is-invalid @enderror" name="vehiculo_marca" value="{{ old('vehiculo_marca') }}" required>
@@ -32,7 +32,7 @@
                     </div>
                 </div>
 
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 12px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px;">
                     <div class="vx-form-group">
                         <label class="vx-label">Año <span class="required">*</span></label>
                         <input type="number" class="vx-input @error('vehiculo_anio') is-invalid @enderror" name="vehiculo_anio" value="{{ old('vehiculo_anio', date('Y') - 3) }}" min="1990" max="2030" required>
@@ -45,7 +45,7 @@
                     </div>
                 </div>
 
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 12px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px;">
                     <div class="vx-form-group">
                         <label class="vx-label">Matrícula</label>
                         <input type="text" class="vx-input @error('matricula') is-invalid @enderror" name="matricula" value="{{ old('matricula') }}" style="text-transform:uppercase;">
@@ -63,7 +63,7 @@
                     </div>
                 </div>
 
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 12px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px;">
                     <div class="vx-form-group">
                         <label class="vx-label">Estado del vehículo <span class="required">*</span></label>
                         <select class="vx-select @error('estado_vehiculo') is-invalid @enderror" name="estado_vehiculo" required>
@@ -85,7 +85,7 @@
                     </div>
                 </div>
 
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 12px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px;">
                     <div class="vx-form-group">
                         <label class="vx-label">Marca comercial (opcional)</label>
                         <select class="vx-select @error('marca_id') is-invalid @enderror" name="marca_id">
@@ -111,7 +111,7 @@
     </div>
 
     <div class="vx-card">
-        <div class="vx-card-header"><h4><i class="bi bi-clock-history"></i> Mis solicitudes recientes</h4></div>
+        <div class="vx-card-header"><h2><i class="bi bi-clock-history"></i> Mis solicitudes recientes</h2></div>
         <div class="vx-card-body">
             @if($solicitudes->count() > 0)
                 <div style="display:flex;flex-direction:column;gap:10px;">

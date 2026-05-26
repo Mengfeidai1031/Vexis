@@ -1,7 +1,7 @@
 @extends('layouts.app')
-@section('title', 'Catálogo de Precios - VEXIS')
+@section('title', 'Catálogo - VEXIS')
 @section('content')
-<div class="vx-page-header"><h1 class="vx-page-title">Catálogo de Precios</h1><div class="vx-page-actions">@can('crear catalogo-precios')<a href="{{ route('catalogo-precios.create') }}" class="vx-btn vx-btn-primary"><i class="bi bi-plus-circle"></i> Nuevo Modelo</a>@endcan</div></div>
+<div class="vx-page-header"><h1 class="vx-page-title">Catálogo</h1><div class="vx-page-actions">@can('crear catalogo-precios')<a href="{{ route('catalogo-precios.create') }}" class="vx-btn vx-btn-primary"><i class="bi bi-plus-circle"></i> Nuevo Modelo</a>@endcan</div></div>
 
 {{-- Tabs de marca --}}
 <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
@@ -12,12 +12,11 @@
     @endforeach
 </div>
 
-<form action="{{ route('catalogo-precios.index') }}" method="GET" class="vx-search-box" style="margin-bottom:16px;">
+<x-filtros-avanzados :action="route('catalogo-precios.index')">
     <input type="hidden" name="marca_id" value="{{ $marcaSeleccionada }}">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar modelo o versión..." value="{{ request('search') }}" style="flex:1;">
-    <select name="combustible" class="vx-select" style="width:auto;"><option value="">Todos</option>@foreach(\App\Models\CatalogoPrecio::$combustibles as $c)<option value="{{ $c }}" {{ request('combustible') == $c ? 'selected' : '' }}>{{ $c }}</option>@endforeach</select>
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i></button>
-</form>
+    <div class="vx-filtro" data-filtro="combustible"><label class="vx-filtro-label">Combustible</label><select name="combustible" class="vx-select"><option value="">Todos</option>@foreach(\App\Models\CatalogoPrecio::$combustibles as $c)<option value="{{ $c }}" {{ request('combustible') == $c ? 'selected' : '' }}>{{ $c }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="disponible"><label class="vx-filtro-label">Disponibilidad</label><select name="disponible" class="vx-select"><option value="">Todos</option><option value="1" {{ request('disponible') === '1' ? 'selected' : '' }}>Disponible</option><option value="0" {{ request('disponible') === '0' ? 'selected' : '' }}>No disponible</option></select></div>
+</x-filtros-avanzados>
 
 {{-- Grid de modelos --}}
 @if($catalogo->count() > 0)
@@ -30,7 +29,7 @@
                     <h4 style="font-size:16px;font-weight:800;margin:0 0 2px;">{{ $item->modelo }}</h4>
                     <p style="font-size:12px;color:var(--vx-text-muted);margin:0;">{{ $item->version ?? '' }}</p>
                 </div>
-                @if($item->marca)<span class="vx-badge" style="background:{{ $item->marca->color }}20;color:{{ $item->marca->color }};font-size:10px;">{{ $item->marca->nombre }}</span>@endif
+                @if($item->marca)@php $logoSlug = Str::lower($item->marca->nombre); @endphp<span class="vx-badge" style="background:{{ $item->marca->color }}20;color:{{ $item->marca->color }};font-size:10px;display:inline-flex;align-items:center;gap:4px;">@if(file_exists(storage_path("app/public/logos/{$logoSlug}.png")))<img src="{{ asset("storage/logos/{$logoSlug}.png") }}" alt="" style="height:14px;">@endif{{ $item->marca->nombre }}</span>@endif
             </div>
             <div style="display:flex;gap:12px;margin-top:12px;">
                 @if($item->combustible)<span style="font-size:11px;color:var(--vx-text-muted);"><i class="bi bi-fuel-pump"></i> {{ $item->combustible }}</span>@endif
@@ -49,7 +48,7 @@
             </div>
             <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center;">
                 @if($item->disponible)<span class="vx-badge vx-badge-success">Disponible</span>@else<span class="vx-badge vx-badge-gray">No disponible</span>@endif
-                <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+                <div class="vx-actions"><button class="vx-actions-toggle" aria-label="Abrir acciones" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button><div class="vx-actions-menu">
                     @can('editar catalogo-precios')<a href="{{ route('catalogo-precios.edit', $item) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>@endcan
                     @can('eliminar catalogo-precios')<form action="{{ route('catalogo-precios.destroy', $item) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar?');">@csrf @method('DELETE')<button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button></form>@endcan
                 </div></div>

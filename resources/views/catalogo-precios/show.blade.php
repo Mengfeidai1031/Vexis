@@ -5,8 +5,8 @@
     <h1 class="vx-page-title">{{ $catalogo_precio->modelo }}</h1>
     <div class="vx-page-actions">@can('editar catalogo-precios')<a href="{{ route('catalogo-precios.edit', $catalogo_precio) }}" class="vx-btn vx-btn-warning"><i class="bi bi-pencil"></i> Editar</a>@endcan <a href="{{ route('catalogo-precios.index', ['marca_id' => $catalogo_precio->marca_id]) }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div>
 </div>
-<div style="max-width:700px;">
-    <div class="vx-card"><div class="vx-card-header"><h4>Detalles del Modelo</h4></div><div class="vx-card-body">
+<div style="max-width:800px;">
+    <div class="vx-card"><div class="vx-card-header"><h2>Detalles del Modelo</h2></div><div class="vx-card-body">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
             <div>
                 <div class="vx-info-row"><div class="vx-info-label">Marca</div><div class="vx-info-value">@if($catalogo_precio->marca)<span class="vx-badge" style="background:{{ $catalogo_precio->marca->color }}20;color:{{ $catalogo_precio->marca->color }};">{{ $catalogo_precio->marca->nombre }}</span>@else — @endif</div></div>

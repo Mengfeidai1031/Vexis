@@ -10,12 +10,14 @@ return new class extends Migration
     {
         Schema::create('citas_taller', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('mecanico_id')->constrained('mecanicos')->onDelete('cascade');
-            $table->foreignId('taller_id')->constrained('talleres')->onDelete('cascade');
-            $table->foreignId('marca_id')->nullable()->constrained('marcas')->onDelete('set null');
-            $table->foreignId('empresa_id')->constrained('empresas')->onDelete('cascade');
-            $table->string('cliente_nombre', 255);
-            $table->string('vehiculo_info', 255)->nullable();
+            $table->foreignId('mecanico_id')->constrained('mecanicos')->cascadeOnDelete();
+            $table->foreignId('taller_id')->constrained('talleres')->cascadeOnDelete();
+            $table->foreignId('marca_id')->nullable()->constrained('marcas')->nullOnDelete();
+            $table->foreignId('empresa_id')->constrained('empresas')->cascadeOnDelete();
+            $table->foreignId('cliente_id')->nullable()->constrained('clientes')->nullOnDelete();
+            $table->foreignId('vehiculo_id')->nullable()->constrained('vehiculos')->nullOnDelete();
+            $table->string('cliente_nombre', 200)->nullable();
+            $table->string('vehiculo_info', 200)->nullable();
             $table->date('fecha');
             $table->time('hora_inicio');
             $table->time('hora_fin')->nullable();
@@ -24,6 +26,10 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['fecha', 'mecanico_id']);
+            $table->index(['taller_id', 'fecha']);
+            $table->index(['empresa_id', 'estado']);
+            $table->index('cliente_id');
+            $table->index('vehiculo_id');
         });
     }
 

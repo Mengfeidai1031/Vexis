@@ -2,23 +2,24 @@
 @section('title', 'Mecánicos - VEXIS')
 @section('content')
 <div class="vx-page-header"><h1 class="vx-page-title">Mecánicos</h1><div class="vx-page-actions">@can('crear mecanicos')<a href="{{ route('mecanicos.create') }}" class="vx-btn vx-btn-primary"><i class="bi bi-plus-circle"></i> Nuevo</a>@endcan</div></div>
-<form action="{{ route('mecanicos.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar por nombre o especialidad..." value="{{ request('search') }}" style="flex:1;">
-    <select name="taller_id" class="vx-select" style="width:auto;"><option value="">Todos los talleres</option>@foreach($talleres as $t)<option value="{{ $t->id }}" {{ request('taller_id') == $t->id ? 'selected' : '' }}>{{ $t->nombre }}</option>@endforeach</select>
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i></button>
-    @if(request()->anyFilled(['search','taller_id']))<a href="{{ route('mecanicos.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>@endif
-</form>
+<x-filtros-avanzados :action="route('mecanicos.index')">
+    <div class="vx-filtro" data-filtro="nombre"><label class="vx-filtro-label">Nombre</label><select name="mecanico_id" class="vx-select"><option value="">Todos</option>@foreach($mecanicos_all as $m)<option value="{{ $m->id }}" {{ request('mecanico_id') == $m->id ? 'selected' : '' }}>{{ $m->nombre }} {{ $m->apellidos }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="especialidad"><label class="vx-filtro-label">Especialidad</label><select name="especialidad" class="vx-select"><option value="">Todas</option>@foreach($especialidades as $e)<option value="{{ $e }}" {{ request('especialidad') == $e ? 'selected' : '' }}>{{ $e }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="taller"><label class="vx-filtro-label">Taller</label><select name="taller_id" class="vx-select"><option value="">Todos</option>@foreach($talleres as $t)<option value="{{ $t->id }}" {{ request('taller_id') == $t->id ? 'selected' : '' }}>{{ $t->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="activo"><label class="vx-filtro-label">Estado</label><select name="activo" class="vx-select"><option value="">Todos</option><option value="1" {{ request('activo') === '1' ? 'selected' : '' }}>Activo</option><option value="0" {{ request('activo') === '0' ? 'selected' : '' }}>Inactivo</option></select></div>
+</x-filtros-avanzados>
 <div class="vx-card"><div class="vx-card-body" style="padding:0;">
     @if($mecanicos->count() > 0)
     <div class="vx-table-wrapper"><table class="vx-table">
-        <thead><tr><th>Nombre</th><th>Especialidad</th><th>Taller</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <thead><tr><x-columna-ordenable campo="nombre" label="Nombre" /><x-columna-ordenable campo="especialidad" label="Especialidad" /><x-columna-ordenable campo="taller_id" label="Taller" /><x-columna-ordenable campo="activo" label="Estado" /><th>Acciones</th></tr></thead>
         <tbody>@foreach($mecanicos as $m)
         <tr>
             <td style="font-weight:600;"><i class="bi bi-person-gear" style="color:var(--vx-success);margin-right:4px;"></i>{{ $m->nombre_completo }}</td>
             <td style="font-size:12px;">{{ $m->especialidad ?? '—' }}</td>
             <td style="font-size:12px;">{{ $m->taller->nombre ?? '—' }}</td>
             <td>@if($m->activo)<span class="vx-badge vx-badge-success">Activo</span>@else<span class="vx-badge vx-badge-gray">Inactivo</span>@endif</td>
-            <td><div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+            <td><div class="vx-actions"><button class="vx-actions-toggle" aria-label="Abrir acciones" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button><div class="vx-actions-menu">
+                <a href="{{ route('mecanicos.show', $m) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
                 @can('editar mecanicos')<a href="{{ route('mecanicos.edit', $m) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>@endcan
                 @can('eliminar mecanicos')<form action="{{ route('mecanicos.destroy', $m) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar?');">@csrf @method('DELETE')<button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button></form>@endcan
             </div></div></td>

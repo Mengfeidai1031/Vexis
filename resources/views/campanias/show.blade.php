@@ -8,7 +8,7 @@
         <a href="{{ route('campanias.index') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
     </div>
 </div>
-<div style="max-width:900px;">
+<div style="max-width:800px;">
     <div class="vx-card" style="margin-bottom:16px;">
         <div class="vx-card-body">
             <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">

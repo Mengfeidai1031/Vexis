@@ -6,7 +6,6 @@ namespace App\Policies;
 
 use App\Helpers\UserRestrictionHelper;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 final class UserPolicy
 {
@@ -25,7 +24,7 @@ final class UserPolicy
     public function view(User $user, User $model): bool
     {
         // Verificar permiso general
-        if (!$user->can('ver usuarios')) {
+        if (! $user->can('ver usuarios')) {
             return false;
         }
 
@@ -54,7 +53,7 @@ final class UserPolicy
     public function update(User $user, User $model): bool
     {
         // Verificar permiso general
-        if (!$user->can('editar usuarios')) {
+        if (! $user->can('editar usuarios')) {
             return false;
         }
 
@@ -73,7 +72,7 @@ final class UserPolicy
     public function delete(User $user, User $model): bool
     {
         // Verificar permiso general
-        if (!$user->can('eliminar usuarios')) {
+        if (! $user->can('eliminar usuarios')) {
             return false;
         }
 
@@ -89,21 +88,5 @@ final class UserPolicy
 
         // Si el usuario no tiene empresa asignada, se permite eliminarlo si no hay restricciones
         return true;
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, User $model): bool
-    {
-        return false; // No implementado
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, User $model): bool
-    {
-        return false; // No implementado
     }
 }

@@ -1,0 +1,373 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Using nullsafe property access "\?\-\>nombre" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Exports/ClientesExport.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>codigo_venta" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Exports/FacturasExport.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Exports/FacturasExport.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>nombre" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 3
+			path: app/Exports/FacturasExport.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>nombre" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 3
+			path: app/Exports/StocksExport.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Exports/TasacionesExport.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>nombre" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Exports/TasacionesExport.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$cif\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Exports/VehiculosExport.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$nombre\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Exports/VehiculosExport.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>nombre" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Exports/VehiculosExport.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>modelo" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Exports/VentasExport.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Exports/VentasExport.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>nombre" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 3
+			path: app/Exports/VentasExport.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Helpers/UserRestrictionHelper.php
+
+		-
+			message: '#^PHPDoc tag @param for parameter \$value with type App\\Helpers\\Model\|int is not subtype of native type Illuminate\\Database\\Eloquent\\Model\|int\.$#'
+			identifier: parameter.phpDocType
+			count: 1
+			path: app/Helpers/UserRestrictionHelper.php
+
+		-
+			message: '#^Parameter \$value of method App\\Helpers\\UserRestrictionHelper\:\:addRestriction\(\) has invalid type App\\Helpers\\Model\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Helpers/UserRestrictionHelper.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$ruta\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/CampaniaController.php
+
+		-
+			message: '#^Parameter \#1 \$vehiculo of method App\\Services\\VehiculoEstadoService\:\:sincronizarConCita\(\) expects App\\Models\\Vehiculo, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/CitaTallerController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$direccion\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/ClienteModuloController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$municipio\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/ClienteModuloController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/ClienteModuloController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$provincia\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/ClienteModuloController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\ClienteModuloController\:\:extractGeminiText\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: app/Http/Controllers/ClienteModuloController.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Http/Controllers/ClienteModuloController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$matricula\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/CocheSustitucionController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/FacturaController.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, int\<1, max\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/TasacionController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$nombre\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/VacacionController.php
+
+		-
+			message: '#^Parameter \#1 \$vehiculo of method App\\Services\\VehiculoEstadoService\:\:registrar\(\) expects App\\Models\\Vehiculo, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/VehiculoDocumentoController.php
+
+		-
+			message: '#^Parameter \#1 \$vehiculo of method App\\Services\\VehiculoEstadoService\:\:cambiarEstado\(\) expects App\\Models\\Vehiculo, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/VentaController.php
+
+		-
+			message: '#^Parameter \#1 \$vehiculo of method App\\Services\\VehiculoEstadoService\:\:sincronizarConVenta\(\) expects App\\Models\\Vehiculo, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Http/Controllers/VentaController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$nombre_completo\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/CitaTaller.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>nombre_completo" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/CitaTaller.php
+
+		-
+			message: '#^Method App\\Models\\Factura\:\:verifactuActivo\(\) should return App\\Models\\Verifactu\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Models/Factura.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$ruta\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/Incidencia.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$nombre_completo\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/ReservaSustitucion.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>nombre_completo" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/ReservaSustitucion.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$cif\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/Verifactu.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$cliente\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Verifactu.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$codigo_factura\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Verifactu.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$empresa\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Verifactu.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$fecha_factura\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Verifactu.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>cif" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 4
+			path: app/Models/Verifactu.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>codigo_factura" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Verifactu.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>nombre" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Models/Verifactu.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$empresa_id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Policies/OfertaPolicy.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$empresa_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Repositories/OfertaRepository.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$restrictable_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Repositories/RestriccionRepository.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$restrictable_type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Repositories/RestriccionRepository.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$apellidos\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AeatVerifactuService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$cif\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AeatVerifactuService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$dni\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AeatVerifactuService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$nombre\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/AeatVerifactuService.php
+
+		-
+			message: '#^Offset ''importe'' on array\{tipo\: string, importe\: float\|int\|string\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Services/ImpuestoService.php
+
+		-
+			message: '#^Offset ''tipo'' on array\{tipo\: string, importe\: float\|int\|string\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 2
+			path: app/Services/ImpuestoService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$precio\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/OfertaPdfService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$tipo\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/OfertaPdfService.php
+
+		-
+			message: '#^Method App\\Services\\OfertaPdfService\:\:generarAbreviatura\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: app/Services/OfertaPdfService.php
+
+		-
+			message: '#^Offset 1 on array\{list\<string\>, list\<non\-falsy\-string\>\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Services/OfertaPdfService.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between ''TOTAL'' and ''TOTAL'' will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
+			count: 1
+			path: app/Services/OfertaPdfService.php
+
+		-
+			message: '#^Ternary operator condition is always true\.$#'
+			identifier: ternary.alwaysTrue
+			count: 1
+			path: app/Services/OfertaPdfService.php
+
+		-
+			message: '#^Variable \$precio in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
+			count: 2
+			path: app/Services/OfertaPdfService.php

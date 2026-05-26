@@ -14,14 +14,16 @@
     </div>
 </div>
 
-{{-- Buscador --}}
-<form action="{{ route('users.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar por nombre, email, empresa, departamento o centro..." value="{{ request('search') }}">
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i> Buscar</button>
-    @if(request('search'))
-        <a href="{{ route('users.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>
-    @endif
-</form>
+<x-filtros-avanzados :action="route('users.index')">
+    <div class="vx-filtro" data-filtro="id"><label class="vx-filtro-label">ID</label><input type="number" name="id" class="vx-input" value="{{ request('id') }}" placeholder="#"></div>
+    <div class="vx-filtro" data-filtro="nombre"><label class="vx-filtro-label">Nombre</label><select name="nombre" class="vx-select"><option value="">Todos</option>@foreach($users_all as $u)<option value="{{ $u->nombre_completo }}" {{ request('nombre') == $u->nombre_completo ? 'selected' : '' }}>{{ $u->nombre_completo }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="email"><label class="vx-filtro-label">Email</label><select name="email" class="vx-select"><option value="">Todos</option>@foreach($users_all as $u)<option value="{{ $u->email }}" {{ request('email') == $u->email ? 'selected' : '' }}>{{ $u->email }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="empresa"><label class="vx-filtro-label">Empresa</label><select name="empresa_id" class="vx-select"><option value="">Todas</option>@foreach($empresas as $e)<option value="{{ $e->id }}" {{ request('empresa_id') == $e->id ? 'selected' : '' }}>{{ $e->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="depto"><label class="vx-filtro-label">Departamento</label><select name="departamento_id" class="vx-select"><option value="">Todos</option>@foreach($departamentos as $d)<option value="{{ $d->id }}" {{ request('departamento_id') == $d->id ? 'selected' : '' }}>{{ $d->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="centro"><label class="vx-filtro-label">Centro</label><select name="centro_id" class="vx-select"><option value="">Todos</option>@foreach($centros as $c)<option value="{{ $c->id }}" {{ request('centro_id') == $c->id ? 'selected' : '' }}>{{ $c->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="telefono"><label class="vx-filtro-label">Teléfono</label><select name="telefono" class="vx-select"><option value="">Todos</option>@foreach($users_all as $u)@if($u->telefono)<option value="{{ $u->telefono }}" {{ request('telefono') == $u->telefono ? 'selected' : '' }}>{{ $u->telefono }}</option>@endif @endforeach</select></div>
+    <div class="vx-filtro" data-filtro="rol"><label class="vx-filtro-label">Rol</label><select name="rol" class="vx-select"><option value="">Todos</option>@foreach($roles as $r)<option value="{{ $r->name }}" {{ request('rol') == $r->name ? 'selected' : '' }}>{{ $r->name }}</option>@endforeach</select></div>
+</x-filtros-avanzados>
 
 {{-- Tabla --}}
 <div class="vx-card">
@@ -31,13 +33,13 @@
                 <table class="vx-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Email</th>
-                            <th>Empresa</th>
-                            <th>Departamento</th>
-                            <th>Centro</th>
-                            <th>Teléfono</th>
+                            <x-columna-ordenable campo="id" label="ID" />
+                            <x-columna-ordenable campo="nombre" label="Nombre" />
+                            <x-columna-ordenable campo="email" label="Email" />
+                            <x-columna-ordenable campo="empresa_id" label="Empresa" />
+                            <x-columna-ordenable campo="departamento_id" label="Departamento" />
+                            <x-columna-ordenable campo="centro_id" label="Centro" />
+                            <x-columna-ordenable campo="telefono" label="Teléfono" />
                             <th>Restricciones</th>
                             <th>Acciones</th>
                         </tr>
@@ -62,17 +64,16 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">@can('view', $user)
-                                            <a href="{{ route('users.show', $user) }}" class="vx-btn vx-btn-info vx-btn-sm" title="Ver"><i class="bi bi-eye"></i></a>
+                                    <div class="vx-actions"><button class="vx-actions-toggle" aria-label="Abrir acciones" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button><div class="vx-actions-menu">@can('view', $user)
+                                            <a href="{{ route('users.show', $user) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
                                         @endcan
                                         @can('update', $user)
-                                            <a href="{{ route('users.edit', $user) }}" class="vx-btn vx-btn-warning vx-btn-sm" title="Editar"><i class="bi bi-pencil"></i></a>
+                                            <a href="{{ route('users.edit', $user) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>
                                         @endcan
                                         @can('delete', $user)
                                             <form action="{{ route('users.destroy', $user) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar este usuario?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="vx-btn vx-btn-danger vx-btn-sm" title="Eliminar"><i class="bi bi-trash"></i></button>
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button>
                                             </form>
                                         @endcan</div></div>
                                 </td>

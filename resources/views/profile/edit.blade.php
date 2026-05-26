@@ -8,7 +8,7 @@
 <div style="max-width: 600px;">
     {{-- Info personal --}}
     <div class="vx-card" style="margin-bottom: 20px;">
-        <div class="vx-card-header"><h4>Información Personal</h4></div>
+        <div class="vx-card-header"><h2>Información Personal</h2></div>
         <div class="vx-card-body">
             <form method="POST" action="{{ route('profile.update') }}">
                 @csrf @method('PUT')
@@ -38,7 +38,7 @@
 
     {{-- Cambiar contraseña --}}
     <div class="vx-card">
-        <div class="vx-card-header"><h4>Cambiar Contraseña</h4></div>
+        <div class="vx-card-header"><h2>Cambiar Contraseña</h2></div>
         <div class="vx-card-body">
             <form method="POST" action="{{ route('profile.password') }}">
                 @csrf @method('PUT')
@@ -50,12 +50,13 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px;">
                     <div class="vx-form-group">
                         <label class="vx-label" for="password">Nueva Contraseña <span class="required">*</span></label>
-                        <input type="password" class="vx-input @error('password') is-invalid @enderror" id="password" name="password" required>
+                        <input type="password" class="vx-input @error('password') is-invalid @enderror" id="password" name="password" minlength="8" required>
                         @error('password')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
+                        <div class="vx-form-hint">Mínimo 8 caracteres</div>
                     </div>
                     <div class="vx-form-group">
                         <label class="vx-label" for="password_confirmation">Confirmar <span class="required">*</span></label>
-                        <input type="password" class="vx-input" id="password_confirmation" name="password_confirmation" required>
+                        <input type="password" class="vx-input" id="password_confirmation" name="password_confirmation" minlength="8" required>
                     </div>
                 </div>
                 <div style="display: flex; justify-content: flex-end;">

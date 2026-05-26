@@ -10,21 +10,22 @@ return new class extends Migration
     {
         Schema::create('repartos', function (Blueprint $table) {
             $table->id();
-            $table->string('codigo_reparto', 30);
-            $table->foreignId('stock_id')->constrained('stocks')->onDelete('cascade');
-            $table->foreignId('almacen_origen_id')->constrained('almacenes')->onDelete('cascade');
-            $table->foreignId('almacen_destino_id')->nullable()->constrained('almacenes')->onDelete('set null');
-            $table->foreignId('empresa_id')->constrained('empresas')->onDelete('cascade');
-            $table->foreignId('centro_id')->constrained('centros')->onDelete('cascade');
-            $table->integer('cantidad');
+            $table->string('codigo_reparto', 30)->unique();
+            $table->foreignId('stock_id')->constrained('stocks')->cascadeOnDelete();
+            $table->foreignId('almacen_origen_id')->constrained('almacenes')->cascadeOnDelete();
+            $table->foreignId('almacen_destino_id')->nullable()->constrained('almacenes')->nullOnDelete();
+            $table->foreignId('empresa_id')->constrained('empresas')->cascadeOnDelete();
+            $table->foreignId('centro_id')->constrained('centros')->cascadeOnDelete();
+            $table->unsignedInteger('cantidad');
             $table->enum('estado', ['pendiente', 'en_transito', 'entregado', 'cancelado'])->default('pendiente');
             $table->date('fecha_solicitud');
             $table->date('fecha_entrega')->nullable();
-            $table->string('solicitado_por', 255)->nullable();
+            $table->string('solicitado_por', 150)->nullable();
             $table->text('observaciones')->nullable();
             $table->timestamps();
 
-            $table->index('codigo_reparto');
+            $table->index(['empresa_id', 'estado']);
+            $table->index(['fecha_solicitud', 'estado']);
         });
     }
 

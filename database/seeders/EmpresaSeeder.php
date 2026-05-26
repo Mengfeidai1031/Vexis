@@ -2,15 +2,15 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Empresa;
+use Illuminate\Database\Seeder;
 
 class EmpresaSeeder extends Seeder
 {
     public function run(): void
     {
         Empresa::create([
-            'nombre' => 'ARI Motor Gran Canaria S.L.',
+            'nombre' => 'DAI Motor Gran Canaria S.L.',
             'abreviatura' => 'ARIGC',
             'cif' => 'B35678901',
             'domicilio' => 'Calle Escritor Benito Pérez Galdós 8, Las Palmas de Gran Canaria',
@@ -19,7 +19,7 @@ class EmpresaSeeder extends Seeder
         ]);
 
         Empresa::create([
-            'nombre' => 'ARI Motor Tenerife S.L.',
+            'nombre' => 'DAI Motor Tenerife S.L.',
             'abreviatura' => 'ARITF',
             'cif' => 'B38765432',
             'domicilio' => 'Avenida de Bélgica 2, Santa Cruz de Tenerife',
@@ -28,7 +28,7 @@ class EmpresaSeeder extends Seeder
         ]);
 
         Empresa::create([
-            'nombre' => 'ARI Motor Lanzarote S.L.',
+            'nombre' => 'DAI Motor Lanzarote S.L.',
             'abreviatura' => 'ARILZ',
             'cif' => 'B35543210',
             'domicilio' => 'Calle Rubicón 15, Arrecife',

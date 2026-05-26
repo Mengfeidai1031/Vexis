@@ -10,13 +10,14 @@
     </div>
 </div>
 
-<form action="{{ route('centros.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar por nombre, dirección, provincia, municipio o empresa..." value="{{ request('search') }}">
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i> Buscar</button>
-    @if(request('search'))
-        <a href="{{ route('centros.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>
-    @endif
-</form>
+<x-filtros-avanzados :action="route('centros.index')">
+    <div class="vx-filtro" data-filtro="id"><label class="vx-filtro-label">ID</label><input type="number" name="id" class="vx-input" value="{{ request('id') }}" placeholder="#"></div>
+    <div class="vx-filtro" data-filtro="nombre"><label class="vx-filtro-label">Nombre</label><select name="nombre" class="vx-select"><option value="">Todos</option>@foreach($nombres_centros as $n)<option value="{{ $n }}" {{ request('nombre') == $n ? 'selected' : '' }}>{{ $n }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="empresa"><label class="vx-filtro-label">Empresa</label><select name="empresa_id" class="vx-select"><option value="">Todas</option>@foreach($empresas as $e)<option value="{{ $e->id }}" {{ request('empresa_id') == $e->id ? 'selected' : '' }}>{{ $e->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="direccion"><label class="vx-filtro-label">Dirección</label><select name="direccion" class="vx-select"><option value="">Todas</option>@foreach($direcciones_centros as $d)<option value="{{ $d }}" {{ request('direccion') == $d ? 'selected' : '' }}>{{ $d }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="municipio"><label class="vx-filtro-label">Municipio</label><select name="municipio" class="vx-select"><option value="">Todos</option>@foreach($municipios as $m)<option value="{{ $m }}" {{ request('municipio') == $m ? 'selected' : '' }}>{{ $m }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="provincia"><label class="vx-filtro-label">Provincia</label><select name="provincia" class="vx-select"><option value="">Todas</option>@foreach($provincias as $p)<option value="{{ $p }}" {{ request('provincia') == $p ? 'selected' : '' }}>{{ $p }}</option>@endforeach</select></div>
+</x-filtros-avanzados>
 
 <div class="vx-card">
     <div class="vx-card-body" style="padding: 0;">
@@ -25,12 +26,12 @@
                 <table class="vx-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Empresa</th>
-                            <th>Dirección</th>
-                            <th>Municipio</th>
-                            <th>Provincia</th>
+                            <x-columna-ordenable campo="id" label="ID" />
+                            <x-columna-ordenable campo="nombre" label="Nombre" />
+                            <x-columna-ordenable campo="empresa_id" label="Empresa" />
+                            <x-columna-ordenable campo="direccion" label="Dirección" />
+                            <x-columna-ordenable campo="municipio" label="Municipio" />
+                            <x-columna-ordenable campo="provincia" label="Provincia" />
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -44,16 +45,16 @@
                                 <td>{{ $centro->municipio }}</td>
                                 <td>{{ $centro->provincia }}</td>
                                 <td>
-                                    <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">@can('view', $centro)
-                                            <a href="{{ route('centros.show', $centro) }}" class="vx-btn vx-btn-info vx-btn-sm" title="Ver"><i class="bi bi-eye"></i></a>
+                                    <div class="vx-actions"><button class="vx-actions-toggle" aria-label="Abrir acciones" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button><div class="vx-actions-menu">@can('view', $centro)
+                                            <a href="{{ route('centros.show', $centro) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
                                         @endcan
                                         @can('update', $centro)
-                                            <a href="{{ route('centros.edit', $centro) }}" class="vx-btn vx-btn-warning vx-btn-sm" title="Editar"><i class="bi bi-pencil"></i></a>
+                                            <a href="{{ route('centros.edit', $centro) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>
                                         @endcan
                                         @can('delete', $centro)
                                             <form action="{{ route('centros.destroy', $centro) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar este centro?');">
                                                 @csrf @method('DELETE')
-                                                <button type="submit" class="vx-btn vx-btn-danger vx-btn-sm" title="Eliminar"><i class="bi bi-trash"></i></button>
+                                                <button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button>
                                             </form>
                                         @endcan</div></div>
                                 </td>

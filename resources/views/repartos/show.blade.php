@@ -8,7 +8,7 @@
         <a href="{{ route('repartos.index') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a>
     </div>
 </div>
-<div style="max-width:700px;"><div class="vx-card"><div class="vx-card-body">
+<div style="max-width:800px;"><div class="vx-card"><div class="vx-card-body">
     <div class="vx-info-row"><div class="vx-info-label">Código</div><div class="vx-info-value" style="font-family:var(--vx-font-mono);font-weight:600;">{{ $reparto->codigo_reparto }}</div></div>
     <div class="vx-info-row"><div class="vx-info-label">Pieza</div><div class="vx-info-value" style="font-weight:600;">{{ $reparto->stock->nombre_pieza ?? '—' }} <span style="color:var(--vx-text-muted);font-size:12px;">({{ $reparto->stock->referencia ?? '' }})</span></div></div>
     <div class="vx-info-row"><div class="vx-info-label">Cantidad</div><div class="vx-info-value"><span class="vx-badge vx-badge-primary">{{ $reparto->cantidad }} uds.</span></div></div>

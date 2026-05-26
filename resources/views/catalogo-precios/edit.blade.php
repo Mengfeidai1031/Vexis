@@ -16,7 +16,7 @@
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px;">
             <div class="vx-form-group"><label class="vx-label">Precio Base (€) <span class="required">*</span></label><input type="number" class="vx-input" name="precio_base" value="{{ old('precio_base', $catalogo_precio->precio_base) }}" step="0.01" required style="font-family:var(--vx-font-mono);"></div>
-            <div class="vx-form-group"><label class="vx-label">Precio Oferta (€)</label><input type="number" class="vx-input" name="precio_oferta" value="{{ old('precio_oferta', $catalogo_precio->precio_oferta) }}" step="0.01" style="font-family:var(--vx-font-mono);color:var(--vx-success);"></div>
+            <div class="vx-form-group"><label class="vx-label">Precio Oferta (€) <span style="font-weight:400;color:var(--vx-text-muted);">opcional</span></label><input type="number" class="vx-input" name="precio_oferta" value="{{ old('precio_oferta', $catalogo_precio->precio_oferta) }}" step="0.01" style="font-family:var(--vx-font-mono);color:var(--vx-success);" placeholder="Solo si hay oferta vigente"></div>
         </div>
         <div class="vx-form-group"><label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="checkbox" name="disponible" value="1" {{ old('disponible', $catalogo_precio->disponible) ? 'checked' : '' }}> Disponible</label></div>
         <div style="display:flex;justify-content:flex-end;gap:8px;"><a href="{{ route('catalogo-precios.index', ['marca_id' => $catalogo_precio->marca_id]) }}" class="vx-btn vx-btn-secondary">Cancelar</a><button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-check-lg"></i> Actualizar</button></div>

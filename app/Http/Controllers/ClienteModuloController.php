@@ -1,21 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Campania;
-use App\Models\CampaniaFoto;
 use App\Models\CatalogoPrecio;
 use App\Models\Centro;
 use App\Models\Cliente;
-use App\Models\Marca;
 use App\Models\Empresa;
+use App\Models\Marca;
+use App\Models\Noticia;
+use App\Models\Taller;
 use App\Models\Tasacion;
 use App\Models\User;
 use App\Models\Vehiculo;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ClienteModuloController extends Controller
@@ -25,10 +29,34 @@ class ClienteModuloController extends Controller
         return view('cliente.inicio');
     }
 
+    // === NOTICIAS (solo vista) ===
+    public function noticias()
+    {
+        $noticias = Noticia::with('autor')
+            ->where('publicada', true)
+            ->orderByDesc('destacada')
+            ->orderByDesc('fecha_publicacion')
+            ->get();
+
+        return view('cliente.noticias', compact('noticias'));
+    }
+
+    // === TALLERES (solo vista) ===
+    public function talleres()
+    {
+        $talleres = Taller::with(['empresa', 'marca'])
+            ->where('activo', true)
+            ->orderBy('nombre')
+            ->get();
+
+        return view('cliente.talleres', compact('talleres'));
+    }
+
     // === CAMPAÑAS (solo vista) ===
     public function campanias()
     {
         $campanias = Campania::with(['marca', 'fotos'])->where('activa', true)->orderByDesc('fecha_inicio')->get();
+
         return view('cliente.campanias', compact('campanias'));
     }
 
@@ -49,9 +77,9 @@ class ClienteModuloController extends Controller
         $restrictedRequest = $this->detectRestrictedRequestWithoutPermission($mensaje, $user);
         if ($restrictedRequest !== null) {
             return response()->json([
-                'respuesta' => "No tienes permisos suficientes para consultar {$restrictedRequest}. " .
-                    "Puedes preguntarme por los datos autorizados para tu usuario. " .
-                    "Si quieres, pregúntame: \"¿Qué permisos tengo?\" o \"¿Qué tablas puedo consultar?\"."
+                'respuesta' => "No tienes permisos suficientes para consultar {$restrictedRequest}. ".
+                    'Puedes preguntarme por los datos autorizados para tu usuario. '.
+                    'Si quieres, pregúntame: "¿Qué permisos tengo?" o "¿Qué tablas puedo consultar?".',
             ]);
         }
 
@@ -64,13 +92,13 @@ class ClienteModuloController extends Controller
             ->where('disponible', true)
             ->limit(300)
             ->get()
-            ->map(fn($c) => [
+            ->map(fn ($c) => [
                 'marca' => $c->marca->nombre ?? '',
                 'modelo' => $c->modelo,
                 'version' => $c->version,
                 'precio' => $c->precio_oferta ?? $c->precio_base,
                 'combustible' => $c->combustible,
-                'cv' => $c->potencia_cv
+                'cv' => $c->potencia_cv,
             ])
             ->toArray();
         $concesionarios = Empresa::with('centros:id,empresa_id,nombre,direccion,provincia,municipio')
@@ -81,7 +109,7 @@ class ClienteModuloController extends Controller
                     'nombre' => $empresa->nombre,
                     'domicilio' => $empresa->domicilio,
                     'telefono' => $empresa->telefono,
-                    'centros' => $empresa->centros->map(fn($centro) => [
+                    'centros' => $empresa->centros->map(fn ($centro) => [
                         'nombre' => $centro->nombre,
                         'direccion' => $centro->direccion,
                         'provincia' => $centro->provincia,
@@ -100,14 +128,14 @@ class ClienteModuloController extends Controller
         $allowedTables[] = 'concesionarios';
         $allowedTables[] = 'stock_vehiculos_publico';
 
-        $contextBlocks[] = "CATALOGO_PRECIOS_PUBLICO:\n" . json_encode($catalogo, JSON_UNESCAPED_UNICODE);
-        $contextBlocks[] = "CONCESIONARIOS:\n" . json_encode($concesionarios, JSON_UNESCAPED_UNICODE);
-        $contextBlocks[] = "STOCK_VEHICULOS_PUBLICO:\n" . json_encode($stockResumen, JSON_UNESCAPED_UNICODE);
+        $contextBlocks[] = "CATALOGO_PRECIOS_PUBLICO:\n".json_encode($catalogo, JSON_UNESCAPED_UNICODE);
+        $contextBlocks[] = "CONCESIONARIOS:\n".json_encode($concesionarios, JSON_UNESCAPED_UNICODE);
+        $contextBlocks[] = "STOCK_VEHICULOS_PUBLICO:\n".json_encode($stockResumen, JSON_UNESCAPED_UNICODE);
 
         // Tablas sensibles según permisos del usuario.
         if ($user->can('ver usuarios')) {
             $allowedTables[] = 'usuarios';
-            $contextBlocks[] = "USUARIOS:\n" . json_encode(
+            $contextBlocks[] = "USUARIOS:\n".json_encode(
                 User::select('id', 'nombre', 'apellidos', 'email', 'empresa_id', 'departamento_id', 'centro_id')
                     ->limit(150)
                     ->get()
@@ -118,7 +146,7 @@ class ClienteModuloController extends Controller
 
         if ($user->can('ver clientes')) {
             $allowedTables[] = 'clientes';
-            $contextBlocks[] = "CLIENTES:\n" . json_encode(
+            $contextBlocks[] = "CLIENTES:\n".json_encode(
                 Cliente::select('id', 'nombre', 'apellidos', 'email', 'telefono', 'empresa_id')
                     ->limit(250)
                     ->get()
@@ -129,7 +157,7 @@ class ClienteModuloController extends Controller
 
         if ($user->can('ver tasaciones')) {
             $allowedTables[] = 'tasaciones';
-            $contextBlocks[] = "TASACIONES:\n" . json_encode(
+            $contextBlocks[] = "TASACIONES:\n".json_encode(
                 Tasacion::select(
                     'id',
                     'codigo_tasacion',
@@ -147,7 +175,7 @@ class ClienteModuloController extends Controller
 
         if ($user->can('ver stocks')) {
             $allowedTables[] = 'stocks';
-            $contextBlocks[] = "STOCKS:\n" . json_encode(
+            $contextBlocks[] = "STOCKS:\n".json_encode(
                 \App\Models\Stock::select('id', 'referencia', 'nombre_pieza', 'cantidad', 'stock_minimo', 'almacen_id', 'empresa_id')
                     ->limit(300)
                     ->get()
@@ -158,7 +186,7 @@ class ClienteModuloController extends Controller
 
         if ($user->can('ver ventas')) {
             $allowedTables[] = 'ventas';
-            $contextBlocks[] = "VENTAS:\n" . json_encode(
+            $contextBlocks[] = "VENTAS:\n".json_encode(
                 \App\Models\Venta::select('id', 'codigo_venta', 'precio_final', 'estado', 'fecha_venta', 'cliente_id', 'marca_id')
                     ->limit(250)
                     ->get()
@@ -169,7 +197,7 @@ class ClienteModuloController extends Controller
 
         if ($user->can('ver vehículos')) {
             $allowedTables[] = 'vehiculos';
-            $contextBlocks[] = "VEHICULOS:\n" . json_encode(
+            $contextBlocks[] = "VEHICULOS:\n".json_encode(
                 Vehiculo::select('id', 'chasis', 'modelo', 'version', 'color_externo', 'empresa_id')
                     ->limit(300)
                     ->get()
@@ -182,93 +210,39 @@ class ClienteModuloController extends Controller
 
         if ($this->isPermissionsQuestion($mensaje)) {
             $permissions = $user->getAllPermissions()->pluck('name')->toArray();
+
             return response()->json([
-                'respuesta' => "Tus permisos actuales son: " . (count($permissions) ? implode(', ', $permissions) : 'sin permisos administrativos') .
-                    ".\n\nTablas que puedo consultar para ti: {$allowedTablesText}.\n\n" .
-                    "Puedes preguntarme por datos y resúmenes de esas tablas, y si pides otra tabla te indicaré que no tienes permisos suficientes."
+                'respuesta' => 'Tus permisos actuales son: '.(count($permissions) ? implode(', ', $permissions) : 'sin permisos administrativos').
+                    ".\n\nTablas que puedo consultar para ti: {$allowedTablesText}.\n\n".
+                    'Puedes preguntarme por datos y resúmenes de esas tablas, y si pides otra tabla te indicaré que no tienes permisos suficientes.',
             ]);
         }
 
-        $contexto = "Eres un asistente virtual de Grupo ARI.\n";
+        $contexto = "Eres un asistente virtual de Grupo DAI.\n";
         $contexto .= "Usuario actual: {$user->nombre_completo} ({$user->email}).\n";
-        $contexto .= "Permisos del usuario: " . implode(', ', $user->getAllPermissions()->pluck('name')->toArray()) . ".\n";
+        $contexto .= 'Permisos del usuario: '.implode(', ', $user->getAllPermissions()->pluck('name')->toArray()).".\n";
         $contexto .= "TABLAS AUTORIZADAS PARA ESTE USUARIO: {$allowedTablesText}.\n\n";
         $contexto .= "REGLAS OBLIGATORIAS:\n";
         $contexto .= "1) Solo responde usando información de TABLAS AUTORIZADAS.\n";
         $contexto .= "2) Si pregunta por una tabla no autorizada, responde que no tiene permisos suficientes.\n";
         $contexto .= "3) Si pregunta por permisos o qué puede consultar, responde listando TABLAS AUTORIZADAS y ejemplos.\n";
         $contexto .= "4) Responde siempre en español, tono profesional y claro.\n\n";
-        $contexto .= "MARCAS OFICIALES: " . implode(', ', $marcas) . "\n\n";
+        $contexto .= 'MARCAS OFICIALES: '.implode(', ', $marcas)."\n\n";
         $contexto .= implode("\n\n", $contextBlocks);
 
-        try {
-            $apiKey = config('services.gemini.api_key');
-            if (empty($apiKey)) {
-                return response()->json(['respuesta' => 'Error: API key de Gemini no configurada. Añade GEMINI_API_KEY en el archivo .env']);
-            }
+        $result = app(\App\Services\GeminiService::class)->generate(
+            'chatbot',
+            $contexto."\n\nPregunta del cliente: ".$mensaje,
+            ['temperature' => 0.7, 'maxOutputTokens' => 800],
+        );
 
-            // Usar modelos disponibles según la API v1beta
-            $combinations = [
-                ['version' => 'v1beta', 'model' => 'gemini-2.5-flash'],
-                ['version' => 'v1beta', 'model' => 'gemini-3-flash-preview'],
-                ['version' => 'v1beta', 'model' => 'gemini-2.0-flash'],
-                ['version' => 'v1beta', 'model' => 'gemini-2.5-pro'],
-            ];
-            
-            $response = null;
-            $workingConfig = null;
-            $lastError = null;
-            
-            foreach ($combinations as $config) {
-                $url = "https://generativelanguage.googleapis.com/{$config['version']}/models/{$config['model']}:generateContent?key=" . urlencode($apiKey);
-                try {
-                    $testResponse = Http::timeout(30)->post($url, [
-                        'contents' => [
-                            [
-                                'parts' => [
-                                    ['text' => $contexto . "\n\nPregunta del cliente: " . $mensaje]
-                                ]
-                            ]
-                        ],
-                        'generationConfig' => ['temperature' => 0.7, 'maxOutputTokens' => 800],
-                    ]);
-                    
-                    if ($testResponse->successful()) {
-                        $response = $testResponse;
-                        $workingConfig = $config;
-                        break;
-                    } else {
-                        $errorData = $testResponse->json();
-                        $lastError = $errorData['error']['message'] ?? "HTTP " . $testResponse->status();
-                        // Si es 404, continuar con el siguiente
-                        if ($testResponse->status() === 404) {
-                            continue;
-                        }
-                    }
-                } catch (\Exception $e) {
-                    $lastError = $e->getMessage();
-                    continue;
-                }
-            }
-            
-            if (!$response) {
-                return response()->json([
-                    'respuesta' => 'Error: No se pudo conectar con ningún modelo de Gemini disponible. Último error: ' . Str::limit($lastError ?? 'Desconocido', 200) . "\n\nPor favor, verifica tu API key y conexión a internet."
-                ]);
-            }
-
-            $data = $response->json();
-            $respuesta = $data['candidates'][0]['content']['parts'][0]['text'] ?? 'Lo siento, no pude procesar tu consulta. Inténtalo de nuevo.';
-            
-            // Añadir información del modelo que funcionó
-            if ($workingConfig) {
-                $respuesta .= "\n\n[INFO: Modelo funcionando - API: {$workingConfig['version']}, Modelo: {$workingConfig['model']}]";
-            }
-        } catch (\Exception $e) {
-            $respuesta = 'Error al conectar con el asistente: ' . Str::limit($e->getMessage(), 150);
+        if (! $result['ok']) {
+            return response()->json([
+                'respuesta' => 'Error: '.Str::limit($result['error'] ?? 'No se pudo conectar con Gemini', 200),
+            ]);
         }
 
-        return response()->json(['respuesta' => $respuesta]);
+        return response()->json(['respuesta' => $result['text']]);
     }
 
     // === PRETASACIÓN IA ===
@@ -291,110 +265,43 @@ class ClienteModuloController extends Controller
         $prompt = "Eres un experto tasador de vehículos en España (Islas Canarias). Te pido una pretasación orientativa para:\n";
         $prompt .= "- Marca: {$request->marca}\n- Modelo: {$request->modelo}\n- Año: {$request->anio}\n";
         $prompt .= "- Kilometraje: {$request->kilometraje} km\n";
-        if ($request->combustible) $prompt .= "- Combustible: {$request->combustible}\n";
-        if ($request->estado) $prompt .= "- Estado general: {$request->estado}\n";
+        if ($request->combustible) {
+            $prompt .= "- Combustible: {$request->combustible}\n";
+        }
+        if ($request->estado) {
+            $prompt .= "- Estado general: {$request->estado}\n";
+        }
         $prompt .= "\nDevuelve SIEMPRE una respuesta completa y cerrada en español con este formato:";
         $prompt .= "\n1) Rango estimado en euros (mínimo-máximo).";
         $prompt .= "\n2) 3 factores clave que influyen en el valor.";
         $prompt .= "\n3) Cierre con aclaración: es orientativo y la tasación formal se solicita en concesionario.";
         $prompt .= "\nNo dejes frases a medias ni respuestas incompletas.";
 
-        try {
-            $apiKey = config('services.gemini.api_key');
-            if (empty($apiKey)) {
-                return response()->json(['respuesta' => 'Error: API key de Gemini no configurada. Añade GEMINI_API_KEY en el archivo .env']);
+        $gemini = app(\App\Services\GeminiService::class);
+        $result = $gemini->generate('pretasacion', $prompt, ['temperature' => 0.45, 'maxOutputTokens' => 1800]);
+
+        if (! $result['ok']) {
+            return response()->json([
+                'respuesta' => 'Error: '.Str::limit($result['error'] ?? 'No se pudo conectar con Gemini', 200),
+            ]);
+        }
+
+        $respuesta = $result['text'];
+
+        // Retry si respuesta parece cortada
+        if ($this->seemsIncompleteResponse($respuesta)) {
+            $retry = $gemini->generate(
+                'pretasacion',
+                $prompt."\n\nLa respuesta anterior quedó incompleta. Reescribe TODA la respuesta completa desde cero, siguiendo exactamente el formato solicitado y sin cortar ninguna frase.",
+                ['temperature' => 0.35, 'maxOutputTokens' => 2200],
+            );
+            if ($retry['ok'] && ! empty($retry['text']) && ! $this->seemsIncompleteResponse($retry['text'])) {
+                $respuesta = $retry['text'];
             }
+        }
 
-            // Usar modelos disponibles según la API v1beta
-            $combinations = [
-                ['version' => 'v1beta', 'model' => 'gemini-2.5-flash'],
-                ['version' => 'v1beta', 'model' => 'gemini-3-flash-preview'],
-                ['version' => 'v1beta', 'model' => 'gemini-2.0-flash'],
-                ['version' => 'v1beta', 'model' => 'gemini-2.5-pro'],
-            ];
-            
-            $response = null;
-            $workingConfig = null;
-            $lastError = null;
-            
-            foreach ($combinations as $config) {
-                $url = "https://generativelanguage.googleapis.com/{$config['version']}/models/{$config['model']}:generateContent?key=" . urlencode($apiKey);
-                try {
-                    $testResponse = Http::timeout(30)->post($url, [
-                        'contents' => [
-                            [
-                                'parts' => [
-                                    ['text' => $prompt]
-                                ]
-                            ]
-                        ],
-                        'generationConfig' => ['temperature' => 0.45, 'maxOutputTokens' => 1800],
-                    ]);
-                    
-                    if ($testResponse->successful()) {
-                        $response = $testResponse;
-                        $workingConfig = $config;
-                        break;
-                    } else {
-                        $errorData = $testResponse->json();
-                        $lastError = $errorData['error']['message'] ?? "HTTP " . $testResponse->status();
-                        // Si es 404, continuar con el siguiente
-                        if ($testResponse->status() === 404) {
-                            continue;
-                        }
-                    }
-                } catch (\Exception $e) {
-                    $lastError = $e->getMessage();
-                    continue;
-                }
-            }
-            
-            if (!$response) {
-                return response()->json([
-                    'respuesta' => 'Error: No se pudo conectar con ningún modelo de Gemini disponible. Último error: ' . Str::limit($lastError ?? 'Desconocido', 200) . "\n\nPor favor, verifica tu API key y conexión a internet."
-                ]);
-            }
-
-            $data = $response->json();
-            $respuesta = $this->extractGeminiText($data);
-            $finishReason = Str::upper((string) data_get($data, 'candidates.0.finishReason', ''));
-
-            if (
-                $workingConfig &&
-                (
-                    $finishReason === 'MAX_TOKENS' ||
-                    $this->seemsIncompleteResponse($respuesta)
-                )
-            ) {
-                $retryPrompt = $prompt .
-                    "\n\nLa respuesta anterior quedó incompleta. Reescribe TODA la respuesta completa desde cero, " .
-                    "siguiendo exactamente el formato solicitado y sin cortar ninguna frase.";
-
-                $retryUrl = "https://generativelanguage.googleapis.com/{$workingConfig['version']}/models/{$workingConfig['model']}:generateContent?key=" . urlencode($apiKey);
-                $retryResponse = Http::timeout(30)->post($retryUrl, [
-                    'contents' => [
-                        [
-                            'parts' => [
-                                ['text' => $retryPrompt]
-                            ]
-                        ]
-                    ],
-                    'generationConfig' => ['temperature' => 0.35, 'maxOutputTokens' => 2200],
-                ]);
-
-                if ($retryResponse->successful()) {
-                    $retryText = $this->extractGeminiText($retryResponse->json());
-                    if (!empty($retryText) && !$this->seemsIncompleteResponse($retryText)) {
-                        $respuesta = $retryText;
-                    }
-                }
-            }
-
-            if ($respuesta === '') {
-                $respuesta = 'No se pudo generar la pretasación.';
-            }
-        } catch (\Exception $e) {
-            $respuesta = 'Error al conectar con el servicio de tasación: ' . Str::limit($e->getMessage(), 150);
+        if ($respuesta === '') {
+            $respuesta = 'No se pudo generar la pretasación.';
         }
 
         return response()->json(['respuesta' => $respuesta]);
@@ -446,6 +353,7 @@ class ClienteModuloController extends Controller
 
         /** @var User $user */
         $user = Auth::user();
+        $tipoParticularId = \App\Models\TipoCliente::where('slug', 'particular')->value('id');
         $cliente = Cliente::firstOrCreate(
             ['email' => $user->email],
             [
@@ -453,10 +361,11 @@ class ClienteModuloController extends Controller
                 'apellidos' => $user->apellidos,
                 'telefono' => $user->telefono,
                 'empresa_id' => $request->empresa_id,
+                'tipo_cliente_id' => $tipoParticularId,
             ]
         );
 
-        if (!$cliente->empresa_id) {
+        if (! $cliente->empresa_id) {
             $cliente->empresa_id = $request->empresa_id;
             $cliente->save();
         }
@@ -495,15 +404,16 @@ class ClienteModuloController extends Controller
         $marcaSeleccionada = $request->filled('marca_id') ? $request->marca_id : ($marcas->first()->id ?? null);
         $catalogo = CatalogoPrecio::with('marca')
             ->where('disponible', true)
-            ->when($marcaSeleccionada, fn($q) => $q->where('marca_id', $marcaSeleccionada))
+            ->when($marcaSeleccionada, fn ($q) => $q->where('marca_id', $marcaSeleccionada))
             ->orderBy('modelo')->orderBy('precio_base')->get();
+
         return view('cliente.precios', compact('catalogo', 'marcas', 'marcaSeleccionada'));
     }
 
     // === CONFIGURADOR DE VEHÍCULOS ===
     public function configurador(Request $request)
     {
-        $marcas = Marca::where('activa', true)->orderBy('nombre')->get();
+        $marcas = Marca::where('activa', true)->orderByRaw("FIELD(LOWER(nombre), 'renault', 'dacia', 'nissan') ASC, nombre ASC")->get();
         $marcaId = $request->marca_id;
         $modelos = [];
         if ($marcaId) {
@@ -520,7 +430,48 @@ class ClienteModuloController extends Controller
                 ->where('disponible', true)
                 ->orderBy('precio_base')->get();
         }
-        return view('cliente.configurador', compact('marcas', 'marcaId', 'modelos', 'modeloSeleccionado', 'versiones'));
+        // Build available images map for the configurador
+        $imagenesDisponibles = [];
+        if ($marcaId && $modeloSeleccionado) {
+            $marca = $marcas->firstWhere('id', $marcaId);
+            $marcaSlug = Str::lower($marca->nombre ?? '');
+            $modeloSlug = Str::lower(str_replace(' ', '_', $modeloSeleccionado));
+            $basePath = "vehiculos/{$marcaSlug}/{$modeloSlug}";
+
+            if (Storage::disk('public')->exists($basePath)) {
+                $dirs = File::directories(Storage::disk('public')->path($basePath));
+                foreach ($dirs as $dir) {
+                    $dirName = basename($dir);
+                    // Extract color from dir name (e.g., "clio_azul" -> "azul")
+                    $color = Str::afterLast($dirName, '_');
+                    $vistas = [];
+                    foreach (['frontal', 'lateral', 'trasera', 'interior', 'asientos'] as $vista) {
+                        foreach (['jpeg', 'jpg', 'png'] as $ext) {
+                            $imgPath = "{$basePath}/{$dirName}/{$vista}.{$ext}";
+                            if (Storage::disk('public')->exists($imgPath)) {
+                                $vistas[$vista] = asset("storage/{$imgPath}");
+                                break;
+                            }
+                        }
+                    }
+                    if (! empty($vistas)) {
+                        $imagenesDisponibles[$color] = $vistas;
+                    }
+                }
+            }
+        }
+
+        // Get brand logo URL
+        $logoMarca = null;
+        if ($marcaId) {
+            $marca = $marcas->firstWhere('id', $marcaId);
+            $marcaSlug = Str::lower($marca->nombre ?? '');
+            if (Storage::disk('public')->exists("logos/{$marcaSlug}.png")) {
+                $logoMarca = asset("storage/logos/{$marcaSlug}.png");
+            }
+        }
+
+        return view('cliente.configurador', compact('marcas', 'marcaId', 'modelos', 'modeloSeleccionado', 'versiones', 'imagenesDisponibles', 'logoMarca'));
     }
 
     private function detectRestrictedRequestWithoutPermission(string $message, User $user): ?string
@@ -537,7 +488,7 @@ class ClienteModuloController extends Controller
         $normalizedMessage = Str::lower($message);
         foreach ($checks as $check) {
             foreach ($check['keywords'] as $keyword) {
-                if (Str::contains($normalizedMessage, $keyword) && !$user->can($check['permission'])) {
+                if (Str::contains($normalizedMessage, $keyword) && ! $user->can($check['permission'])) {
                     return $check['label'];
                 }
             }
@@ -550,13 +501,14 @@ class ClienteModuloController extends Controller
     {
         $year = now()->year;
         $sequence = Tasacion::whereYear('fecha_tasacion', $year)->count() + 1;
-        return 'TAS-' . now()->format('Ym') . '-' . str_pad((string)$sequence, 4, '0', STR_PAD_LEFT);
+
+        return 'TAS-'.now()->format('Ym').'-'.str_pad((string) $sequence, 4, '0', STR_PAD_LEFT);
     }
 
     private function extractGeminiText(array $payload): string
     {
         $parts = data_get($payload, 'candidates.0.content.parts', []);
-        if (!is_array($parts) || count($parts) === 0) {
+        if (! is_array($parts) || count($parts) === 0) {
             return '';
         }
 
@@ -564,7 +516,7 @@ class ClienteModuloController extends Controller
         foreach ($parts as $part) {
             $chunk = isset($part['text']) ? (string) $part['text'] : '';
             if ($chunk !== '') {
-                $text .= ($text === '' ? '' : "\n") . $chunk;
+                $text .= ($text === '' ? '' : "\n").$chunk;
             }
         }
 
@@ -584,7 +536,7 @@ class ClienteModuloController extends Controller
         }
 
         $lastChar = mb_substr($trimmed, -1);
-        if (!in_array($lastChar, ['.', '!', '?', '€', ')'])) {
+        if (! in_array($lastChar, ['.', '!', '?', '€', ')'])) {
             return true;
         }
 
@@ -594,6 +546,7 @@ class ClienteModuloController extends Controller
     private function isPermissionsQuestion(string $message): bool
     {
         $normalized = Str::lower($message);
+
         return Str::contains($normalized, [
             'que permisos tengo',
             'qué permisos tengo',

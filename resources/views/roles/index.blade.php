@@ -10,13 +10,13 @@
     </div>
 </div>
 
-<form action="{{ route('roles.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar por nombre de rol..." value="{{ request('search') }}">
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i> Buscar</button>
-    @if(request('search'))
-        <a href="{{ route('roles.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>
-    @endif
-</form>
+<x-filtros-avanzados :action="route('roles.index')">
+    <div class="vx-filtro" data-filtro="id"><label class="vx-filtro-label">ID</label><input type="number" name="id" class="vx-input" value="{{ request('id') }}" placeholder="#"></div>
+    <div class="vx-filtro" data-filtro="nombre"><label class="vx-filtro-label">Nombre</label><select name="nombre" class="vx-select"><option value="">Todos</option>@foreach($roles as $r)<option value="{{ $r->name }}" {{ request('nombre') == $r->name ? 'selected' : '' }}>{{ $r->name }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="permisos_min"><label class="vx-filtro-label">Permisos (mín.)</label><input type="number" name="permisos_min" class="vx-input" value="{{ request('permisos_min') }}" min="0" placeholder="0"></div>
+    <div class="vx-filtro" data-filtro="usuarios_min"><label class="vx-filtro-label">Usuarios (mín.)</label><input type="number" name="usuarios_min" class="vx-input" value="{{ request('usuarios_min') }}" min="0" placeholder="0"></div>
+    <div class="vx-filtro" data-filtro="creado_desde"><label class="vx-filtro-label">Creado (desde)</label><input type="date" name="creado_desde" class="vx-input" value="{{ request('creado_desde') }}"></div>
+</x-filtros-avanzados>
 
 <div class="vx-card">
     <div class="vx-card-body" style="padding: 0;">
@@ -25,11 +25,11 @@
                 <table class="vx-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
+                            <x-columna-ordenable campo="id" label="ID" />
+                            <x-columna-ordenable campo="name" label="Nombre" />
                             <th>Permisos</th>
                             <th>Usuarios</th>
-                            <th>Creado</th>
+                            <x-columna-ordenable campo="created_at" label="Creado" />
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -42,20 +42,20 @@
                                 <td><span class="vx-badge vx-badge-gray">{{ $role->users_count }} usuarios</span></td>
                                 <td>{{ $role->created_at->format('d/m/Y') }}</td>
                                 <td>
-                                    <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">@can('ver roles')
-                                            <a href="{{ route('roles.show', $role->id) }}" class="vx-btn vx-btn-info vx-btn-sm" title="Ver"><i class="bi bi-eye"></i></a>
+                                    <div class="vx-actions"><button class="vx-actions-toggle" aria-label="Abrir acciones" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button><div class="vx-actions-menu">@can('ver roles')
+                                            <a href="{{ route('roles.show', $role->id) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
                                         @endcan
                                         @can('editar roles')
-                                            <a href="{{ route('roles.edit', $role->id) }}" class="vx-btn vx-btn-warning vx-btn-sm" title="Editar"><i class="bi bi-pencil"></i></a>
+                                            <a href="{{ route('roles.edit', $role->id) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>
                                         @endcan
                                         @can('eliminar roles')
                                             @if($role->users_count == 0)
                                                 <form action="{{ route('roles.destroy', $role->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar este rol?');">
                                                     @csrf @method('DELETE')
-                                                    <button type="submit" class="vx-btn vx-btn-danger vx-btn-sm" title="Eliminar"><i class="bi bi-trash"></i></button>
+                                                    <button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button>
                                                 </form>
                                             @else
-                                                <button class="vx-btn vx-btn-danger vx-btn-sm" disabled title="Tiene usuarios asignados"><i class="bi bi-trash"></i></button>
+                                                <button class="act-danger" disabled title="Tiene usuarios asignados"><i class="bi bi-trash"></i> Eliminar</button>
                                             @endif
                                         @endcan</div></div>
                                 </td>

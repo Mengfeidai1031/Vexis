@@ -16,12 +16,15 @@ return new class extends Migration
             $table->string('codigo_postal', 5)->nullable();
             $table->string('localidad', 100)->nullable();
             $table->string('isla', 50)->nullable();
-            $table->string('telefono', 12)->nullable();
-            $table->foreignId('empresa_id')->constrained('empresas')->onDelete('cascade');
-            $table->foreignId('centro_id')->constrained('centros')->onDelete('cascade');
+            $table->string('telefono', 15)->nullable();
+            $table->foreignId('empresa_id')->constrained('empresas')->cascadeOnDelete();
+            $table->foreignId('centro_id')->constrained('centros')->cascadeOnDelete();
             $table->boolean('activo')->default(true);
             $table->text('observaciones')->nullable();
             $table->timestamps();
+
+            $table->index(['empresa_id', 'centro_id']);
+            $table->index(['isla', 'activo']);
         });
     }
 

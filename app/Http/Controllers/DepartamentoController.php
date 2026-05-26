@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreDepartamentoRequest;
@@ -22,11 +24,31 @@ class DepartamentoController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->has('search') && !empty($request->search)) {
-            $departamentos = $this->departamentoRepository->search($request->search);
-        } else {
-            $departamentos = $this->departamentoRepository->all();
+        $query = Departamento::query();
+
+        if ($request->filled('id')) {
+            $query->where('id', (int) $request->input('id'));
         }
+        if ($request->filled('nombre')) {
+            $query->where('nombre', $request->input('nombre'));
+        }
+        if ($request->filled('abreviatura')) {
+            $query->where('abreviatura', $request->input('abreviatura'));
+        }
+        if ($request->filled('creado_desde')) {
+            $query->whereDate('created_at', '>=', $request->input('creado_desde'));
+        }
+
+        $sortable = ['id', 'nombre', 'abreviatura', 'created_at'];
+        $sortBy = $request->input('sort_by');
+        if ($sortBy && in_array($sortBy, $sortable, true)) {
+            $dir = $request->input('sort_dir') === 'desc' ? 'desc' : 'asc';
+            $query->orderBy($sortBy, $dir);
+        } else {
+            $query->orderBy('nombre', 'asc');
+        }
+
+        $departamentos = $query->paginate(10)->withQueryString();
 
         return view('departamentos.index', compact('departamentos'));
     }
@@ -37,7 +59,7 @@ class DepartamentoController extends Controller
     public function create()
     {
         $this->authorize('create', Departamento::class);
-        
+
         return view('departamentos.create');
     }
 
@@ -47,7 +69,7 @@ class DepartamentoController extends Controller
     public function store(StoreDepartamentoRequest $request)
     {
         $this->authorize('create', Departamento::class);
-        
+
         $this->departamentoRepository->create($request->validated());
 
         return redirect()->route('departamentos.index')
@@ -60,7 +82,7 @@ class DepartamentoController extends Controller
     public function show(Departamento $departamento)
     {
         $this->authorize('view', $departamento);
-        
+
         return view('departamentos.show', compact('departamento'));
     }
 
@@ -70,7 +92,7 @@ class DepartamentoController extends Controller
     public function edit(Departamento $departamento)
     {
         $this->authorize('update', $departamento);
-        
+
         return view('departamentos.edit', compact('departamento'));
     }
 
@@ -80,7 +102,7 @@ class DepartamentoController extends Controller
     public function update(UpdateDepartamentoRequest $request, Departamento $departamento)
     {
         $this->authorize('update', $departamento);
-        
+
         $this->departamentoRepository->update($departamento->id, $request->validated());
 
         return redirect()->route('departamentos.index')
@@ -93,9 +115,10 @@ class DepartamentoController extends Controller
     public function destroy(Departamento $departamento)
     {
         $this->authorize('delete', $departamento);
-        
+
         try {
             $this->departamentoRepository->delete($departamento->id);
+
             return redirect()->route('departamentos.index')
                 ->with('success', 'Departamento eliminado exitosamente.');
         } catch (\Exception $e) {

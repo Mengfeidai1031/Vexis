@@ -7,7 +7,6 @@ namespace App\Policies;
 use App\Helpers\UserRestrictionHelper;
 use App\Models\Centro;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 final class CentroPolicy
 {
@@ -26,7 +25,7 @@ final class CentroPolicy
     public function view(User $user, Centro $centro): bool
     {
         // Verificar permiso general
-        if (!$user->can('ver centros')) {
+        if (! $user->can('ver centros')) {
             return false;
         }
 
@@ -50,7 +49,7 @@ final class CentroPolicy
     public function update(User $user, Centro $centro): bool
     {
         // Verificar permiso general
-        if (!$user->can('editar centros')) {
+        if (! $user->can('editar centros')) {
             return false;
         }
 
@@ -65,28 +64,12 @@ final class CentroPolicy
     public function delete(User $user, Centro $centro): bool
     {
         // Verificar permiso general
-        if (!$user->can('eliminar centros')) {
+        if (! $user->can('eliminar centros')) {
             return false;
         }
 
         // Verificar restricciones de empresa y centro
         return UserRestrictionHelper::canAccess($user, 'empresa', $centro->empresa_id) &&
                UserRestrictionHelper::canAccess($user, 'centro', $centro->id);
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Centro $centro): bool
-    {
-        return false; // No implementado
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Centro $centro): bool
-    {
-        return false; // No implementado
     }
 }

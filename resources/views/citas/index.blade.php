@@ -1,12 +1,21 @@
 @extends('layouts.app')
 @section('title', 'Citas Taller - VEXIS')
+@push('styles')
+<style>
+.vx-cal-confirmada { background: rgba(46, 204, 113, 0.12); border-left: 3px solid var(--vx-success); }
+.vx-cal-en-proceso { background: rgba(51, 170, 221, 0.12); border-left: 3px solid var(--vx-info); }
+.vx-cal-cancelada { background: rgba(231, 76, 60, 0.08); border-left: 3px solid var(--vx-danger); }
+.vx-cal-pendiente { background: rgba(255, 152, 0, 0.12); border-left: 3px solid var(--vx-warning); }
+.vx-cal-completada { background: rgba(149, 165, 166, 0.12); border-left: 3px solid var(--vx-gray, #95a5a6); }
+</style>
+@endpush
 @section('content')
 <div class="vx-page-header"><h1 class="vx-page-title">Citas de Taller</h1><div class="vx-page-actions">@can('crear citas')<a href="{{ route('citas.create') }}" class="vx-btn vx-btn-primary"><i class="bi bi-plus-circle"></i> Nueva Cita</a>@endcan</div></div>
 
 {{-- Calendario semanal --}}
 <div class="vx-card" style="margin-bottom:20px;">
     <div class="vx-card-header" style="display:flex;justify-content:space-between;align-items:center;">
-        <h4><i class="bi bi-calendar-week" style="color:var(--vx-primary);"></i> Semana {{ $semanaInicio->format('d/m') }} — {{ $semanaFin->format('d/m/Y') }}</h4>
+        <h2><i class="bi bi-calendar-week" style="color:var(--vx-primary);" aria-hidden="true"></i> Semana {{ $semanaInicio->format('d/m') }} — {{ $semanaFin->format('d/m/Y') }}</h2>
         <div style="display:flex;gap:6px;">
             <a href="{{ route('citas.index', ['semana' => $semanaInicio->copy()->subWeek()->format('Y-m-d')]) }}" class="vx-btn vx-btn-secondary vx-btn-sm"><i class="bi bi-chevron-left"></i></a>
             <a href="{{ route('citas.index', ['semana' => now()->format('Y-m-d')]) }}" class="vx-btn vx-btn-secondary vx-btn-sm">Hoy</a>
@@ -33,8 +42,8 @@
                     @endphp
                     <td style="font-size:11px;vertical-align:top;padding:4px;">
                         @foreach($citasSlot as $c)
-                        <div style="background:{{ match($c->estado) { 'confirmada' => '#2ecc7130', 'en_curso' => '#3498db30', 'completada' => '#95a5a630', 'cancelada' => '#e74c3c20', default => '#f39c1230' } }};padding:3px 6px;border-radius:4px;margin-bottom:2px;border-left:3px solid {{ match($c->estado) { 'confirmada' => '#2ecc71', 'en_curso' => '#3498db', 'completada' => '#95a5a6', 'cancelada' => '#e74c3c', default => '#f39c12' } }};">
-                            <strong>{{ $c->mecanico->nombre ?? '' }}</strong><br>{{ Str::limit($c->cliente_nombre, 15) }}
+                        <div class="{{ match($c->estado) { 'confirmada' => 'vx-cal-confirmada', 'en_curso' => 'vx-cal-en-proceso', 'completada' => 'vx-cal-completada', 'cancelada' => 'vx-cal-cancelada', default => 'vx-cal-pendiente' } }}" style="padding:3px 6px;border-radius:4px;margin-bottom:2px;">
+                            <strong>{{ $c->mecanico->nombre ?? '' }}</strong><br>{{ Str::limit($c->cliente_display, 15) }}
                         </div>
                         @endforeach
                     </td>
@@ -48,36 +57,37 @@
 
 {{-- Leyenda + filtros --}}
 <div style="display:flex;gap:16px;margin-bottom:12px;font-size:11px;flex-wrap:wrap;">
-    <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#f39c12;margin-right:3px;"></span>Pendiente</span>
-    <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#2ecc71;margin-right:3px;"></span>Confirmada</span>
-    <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#3498db;margin-right:3px;"></span>En curso</span>
-    <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#95a5a6;margin-right:3px;"></span>Completada</span>
-    <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#e74c3c;margin-right:3px;"></span>Cancelada</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--vx-warning);margin-right:3px;"></span>Pendiente</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--vx-success);margin-right:3px;"></span>Confirmada</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--vx-info);margin-right:3px;"></span>En curso</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--vx-gray, #95a5a6);margin-right:3px;"></span>Completada</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--vx-danger);margin-right:3px;"></span>Cancelada</span>
 </div>
 
-<form action="{{ route('citas.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar cliente o vehículo..." value="{{ request('search') }}" style="flex:1;">
-    <select name="taller_id" class="vx-select" style="width:auto;"><option value="">Todos los talleres</option>@foreach($talleres as $t)<option value="{{ $t->id }}" {{ request('taller_id') == $t->id ? 'selected' : '' }}>{{ $t->nombre }}</option>@endforeach</select>
-    <select name="estado" class="vx-select" style="width:auto;"><option value="">Todos</option>@foreach(\App\Models\CitaTaller::$estados as $k => $v)<option value="{{ $k }}" {{ request('estado') == $k ? 'selected' : '' }}>{{ $v }}</option>@endforeach</select>
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i></button>
-    @if(request()->anyFilled(['search','taller_id','estado']))<a href="{{ route('citas.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>@endif
-</form>
+<x-filtros-avanzados :action="route('citas.index')">
+    <div class="vx-filtro" data-filtro="fecha"><label class="vx-filtro-label">Fecha</label><input type="date" name="fecha" class="vx-input" value="{{ request('fecha') }}"></div>
+    <div class="vx-filtro" data-filtro="cliente"><label class="vx-filtro-label">Cliente</label><select name="cliente_id" class="vx-select"><option value="">Todos</option>@foreach($clientes_citas as $c)<option value="{{ $c->id }}" {{ request('cliente_id') == $c->id ? 'selected' : '' }}>{{ $c->nombre }} {{ $c->apellidos }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="mecanico"><label class="vx-filtro-label">Mecánico</label><select name="mecanico_id" class="vx-select"><option value="">Todos</option>@foreach($mecanicos as $m)<option value="{{ $m->id }}" {{ request('mecanico_id') == $m->id ? 'selected' : '' }}>{{ $m->nombre_completo }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="taller"><label class="vx-filtro-label">Taller</label><select name="taller_id" class="vx-select"><option value="">Todos</option>@foreach($talleres as $t)<option value="{{ $t->id }}" {{ request('taller_id') == $t->id ? 'selected' : '' }}>{{ $t->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="estado"><label class="vx-filtro-label">Estado</label><select name="estado" class="vx-select"><option value="">Todos</option>@foreach(\App\Models\CitaTaller::$estados as $k => $v)<option value="{{ $k }}" {{ request('estado') == $k ? 'selected' : '' }}>{{ $v }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="marca"><label class="vx-filtro-label">Marca</label><select name="marca_id" class="vx-select"><option value="">Todas</option>@foreach($marcas as $m)<option value="{{ $m->id }}" {{ request('marca_id') == $m->id ? 'selected' : '' }}>{{ $m->nombre }}</option>@endforeach</select></div>
+</x-filtros-avanzados>
 
 {{-- Tabla --}}
 <div class="vx-card"><div class="vx-card-body" style="padding:0;">
     @if($citas->count() > 0)
     <div class="vx-table-wrapper"><table class="vx-table">
-        <thead><tr><th>Fecha</th><th>Hora</th><th>Cliente</th><th>Vehículo</th><th>Mecánico</th><th>Taller</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <thead><tr><x-columna-ordenable campo="fecha" label="Fecha" /><x-columna-ordenable campo="hora_inicio" label="Hora" /><x-columna-ordenable campo="cliente_nombre" label="Cliente" /><x-columna-ordenable campo="vehiculo_info" label="Vehículo" /><x-columna-ordenable campo="mecanico_id" label="Mecánico" /><x-columna-ordenable campo="taller_id" label="Taller" /><x-columna-ordenable campo="estado" label="Estado" /><th>Acciones</th></tr></thead>
         <tbody>@foreach($citas as $c)
         <tr>
             <td style="font-size:12px;">{{ $c->fecha->format('d/m/Y') }}</td>
             <td style="font-family:var(--vx-font-mono);font-size:12px;">{{ substr($c->hora_inicio, 0, 5) }}@if($c->hora_fin)–{{ substr($c->hora_fin, 0, 5) }}@endif</td>
-            <td style="font-weight:600;">{{ Str::limit($c->cliente_nombre, 25) }}</td>
-            <td style="font-size:12px;">{{ $c->vehiculo_info ?? '—' }}</td>
+            <td style="font-weight:600;">{{ Str::limit($c->cliente_display, 25) }}</td>
+            <td style="font-size:12px;">{{ Str::limit($c->vehiculo_display, 25) }}</td>
             <td style="font-size:12px;">{{ $c->mecanico->nombre_completo ?? '—' }}</td>
             <td style="font-size:12px;">{{ $c->taller->nombre ?? '—' }}</td>
             <td>@switch($c->estado) @case('pendiente')<span class="vx-badge vx-badge-warning">Pendiente</span>@break @case('confirmada')<span class="vx-badge vx-badge-success">Confirmada</span>@break @case('en_curso')<span class="vx-badge vx-badge-info">En Curso</span>@break @case('completada')<span class="vx-badge vx-badge-gray">Completada</span>@break @case('cancelada')<span class="vx-badge vx-badge-danger">Cancelada</span>@break @endswitch</td>
-            <td><div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+            <td><div class="vx-actions"><button class="vx-actions-toggle" aria-label="Abrir acciones" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button><div class="vx-actions-menu">
                 @can('editar citas')<a href="{{ route('citas.edit', $c) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>@endcan
                 @can('eliminar citas')<form action="{{ route('citas.destroy', $c) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar?');">@csrf @method('DELETE')<button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button></form>@endcan
             </div></div></td>

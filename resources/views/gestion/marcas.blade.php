@@ -5,7 +5,7 @@
     <h1 class="vx-page-title">Marcas</h1>
     <a href="{{ route('gestion.inicio') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Gestión</a>
 </div>
-<p style="color:var(--vx-text-muted);margin-bottom:20px;">Marcas de vehículos gestionadas por Grupo ARI.</p>
+<p style="color:var(--vx-text-muted);margin-bottom:20px;">Marcas de vehículos gestionadas por Grupo DAI.</p>
 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;">
     @foreach($marcas as $marca)
     <div class="vx-card">

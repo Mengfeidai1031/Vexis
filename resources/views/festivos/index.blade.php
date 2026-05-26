@@ -12,7 +12,7 @@
 
 {{-- Calendario --}}
 <div class="vx-card" style="margin-bottom:20px;">
-    <div class="vx-card-header"><h4><i class="bi bi-calendar-event" style="color:var(--vx-primary);"></i> Calendario {{ $anio }}</h4></div>
+    <div class="vx-card-header"><h2><i class="bi bi-calendar-event" style="color:var(--vx-primary);"></i> Calendario {{ $anio }}</h2></div>
     <div class="vx-card-body">
         <div id="calFest" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;"></div>
         <div style="display:flex;gap:16px;margin-top:12px;font-size:11px;flex-wrap:wrap;">
@@ -24,24 +24,11 @@
 </div>
 
 {{-- Filtros --}}
-<form action="{{ route('festivos.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar festivo o municipio..." value="{{ request('search') }}" style="flex:1;">
-    <select name="ambito" class="vx-select" style="width:auto;">
-        <option value="">Todos los ámbitos</option>
-        @foreach(\App\Models\Festivo::$ambitos as $k => $v)
-            <option value="{{ $k }}" {{ request('ambito') == $k ? 'selected' : '' }}>{{ $v }}</option>
-        @endforeach
-    </select>
-    <select name="municipio" class="vx-select" style="width:auto;">
-        <option value="">Todos los municipios</option>
-        @foreach($municipios as $m)
-            <option value="{{ $m }}" {{ request('municipio') == $m ? 'selected' : '' }}>{{ $m }}</option>
-        @endforeach
-    </select>
+<x-filtros-avanzados :action="route('festivos.index')">
     <input type="hidden" name="anio" value="{{ $anio }}">
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i></button>
-    @if(request()->anyFilled(['search','ambito','municipio']))<a href="{{ route('festivos.index', ['anio' => $anio]) }}" class="vx-btn vx-btn-secondary">Limpiar</a>@endif
-</form>
+    <div class="vx-filtro" data-filtro="ambito"><label class="vx-filtro-label">Ámbito</label><select name="ambito" class="vx-select"><option value="">Todos</option>@foreach(\App\Models\Festivo::$ambitos as $k => $v)<option value="{{ $k }}" {{ request('ambito') == $k ? 'selected' : '' }}>{{ $v }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="municipio"><label class="vx-filtro-label">Municipio</label><select name="municipio" class="vx-select"><option value="">Todos</option>@foreach($municipios as $m)<option value="{{ $m }}" {{ request('municipio') == $m ? 'selected' : '' }}>{{ $m }}</option>@endforeach</select></div>
+</x-filtros-avanzados>
 
 {{-- Tabla --}}
 <div class="vx-card">
@@ -49,7 +36,7 @@
         @if($festivos->count() > 0)
         <div class="vx-table-wrapper">
             <table class="vx-table">
-                <thead><tr><th>Fecha</th><th>Nombre</th><th>Ámbito</th><th>Municipio</th><th>Acciones</th></tr></thead>
+                <thead><tr><x-columna-ordenable campo="fecha" label="Fecha" /><x-columna-ordenable campo="nombre" label="Nombre" /><x-columna-ordenable campo="ambito" label="Ámbito" /><x-columna-ordenable campo="municipio" label="Municipio" /><th>Acciones</th></tr></thead>
                 <tbody>
                     @foreach($festivos as $f)
                     <tr>
@@ -62,7 +49,7 @@
                         </td>
                         <td style="font-size:12px;">{{ $f->municipio ?? 'Todos' }}</td>
                         <td>
-                            <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+                            <div class="vx-actions"><button class="vx-actions-toggle" aria-label="Abrir acciones" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button><div class="vx-actions-menu">
                                 @can('editar festivos')<a href="{{ route('festivos.edit', $f) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>@endcan
                                 @can('eliminar festivos')
                                 <form action="{{ route('festivos.destroy', $f) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar?');">

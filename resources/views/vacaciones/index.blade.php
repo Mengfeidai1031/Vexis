@@ -11,7 +11,7 @@
 {{-- Resumen --}}
 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:20px;">
     <div class="vx-card"><div class="vx-card-body" style="text-align:center;padding:16px;">
-        <div style="font-size:32px;font-weight:800;color:var(--vx-primary);">{{ \App\Models\Vacacion::DIAS_TOTALES }}</div>
+        <div style="font-size:32px;font-weight:800;color:var(--vx-primary);">{{ \App\Models\Vacacion::diasAsignados() }}</div>
         <div style="font-size:12px;color:var(--vx-text-muted);">Días totales</div>
     </div></div>
     <div class="vx-card"><div class="vx-card-body" style="text-align:center;padding:16px;">
@@ -33,10 +33,10 @@
     <div class="vx-card-body" style="padding:14px 20px;">
         <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
             <span style="color:var(--vx-text-muted);">Progreso {{ $anio }}</span>
-            <span style="font-weight:700;">{{ $diasUsados }}/{{ \App\Models\Vacacion::DIAS_TOTALES }} días</span>
+            <span style="font-weight:700;">{{ $diasUsados }}/{{ \App\Models\Vacacion::diasAsignados() }} días</span>
         </div>
         <div style="height:10px;background:var(--vx-gray-200);border-radius:5px;overflow:hidden;">
-            @php $pct = \App\Models\Vacacion::DIAS_TOTALES > 0 ? ($diasUsados / \App\Models\Vacacion::DIAS_TOTALES * 100) : 0; @endphp
+            @php $pct = \App\Models\Vacacion::diasAsignados() > 0 ? ($diasUsados / \App\Models\Vacacion::diasAsignados() * 100) : 0; @endphp
             <div style="height:100%;width:{{ $pct }}%;background:{{ $pct > 80 ? 'var(--vx-danger)' : ($pct > 50 ? 'var(--vx-warning)' : 'var(--vx-success)') }};border-radius:5px;transition:width 0.5s;"></div>
         </div>
     </div>
@@ -44,7 +44,7 @@
 
 {{-- Calendario --}}
 <div class="vx-card" style="margin-bottom:20px;">
-    <div class="vx-card-header"><h4><i class="bi bi-calendar3" style="color:var(--vx-primary);"></i> Calendario {{ $anio }}</h4></div>
+    <div class="vx-card-header"><h2><i class="bi bi-calendar3" style="color:var(--vx-primary);"></i> Calendario {{ $anio }}</h2></div>
     <div class="vx-card-body">
         <div id="calVac" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;"></div>
         <div style="display:flex;gap:16px;margin-top:12px;font-size:11px;">
@@ -55,6 +55,15 @@
     </div>
 </div>
 
+{{-- Filtros --}}
+<x-filtros-avanzados :action="route('vacaciones.index')">
+    @if($isSuperAdmin)
+    <div class="vx-filtro" data-filtro="usuario"><label class="vx-filtro-label">Usuario</label><select name="user_id" class="vx-select"><option value="">Todos</option>@foreach($usuarios_vac as $u)<option value="{{ $u->id }}" {{ request('user_id') == $u->id ? 'selected' : '' }}>{{ $u->nombre_completo }}</option>@endforeach</select></div>
+    @endif
+    <div class="vx-filtro" data-filtro="estado"><label class="vx-filtro-label">Estado</label><select name="estado" class="vx-select"><option value="">Todos</option><option value="pendiente" {{ request('estado') == 'pendiente' ? 'selected' : '' }}>Pendiente</option><option value="aprobada" {{ request('estado') == 'aprobada' ? 'selected' : '' }}>Aprobada</option><option value="rechazada" {{ request('estado') == 'rechazada' ? 'selected' : '' }}>Rechazada</option></select></div>
+    <div class="vx-filtro" data-filtro="anio"><label class="vx-filtro-label">Año</label><select name="anio" class="vx-select">@foreach($anios_disponibles as $a)<option value="{{ $a }}" {{ request('anio', now()->year) == $a ? 'selected' : '' }}>{{ $a }}</option>@endforeach @if(!$anios_disponibles->contains(now()->year))<option value="{{ now()->year }}" {{ request('anio', now()->year) == now()->year ? 'selected' : '' }}>{{ now()->year }}</option>@endif</select></div>
+</x-filtros-avanzados>
+
 {{-- Tabla solicitudes --}}
 <div class="vx-card">
     <div class="vx-card-body" style="padding:0;">
@@ -62,8 +71,8 @@
         <div class="vx-table-wrapper">
             <table class="vx-table">
                 <thead><tr>
-                    @if($isSuperAdmin)<th>Empleado</th>@endif
-                    <th>Desde</th><th>Hasta</th><th>Días</th><th>Estado</th><th>Motivo</th><th>Acciones</th>
+                    @if($isSuperAdmin)<x-columna-ordenable campo="user_id" label="Empleado" />@endif
+                    <x-columna-ordenable campo="fecha_inicio" label="Desde" /><x-columna-ordenable campo="fecha_fin" label="Hasta" /><x-columna-ordenable campo="dias_solicitados" label="Días" /><x-columna-ordenable campo="estado" label="Estado" /><x-columna-ordenable campo="motivo" label="Motivo" /><th>Acciones</th>
                 </tr></thead>
                 <tbody>
                     @foreach($vacaciones as $v)
@@ -79,22 +88,22 @@
                         </td>
                         <td style="font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ $v->motivo ?? '—' }}</td>
                         <td>
-                            <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">@if($isSuperAdmin && $v->estado === 'pendiente')
+                            <div class="vx-actions"><button class="vx-actions-toggle" aria-label="Abrir acciones" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button><div class="vx-actions-menu">@if($isSuperAdmin && $v->estado === 'pendiente')
                                 <form action="{{ route('vacaciones.gestionar', $v) }}" method="POST" style="display:inline;">
                                     @csrf @method('PATCH')
                                     <input type="hidden" name="estado" value="aprobada">
-                                    <button type="submit" class="vx-btn vx-btn-success vx-btn-sm" title="Aprobar"><i class="bi bi-check-lg"></i></button>
+                                    <button type="submit" style="color:var(--vx-success);"><i class="bi bi-check-lg"></i> Aprobar</button>
                                 </form>
                                 <form action="{{ route('vacaciones.gestionar', $v) }}" method="POST" style="display:inline;">
                                     @csrf @method('PATCH')
                                     <input type="hidden" name="estado" value="rechazada">
-                                    <button type="submit" class="vx-btn vx-btn-danger vx-btn-sm" title="Rechazar"><i class="bi bi-x-lg"></i></button>
+                                    <button type="submit" class="act-danger"><i class="bi bi-x-lg"></i> Rechazar</button>
                                 </form>
                                 @endif
                                 @if($v->estado === 'pendiente')
                                 <form action="{{ route('vacaciones.destroy', $v) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar solicitud?');">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="vx-btn vx-btn-secondary vx-btn-sm"><i class="bi bi-trash"></i></button>
+                                    <button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button>
                                 </form>
                                 @endif</div></div>
                         </td>

@@ -1,18 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Cliente extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'clientes';
 
     protected $fillable = [
         'nombre',
         'apellidos',
         'empresa_id',
+        'tipo_cliente_id',
         'dni',
         'email',
         'telefono',
@@ -26,6 +32,11 @@ class Cliente extends Model
     public function empresa(): BelongsTo
     {
         return $this->belongsTo(Empresa::class);
+    }
+
+    public function tipoCliente(): BelongsTo
+    {
+        return $this->belongsTo(TipoCliente::class, 'tipo_cliente_id');
     }
 
     /**

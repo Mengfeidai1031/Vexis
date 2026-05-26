@@ -11,7 +11,7 @@
     </div>
 </div>
 
-<div style="max-width: 700px;">
+<div style="max-width: 800px;">
     <div class="vx-card" style="margin-bottom: 20px;">
         <div class="vx-card-header">
             <h3><i class="bi bi-diagram-3" style="color: var(--vx-primary); margin-right: 8px;"></i>{{ $departamento->nombre }}</h3>
@@ -28,7 +28,7 @@
 
     @if($departamento->users->count() > 0)
     <div class="vx-card">
-        <div class="vx-card-header"><h4>Usuarios en este Departamento</h4></div>
+        <div class="vx-card-header"><h2>Usuarios en este Departamento</h2></div>
         <div class="vx-card-body" style="padding: 0;">
             <div class="vx-table-wrapper">
                 <table class="vx-table">

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories;
 
 use App\Models\Departamento;
@@ -34,12 +36,14 @@ class DepartamentoRepository implements DepartamentoRepositoryInterface
     {
         $departamento = Departamento::findOrFail($id);
         $departamento->update($data);
+
         return $departamento;
     }
 
     public function delete(int $id)
     {
         $departamento = Departamento::findOrFail($id);
+
         return $departamento->delete();
     }
 }

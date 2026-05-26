@@ -10,13 +10,12 @@
     </div>
 </div>
 
-<form action="{{ route('departamentos.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar por nombre o abreviatura..." value="{{ request('search') }}">
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i> Buscar</button>
-    @if(request('search'))
-        <a href="{{ route('departamentos.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>
-    @endif
-</form>
+<x-filtros-avanzados :action="route('departamentos.index')">
+    <div class="vx-filtro" data-filtro="id"><label class="vx-filtro-label">ID</label><input type="number" name="id" class="vx-input" value="{{ request('id') }}" placeholder="#"></div>
+    <div class="vx-filtro" data-filtro="nombre"><label class="vx-filtro-label">Nombre</label><select name="nombre" class="vx-select"><option value="">Todos</option>@foreach($departamentos as $d)<option value="{{ $d->nombre }}" {{ request('nombre') == $d->nombre ? 'selected' : '' }}>{{ $d->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="abreviatura"><label class="vx-filtro-label">Abreviatura</label><select name="abreviatura" class="vx-select"><option value="">Todas</option>@foreach($departamentos as $d)<option value="{{ $d->abreviatura }}" {{ request('abreviatura') == $d->abreviatura ? 'selected' : '' }}>{{ $d->abreviatura }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="creado"><label class="vx-filtro-label">Creado (desde)</label><input type="date" name="creado_desde" class="vx-input" value="{{ request('creado_desde') }}"></div>
+</x-filtros-avanzados>
 
 <div class="vx-card">
     <div class="vx-card-body" style="padding: 0;">
@@ -25,10 +24,10 @@
                 <table class="vx-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Abreviatura</th>
-                            <th>Creado</th>
+                            <x-columna-ordenable campo="id" label="ID" />
+                            <x-columna-ordenable campo="nombre" label="Nombre" />
+                            <x-columna-ordenable campo="abreviatura" label="Abreviatura" />
+                            <x-columna-ordenable campo="created_at" label="Creado" />
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -40,16 +39,16 @@
                                 <td><span class="vx-badge vx-badge-gray">{{ $departamento->abreviatura }}</span></td>
                                 <td>{{ $departamento->created_at->format('d/m/Y') }}</td>
                                 <td>
-                                    <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">@can('view', $departamento)
-                                            <a href="{{ route('departamentos.show', $departamento) }}" class="vx-btn vx-btn-info vx-btn-sm" title="Ver"><i class="bi bi-eye"></i></a>
+                                    <div class="vx-actions"><button class="vx-actions-toggle" aria-label="Abrir acciones" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button><div class="vx-actions-menu">@can('view', $departamento)
+                                            <a href="{{ route('departamentos.show', $departamento) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
                                         @endcan
                                         @can('update', $departamento)
-                                            <a href="{{ route('departamentos.edit', $departamento) }}" class="vx-btn vx-btn-warning vx-btn-sm" title="Editar"><i class="bi bi-pencil"></i></a>
+                                            <a href="{{ route('departamentos.edit', $departamento) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>
                                         @endcan
                                         @can('delete', $departamento)
                                             <form action="{{ route('departamentos.destroy', $departamento) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar este departamento?');">
                                                 @csrf @method('DELETE')
-                                                <button type="submit" class="vx-btn vx-btn-danger vx-btn-sm" title="Eliminar"><i class="bi bi-trash"></i></button>
+                                                <button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button>
                                             </form>
                                         @endcan</div></div>
                                 </td>

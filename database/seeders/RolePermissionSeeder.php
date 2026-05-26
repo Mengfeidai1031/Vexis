@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RolePermissionSeeder extends Seeder
 {
@@ -36,6 +36,12 @@ class RolePermissionSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'crear clientes']);
         Permission::firstOrCreate(['name' => 'editar clientes']);
         Permission::firstOrCreate(['name' => 'eliminar clientes']);
+
+        // Crear permisos para Tipos de Cliente
+        Permission::firstOrCreate(['name' => 'ver tipos-cliente']);
+        Permission::firstOrCreate(['name' => 'crear tipos-cliente']);
+        Permission::firstOrCreate(['name' => 'editar tipos-cliente']);
+        Permission::firstOrCreate(['name' => 'eliminar tipos-cliente']);
 
         // Crear permisos para Vehículos
         Permission::firstOrCreate(['name' => 'ver vehículos']);
@@ -151,6 +157,39 @@ class RolePermissionSeeder extends Seeder
         Permission::firstOrCreate(['name' => 'editar catalogo-precios']);
         Permission::firstOrCreate(['name' => 'eliminar catalogo-precios']);
 
+        // Crear permisos para Facturas
+        Permission::firstOrCreate(['name' => 'ver facturas']);
+        Permission::firstOrCreate(['name' => 'crear facturas']);
+        Permission::firstOrCreate(['name' => 'editar facturas']);
+        Permission::firstOrCreate(['name' => 'eliminar facturas']);
+
+        // Crear permisos para Verifactu
+        Permission::firstOrCreate(['name' => 'ver verifactu']);
+        Permission::firstOrCreate(['name' => 'crear verifactu']);
+        Permission::firstOrCreate(['name' => 'editar verifactu']);
+        Permission::firstOrCreate(['name' => 'eliminar verifactu']);
+
+        // Crear permisos para Incidencias
+        Permission::firstOrCreate(['name' => 'ver incidencias']);
+        Permission::firstOrCreate(['name' => 'crear incidencias']);
+        Permission::firstOrCreate(['name' => 'editar incidencias']);
+        Permission::firstOrCreate(['name' => 'eliminar incidencias']);
+
+        // Permisos sobre permisos (solo Super Admin)
+        Permission::firstOrCreate(['name' => 'ver permisos']);
+        Permission::firstOrCreate(['name' => 'crear permisos']);
+        Permission::firstOrCreate(['name' => 'eliminar permisos']);
+
+        // Permisos vehículo: documentos e historial
+        Permission::firstOrCreate(['name' => 'ver historial vehiculos']);
+        Permission::firstOrCreate(['name' => 'subir documentos vehiculos']);
+        Permission::firstOrCreate(['name' => 'eliminar documentos vehiculos']);
+
+        // Rol Mecánico / Recepción Taller / Cliente (registro público)
+        Role::firstOrCreate(['name' => 'Mecánico']);
+        Role::firstOrCreate(['name' => 'Recepción Taller']);
+        Role::firstOrCreate(['name' => 'Cliente']);
+
         // Crear rol de Super Admin (tiene todos los permisos)
         $superAdminRole = Role::firstOrCreate(['name' => 'Super Admin']);
         $superAdminRole->syncPermissions(Permission::all());
@@ -178,6 +217,11 @@ class RolePermissionSeeder extends Seeder
             'ver ventas', 'crear ventas', 'editar ventas', 'eliminar ventas',
             'ver tasaciones', 'crear tasaciones', 'editar tasaciones', 'eliminar tasaciones',
             'ver catalogo-precios', 'crear catalogo-precios', 'editar catalogo-precios', 'eliminar catalogo-precios',
+            'ver facturas', 'crear facturas', 'editar facturas', 'eliminar facturas',
+            'ver verifactu', 'crear verifactu', 'editar verifactu', 'eliminar verifactu',
+            'ver incidencias', 'crear incidencias', 'editar incidencias', 'eliminar incidencias',
+            'ver tipos-cliente', 'crear tipos-cliente', 'editar tipos-cliente', 'eliminar tipos-cliente',
+            'ver historial vehiculos', 'subir documentos vehiculos', 'eliminar documentos vehiculos',
         ]);
 
         // Crear rol de Gerente (puede ver y gestionar clientes, vehículos y ofertas)
@@ -187,17 +231,48 @@ class RolePermissionSeeder extends Seeder
             'ver departamentos',
             'ver centros',
             'ver clientes', 'crear clientes', 'editar clientes', 'eliminar clientes',
+            'ver tipos-cliente', 'crear tipos-cliente', 'editar tipos-cliente',
             'ver vehículos', 'crear vehículos', 'editar vehículos', 'eliminar vehículos',
             'ver ofertas', 'crear ofertas', 'editar ofertas', 'eliminar ofertas',
+            'ver incidencias', 'crear incidencias',
+            'ver historial vehiculos', 'subir documentos vehiculos',
         ]);
 
         // Crear rol de Vendedor (gestión de clientes y ofertas)
         $vendedorRole = Role::firstOrCreate(['name' => 'Vendedor']);
         $vendedorRole->syncPermissions([
             'ver clientes', 'crear clientes', 'editar clientes',
+            'ver tipos-cliente', 'crear tipos-cliente',
             'ver vehículos',
             'ver ofertas', 'crear ofertas', 'editar ofertas',
+            'ver incidencias', 'crear incidencias',
         ]);
+
+        // Rol Mecánico — acceso limitado a taller y citas
+        $mecanicoRole = Role::findByName('Mecánico');
+        $mecanicoRole->syncPermissions([
+            'ver citas', 'editar citas',
+            'ver talleres',
+            'ver mecanicos',
+            'ver coches-sustitucion',
+            'ver vehículos', 'ver historial vehiculos',
+            'ver incidencias', 'crear incidencias',
+        ]);
+
+        // Rol Recepción Taller — gestiona citas, coches sustitución, clientes lectura
+        $recepcionRole = Role::findByName('Recepción Taller');
+        $recepcionRole->syncPermissions([
+            'ver citas', 'crear citas', 'editar citas', 'eliminar citas',
+            'ver talleres', 'ver mecanicos',
+            'ver coches-sustitucion', 'crear coches-sustitucion', 'editar coches-sustitucion',
+            'ver clientes', 'crear clientes', 'editar clientes',
+            'ver vehículos', 'ver historial vehiculos', 'subir documentos vehiculos',
+            'ver incidencias', 'crear incidencias',
+        ]);
+
+        // Rol Cliente (registro público — sólo accede a módulo cliente, sin permisos de CRUD)
+        $clienteRole = Role::findByName('Cliente');
+        $clienteRole->syncPermissions([]);
 
         // Crear rol de Consultor (solo lectura)
         $consultorRole = Role::firstOrCreate(['name' => 'Consultor']);
@@ -206,11 +281,13 @@ class RolePermissionSeeder extends Seeder
             'ver departamentos',
             'ver centros',
             'ver clientes',
+            'ver tipos-cliente',
             'ver vehículos',
             'ver ofertas',
             'ver noticias',
             'ver campanias',
             'ver festivos',
+            'ver incidencias', 'crear incidencias',
         ]);
     }
 }

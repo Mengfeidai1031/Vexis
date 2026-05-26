@@ -10,15 +10,15 @@ return new class extends Migration
     {
         Schema::create('festivos', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre', 255);
+            $table->string('nombre', 150);
             $table->date('fecha');
-            $table->string('municipio', 150)->nullable();
+            $table->string('municipio', 100)->nullable();
             $table->enum('ambito', ['nacional', 'autonomico', 'local'])->default('local');
-            $table->integer('anio');
+            $table->unsignedSmallInteger('anio');
             $table->timestamps();
 
             $table->index(['fecha', 'municipio']);
-            $table->index('anio');
+            $table->index(['anio', 'ambito']);
         });
     }
 

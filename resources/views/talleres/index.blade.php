@@ -5,17 +5,19 @@
     <h1 class="vx-page-title">Talleres</h1>
     <div class="vx-page-actions">@can('crear talleres')<a href="{{ route('talleres.create') }}" class="vx-btn vx-btn-primary"><i class="bi bi-plus-circle"></i> Nuevo Taller</a>@endcan</div>
 </div>
-<form action="{{ route('talleres.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar por nombre, código o localidad..." value="{{ request('search') }}" style="flex:1;">
-    <select name="isla" class="vx-select" style="width:auto;"><option value="">Todas las islas</option>@foreach(\App\Models\Taller::$islas as $i)<option value="{{ $i }}" {{ request('isla') == $i ? 'selected' : '' }}>{{ $i }}</option>@endforeach</select>
-    <select name="marca_id" class="vx-select" style="width:auto;"><option value="">Todas las marcas</option>@foreach($marcas as $m)<option value="{{ $m->id }}" {{ request('marca_id') == $m->id ? 'selected' : '' }}>{{ $m->nombre }}</option>@endforeach</select>
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i></button>
-    @if(request()->anyFilled(['search','isla','marca_id']))<a href="{{ route('talleres.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>@endif
-</form>
+<x-filtros-avanzados :action="route('talleres.index')">
+    <div class="vx-filtro" data-filtro="codigo"><label class="vx-filtro-label">Código</label><select name="codigo" class="vx-select"><option value="">Todos</option>@foreach($codigos_talleres as $c)<option value="{{ $c }}" {{ request('codigo') == $c ? 'selected' : '' }}>{{ $c }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="nombre"><label class="vx-filtro-label">Nombre</label><select name="nombre" class="vx-select"><option value="">Todos</option>@foreach($nombres_talleres as $n)<option value="{{ $n }}" {{ request('nombre') == $n ? 'selected' : '' }}>{{ $n }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="marca"><label class="vx-filtro-label">Marca</label><select name="marca_id" class="vx-select"><option value="">Todas</option>@foreach($marcas as $m)<option value="{{ $m->id }}" {{ request('marca_id') == $m->id ? 'selected' : '' }}>{{ $m->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="isla"><label class="vx-filtro-label">Isla</label><select name="isla" class="vx-select"><option value="">Todas</option>@foreach(\App\Models\Taller::$islas as $i)<option value="{{ $i }}" {{ request('isla') == $i ? 'selected' : '' }}>{{ $i }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="localidad"><label class="vx-filtro-label">Localidad</label><select name="localidad" class="vx-select"><option value="">Todas</option>@foreach($localidades_talleres as $l)<option value="{{ $l }}" {{ request('localidad') == $l ? 'selected' : '' }}>{{ $l }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="activo"><label class="vx-filtro-label">Estado</label><select name="activo" class="vx-select"><option value="">Todos</option><option value="1" {{ request('activo') === '1' ? 'selected' : '' }}>Activo</option><option value="0" {{ request('activo') === '0' ? 'selected' : '' }}>Inactivo</option></select></div>
+    <div class="vx-filtro" data-filtro="empresa"><label class="vx-filtro-label">Empresa</label><select name="empresa_id" class="vx-select"><option value="">Todas</option>@foreach($empresas as $e)<option value="{{ $e->id }}" {{ request('empresa_id') == $e->id ? 'selected' : '' }}>{{ $e->nombre }}</option>@endforeach</select></div>
+</x-filtros-avanzados>
 <div class="vx-card"><div class="vx-card-body" style="padding:0;">
     @if($talleres->count() > 0)
     <div class="vx-table-wrapper"><table class="vx-table">
-        <thead><tr><th>Código</th><th>Nombre</th><th>Marca</th><th>Isla</th><th>Localidad</th><th>Cap.</th><th>Mec.</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <thead><tr><x-columna-ordenable campo="codigo" label="Código" /><x-columna-ordenable campo="nombre" label="Nombre" /><x-columna-ordenable campo="marca_id" label="Marca" /><x-columna-ordenable campo="isla" label="Isla" /><x-columna-ordenable campo="localidad" label="Localidad" /><x-columna-ordenable campo="capacidad_diaria" label="Cap." /><th>Mec.</th><x-columna-ordenable campo="activo" label="Estado" /><th>Acciones</th></tr></thead>
         <tbody>@foreach($talleres as $t)
         <tr>
             <td style="font-family:var(--vx-font-mono);font-size:11px;">{{ $t->codigo }}</td>
@@ -26,7 +28,7 @@
             <td style="text-align:center;">{{ $t->capacidad_diaria }}</td>
             <td style="text-align:center;"><span class="vx-badge vx-badge-info">{{ $t->mecanicos_count }}</span></td>
             <td>@if($t->activo)<span class="vx-badge vx-badge-success">Activo</span>@else<span class="vx-badge vx-badge-gray">Inactivo</span>@endif</td>
-            <td><div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+            <td><div class="vx-actions"><button class="vx-actions-toggle" aria-label="Abrir acciones" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button><div class="vx-actions-menu">
                 <a href="{{ route('talleres.show', $t) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
                 @can('editar talleres')<a href="{{ route('talleres.edit', $t) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>@endcan
                 @can('eliminar talleres')<form action="{{ route('talleres.destroy', $t) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar?');">@csrf @method('DELETE')<button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button></form>@endcan

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Campania;
@@ -17,17 +19,19 @@ class CampaniaController extends Controller
         if ($request->filled('marca_id')) {
             $query->where('marca_id', $request->marca_id);
         }
-        if ($request->filled('search')) {
-            $query->where('nombre', 'like', '%' . $request->search . '%');
+        if ($request->filled('activa')) {
+            $query->where('activa', $request->activa);
         }
         $campanias = $query->orderByDesc('created_at')->paginate(10)->withQueryString();
         $marcas = Marca::where('activa', true)->orderBy('nombre')->get();
+
         return view('campanias.index', compact('campanias', 'marcas'));
     }
 
     public function create()
     {
         $marcas = Marca::where('activa', true)->orderBy('nombre')->get();
+
         return view('campanias.create', compact('marcas'));
     }
 
@@ -49,7 +53,7 @@ class CampaniaController extends Controller
                 $ext = $foto->getClientOriginalExtension();
                 $safeName = Str::slug(pathinfo($foto->getClientOriginalName(), PATHINFO_FILENAME), '_');
                 $path = $foto->storeAs(
-                    'campanias/' . $campania->id,
+                    'campanias/'.$campania->id,
                     "foto_{$i}_{$safeName}.{$ext}",
                     'public'
                 );
@@ -68,6 +72,7 @@ class CampaniaController extends Controller
     public function show(Campania $campania)
     {
         $campania->load(['marca', 'fotos']);
+
         return view('campanias.show', compact('campania'));
     }
 
@@ -75,6 +80,7 @@ class CampaniaController extends Controller
     {
         $campania->load('fotos');
         $marcas = Marca::where('activa', true)->orderBy('nombre')->get();
+
         return view('campanias.edit', compact('campania', 'marcas'));
     }
 
@@ -100,7 +106,7 @@ class CampaniaController extends Controller
                 $ext = $foto->getClientOriginalExtension();
                 $safeName = Str::slug(pathinfo($foto->getClientOriginalName(), PATHINFO_FILENAME), '_');
                 $path = $foto->storeAs(
-                    'campanias/' . $campania->id,
+                    'campanias/'.$campania->id,
                     "foto_{$orden}_{$safeName}.{$ext}",
                     'public'
                 );
@@ -118,14 +124,20 @@ class CampaniaController extends Controller
 
     public function destroyFoto(CampaniaFoto $foto)
     {
-        $foto->delete();
+        $foto->delete(); // Model's deleting event handles file cleanup
+
         return back()->with('success', 'Foto eliminada correctamente.');
     }
 
     public function destroy(Campania $campania)
     {
-        $campania->fotos->each->delete();
+        $campania->fotos->each(function ($foto) {
+            Storage::disk('public')->delete($foto->ruta);
+            $foto->delete();
+        });
+        Storage::disk('public')->deleteDirectory('campanias/'.$campania->id);
         $campania->delete();
+
         return redirect()->route('campanias.index')->with('success', 'Campaña eliminada correctamente.');
     }
 }

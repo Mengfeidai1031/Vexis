@@ -12,13 +12,16 @@
     </div>
 </div>
 
-<form action="{{ route('clientes.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar por nombre, apellidos, DNI, domicilio, CP o empresa..." value="{{ request('search') }}">
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i> Buscar</button>
-    @if(request('search'))
-        <a href="{{ route('clientes.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>
-    @endif
-</form>
+<x-filtros-avanzados :action="route('clientes.index')">
+    <div class="vx-filtro" data-filtro="nombre"><label class="vx-filtro-label">Nombre</label><select name="nombre" class="vx-select"><option value="">Todos</option>@foreach($clientes_all as $c)<option value="{{ $c->nombre_completo }}" {{ request('nombre') == $c->nombre_completo ? 'selected' : '' }}>{{ $c->nombre_completo }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="dni"><label class="vx-filtro-label">DNI</label><select name="dni" class="vx-select"><option value="">Todos</option>@foreach($clientes_all as $c)<option value="{{ $c->dni }}" {{ request('dni') == $c->dni ? 'selected' : '' }}>{{ $c->dni }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="empresa"><label class="vx-filtro-label">Empresa</label><select name="empresa_id" class="vx-select"><option value="">Todas</option>@foreach($empresas as $e)<option value="{{ $e->id }}" {{ request('empresa_id') == $e->id ? 'selected' : '' }}>{{ $e->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="domicilio"><label class="vx-filtro-label">Domicilio</label><select name="domicilio" class="vx-select"><option value="">Todos</option>@foreach($clientes_all as $c)@if($c->domicilio)<option value="{{ $c->domicilio }}" {{ request('domicilio') == $c->domicilio ? 'selected' : '' }}>{{ $c->domicilio }}</option>@endif @endforeach</select></div>
+    <div class="vx-filtro" data-filtro="cp"><label class="vx-filtro-label">Código Postal</label><select name="codigo_postal" class="vx-select"><option value="">Todos</option>@foreach($codigos_postales as $cp)<option value="{{ $cp }}" {{ request('codigo_postal') == $cp ? 'selected' : '' }}>{{ $cp }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="tipo"><label class="vx-filtro-label">Tipo</label><select name="tipo_cliente_id" class="vx-select"><option value="">Todos</option>@foreach($tipos_cliente as $t)<option value="{{ $t->id }}" {{ request('tipo_cliente_id') == $t->id ? 'selected' : '' }}>{{ $t->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="email"><label class="vx-filtro-label">Email</label><select name="email" class="vx-select"><option value="">Todos</option>@foreach($clientes_all as $c)@if($c->email)<option value="{{ $c->email }}" {{ request('email') == $c->email ? 'selected' : '' }}>{{ $c->email }}</option>@endif @endforeach</select></div>
+    <div class="vx-filtro" data-filtro="telefono"><label class="vx-filtro-label">Teléfono</label><select name="telefono" class="vx-select"><option value="">Todos</option>@foreach($clientes_all as $c)@if($c->telefono)<option value="{{ $c->telefono }}" {{ request('telefono') == $c->telefono ? 'selected' : '' }}>{{ $c->telefono }}</option>@endif @endforeach</select></div>
+</x-filtros-avanzados>
 
 <div class="vx-card">
     <div class="vx-card-body" style="padding: 0;">
@@ -27,12 +30,15 @@
                 <table class="vx-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>DNI</th>
-                            <th>Empresa</th>
-                            <th>Domicilio</th>
-                            <th>CP</th>
+                            <x-columna-ordenable campo="id" label="ID" />
+                            <x-columna-ordenable campo="nombre" label="Nombre" />
+                            <x-columna-ordenable campo="tipo_cliente_id" label="Tipo" />
+                            <x-columna-ordenable campo="email" label="Email" />
+                            <x-columna-ordenable campo="telefono" label="Teléfono" />
+                            <x-columna-ordenable campo="dni" label="DNI" />
+                            <x-columna-ordenable campo="empresa_id" label="Empresa" />
+                            <x-columna-ordenable campo="domicilio" label="Domicilio" />
+                            <x-columna-ordenable campo="codigo_postal" label="CP" />
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -41,12 +47,15 @@
                             <tr>
                                 <td style="color: var(--vx-text-muted);">{{ $cliente->id }}</td>
                                 <td style="font-weight: 600;">{{ $cliente->nombre_completo }}</td>
+                                <td>{{ $cliente->tipoCliente->nombre ?? '-' }}</td>
+                                <td style="font-size: 12px;">{{ $cliente->email }}</td>
+                                <td style="font-size: 12px;">{{ $cliente->telefono }}</td>
                                 <td><span class="vx-badge vx-badge-gray" style="font-family: var(--vx-font-mono);">{{ $cliente->dni }}</span></td>
                                 <td>{{ $cliente->empresa->nombre }}</td>
                                 <td style="font-size: 12px;">{{ $cliente->domicilio }}</td>
                                 <td>{{ $cliente->codigo_postal }}</td>
                                 <td>
-                                    <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+                                    <div class="vx-actions"><button class="vx-actions-toggle" aria-label="Abrir acciones" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button><div class="vx-actions-menu">
                                         @can('view', $cliente)
                                             <a href="{{ route('clientes.show', $cliente) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
                                         @endcan

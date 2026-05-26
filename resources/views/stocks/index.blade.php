@@ -9,24 +9,23 @@
         @can('crear stocks')<a href="{{ route('stocks.create') }}" class="vx-btn vx-btn-primary"><i class="bi bi-plus-circle"></i> Nuevo Registro</a>@endcan
     </div>
 </div>
-<form action="{{ route('stocks.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar por referencia, pieza o marca..." value="{{ request('search') }}" style="flex:1;">
-    <select name="almacen_id" class="vx-select" style="width:auto;">
-        <option value="">Todos los almacenes</option>
-        @foreach($almacenes as $a)<option value="{{ $a->id }}" {{ request('almacen_id') == $a->id ? 'selected' : '' }}>{{ $a->nombre }}</option>@endforeach
-    </select>
-    <select name="empresa_id" class="vx-select" style="width:auto;">
-        <option value="">Todas las empresas</option>
-        @foreach($empresas as $e)<option value="{{ $e->id }}" {{ request('empresa_id') == $e->id ? 'selected' : '' }}>{{ $e->nombre }}</option>@endforeach
-    </select>
-    <label style="display:flex;align-items:center;gap:4px;font-size:12px;white-space:nowrap;"><input type="checkbox" name="bajo_stock" value="1" {{ request('bajo_stock') ? 'checked' : '' }}> Bajo stock</label>
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i></button>
-    @if(request()->anyFilled(['search','almacen_id','empresa_id','bajo_stock']))<a href="{{ route('stocks.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>@endif
-</form>
+<x-filtros-avanzados :action="route('stocks.index')">
+    <div class="vx-filtro" data-filtro="referencia"><label class="vx-filtro-label">Referencia</label><select name="referencia" class="vx-select"><option value="">Todas</option>@foreach($referencias as $r)<option value="{{ $r }}" {{ request('referencia') == $r ? 'selected' : '' }}>{{ $r }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="nombre_pieza"><label class="vx-filtro-label">Nombre pieza</label><select name="nombre_pieza" class="vx-select"><option value="">Todos</option>@foreach($nombres_pieza as $n)<option value="{{ $n }}" {{ request('nombre_pieza') == $n ? 'selected' : '' }}>{{ $n }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="marca_pieza"><label class="vx-filtro-label">Marca pieza</label><select name="marca_pieza" class="vx-select"><option value="">Todas</option>@foreach($marcas_pieza as $m)<option value="{{ $m }}" {{ request('marca_pieza') == $m ? 'selected' : '' }}>{{ $m }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="cant_min"><label class="vx-filtro-label">Cant. mín.</label><input type="number" name="cantidad_min" class="vx-input" value="{{ request('cantidad_min') }}"></div>
+    <div class="vx-filtro" data-filtro="cant_max"><label class="vx-filtro-label">Cant. máx.</label><input type="number" name="cantidad_max" class="vx-input" value="{{ request('cantidad_max') }}"></div>
+    <div class="vx-filtro" data-filtro="precio_min"><label class="vx-filtro-label">Precio mín.</label><input type="number" step="0.01" name="precio_min" class="vx-input" value="{{ request('precio_min') }}"></div>
+    <div class="vx-filtro" data-filtro="precio_max"><label class="vx-filtro-label">Precio máx.</label><input type="number" step="0.01" name="precio_max" class="vx-input" value="{{ request('precio_max') }}"></div>
+    <div class="vx-filtro" data-filtro="almacen"><label class="vx-filtro-label">Almacén</label><select name="almacen_id" class="vx-select"><option value="">Todos</option>@foreach($almacenes as $a)<option value="{{ $a->id }}" {{ request('almacen_id') == $a->id ? 'selected' : '' }}>{{ $a->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="empresa"><label class="vx-filtro-label">Empresa</label><select name="empresa_id" class="vx-select"><option value="">Todas</option>@foreach($empresas as $e)<option value="{{ $e->id }}" {{ request('empresa_id') == $e->id ? 'selected' : '' }}>{{ $e->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="activo"><label class="vx-filtro-label">Estado</label><select name="activo" class="vx-select"><option value="">Todos</option><option value="1" {{ request('activo') === '1' ? 'selected' : '' }}>Activo</option><option value="0" {{ request('activo') === '0' ? 'selected' : '' }}>Inactivo</option></select></div>
+    <div class="vx-filtro" data-filtro="stock"><label class="vx-filtro-label">Stock</label><select name="bajo_stock" class="vx-select"><option value="">Todos</option><option value="1" {{ request('bajo_stock') ? 'selected' : '' }}>Bajo stock</option></select></div>
+</x-filtros-avanzados>
 <div class="vx-card"><div class="vx-card-body" style="padding:0;">
     @if($stocks->count() > 0)
     <div class="vx-table-wrapper"><table class="vx-table">
-        <thead><tr><th>Ref.</th><th>Pieza</th><th>Marca</th><th>Cantidad</th><th>Mín.</th><th>Precio</th><th>Almacén</th><th>Empresa</th><th>Acciones</th></tr></thead>
+        <thead><tr><x-columna-ordenable campo="referencia" label="Ref." /><x-columna-ordenable campo="nombre_pieza" label="Pieza" /><x-columna-ordenable campo="marca_pieza" label="Marca" /><x-columna-ordenable campo="cantidad" label="Cantidad" /><x-columna-ordenable campo="stock_minimo" label="Mín." /><x-columna-ordenable campo="precio_unitario" label="Precio" /><x-columna-ordenable campo="almacen_id" label="Almacén" /><x-columna-ordenable campo="empresa_id" label="Empresa" /><th>Acciones</th></tr></thead>
         <tbody>
             @foreach($stocks as $s)
             <tr>
@@ -42,7 +41,7 @@
                 <td style="font-size:12px;">{{ $s->almacen->nombre ?? '—' }}</td>
                 <td style="font-size:12px;">{{ $s->empresa->abreviatura ?? '—' }}</td>
                 <td>
-                    <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+                    <div class="vx-actions"><button class="vx-actions-toggle" aria-label="Abrir acciones" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button><div class="vx-actions-menu">
                         <a href="{{ route('stocks.show', $s) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
                         @can('editar stocks')<a href="{{ route('stocks.edit', $s) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>@endcan
                         @can('eliminar stocks')

@@ -1,0 +1,216 @@
+/* ============================================================
+   VEXIS Design Tokens — v5
+   Única fuente de verdad para color, tipografía, espaciado,
+   radios, sombras, z-index y breakpoints. Las capas superiores
+   (componentes Blade, utilidades .vx-*, .mod-*, .dx-*, .cli-*)
+   consumen exclusivamente estas variables.
+   ============================================================ */
+
+:root {
+    /* ----- Color · Primario de marca (cian VEXIS) ----- */
+    --vx-primary-50:  #E8F6FC;
+    --vx-primary-100: #C9EAF6;
+    --vx-primary-200: #93D5EE;
+    --vx-primary-300: #5CBDE6;
+    --vx-primary-400: #33AADD;
+    --vx-primary-500: #33AADD;  /* alias — brand */
+    --vx-primary-600: #2890BB;
+    --vx-primary-700: #1F7FC6;
+    --vx-primary-800: #1966A0;
+    --vx-primary-900: #0F4B7A;
+    --vx-primary:       var(--vx-primary-500);
+    --vx-primary-dark:  var(--vx-primary-600);
+    --vx-primary-light: var(--vx-primary-300);
+
+    /* ----- Color · Acento neutro ----- */
+    --vx-accent:       #9BA4AE;
+    --vx-accent-dark:  #6B7580;
+
+    /* ----- Color · Escala de grises (light) ----- */
+    --vx-white:   #FFFFFF;
+    --vx-gray-50:  #F8F9FA;
+    --vx-gray-100: #F1F3F5;
+    --vx-gray-200: #E9ECEF;
+    --vx-gray-300: #DEE2E6;
+    --vx-gray-400: #CED4DA;
+    --vx-gray-500: #ADB5BD;
+    --vx-gray-600: #6C757D;
+    --vx-gray-700: #495057;
+    --vx-gray-800: #343A40;
+    --vx-gray-900: #212529;
+
+    /* ----- Color · Semántico ----- */
+    --vx-success: #2ECC71;
+    --vx-success-dark: #27AE60;
+    --vx-warning: #F39C12;
+    --vx-warning-dark: #E67E22;
+    --vx-danger:  #E74C3C;
+    --vx-danger-dark: #C0392B;
+    --vx-info:    #3498DB;
+    --vx-info-dark: #2980B9;
+
+    --vx-success-bg: rgba(46,204,113,0.10);
+    --vx-warning-bg: rgba(243,156,18,0.10);
+    --vx-danger-bg:  rgba(231,76,60,0.10);
+    --vx-info-bg:    rgba(52,152,219,0.10);
+    --vx-primary-bg: rgba(51,170,221,0.10);
+
+    /* ----- Color · Superficie (light) ----- */
+    --vx-bg:            var(--vx-gray-50);
+    --vx-surface:       var(--vx-white);
+    --vx-surface-alt:   var(--vx-gray-50);
+    --vx-surface-hover: var(--vx-gray-100);
+    --vx-border:        var(--vx-gray-200);
+    --vx-border-strong: var(--vx-gray-300);
+
+    /* ----- Color · Texto ----- */
+    --vx-text:           var(--vx-gray-900);
+    --vx-text-secondary: var(--vx-gray-600);
+    --vx-text-muted:     #8590A2;
+    --vx-text-inverse:   var(--vx-white);
+
+    /* ----- Tipografía ----- */
+    --vx-font:      'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --vx-font-mono: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+
+    --vx-text-xs:   11px;
+    --vx-text-sm:   12px;
+    --vx-text-base: 13px;
+    --vx-text-md:   14px;
+    --vx-text-lg:   16px;
+    --vx-text-xl:   18px;
+    --vx-text-2xl:  22px;
+    --vx-text-3xl:  28px;
+
+    --vx-leading-tight:   1.25;
+    --vx-leading-normal:  1.5;
+    --vx-leading-relaxed: 1.65;
+
+    --vx-weight-regular:  400;
+    --vx-weight-medium:   500;
+    --vx-weight-semibold: 600;
+    --vx-weight-bold:     700;
+    --vx-weight-black:    800;
+
+    /* ----- Espaciado (escala 4px) ----- */
+    --vx-space-0: 0;
+    --vx-space-1: 4px;
+    --vx-space-2: 8px;
+    --vx-space-3: 12px;
+    --vx-space-4: 16px;
+    --vx-space-5: 20px;
+    --vx-space-6: 24px;
+    --vx-space-8: 32px;
+    --vx-space-10: 40px;
+    --vx-space-12: 48px;
+    --vx-space-16: 64px;
+
+    /* ----- Radios ----- */
+    --vx-radius-xs: 4px;
+    --vx-radius-sm: 6px;
+    --vx-radius:    8px;
+    --vx-radius-lg: 12px;
+    --vx-radius-xl: 16px;
+    --vx-radius-full: 9999px;
+
+    /* ----- Sombras ----- */
+    --vx-shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+    --vx-shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+    --vx-shadow:    0 4px 12px rgba(0,0,0,0.08);
+    --vx-shadow-md: 0 6px 16px rgba(0,0,0,0.1);
+    --vx-shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+    --vx-shadow-xl: 0 16px 40px rgba(0,0,0,0.18);
+    --vx-shadow-focus: 0 0 0 3px rgba(51,170,221,0.20);
+    --vx-shadow-focus-danger: 0 0 0 3px rgba(231,76,60,0.18);
+
+    /* ----- Z-index ----- */
+    --vx-z-base:        1;
+    --vx-z-sticky:      5;
+    --vx-z-modulebar:   990;
+    --vx-z-navbar:      1000;
+    --vx-z-dropdown:    1100;
+    --vx-z-submenu:     1200;
+    --vx-z-mobile-menu: 1300;
+    --vx-z-modal:       2000;
+    --vx-z-toast:       2500;
+    --vx-z-loader:      99999;
+
+    /* ----- Layout ----- */
+    --vx-navbar-height: 56px;
+    --vx-container:     1200px;
+    --vx-container-sm:  800px;
+    --vx-container-md:  950px;
+
+    /* ----- Transiciones ----- */
+    --vx-transition-fast:   0.15s ease;
+    --vx-transition:        0.2s ease;
+    --vx-transition-slow:   0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --vx-transition-bounce: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* ----- Breakpoints (referencia · usadas en media queries) ----- */
+    --vx-bp-xs:  480px;
+    --vx-bp-sm:  640px;
+    --vx-bp-md:  768px;
+    --vx-bp-lg:  992px;
+    --vx-bp-xl:  1200px;
+}
+
+/* ============================================================
+   Modo oscuro · overrides únicamente de superficie + texto.
+   Los tokens semánticos se mantienen con misma familia hue
+   para preservar legibilidad del brand.
+   ============================================================ */
+[data-theme="dark"] {
+    --vx-bg:            #0F1117;
+    --vx-surface:       #1A1D27;
+    --vx-surface-alt:   #1F222D;
+    --vx-surface-hover: #242736;
+    --vx-border:        #2A2D3A;
+    --vx-border-strong: #3A3D4A;
+    --vx-text:           #E8E9ED;
+    --vx-text-secondary: #9CA3AF;
+    --vx-text-muted:     #6B7280;
+    --vx-shadow-xs: 0 1px 2px rgba(0,0,0,0.3);
+    --vx-shadow-sm: 0 1px 3px rgba(0,0,0,0.35);
+    --vx-shadow:    0 4px 12px rgba(0,0,0,0.4);
+    --vx-shadow-md: 0 6px 16px rgba(0,0,0,0.45);
+    --vx-shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+    --vx-shadow-xl: 0 16px 40px rgba(0,0,0,0.55);
+    --vx-success-bg: rgba(46,204,113,0.14);
+    --vx-warning-bg: rgba(243,156,18,0.16);
+    --vx-danger-bg:  rgba(231,76,60,0.15);
+    --vx-info-bg:    rgba(52,152,219,0.15);
+    --vx-primary-bg: rgba(51,170,221,0.14);
+    --vx-gray-50:  #1A1D27;
+    --vx-gray-100: #242736;
+    --vx-gray-200: #2A2D3A;
+    --vx-gray-300: #3A3D4A;
+}
+
+/* ============================================================
+   Reduce motion accessibility
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ============================================================
+   Focus ring accesible global (teclado)
+   ============================================================ */
+:focus-visible {
+    outline: 2px solid var(--vx-primary);
+    outline-offset: 2px;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: none;
+    box-shadow: var(--vx-shadow-focus);
+}

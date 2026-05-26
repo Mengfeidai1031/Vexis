@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Almacen;
+use Illuminate\Database\Seeder;
 
 class AlmacenSeeder extends Seeder
 {
@@ -30,7 +30,7 @@ class AlmacenSeeder extends Seeder
                 'isla' => 'Gran Canaria',
                 'telefono' => '928762030',
                 'empresa_id' => 1,
-                'centro_id' => 1,
+                'centro_id' => 3,
             ],
             [
                 'nombre' => 'Almacén Telde',
@@ -41,7 +41,7 @@ class AlmacenSeeder extends Seeder
                 'isla' => 'Gran Canaria',
                 'telefono' => '928694050',
                 'empresa_id' => 1,
-                'centro_id' => 1,
+                'centro_id' => 2,
             ],
             [
                 'nombre' => 'Almacén Santa Cruz de Tenerife',
@@ -51,8 +51,8 @@ class AlmacenSeeder extends Seeder
                 'localidad' => 'Güímar',
                 'isla' => 'Tenerife',
                 'telefono' => '922510060',
-                'empresa_id' => 1,
-                'centro_id' => 1,
+                'empresa_id' => 2,
+                'centro_id' => 4,
             ],
             [
                 'nombre' => 'Almacén Sur Tenerife',
@@ -62,8 +62,8 @@ class AlmacenSeeder extends Seeder
                 'localidad' => 'Granadilla de Abona',
                 'isla' => 'Tenerife',
                 'telefono' => '922773080',
-                'empresa_id' => 1,
-                'centro_id' => 1,
+                'empresa_id' => 2,
+                'centro_id' => 6,
             ],
             [
                 'nombre' => 'Almacén Lanzarote',
@@ -73,8 +73,8 @@ class AlmacenSeeder extends Seeder
                 'localidad' => 'San Bartolomé',
                 'isla' => 'Lanzarote',
                 'telefono' => '928820090',
-                'empresa_id' => 1,
-                'centro_id' => 1,
+                'empresa_id' => 3,
+                'centro_id' => 7,
             ],
             [
                 'nombre' => 'Almacén Fuerteventura',

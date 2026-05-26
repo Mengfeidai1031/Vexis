@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Festivo;
@@ -12,12 +14,6 @@ class FestivoController extends Controller
         $anio = $request->input('anio', now()->year);
         $query = Festivo::where('anio', $anio);
 
-        if ($request->filled('search')) {
-            $s = $request->search;
-            $query->where(function ($q) use ($s) {
-                $q->where('nombre', 'like', "%$s%")->orWhere('municipio', 'like', "%$s%");
-            });
-        }
         if ($request->filled('ambito')) {
             $query->where('ambito', $request->ambito);
         }
@@ -25,13 +21,20 @@ class FestivoController extends Controller
             $query->where('municipio', $request->municipio);
         }
 
-        $festivos = $query->orderBy('fecha')->paginate(20)->withQueryString();
+        // Sorting
+        $sortable = ['id', 'fecha', 'nombre', 'ambito', 'municipio'];
+        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
+            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
+            $query->reorder()->orderBy($request->sort_by, $dir);
+        }
+
+        $festivos = $query->paginate(20)->withQueryString();
 
         // Datos para calendario
-        $eventos = Festivo::where('anio', $anio)->get()->map(fn($f) => [
+        $eventos = Festivo::where('anio', $anio)->get()->map(fn ($f) => [
             'title' => $f->nombre,
             'start' => $f->fecha->format('Y-m-d'),
-            'color' => match($f->ambito) {
+            'color' => match ($f->ambito) {
                 'nacional' => '#e74c3c',
                 'autonomico' => '#3498db',
                 default => '#2ecc71',
@@ -67,6 +70,11 @@ class FestivoController extends Controller
         return redirect()->route('festivos.index')->with('success', 'Festivo creado correctamente.');
     }
 
+    public function show(Festivo $festivo)
+    {
+        return view('festivos.show', compact('festivo'));
+    }
+
     public function edit(Festivo $festivo)
     {
         return view('festivos.edit', compact('festivo'));
@@ -92,6 +100,7 @@ class FestivoController extends Controller
     public function destroy(Festivo $festivo)
     {
         $festivo->delete();
+
         return redirect()->route('festivos.index')->with('success', 'Festivo eliminado correctamente.');
     }
 }

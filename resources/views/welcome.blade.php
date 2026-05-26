@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'VEXIS - Grupo ARI')
+@section('title', 'VEXIS - Grupo DAI')
 @section('content')
 
 @auth
@@ -13,46 +13,42 @@
         <h1 style="font-size: 28px; font-weight: 300; color: var(--vx-text); margin-bottom: 4px;">
             {{ $greeting }}, <strong style="font-weight: 700;">{{ Auth::user()->nombre }}</strong>
         </h1>
-        <p style="font-size: 14px; color: var(--vx-text-muted);">Bienvenido a VEXIS — Sistema de Gestión de Grupo ARI</p>
+        <p style="font-size: 14px; color: var(--vx-text-muted);">Bienvenido a VEXIS — Sistema de Gestión de Grupo DAI</p>
     </div>
 
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 20px;">
-        @can('ver usuarios')
-        <a href="{{ route('users.index') }}" class="vx-quick-card">
-            <i class="bi bi-people" style="color: var(--vx-primary);"></i>
-            <span>Usuarios</span>
+        @canany(['ver usuarios', 'ver departamentos', 'ver centros', 'ver roles', 'ver restricciones', 'ver clientes'])
+        <a href="{{ route('gestion.inicio') }}" class="vx-quick-card">
+            <i class="bi bi-building" style="color: var(--vx-primary);"></i>
+            <span>Gestión</span>
+        </a>
+        @endcanany
+        @canany(['ver vehículos', 'ver ofertas'])
+        <a href="{{ route('comercial.inicio') }}" class="vx-quick-card">
+            <i class="bi bi-car-front" style="color: var(--vx-warning);"></i>
+            <span>Comercial</span>
+        </a>
+        @endcanany
+        @can('ver almacenes')
+        <a href="{{ route('recambios.inicio') }}" class="vx-quick-card">
+            <i class="bi bi-box-seam" style="color: var(--vx-success);"></i>
+            <span>Recambios</span>
         </a>
         @endcan
-        @can('ver clientes')
-        <a href="{{ route('clientes.index') }}" class="vx-quick-card">
-            <i class="bi bi-person-lines-fill" style="color: var(--vx-success);"></i>
-            <span>Clientes</span>
+        @canany(['ver talleres', 'ver citas', 'ver coches-sustitucion'])
+        <a href="{{ route('talleres.inicio') }}" class="vx-quick-card">
+            <i class="bi bi-wrench-adjustable" style="color: var(--vx-accent-dark);"></i>
+            <span>Talleres</span>
         </a>
-        @endcan
-        @can('ver ofertas')
-        <a href="{{ route('ofertas.index') }}" class="vx-quick-card">
-            <i class="bi bi-file-earmark-text" style="color: var(--vx-warning);"></i>
-            <span>Ofertas</span>
+        @endcanany
+        <a href="{{ route('dataxis.inicio') }}" class="vx-quick-card">
+            <i class="bi bi-bar-chart-line" style="color: #27AE60;"></i>
+            <span>Dataxis</span>
         </a>
-        @endcan
-        @can('ver vehículos')
-        <a href="{{ route('vehiculos.index') }}" class="vx-quick-card">
-            <i class="bi bi-truck" style="color: var(--vx-info);"></i>
-            <span>Vehículos</span>
+        <a href="{{ route('cliente.inicio') }}" class="vx-quick-card">
+            <i class="bi bi-person-heart" style="color: var(--vx-danger);"></i>
+            <span>Cliente</span>
         </a>
-        @endcan
-        @can('ver centros')
-        <a href="{{ route('centros.index') }}" class="vx-quick-card">
-            <i class="bi bi-geo-alt" style="color: var(--vx-danger);"></i>
-            <span>Centros</span>
-        </a>
-        @endcan
-        @can('ver roles')
-        <a href="{{ route('roles.index') }}" class="vx-quick-card">
-            <i class="bi bi-shield-lock" style="color: var(--vx-accent-dark);"></i>
-            <span>Roles</span>
-        </a>
-        @endcan
         <a href="{{ route('dashboard') }}" class="vx-quick-card">
             <i class="bi bi-speedometer2" style="color: var(--vx-primary-dark);"></i>
             <span>Dashboard</span>
@@ -76,7 +72,7 @@
             Sistema de Gestión
         </h1>
         <p style="font-size: 14px; color: var(--vx-text-muted); margin-bottom: 32px;">
-            Plataforma integral de gestión para concesionarios — Grupo ARI
+            Plataforma integral de gestión para concesionarios — Grupo DAI
         </p>
         <div style="display: flex; flex-direction: column; gap: 10px; max-width: 280px; margin: 0 auto;">
             <a href="{{ route('login') }}" class="vx-btn vx-btn-primary" style="justify-content: center; padding: 12px;">

@@ -21,7 +21,7 @@
 {{-- Fila 1: Cliente + Empresa --}}
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
     <div class="vx-card">
-        <div class="vx-card-header"><h4><i class="bi bi-person" style="color: var(--vx-primary);"></i> Cliente</h4></div>
+        <div class="vx-card-header"><h2><i class="bi bi-person" style="color: var(--vx-primary);"></i> Cliente</h2></div>
         <div class="vx-card-body">
             @if($oferta->cliente)
             <div class="vx-info-row"><div class="vx-info-label">Nombre</div><div class="vx-info-value" style="font-weight:600;">{{ $oferta->cliente->nombre_completo }}</div></div>
@@ -41,7 +41,7 @@
     </div>
 
     <div class="vx-card">
-        <div class="vx-card-header"><h4><i class="bi bi-building" style="color: var(--vx-success);"></i> Empresa</h4></div>
+        <div class="vx-card-header"><h2><i class="bi bi-building" style="color: var(--vx-success);"></i> Empresa</h2></div>
         <div class="vx-card-body">
             @if($oferta->cliente && $oferta->cliente->empresa)
                 @php $empresa = $oferta->cliente->empresa; @endphp
@@ -60,7 +60,7 @@
 {{-- Fila 2: Vehículo + Oferta Cabecera --}}
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
     <div class="vx-card">
-        <div class="vx-card-header"><h4><i class="bi bi-truck" style="color: var(--vx-info);"></i> Vehículo</h4></div>
+        <div class="vx-card-header"><h2><i class="bi bi-truck" style="color: var(--vx-info);"></i> Vehículo</h2></div>
         <div class="vx-card-body">
             @if($oferta->vehiculo)
             <div class="vx-info-row"><div class="vx-info-label">Chasis</div><div class="vx-info-value"><span style="font-family:var(--vx-font-mono);font-size:12px;background:var(--vx-bg);padding:2px 6px;border-radius:4px;">{{ $oferta->vehiculo->chasis }}</span></div></div>
@@ -79,7 +79,7 @@
     </div>
 
     <div class="vx-card">
-        <div class="vx-card-header"><h4><i class="bi bi-file-earmark-text" style="color: var(--vx-warning);"></i> Cabecera</h4></div>
+        <div class="vx-card-header"><h2><i class="bi bi-file-earmark-text" style="color: var(--vx-warning);"></i> Cabecera</h2></div>
         <div class="vx-card-body">
             <div class="vx-info-row"><div class="vx-info-label">ID Oferta</div><div class="vx-info-value">{{ $oferta->id }}</div></div>
             <div class="vx-info-row"><div class="vx-info-label">Fecha</div><div class="vx-info-value" style="font-weight:600;">{{ $oferta->fecha->format('d/m/Y') }}</div></div>
@@ -92,7 +92,7 @@
 
 {{-- Líneas de Oferta --}}
 <div class="vx-card" style="margin-bottom: 16px;">
-    <div class="vx-card-header"><h4>Líneas de Oferta <span class="vx-badge vx-badge-gray">{{ $oferta->lineas->count() }}</span></h4></div>
+    <div class="vx-card-header"><h2>Líneas de Oferta <span class="vx-badge vx-badge-gray">{{ $oferta->lineas->count() }}</span></h2></div>
     <div class="vx-card-body" style="padding: 0;">
         @if($oferta->lineas->count() > 0)
         <div class="vx-table-wrapper">

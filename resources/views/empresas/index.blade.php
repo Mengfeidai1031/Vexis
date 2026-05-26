@@ -9,17 +9,20 @@
         @endcan
     </div>
 </div>
-<form action="{{ route('empresas.index') }}" method="GET" class="vx-search-box">
-    <input type="text" name="search" class="vx-input" placeholder="Buscar por nombre, abreviatura, CIF o domicilio..." value="{{ request('search') }}">
-    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-search"></i> Buscar</button>
-    @if(request('search'))<a href="{{ route('empresas.index') }}" class="vx-btn vx-btn-secondary">Limpiar</a>@endif
-</form>
+<x-filtros-avanzados :action="route('empresas.index')">
+    <div class="vx-filtro" data-filtro="nombre"><label class="vx-filtro-label">Nombre</label><select name="nombre" class="vx-select"><option value="">Todas</option>@foreach($empresas_all as $e)<option value="{{ $e->nombre }}" {{ request('nombre') == $e->nombre ? 'selected' : '' }}>{{ $e->nombre }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="abreviatura"><label class="vx-filtro-label">Abreviatura</label><select name="abreviatura" class="vx-select"><option value="">Todas</option>@foreach($abreviaturas as $ab)<option value="{{ $ab }}" {{ request('abreviatura') == $ab ? 'selected' : '' }}>{{ $ab }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="cif"><label class="vx-filtro-label">CIF</label><select name="cif" class="vx-select"><option value="">Todos</option>@foreach($empresas_all as $e)<option value="{{ $e->cif }}" {{ request('cif') == $e->cif ? 'selected' : '' }}>{{ $e->cif }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="domicilio"><label class="vx-filtro-label">Domicilio</label><select name="domicilio" class="vx-select"><option value="">Todos</option>@foreach($empresas_all as $e)@if($e->domicilio)<option value="{{ $e->domicilio }}" {{ request('domicilio') == $e->domicilio ? 'selected' : '' }}>{{ $e->domicilio }}</option>@endif @endforeach</select></div>
+    <div class="vx-filtro" data-filtro="cp"><label class="vx-filtro-label">Código Postal</label><select name="codigo_postal" class="vx-select"><option value="">Todos</option>@foreach($codigos_postales as $cp)<option value="{{ $cp }}" {{ request('codigo_postal') == $cp ? 'selected' : '' }}>{{ $cp }}</option>@endforeach</select></div>
+    <div class="vx-filtro" data-filtro="telefono"><label class="vx-filtro-label">Teléfono</label><select name="telefono" class="vx-select"><option value="">Todos</option>@foreach($empresas_all as $e)@if($e->telefono)<option value="{{ $e->telefono }}" {{ request('telefono') == $e->telefono ? 'selected' : '' }}>{{ $e->telefono }}</option>@endif @endforeach</select></div>
+</x-filtros-avanzados>
 <div class="vx-card">
     <div class="vx-card-body" style="padding: 0;">
         @if($empresas->count() > 0)
         <div class="vx-table-wrapper">
             <table class="vx-table">
-                <thead><tr><th>ID</th><th>Nombre</th><th>Abrev.</th><th>CIF</th><th>Domicilio</th><th>CP</th><th>Teléfono</th><th>Acciones</th></tr></thead>
+                <thead><tr><x-columna-ordenable campo="id" label="ID" /><x-columna-ordenable campo="nombre" label="Nombre" /><x-columna-ordenable campo="abreviatura" label="Abrev." /><x-columna-ordenable campo="cif" label="CIF" /><x-columna-ordenable campo="domicilio" label="Domicilio" /><x-columna-ordenable campo="codigo_postal" label="CP" /><x-columna-ordenable campo="telefono" label="Teléfono" /><th>Acciones</th></tr></thead>
                 <tbody>
                     @foreach($empresas as $empresa)
                     <tr>
@@ -31,7 +34,7 @@
                         <td>{{ $empresa->codigo_postal }}</td>
                         <td>{{ $empresa->telefono }}</td>
                         <td>
-                            <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+                            <div class="vx-actions"><button class="vx-actions-toggle" aria-label="Abrir acciones" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button><div class="vx-actions-menu">
                                 @can('ver empresas')<a href="{{ route('empresas.show', $empresa) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>@endcan
                                 @can('editar empresas')<a href="{{ route('empresas.edit', $empresa) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>@endcan
                                 @can('eliminar empresas')

@@ -1,34 +1,43 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\DepartamentoController;
-use App\Http\Controllers\CentroController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\RestriccionController;
-use App\Http\Controllers\ClienteController;
-use App\Http\Controllers\VehiculoController;
-use App\Http\Controllers\OfertaController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\EmpresaController;
-use App\Http\Controllers\NoticiaController;
-use App\Http\Controllers\CampaniaController;
-use App\Http\Controllers\NamingPcController;
-use App\Http\Controllers\VacacionController;
-use App\Http\Controllers\FestivoController;
-use App\Http\Controllers\StockController;
-use App\Http\Controllers\RepartoController;
-use App\Http\Controllers\TallerController;
-use App\Http\Controllers\MecanicoController;
-use App\Http\Controllers\CitaTallerController;
-use App\Http\Controllers\CocheSustitucionController;
-use App\Http\Controllers\VentaController;
-use App\Http\Controllers\TasacionController;
-use App\Http\Controllers\CatalogoPrecioController;
-use App\Http\Controllers\ClienteModuloController;
-use App\Http\Controllers\DatAxisController;
 use App\Http\Controllers\AlmacenController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CampaniaController;
+use App\Http\Controllers\CatalogoPrecioController;
+use App\Http\Controllers\CentroController;
+use App\Http\Controllers\CitaTallerController;
+use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\ClienteModuloController;
+use App\Http\Controllers\CocheSustitucionController;
+use App\Http\Controllers\DatAxisController;
+use App\Http\Controllers\DepartamentoController;
+use App\Http\Controllers\EmpresaController;
+use App\Http\Controllers\FacturaController;
+use App\Http\Controllers\FestivoController;
+use App\Http\Controllers\IncidenciaController;
+use App\Http\Controllers\LogViewerController;
+use App\Http\Controllers\MecanicoController;
+use App\Http\Controllers\NamingPcController;
+use App\Http\Controllers\NoticiaController;
+use App\Http\Controllers\OfertaController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RepartoController;
+use App\Http\Controllers\RestriccionController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SettingController;
+use App\Http\Controllers\StockController;
+use App\Http\Controllers\TallerController;
+use App\Http\Controllers\TasacionController;
+use App\Http\Controllers\TipoClienteController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\VacacionController;
+use App\Http\Controllers\VehiculoController;
+use App\Http\Controllers\VehiculoDocumentoController;
+use App\Http\Controllers\VehiculoDocumentoGeneradorController;
+use App\Http\Controllers\VentaController;
+use App\Http\Controllers\VerifactuController;
+use Illuminate\Support\Facades\Route;
 
 // Ruta pública (página de inicio)
 Route::get('/', function () {
@@ -38,27 +47,32 @@ Route::get('/', function () {
 // Rutas de autenticación (públicas)
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10,1');
     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
-    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:5,1');
 });
 
 // Rutas protegidas (requieren autenticación)
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-    
+
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
 
     // Módulos - Inicio
-    Route::get('/gestion', function () { return view('gestion.inicio'); })->name('gestion.inicio');
-    Route::get('/comercial', function () { return view('comercial.inicio'); })->name('comercial.inicio');
+    Route::get('/gestion', function () {
+        return view('gestion.inicio');
+    })->name('gestion.inicio');
+    Route::get('/comercial', function () {
+        return view('comercial.inicio');
+    })->name('comercial.inicio');
 
     // Gestión - Seguridad
     Route::get('/gestion/permisos', function () {
         $roles = \Spatie\Permission\Models\Role::orderBy('id')->get();
         $permissions = \Spatie\Permission\Models\Permission::orderBy('name')->get();
+
         return view('gestion.permisos', compact('roles', 'permissions'));
     })->name('gestion.permisos')->middleware('permission:ver roles');
 
@@ -69,6 +83,7 @@ Route::middleware('auth')->group(function () {
     // Gestión - Mantenimiento: Marcas
     Route::get('/gestion/marcas', function () {
         $marcas = \App\Models\Marca::orderBy('nombre')->get();
+
         return view('gestion.marcas', compact('marcas'));
     })->name('gestion.marcas');
 
@@ -145,6 +160,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/vacaciones', [VacacionController::class, 'index'])->name('vacaciones.index');
     Route::get('/vacaciones/create', [VacacionController::class, 'create'])->name('vacaciones.create');
     Route::post('/vacaciones', [VacacionController::class, 'store'])->name('vacaciones.store');
+    Route::get('/vacaciones/{vacacion}', [VacacionController::class, 'show'])->name('vacaciones.show');
     Route::patch('/vacaciones/{vacacion}/gestionar', [VacacionController::class, 'gestionar'])->name('vacaciones.gestionar');
     Route::delete('/vacaciones/{vacacion}', [VacacionController::class, 'destroy'])->name('vacaciones.destroy');
 
@@ -155,6 +171,7 @@ Route::middleware('auth')->group(function () {
     });
     Route::middleware(['permission:ver festivos'])->group(function () {
         Route::get('/festivos', [FestivoController::class, 'index'])->name('festivos.index');
+        Route::get('/festivos/{festivo}', [FestivoController::class, 'show'])->name('festivos.show');
     });
     Route::middleware(['permission:editar festivos'])->group(function () {
         Route::get('/festivos/{festivo}/edit', [FestivoController::class, 'edit'])->name('festivos.edit');
@@ -165,7 +182,9 @@ Route::middleware('auth')->group(function () {
     });
 
     // Módulo Recambios - Inicio
-    Route::get('/recambios', function () { return view('recambios.inicio'); })->name('recambios.inicio');
+    Route::get('/recambios', function () {
+        return view('recambios.inicio');
+    })->name('recambios.inicio');
 
     // CRUD de Almacenes
     Route::middleware(['permission:crear almacenes'])->group(function () {
@@ -221,7 +240,9 @@ Route::middleware('auth')->group(function () {
     });
 
     // === MÓDULO TALLERES ===
-    Route::get('/talleres-modulo', function () { return view('talleres.inicio'); })->name('talleres.inicio');
+    Route::get('/talleres-modulo', function () {
+        return view('talleres.inicio');
+    })->name('talleres.inicio');
 
     // CRUD Talleres
     Route::middleware(['permission:crear talleres'])->group(function () {
@@ -302,6 +323,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/ventas/export/excel', [VentaController::class, 'export'])->name('ventas.export');
         Route::get('/ventas/export/pdf', [VentaController::class, 'exportPdf'])->name('ventas.exportPdf');
         Route::get('/ventas/{venta}', [VentaController::class, 'show'])->name('ventas.show');
+        Route::get('/ventas/{venta}/contrato-pdf', [VentaController::class, 'contratoPdf'])->name('ventas.contratoPdf');
     });
     Route::middleware(['permission:editar ventas'])->group(function () {
         Route::get('/ventas/{venta}/edit', [VentaController::class, 'edit'])->name('ventas.edit');
@@ -321,6 +343,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/tasaciones/export/excel', [TasacionController::class, 'export'])->name('tasaciones.export');
         Route::get('/tasaciones/export/pdf', [TasacionController::class, 'exportPdf'])->name('tasaciones.exportPdf');
         Route::get('/tasaciones/{tasacion}', [TasacionController::class, 'show'])->name('tasaciones.show');
+        Route::get('/tasaciones/{tasacion}/pdf', [TasacionController::class, 'singlePdf'])->name('tasaciones.singlePdf');
     });
     Route::middleware(['permission:editar tasaciones'])->group(function () {
         Route::get('/tasaciones/{tasacion}/edit', [TasacionController::class, 'edit'])->name('tasaciones.edit');
@@ -347,25 +370,112 @@ Route::middleware('auth')->group(function () {
         Route::delete('/catalogo-precios/{catalogo_precio}', [CatalogoPrecioController::class, 'destroy'])->name('catalogo-precios.destroy');
     });
 
+    // === MÓDULO COMERCIAL: Facturas ===
+    Route::middleware(['module:facturas', 'permission:crear facturas'])->group(function () {
+        Route::get('/facturas/create', [FacturaController::class, 'create'])->name('facturas.create');
+        Route::post('/facturas', [FacturaController::class, 'store'])->name('facturas.store');
+    });
+    Route::middleware(['module:facturas', 'permission:ver facturas'])->group(function () {
+        Route::get('/facturas', [FacturaController::class, 'index'])->name('facturas.index');
+        Route::get('/facturas/export/excel', [FacturaController::class, 'export'])->name('facturas.export');
+        Route::get('/facturas/export/pdf', [FacturaController::class, 'exportPdf'])->name('facturas.exportPdf');
+        Route::get('/facturas/{factura}', [FacturaController::class, 'show'])->name('facturas.show');
+        Route::get('/facturas/{factura}/generate-pdf', [FacturaController::class, 'generatePdf'])->name('facturas.generatePdf');
+    });
+    Route::middleware(['module:facturas', 'permission:editar facturas'])->group(function () {
+        Route::get('/facturas/{factura}/edit', [FacturaController::class, 'edit'])->name('facturas.edit');
+        Route::put('/facturas/{factura}', [FacturaController::class, 'update'])->name('facturas.update');
+    });
+    Route::middleware(['module:facturas', 'permission:eliminar facturas'])->group(function () {
+        Route::delete('/facturas/{factura}', [FacturaController::class, 'destroy'])->name('facturas.destroy');
+    });
+
+    // === MÓDULO COMERCIAL: Verifactu ===
+    Route::middleware(['module:verifactu', 'permission:ver verifactu'])->group(function () {
+        Route::get('/verifactu', [VerifactuController::class, 'index'])->name('verifactu.index');
+        Route::get('/verifactu/declaracion', [VerifactuController::class, 'declaracion'])->name('verifactu.declaracion');
+        Route::get('/verifactu/cumplimiento', [VerifactuController::class, 'cumplimiento'])->name('verifactu.cumplimiento');
+        Route::get('/verifactu/verificar-cadena', [VerifactuController::class, 'verificarCadena'])->name('verifactu.verificarCadena');
+        Route::get('/verifactu/{verifactu}', [VerifactuController::class, 'show'])->name('verifactu.show');
+        Route::get('/verifactu/{verifactu}/xml', [VerifactuController::class, 'descargarXml'])->name('verifactu.descargarXml');
+    });
+    Route::middleware(['module:verifactu', 'permission:crear verifactu'])->group(function () {
+        Route::get('/verifactu-registrar', [VerifactuController::class, 'create'])->name('verifactu.create');
+        Route::post('/verifactu', [VerifactuController::class, 'registrar'])->name('verifactu.registrar');
+    });
+    Route::middleware(['module:verifactu', 'permission:editar verifactu'])->group(function () {
+        Route::post('/verifactu/{verifactu}/enviar-aeat', [VerifactuController::class, 'enviarAeat'])->name('verifactu.enviarAeat');
+        Route::put('/verifactu/{verifactu}/estado', [VerifactuController::class, 'cambiarEstado'])->name('verifactu.cambiarEstado');
+    });
+
+    // === MÓDULO INCIDENCIAS ===
+    Route::middleware(['module:incidencias', 'permission:crear incidencias'])->group(function () {
+        Route::get('/incidencias/create', [IncidenciaController::class, 'create'])->name('incidencias.create');
+        Route::post('/incidencias', [IncidenciaController::class, 'store'])->name('incidencias.store');
+    });
+    Route::middleware(['module:incidencias', 'permission:ver incidencias'])->group(function () {
+        Route::get('/incidencias', [IncidenciaController::class, 'index'])->name('incidencias.index');
+        Route::get('/incidencias/{incidencia}', [IncidenciaController::class, 'show'])->name('incidencias.show');
+    });
+    Route::middleware(['module:incidencias', 'permission:editar incidencias'])->group(function () {
+        Route::get('/incidencias/{incidencia}/edit', [IncidenciaController::class, 'edit'])->name('incidencias.edit');
+        Route::put('/incidencias/{incidencia}', [IncidenciaController::class, 'update'])->name('incidencias.update');
+    });
+    Route::middleware(['module:incidencias', 'permission:eliminar incidencias'])->group(function () {
+        Route::delete('/incidencias/{incidencia}', [IncidenciaController::class, 'destroy'])->name('incidencias.destroy');
+        Route::delete('/incidencias/archivo/{archivo}', [IncidenciaController::class, 'eliminarArchivo'])->name('incidencias.eliminarArchivo');
+    });
+
+    // === CONFIGURACIÓN (Solo Super Admin) ===
+    Route::middleware(['role:Super Admin'])->group(function () {
+        Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+        Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
+
+        // CRUD de Permisos (Sólo Super Admin)
+        Route::get('/permisos', [PermissionController::class, 'index'])->name('permisos.index');
+        Route::get('/permisos/create', [PermissionController::class, 'create'])->name('permisos.create');
+        Route::post('/permisos', [PermissionController::class, 'store'])->name('permisos.store');
+        Route::delete('/permisos/{permiso}', [PermissionController::class, 'destroy'])->name('permisos.destroy');
+
+        // Visor de Logs (monitor tiempo real de seguridad y errores)
+        Route::get('/gestion/logs', [LogViewerController::class, 'index'])->name('logs.index');
+        Route::get('/gestion/logs/stream', [LogViewerController::class, 'stream'])->middleware('throttle:60,1')->name('logs.stream');
+        Route::get('/gestion/logs/download', [LogViewerController::class, 'download'])->name('logs.download');
+        Route::post('/gestion/logs/clear', [LogViewerController::class, 'clear'])->name('logs.clear');
+    });
+
+    // Manual de usuario (todos los autenticados)
+    Route::get('/manual', [\App\Http\Controllers\ManualController::class, 'index'])->name('manual.index');
+
+    // Control IA (Super Admin)
+    Route::middleware(['role:Super Admin'])->group(function () {
+        Route::get('/ai/control', [\App\Http\Controllers\AiControlController::class, 'index'])->name('ai.control');
+        Route::get('/ai/control/summary', [\App\Http\Controllers\AiControlController::class, 'summary'])->name('ai.control.summary');
+    });
+
     // === DATAXIS (Análisis de datos) ===
     Route::get('/dataxis', [DatAxisController::class, 'inicio'])->name('dataxis.inicio');
     Route::get('/dataxis/general', [DatAxisController::class, 'general'])->name('dataxis.general');
     Route::get('/dataxis/ventas', [DatAxisController::class, 'ventas'])->name('dataxis.ventas');
     Route::get('/dataxis/stock', [DatAxisController::class, 'stock'])->name('dataxis.stock');
     Route::get('/dataxis/taller', [DatAxisController::class, 'taller'])->name('dataxis.taller');
+    Route::get('/dataxis/facturas', [DatAxisController::class, 'facturas'])->name('dataxis.facturas');
+    Route::get('/dataxis/incidencias', [DatAxisController::class, 'incidencias'])->name('dataxis.incidencias');
 
     // === MÓDULO CLIENTE ===
     Route::get('/cliente', [ClienteModuloController::class, 'inicio'])->name('cliente.inicio');
     Route::get('/cliente/chatbot', [ClienteModuloController::class, 'chatbot'])->name('cliente.chatbot');
-    Route::post('/cliente/chatbot/query', [ClienteModuloController::class, 'chatbotQuery'])->name('cliente.chatbot.query');
+    Route::post('/cliente/chatbot/query', [ClienteModuloController::class, 'chatbotQuery'])->middleware('throttle:20,1')->name('cliente.chatbot.query');
     Route::get('/cliente/pretasacion', [ClienteModuloController::class, 'pretasacion'])->name('cliente.pretasacion');
-    Route::post('/cliente/pretasacion/query', [ClienteModuloController::class, 'pretasacionQuery'])->name('cliente.pretasacion.query');
+    Route::post('/cliente/pretasacion/query', [ClienteModuloController::class, 'pretasacionQuery'])->middleware('throttle:10,1')->name('cliente.pretasacion.query');
     Route::get('/cliente/tasacion', [ClienteModuloController::class, 'tasacion'])->name('cliente.tasacion');
-    Route::post('/cliente/tasacion', [ClienteModuloController::class, 'tasacionStore'])->name('cliente.tasacion.store');
+    Route::post('/cliente/tasacion', [ClienteModuloController::class, 'tasacionStore'])->middleware('throttle:5,1')->name('cliente.tasacion.store');
     Route::get('/cliente/campanias', [ClienteModuloController::class, 'campanias'])->name('cliente.campanias');
     Route::get('/cliente/concesionarios', [ClienteModuloController::class, 'concesionarios'])->name('cliente.concesionarios');
     Route::get('/cliente/precios', [ClienteModuloController::class, 'precios'])->name('cliente.precios');
     Route::get('/cliente/configurador', [ClienteModuloController::class, 'configurador'])->name('cliente.configurador');
+    Route::get('/cliente/noticias', [ClienteModuloController::class, 'noticias'])->name('cliente.noticias');
+    Route::get('/cliente/talleres', [ClienteModuloController::class, 'talleres'])->name('cliente.talleres');
 
     // Perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -385,7 +495,7 @@ Route::middleware('auth')->group(function () {
             ->middleware('can:view,user')
             ->name('users.show');
     });
-    
+
     Route::middleware(['permission:editar usuarios'])->group(function () {
         Route::get('/users/{user}/edit', [UserController::class, 'edit'])
             ->middleware('can:update,user')
@@ -396,7 +506,7 @@ Route::middleware('auth')->group(function () {
         Route::patch('/users/{user}', [UserController::class, 'update'])
             ->middleware('can:update,user');
     });
-    
+
     Route::middleware(['permission:eliminar usuarios'])->group(function () {
         Route::delete('/users/{user}', [UserController::class, 'destroy'])
             ->middleware('can:delete,user')
@@ -419,7 +529,7 @@ Route::middleware('auth')->group(function () {
             ->middleware('can:view,departamento')
             ->name('departamentos.show');
     });
-    
+
     Route::middleware(['permission:editar departamentos'])->group(function () {
         Route::get('/departamentos/{departamento}/edit', [DepartamentoController::class, 'edit'])
             ->middleware('can:update,departamento')
@@ -430,7 +540,7 @@ Route::middleware('auth')->group(function () {
         Route::patch('/departamentos/{departamento}', [DepartamentoController::class, 'update'])
             ->middleware('can:update,departamento');
     });
-    
+
     Route::middleware(['permission:eliminar departamentos'])->group(function () {
         Route::delete('/departamentos/{departamento}', [DepartamentoController::class, 'destroy'])
             ->middleware('can:delete,departamento')
@@ -450,7 +560,7 @@ Route::middleware('auth')->group(function () {
             ->middleware('can:view,centro')
             ->name('centros.show');
     });
-    
+
     Route::middleware(['permission:editar centros'])->group(function () {
         Route::get('/centros/{centro}/edit', [CentroController::class, 'edit'])
             ->middleware('can:update,centro')
@@ -461,7 +571,7 @@ Route::middleware('auth')->group(function () {
         Route::patch('/centros/{centro}', [CentroController::class, 'update'])
             ->middleware('can:update,centro');
     });
-    
+
     Route::middleware(['permission:eliminar centros'])->group(function () {
         Route::delete('/centros/{centro}', [CentroController::class, 'destroy'])
             ->middleware('can:delete,centro')
@@ -479,13 +589,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
         Route::get('/roles/{role}', [RoleController::class, 'show'])->name('roles.show');
     });
-    
+
     Route::middleware(['permission:editar roles'])->group(function () {
         Route::get('/roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit');
         Route::put('/roles/{role}', [RoleController::class, 'update'])->name('roles.update');
         Route::patch('/roles/{role}', [RoleController::class, 'update']);
     });
-    
+
     Route::middleware(['permission:eliminar roles'])->group(function () {
         Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
     });
@@ -502,7 +612,7 @@ Route::middleware('auth')->group(function () {
             ->middleware('can:view,restriccion')
             ->name('restricciones.show');
     });
-    
+
     Route::middleware(['permission:editar restricciones'])->group(function () {
         Route::get('/restricciones/{restriccion}/edit', [RestriccionController::class, 'edit'])
             ->middleware('can:update,restriccion')
@@ -513,7 +623,7 @@ Route::middleware('auth')->group(function () {
         Route::patch('/restricciones/{restriccion}', [RestriccionController::class, 'update'])
             ->middleware('can:update,restriccion');
     });
-    
+
     Route::middleware(['permission:eliminar restricciones'])->group(function () {
         Route::delete('/restricciones/{restriccion}', [RestriccionController::class, 'destroy'])
             ->middleware('can:delete,restriccion')
@@ -525,7 +635,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/clientes/create', [ClienteController::class, 'create'])->name('clientes.create');
         Route::post('/clientes', [ClienteController::class, 'store'])->name('clientes.store');
     });
-    
+
     Route::middleware(['permission:ver clientes'])->group(function () {
         Route::get('/clientes', [ClienteController::class, 'index'])->name('clientes.index');
         Route::get('/clientes/export/excel', [ClienteController::class, 'export'])->name('clientes.export');
@@ -552,10 +662,28 @@ Route::middleware('auth')->group(function () {
             ->name('clientes.destroy');
     });
 
+    // CRUD de Tipos de Cliente
+    Route::middleware(['permission:ver tipos-cliente'])->group(function () {
+        Route::get('/tipos-cliente', [TipoClienteController::class, 'index'])->name('tipos-cliente.index');
+    });
+    Route::middleware(['permission:crear tipos-cliente'])->group(function () {
+        Route::get('/tipos-cliente/create', [TipoClienteController::class, 'create'])->name('tipos-cliente.create');
+        Route::post('/tipos-cliente', [TipoClienteController::class, 'store'])->name('tipos-cliente.store');
+    });
+    Route::middleware(['permission:editar tipos-cliente'])->group(function () {
+        Route::get('/tipos-cliente/{tipoCliente}/edit', [TipoClienteController::class, 'edit'])->name('tipos-cliente.edit');
+        Route::put('/tipos-cliente/{tipoCliente}', [TipoClienteController::class, 'update'])->name('tipos-cliente.update');
+    });
+    Route::middleware(['permission:eliminar tipos-cliente'])->group(function () {
+        Route::delete('/tipos-cliente/{tipoCliente}', [TipoClienteController::class, 'destroy'])->name('tipos-cliente.destroy');
+    });
+
     // CRUD de vehículos - Solo con permisos
     Route::middleware(['permission:crear vehículos'])->group(function () {
         Route::get('/vehiculos/create', [VehiculoController::class, 'create'])->name('vehiculos.create');
         Route::post('/vehiculos', [VehiculoController::class, 'store'])->name('vehiculos.store');
+        Route::get('/vehiculos/generar-matricula', [VehiculoController::class, 'generarMatricula'])->name('vehiculos.generarMatricula');
+        Route::get('/vehiculos/modelos-por-marca/{marca}', [VehiculoController::class, 'modelosPorMarca'])->name('vehiculos.modelosPorMarca');
     });
 
     Route::middleware(['permission:ver vehículos'])->group(function () {
@@ -584,17 +712,49 @@ Route::middleware('auth')->group(function () {
             ->name('vehiculos.destroy');
     });
 
+    // Documentos de vehículo
+    Route::middleware(['permission:ver vehículos'])->group(function () {
+        Route::get('/vehiculos/{vehiculo}/documentos', [VehiculoDocumentoController::class, 'index'])->name('vehiculos.documentos.index');
+        Route::get('/vehiculos/documentos/{documento}/download', [VehiculoDocumentoController::class, 'download'])->name('vehiculos.documentos.download');
+    });
+    Route::middleware(['permission:subir documentos vehiculos'])->group(function () {
+        Route::post('/vehiculos/{vehiculo}/documentos', [VehiculoDocumentoController::class, 'store'])->name('vehiculos.documentos.store');
+    });
+    Route::middleware(['permission:eliminar documentos vehiculos'])->group(function () {
+        Route::delete('/vehiculos/documentos/{documento}', [VehiculoDocumentoController::class, 'destroy'])->name('vehiculos.documentos.destroy');
+    });
+
+    // Generador de documentos PDF profesionales
+    Route::middleware(['permission:subir documentos vehiculos'])->group(function () {
+        Route::get('/vehiculos/documentos/generar', [VehiculoDocumentoGeneradorController::class, 'hub'])->name('vehiculos.documentos.hub');
+        Route::get('/vehiculos/documentos/generar-codigo/{tipo}', [VehiculoDocumentoGeneradorController::class, 'ajaxCodigo'])->name('vehiculos.documentos.generarCodigo');
+        Route::get('/vehiculos/{vehiculo}/documentos/generar/{tipo}', [VehiculoDocumentoGeneradorController::class, 'form'])->name('vehiculos.documentos.generar.form');
+        Route::post('/vehiculos/{vehiculo}/documentos/generar/{tipo}', [VehiculoDocumentoGeneradorController::class, 'generate'])->name('vehiculos.documentos.generar');
+    });
+
     // CRUD de ofertas - Solo con permisos
     Route::middleware(['permission:crear ofertas'])->group(function () {
         Route::get('/ofertas/create', [OfertaController::class, 'create'])->name('ofertas.create');
         Route::post('/ofertas', [OfertaController::class, 'store'])->name('ofertas.store');
     });
-    
+
     Route::middleware(['permission:ver ofertas'])->group(function () {
         Route::get('/ofertas', [OfertaController::class, 'index'])->name('ofertas.index');
+        Route::get('/ofertas/{oferta}/presupuesto-pdf', [OfertaController::class, 'presupuestoPdf'])
+            ->middleware('can:view,oferta')
+            ->name('ofertas.presupuestoPdf');
         Route::get('/ofertas/{oferta}', [OfertaController::class, 'show'])
             ->middleware('can:view,oferta')
             ->name('ofertas.show');
+    });
+
+    Route::middleware(['permission:editar ofertas'])->group(function () {
+        Route::get('/ofertas/{oferta}/edit', [OfertaController::class, 'edit'])
+            ->middleware('can:update,oferta')
+            ->name('ofertas.edit');
+        Route::put('/ofertas/{oferta}', [OfertaController::class, 'update'])
+            ->middleware('can:update,oferta')
+            ->name('ofertas.update');
     });
 
     Route::middleware(['permission:eliminar ofertas'])->group(function () {

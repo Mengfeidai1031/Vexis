@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories;
 
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 use App\Repositories\Interfaces\RoleRepositoryInterface;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RoleRepository implements RoleRepositoryInterface
 {
@@ -31,13 +33,13 @@ class RoleRepository implements RoleRepositoryInterface
     public function create(array $data, array $permissions = [])
     {
         $role = Role::create($data);
-        
-        if (!empty($permissions)) {
+
+        if (! empty($permissions)) {
             // Convertir IDs a instancias de Permission
             $permissionModels = Permission::whereIn('id', $permissions)->get();
             $role->syncPermissions($permissionModels);
         }
-        
+
         return $role;
     }
 
@@ -45,27 +47,28 @@ class RoleRepository implements RoleRepositoryInterface
     {
         $role = Role::findOrFail($id);
         $role->update($data);
-        
-        if (!empty($permissions)) {
+
+        if (! empty($permissions)) {
             // Convertir IDs a instancias de Permission
             $permissionModels = Permission::whereIn('id', $permissions)->get();
             $role->syncPermissions($permissionModels);
         } else {
             $role->syncPermissions([]);
         }
-        
+
         return $role;
     }
 
     public function delete(int $id)
     {
         $role = Role::findOrFail($id);
+
         return $role->delete();
     }
 
     public function getAllPermissions()
     {
-        return Permission::all()->groupBy(function($permission) {
+        return Permission::all()->groupBy(function ($permission) {
             // Agrupar por módulo (primera palabra del nombre)
             return explode(' ', $permission->name)[1] ?? 'otros';
         });
