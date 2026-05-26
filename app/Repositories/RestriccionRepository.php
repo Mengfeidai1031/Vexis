@@ -96,20 +96,11 @@ class RestriccionRepository implements RestriccionRepositoryInterface
     public function getAvailableRestrictions(): array
     {
         $empresas = Empresa::orderBy('nombre', 'asc')->get();
-        $clientes = Cliente::with('empresa')->orderBy('apellidos', 'asc')->orderBy('nombre', 'asc')->get();
-        $vehiculos = Vehiculo::with('empresa')->orderBy('modelo', 'asc')->orderBy('version', 'asc')->get();
         $centros = Centro::with('empresa')->orderBy('nombre', 'asc')->get();
         $departamentos = Departamento::orderBy('nombre', 'asc')->get();
 
-        // Añadir nombre_completo a los clientes para el JSON
-        $clientes->each(function ($cliente) {
-            $cliente->setAttribute('nombre_completo', $cliente->nombre_completo);
-        });
-
         return [
             'empresas' => $empresas,
-            'clientes' => $clientes,
-            'vehiculos' => $vehiculos,
             'centros' => $centros,
             'departamentos' => $departamentos,
         ];
@@ -122,8 +113,6 @@ class RestriccionRepository implements RestriccionRepositoryInterface
 
         $grouped = [
             'empresas' => [],
-            'clientes' => [],
-            'vehiculos' => [],
             'centros' => [],
             'departamentos' => [],
         ];
@@ -142,19 +131,14 @@ class RestriccionRepository implements RestriccionRepositoryInterface
     {
         $user = User::findOrFail($userId);
 
-        // Eliminar todas las restricciones existentes
         UserRestrictionHelper::removeAllRestrictions($user);
 
-        // Mapeo de tipos del formulario a tipos del helper
         $typeMapping = [
             'empresas' => UserRestrictionHelper::TYPE_EMPRESA,
-            'clientes' => UserRestrictionHelper::TYPE_CLIENTE,
-            'vehiculos' => UserRestrictionHelper::TYPE_VEHICULO,
             'centros' => UserRestrictionHelper::TYPE_CENTRO,
             'departamentos' => UserRestrictionHelper::TYPE_DEPARTAMENTO,
         ];
 
-        // Añadir nuevas restricciones
         foreach ($restrictions as $formType => $ids) {
             if (! empty($ids) && is_array($ids) && isset($typeMapping[$formType])) {
                 $helperType = $typeMapping[$formType];
@@ -169,8 +153,6 @@ class RestriccionRepository implements RestriccionRepositoryInterface
     {
         return match ($class) {
             Empresa::class => UserRestrictionHelper::TYPE_EMPRESA,
-            Cliente::class => UserRestrictionHelper::TYPE_CLIENTE,
-            Vehiculo::class => UserRestrictionHelper::TYPE_VEHICULO,
             Centro::class => UserRestrictionHelper::TYPE_CENTRO,
             Departamento::class => UserRestrictionHelper::TYPE_DEPARTAMENTO,
             default => null,

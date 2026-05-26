@@ -20,32 +20,32 @@
     <div class="mod-grid">
         <a href="{{ route('dataxis.general') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#33AADD,#2980b9);"><i class="bi bi-speedometer2"></i></div>
-            <div class="mod-card-info"><h4>General</h4><p>KPIs, catálogo y crecimiento de clientes</p></div>
+            <div class="mod-card-info"><h2>General</h2><p>KPIs, catálogo y crecimiento de clientes</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         <a href="{{ route('dataxis.ventas') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#2ECC71,#27AE60);"><i class="bi bi-currency-euro"></i></div>
-            <div class="mod-card-info"><h4>Ventas</h4><p>Rendimiento por mes, marca y vendedor</p></div>
+            <div class="mod-card-info"><h2>Ventas</h2><p>Rendimiento por mes, marca y vendedor</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         <a href="{{ route('dataxis.stock') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#F39C12,#E67E22);"><i class="bi bi-box-seam"></i></div>
-            <div class="mod-card-info"><h4>Stock</h4><p>Inventario, valor y alertas de bajo stock</p></div>
+            <div class="mod-card-info"><h2>Stock</h2><p>Inventario, valor y alertas de bajo stock</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         <a href="{{ route('dataxis.taller') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#9B59B6,#8E44AD);"><i class="bi bi-wrench-adjustable"></i></div>
-            <div class="mod-card-info"><h4>Taller</h4><p>Citas, carga mecánicos y tasaciones</p></div>
+            <div class="mod-card-info"><h2>Taller</h2><p>Citas, carga mecánicos y tasaciones</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         <a href="{{ route('dataxis.facturas') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#E74C3C,#C0392B);"><i class="bi bi-receipt"></i></div>
-            <div class="mod-card-info"><h4>Facturas</h4><p>Facturación mensual, por estado y marca</p></div>
+            <div class="mod-card-info"><h2>Facturas</h2><p>Facturación mensual, por estado y marca</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         <a href="{{ route('dataxis.incidencias') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#F39C12,#E67E22);"><i class="bi bi-exclamation-triangle"></i></div>
-            <div class="mod-card-info"><h4>Incidencias</h4><p>Estado, prioridad, tiempos y carga técnica</p></div>
+            <div class="mod-card-info"><h2>Incidencias</h2><p>Estado, prioridad, tiempos y carga técnica</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
     </div>

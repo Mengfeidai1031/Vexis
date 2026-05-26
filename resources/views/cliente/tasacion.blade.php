@@ -15,7 +15,7 @@
 
 <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:16px;">
     <div class="vx-card">
-        <div class="vx-card-header"><h4><i class="bi bi-send"></i> Nueva solicitud</h4></div>
+        <div class="vx-card-header"><h2><i class="bi bi-send"></i> Nueva solicitud</h2></div>
         <div class="vx-card-body">
             <form action="{{ route('cliente.tasacion.store') }}" method="POST">
                 @csrf
@@ -111,7 +111,7 @@
     </div>
 
     <div class="vx-card">
-        <div class="vx-card-header"><h4><i class="bi bi-clock-history"></i> Mis solicitudes recientes</h4></div>
+        <div class="vx-card-header"><h2><i class="bi bi-clock-history"></i> Mis solicitudes recientes</h2></div>
         <div class="vx-card-body">
             @if($solicitudes->count() > 0)
                 <div style="display:flex;flex-direction:column;gap:10px;">

@@ -22,7 +22,8 @@ class AeatVerifactuService
 
     public function __construct()
     {
-        $this->sandbox = config('services.aeat.sandbox', true);
+        // Setting prevalece sobre config — permite alternar sandbox/prod sin redeploy
+        $this->sandbox = (bool) Setting::get('verifactu_sandbox', config('services.aeat.sandbox', true));
         $this->endpointUrl = $this->sandbox
             ? 'https://prewww2.aeat.es/wlpl/TIKE-CONT/ws/SuministroLRFacturasEmitidas'
             : 'https://www2.aeat.es/wlpl/TIKE-CONT/ws/SuministroLRFacturasEmitidas';
@@ -45,7 +46,7 @@ class AeatVerifactuService
         $qrUrl = Verifactu::generateQrUrl($factura, $this->sandbox);
 
         $codigo = 'VRF-'.date('Ym').'-'.str_pad(
-            Verifactu::whereYear('fecha_registro', date('Y'))->count() + 1,
+            (string) (Verifactu::whereYear('fecha_registro', date('Y'))->count() + 1),
             5, '0', STR_PAD_LEFT
         );
 
@@ -175,7 +176,7 @@ class AeatVerifactuService
             'estado' => 'aceptado',
             'csv' => $csv,
             'resultado' => 'Correcto',
-            'codigo_registro_aeat' => 'AEAT-'.date('Y').'-'.str_pad(rand(1, 999999), 6, '0', STR_PAD_LEFT),
+            'codigo_registro_aeat' => 'AEAT-'.date('Y').'-'.str_pad((string) rand(1, 999999), 6, '0', STR_PAD_LEFT),
             'fecha_respuesta' => now()->format('Y-m-d H:i:s'),
             'entorno' => 'sandbox',
             'detalle' => 'Registro aceptado correctamente en entorno de pruebas',

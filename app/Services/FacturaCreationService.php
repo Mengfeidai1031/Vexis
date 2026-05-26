@@ -23,8 +23,9 @@ class FacturaCreationService
     public function generarCodigo(): string
     {
         $siguiente = Factura::whereYear('fecha_factura', date('Y'))->count() + 1;
+        $serie = setting('factura_serie_actual', 'A');
 
-        return 'FAC-'.date('Ym').'-'.str_pad((string) $siguiente, 4, '0', STR_PAD_LEFT);
+        return 'FAC-'.$serie.'-'.date('Ym').'-'.str_pad((string) $siguiente, 4, '0', STR_PAD_LEFT);
     }
 
     /**

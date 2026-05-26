@@ -1,0 +1,18 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - phpstan-baseline.neon
+
+parameters:
+    paths:
+        - app
+
+    # Nivel de strict (0..9). Nivel 5 con baseline para errores preexistentes:
+    # los nuevos errores fallarán pero los del legacy se ignoran (registrados en baseline).
+    level: 5
+
+    excludePaths:
+        - app/Http/Controllers/Controller.php
+
+    # Eloquent model property access es notoriamente difícil de tipar
+    checkModelProperties: false
+    reportUnmatchedIgnoredErrors: false

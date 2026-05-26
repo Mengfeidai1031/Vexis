@@ -13,9 +13,9 @@
 
 {{-- Gráficas --}}
 <div class="dx-grid">
-    <div class="vx-card dx-grid-full dx-chart-lg"><div class="vx-card-header"><h4>Facturación Mensual</h4></div><div class="vx-card-body"><canvas id="chartFactMes" height="120"></canvas></div></div>
-    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4>Facturas por Estado</h4></div><div class="vx-card-body"><canvas id="chartFactEstado" height="180"></canvas></div></div>
-    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4>Facturación por Marca</h4></div><div class="vx-card-body"><canvas id="chartFactMarca" height="180"></canvas></div></div>
+    <div class="vx-card dx-grid-full dx-chart-lg"><div class="vx-card-header"><h2>Facturación Mensual</h2></div><div class="vx-card-body"><canvas id="chartFactMes" height="120"></canvas></div></div>
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h2>Facturas por Estado</h2></div><div class="vx-card-body"><canvas id="chartFactEstado" height="180"></canvas></div></div>
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h2>Facturación por Marca</h2></div><div class="vx-card-body"><canvas id="chartFactMarca" height="180"></canvas></div></div>
 </div>
 
 @push('scripts')

@@ -4,10 +4,10 @@
 <div class="vx-page-header"><h1 class="vx-page-title">Dataxis — Stock</h1><div class="vx-page-actions"><a href="{{ route('dataxis.inicio') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div></div>
 
 <div class="dx-grid">
-    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4>Unidades por Almacén</h4></div><div class="vx-card-body"><canvas id="chartStockAlm" height="180"></canvas></div></div>
-    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4>Valor Stock por Almacén</h4></div><div class="vx-card-body"><canvas id="chartValorAlm" height="180"></canvas></div></div>
-    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4>Top Piezas por Valor</h4></div><div class="vx-card-body"><canvas id="chartTopValor" height="180"></canvas></div></div>
-    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4><i class="bi bi-exclamation-triangle" style="color:var(--vx-danger);"></i> Alertas Bajo Stock</h4></div><div class="vx-card-body" style="padding:0;">
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h2>Unidades por Almacén</h2></div><div class="vx-card-body"><canvas id="chartStockAlm" height="180"></canvas></div></div>
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h2>Valor Stock por Almacén</h2></div><div class="vx-card-body"><canvas id="chartValorAlm" height="180"></canvas></div></div>
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h2>Top Piezas por Valor</h2></div><div class="vx-card-body"><canvas id="chartTopValor" height="180"></canvas></div></div>
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h2><i class="bi bi-exclamation-triangle" style="color:var(--vx-danger);"></i> Alertas Bajo Stock</h2></div><div class="vx-card-body" style="padding:0;">
         @if($bajoStock->count() > 0)
         <div class="vx-table-wrapper"><table class="vx-table"><thead><tr><th>Ref.</th><th>Pieza</th><th>Actual</th><th>Mínimo</th></tr></thead><tbody>
             @foreach($bajoStock as $s)

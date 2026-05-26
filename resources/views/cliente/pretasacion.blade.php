@@ -12,7 +12,7 @@
 <div style="max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:20px;">
     {{-- Formulario --}}
     <div class="vx-card">
-        <div class="vx-card-header"><h4><i class="bi bi-car-front" style="color:#9B59B6;"></i> Datos del vehículo</h4></div>
+        <div class="vx-card-header"><h2><i class="bi bi-car-front" style="color:#9B59B6;"></i> Datos del vehículo</h2></div>
         <div class="vx-card-body">
             <div class="vx-form-group"><label class="vx-label">Marca <span class="required">*</span></label><input type="text" id="ptMarca" class="vx-input" placeholder="Ej: Renault, Dacia, Nissan..." required></div>
             <div class="vx-form-group"><label class="vx-label">Modelo <span class="required">*</span></label><input type="text" id="ptModelo" class="vx-input" placeholder="Ej: Qashqai, Clio, León..." required></div>
@@ -30,7 +30,7 @@
 
     {{-- Resultado --}}
     <div class="vx-card">
-        <div class="vx-card-header"><h4><i class="bi bi-robot" style="color:var(--vx-primary);"></i> Valoración IA</h4></div>
+        <div class="vx-card-header"><h2><i class="bi bi-robot" style="color:var(--vx-primary);"></i> Valoración IA</h2></div>
         <div class="vx-card-body" id="ptResult" style="min-height:300px;display:flex;align-items:center;justify-content:center;">
             <div style="text-align:center;color:var(--vx-text-muted);">
                 <i class="bi bi-arrow-left-circle" style="font-size:40px;opacity:0.3;"></i>

@@ -7,16 +7,16 @@
         </div>
         <div class="vx-filtros-controles">
             <div class="vx-filtros-selector-wrap">
-                <button type="button" class="vx-btn vx-btn-secondary vx-btn-sm vx-filtros-toggle-btn">
-                    <i class="bi bi-funnel"></i> Filtros
+                <button type="button" class="vx-btn vx-btn-secondary vx-btn-sm vx-filtros-toggle-btn" aria-haspopup="true" aria-expanded="false">
+                    <i class="bi bi-funnel" aria-hidden="true"></i> Filtros
                 </button>
                 <div class="vx-filtros-selector">
                     <div class="vx-filtros-selector-title">Ocultar filtros</div>
                     <div class="vx-filtros-checks"></div>
                 </div>
             </div>
-            <button type="submit" class="vx-btn vx-btn-primary vx-btn-sm"><i class="bi bi-search"></i> Buscar</button>
-            <a href="{{ $action }}" class="vx-btn vx-btn-secondary vx-btn-sm vx-filtros-limpiar" style="display:none;"><i class="bi bi-x-lg"></i> Limpiar</a>
+            <button type="submit" class="vx-btn vx-btn-primary vx-btn-sm"><i class="bi bi-search" aria-hidden="true"></i> Buscar</button>
+            <a href="{{ $action }}" class="vx-btn vx-btn-secondary vx-btn-sm vx-filtros-limpiar" style="display:none;"><i class="bi bi-x-lg" aria-hidden="true"></i> Limpiar</a>
         </div>
     </div>
 </form>
@@ -82,6 +82,22 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // A11y: associate each filter input/select with its visible label text.
+    // The visible .vx-filtro-label is a plain <label> with no `for=`, so axe
+    // flags label/select-name. Setting aria-label preserves the visual label
+    // exactly while giving the form control an accessible name.
+    document.querySelectorAll('.vx-filtros-form .vx-filtro').forEach(function(filtro) {
+        var label = filtro.querySelector('.vx-filtro-label');
+        if (!label) return;
+        var labelText = label.textContent.trim();
+        if (!labelText) return;
+        filtro.querySelectorAll('select, input').forEach(function(ctrl) {
+            if (!ctrl.hasAttribute('aria-label') && !ctrl.getAttribute('aria-labelledby')) {
+                ctrl.setAttribute('aria-label', labelText);
+            }
+        });
+    });
+
     // Searchable select: transform all .vx-select inside .vx-filtros-form
     document.querySelectorAll('.vx-filtros-form .vx-filtro .vx-select').forEach(function(sel) {
         if (sel.options.length <= 2) return; // skip if only "Todos" + 0-1 option

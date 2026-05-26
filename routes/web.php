@@ -444,6 +444,15 @@ Route::middleware('auth')->group(function () {
         Route::post('/gestion/logs/clear', [LogViewerController::class, 'clear'])->name('logs.clear');
     });
 
+    // Manual de usuario (todos los autenticados)
+    Route::get('/manual', [\App\Http\Controllers\ManualController::class, 'index'])->name('manual.index');
+
+    // Control IA (Super Admin)
+    Route::middleware(['role:Super Admin'])->group(function () {
+        Route::get('/ai/control', [\App\Http\Controllers\AiControlController::class, 'index'])->name('ai.control');
+        Route::get('/ai/control/summary', [\App\Http\Controllers\AiControlController::class, 'summary'])->name('ai.control.summary');
+    });
+
     // === DATAXIS (Análisis de datos) ===
     Route::get('/dataxis', [DatAxisController::class, 'inicio'])->name('dataxis.inicio');
     Route::get('/dataxis/general', [DatAxisController::class, 'general'])->name('dataxis.general');
@@ -704,11 +713,12 @@ Route::middleware('auth')->group(function () {
     });
 
     // Documentos de vehículo
+    Route::middleware(['permission:ver vehículos'])->group(function () {
+        Route::get('/vehiculos/{vehiculo}/documentos', [VehiculoDocumentoController::class, 'index'])->name('vehiculos.documentos.index');
+        Route::get('/vehiculos/documentos/{documento}/download', [VehiculoDocumentoController::class, 'download'])->name('vehiculos.documentos.download');
+    });
     Route::middleware(['permission:subir documentos vehiculos'])->group(function () {
         Route::post('/vehiculos/{vehiculo}/documentos', [VehiculoDocumentoController::class, 'store'])->name('vehiculos.documentos.store');
-    });
-    Route::middleware(['permission:ver vehículos'])->group(function () {
-        Route::get('/vehiculos/documentos/{documento}/download', [VehiculoDocumentoController::class, 'download'])->name('vehiculos.documentos.download');
     });
     Route::middleware(['permission:eliminar documentos vehiculos'])->group(function () {
         Route::delete('/vehiculos/documentos/{documento}', [VehiculoDocumentoController::class, 'destroy'])->name('vehiculos.documentos.destroy');

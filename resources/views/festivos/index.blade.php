@@ -12,7 +12,7 @@
 
 {{-- Calendario --}}
 <div class="vx-card" style="margin-bottom:20px;">
-    <div class="vx-card-header"><h4><i class="bi bi-calendar-event" style="color:var(--vx-primary);"></i> Calendario {{ $anio }}</h4></div>
+    <div class="vx-card-header"><h2><i class="bi bi-calendar-event" style="color:var(--vx-primary);"></i> Calendario {{ $anio }}</h2></div>
     <div class="vx-card-body">
         <div id="calFest" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;"></div>
         <div style="display:flex;gap:16px;margin-top:12px;font-size:11px;flex-wrap:wrap;">
@@ -49,7 +49,7 @@
                         </td>
                         <td style="font-size:12px;">{{ $f->municipio ?? 'Todos' }}</td>
                         <td>
-                            <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+                            <div class="vx-actions"><button class="vx-actions-toggle" aria-label="Abrir acciones" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button><div class="vx-actions-menu">
                                 @can('editar festivos')<a href="{{ route('festivos.edit', $f) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>@endcan
                                 @can('eliminar festivos')
                                 <form action="{{ route('festivos.destroy', $f) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar?');">

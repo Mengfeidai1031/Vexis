@@ -4,7 +4,7 @@
 <div class="vx-page-header"><h1 class="vx-page-title">Crear Tasación</h1><a href="{{ route('tasaciones.index') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div>
 <div style="max-width:750px;"><div class="vx-card"><div class="vx-card-body">
     <form action="{{ route('tasaciones.store') }}" method="POST">@csrf
-        <h5 style="font-size:13px;font-weight:700;color:var(--vx-text-muted);margin-bottom:12px;">DATOS DEL VEHÍCULO</h5>
+        <h2 style="font-size:13px;font-weight:700;color:var(--vx-text-muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.4px;">DATOS DEL VEHÍCULO</h2>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 16px;">
             <div class="vx-form-group"><label class="vx-label">Marca vehículo <span class="required">*</span></label><input type="text" class="vx-input" name="vehiculo_marca" value="{{ old('vehiculo_marca') }}" required placeholder="Ej: Nissan"></div>
             <div class="vx-form-group"><label class="vx-label">Modelo <span class="required">*</span></label><input type="text" class="vx-input" name="vehiculo_modelo" value="{{ old('vehiculo_modelo') }}" required placeholder="Ej: Qashqai"></div>
@@ -22,7 +22,7 @@
                 @endforeach
             </div>
         </div>
-        <h5 style="font-size:13px;font-weight:700;color:var(--vx-text-muted);margin:16px 0 12px;">DATOS DE LA TASACIÓN</h5>
+        <h2 style="font-size:13px;font-weight:700;color:var(--vx-text-muted);margin:16px 0 12px;text-transform:uppercase;letter-spacing:0.4px;">DATOS DE LA TASACIÓN</h2>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 16px;">
             <div class="vx-form-group"><label class="vx-label">Cliente</label><select class="vx-select" name="cliente_id"><option value="">Sin asignar</option>@foreach($clientes as $c)<option value="{{ $c->id }}" {{ old('cliente_id') == $c->id ? 'selected' : '' }}>{{ $c->nombre }} {{ $c->apellidos }}</option>@endforeach</select><a href="{{ route('clientes.create') }}" class="vx-select-create" target="_blank"><i class="bi bi-plus-circle"></i> Crear nuevo</a></div>
             <div class="vx-form-group"><label class="vx-label">Empresa <span class="required">*</span></label><select class="vx-select" name="empresa_id" required>@foreach($empresas as $e)<option value="{{ $e->id }}" {{ old('empresa_id') == $e->id ? 'selected' : '' }}>{{ $e->nombre }}</option>@endforeach</select><a href="{{ route('empresas.create') }}" class="vx-select-create" target="_blank"><i class="bi bi-plus-circle"></i> Crear nuevo</a></div>

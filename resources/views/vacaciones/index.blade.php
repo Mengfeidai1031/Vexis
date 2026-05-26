@@ -11,7 +11,7 @@
 {{-- Resumen --}}
 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:20px;">
     <div class="vx-card"><div class="vx-card-body" style="text-align:center;padding:16px;">
-        <div style="font-size:32px;font-weight:800;color:var(--vx-primary);">{{ \App\Models\Vacacion::DIAS_TOTALES }}</div>
+        <div style="font-size:32px;font-weight:800;color:var(--vx-primary);">{{ \App\Models\Vacacion::diasAsignados() }}</div>
         <div style="font-size:12px;color:var(--vx-text-muted);">Días totales</div>
     </div></div>
     <div class="vx-card"><div class="vx-card-body" style="text-align:center;padding:16px;">
@@ -33,10 +33,10 @@
     <div class="vx-card-body" style="padding:14px 20px;">
         <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
             <span style="color:var(--vx-text-muted);">Progreso {{ $anio }}</span>
-            <span style="font-weight:700;">{{ $diasUsados }}/{{ \App\Models\Vacacion::DIAS_TOTALES }} días</span>
+            <span style="font-weight:700;">{{ $diasUsados }}/{{ \App\Models\Vacacion::diasAsignados() }} días</span>
         </div>
         <div style="height:10px;background:var(--vx-gray-200);border-radius:5px;overflow:hidden;">
-            @php $pct = \App\Models\Vacacion::DIAS_TOTALES > 0 ? ($diasUsados / \App\Models\Vacacion::DIAS_TOTALES * 100) : 0; @endphp
+            @php $pct = \App\Models\Vacacion::diasAsignados() > 0 ? ($diasUsados / \App\Models\Vacacion::diasAsignados() * 100) : 0; @endphp
             <div style="height:100%;width:{{ $pct }}%;background:{{ $pct > 80 ? 'var(--vx-danger)' : ($pct > 50 ? 'var(--vx-warning)' : 'var(--vx-success)') }};border-radius:5px;transition:width 0.5s;"></div>
         </div>
     </div>
@@ -44,7 +44,7 @@
 
 {{-- Calendario --}}
 <div class="vx-card" style="margin-bottom:20px;">
-    <div class="vx-card-header"><h4><i class="bi bi-calendar3" style="color:var(--vx-primary);"></i> Calendario {{ $anio }}</h4></div>
+    <div class="vx-card-header"><h2><i class="bi bi-calendar3" style="color:var(--vx-primary);"></i> Calendario {{ $anio }}</h2></div>
     <div class="vx-card-body">
         <div id="calVac" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;"></div>
         <div style="display:flex;gap:16px;margin-top:12px;font-size:11px;">
@@ -88,7 +88,7 @@
                         </td>
                         <td style="font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ $v->motivo ?? '—' }}</td>
                         <td>
-                            <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">@if($isSuperAdmin && $v->estado === 'pendiente')
+                            <div class="vx-actions"><button class="vx-actions-toggle" aria-label="Abrir acciones" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button><div class="vx-actions-menu">@if($isSuperAdmin && $v->estado === 'pendiente')
                                 <form action="{{ route('vacaciones.gestionar', $v) }}" method="POST" style="display:inline;">
                                     @csrf @method('PATCH')
                                     <input type="hidden" name="estado" value="aprobada">

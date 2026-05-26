@@ -37,13 +37,18 @@ class Vacacion extends Model
         'rechazada' => 'Rechazada',
     ];
 
-    public const DIAS_TOTALES = 30;
+    public const DIAS_TOTALES = 30; // Fallback. El valor real se lee de setting('dias_vacaciones_anuales').
+
+    public static function diasAsignados(): int
+    {
+        return (int) setting('dias_vacaciones_anuales', self::DIAS_TOTALES);
+    }
 
     public static function diasUsados(int $userId, ?int $anio = null): int
     {
         $anio = $anio ?? now()->year;
 
-        return static::where('user_id', $userId)
+        return (int) static::where('user_id', $userId)
             ->where('estado', 'aprobada')
             ->whereYear('fecha_inicio', $anio)
             ->sum('dias_solicitados');

@@ -37,7 +37,7 @@
                 </td>
                 <td style="font-size:12px;">{{ $r->fecha_solicitud->format('d/m/Y') }}</td>
                 <td>
-                    <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+                    <div class="vx-actions"><button class="vx-actions-toggle" aria-label="Abrir acciones" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button><div class="vx-actions-menu">
                         <a href="{{ route('repartos.show', $r) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
                         @can('editar repartos')<a href="{{ route('repartos.edit', $r) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>@endcan
                         @can('eliminar repartos')

@@ -8,7 +8,7 @@
 <div style="max-width: 600px;">
     {{-- Info personal --}}
     <div class="vx-card" style="margin-bottom: 20px;">
-        <div class="vx-card-header"><h4>Información Personal</h4></div>
+        <div class="vx-card-header"><h2>Información Personal</h2></div>
         <div class="vx-card-body">
             <form method="POST" action="{{ route('profile.update') }}">
                 @csrf @method('PUT')
@@ -38,7 +38,7 @@
 
     {{-- Cambiar contraseña --}}
     <div class="vx-card">
-        <div class="vx-card-header"><h4>Cambiar Contraseña</h4></div>
+        <div class="vx-card-header"><h2>Cambiar Contraseña</h2></div>
         <div class="vx-card-body">
             <form method="POST" action="{{ route('profile.password') }}">
                 @csrf @method('PUT')

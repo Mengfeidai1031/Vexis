@@ -37,7 +37,7 @@
                     <td style="text-align:right;">
                         <form action="{{ route('permisos.destroy', $permission) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Eliminar el permiso {{ $permission->name }}? Se quitará de todos los roles que lo tengan.');">
                             @csrf @method('DELETE')
-                            <button type="submit" class="vx-btn vx-btn-danger vx-btn-sm"><i class="bi bi-trash"></i></button>
+                            <button type="submit" class="vx-btn vx-btn-danger vx-btn-sm" aria-label="Eliminar permiso"><i class="bi bi-trash" aria-hidden="true"></i></button>
                         </form>
                     </td>
                 </tr>

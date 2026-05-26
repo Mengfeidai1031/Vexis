@@ -52,7 +52,7 @@
             --vx-border: var(--vx-gray-200);
             --vx-text: var(--vx-gray-900);
             --vx-text-secondary: var(--vx-gray-600);
-            --vx-text-muted: #8590A2;
+            --vx-text-muted: #6B7280; /* darkened from #8590A2 for AA contrast on #F8F9FA */
             --vx-shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
             --vx-shadow: 0 4px 12px rgba(0,0,0,0.08);
             --vx-shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
@@ -92,7 +92,7 @@
         .vx-navbar { height: var(--vx-navbar-height); background: var(--vx-surface); border-bottom: 1px solid var(--vx-border); display: flex; align-items: center; padding: 0 24px; position: sticky; top: 0; z-index: 1000; box-shadow: var(--vx-shadow-sm); transition: background-color 0.3s, border-color 0.3s; }
         .vx-navbar-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; margin-right: 32px; flex-shrink: 0; }
         .vx-navbar-brand img { height: 28px; width: auto; }
-        .vx-navbar-brand .vx-role-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 2px 8px; border-radius: 4px; background: var(--vx-primary); color: white; }
+        .vx-navbar-brand .vx-role-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 2px 8px; border-radius: 4px; background: #1F7AA0; color: white; }
         .vx-nav { display: flex; align-items: center; gap: 4px; list-style: none; flex: 1; }
         .vx-nav-item { position: relative; }
         .vx-nav-link { display: flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 500; color: var(--vx-text-secondary); text-decoration: none; transition: all 0.2s; white-space: nowrap; cursor: pointer; border: none; background: none; font-family: var(--vx-font); }
@@ -230,7 +230,7 @@
         .mod-card:hover::before{opacity:1;}
         .mod-card:hover .mod-card-arrow{opacity:1;transform:translateX(0);}
         .mod-card-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;color:white;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.12);}
-        .mod-card-info h4{font-size:14px;font-weight:700;margin:0 0 2px;}
+        .mod-card-info h2,.mod-card-info h3,.mod-card-info h4{font-size:14px;font-weight:700;margin:0 0 2px;}
         .mod-card-info p{font-size:12px;color:var(--vx-text-muted);margin:0;line-height:1.4;}
         .mod-card-arrow{margin-left:auto;font-size:16px;color:var(--vx-primary);opacity:0;transform:translateX(-8px);transition:all 0.25s;}
 
@@ -260,16 +260,17 @@
         /* Buttons */
         .vx-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-family: var(--vx-font); font-size: 13px; font-weight: 600; border: 1px solid transparent; cursor: pointer; transition: all 0.2s; text-decoration: none; white-space: nowrap; line-height: 1.4; }
         .vx-btn i { font-size: 15px; }
-        .vx-btn-primary { background: var(--vx-primary); color: white; border-color: var(--vx-primary); }
-        .vx-btn-primary:hover { background: var(--vx-primary-dark); border-color: var(--vx-primary-dark); color: white; box-shadow: 0 4px 12px rgba(51, 170, 221, 0.3); }
+        /* Buttons use the darker brand shade for AA white-on-color contrast (~4.5:1). */
+        .vx-btn-primary { background: #1F7AA0; color: white; border-color: #1F7AA0; }
+        .vx-btn-primary:hover { background: #186685; border-color: #186685; color: white; box-shadow: 0 4px 12px rgba(51, 170, 221, 0.3); }
         .vx-btn-secondary { background: var(--vx-surface); color: var(--vx-text); border-color: var(--vx-border); }
         .vx-btn-secondary:hover { background: var(--vx-surface-hover); border-color: var(--vx-gray-400); color: var(--vx-text); }
-        .vx-btn-success { background: var(--vx-success); color: white; border-color: var(--vx-success); }
-        .vx-btn-success:hover { background: #27AE60; border-color: #27AE60; color: white; }
-        .vx-btn-warning { background: var(--vx-warning); color: white; border-color: var(--vx-warning); }
-        .vx-btn-warning:hover { background: #E67E22; border-color: #E67E22; color: white; }
-        .vx-btn-danger { background: var(--vx-danger); color: white; border-color: var(--vx-danger); }
-        .vx-btn-danger:hover { background: #C0392B; border-color: #C0392B; color: white; }
+        .vx-btn-success { background: #1F8849; color: white; border-color: #1F8849; }
+        .vx-btn-success:hover { background: #156B38; border-color: #156B38; color: white; }
+        .vx-btn-warning { background: #B86A0E; color: white; border-color: #B86A0E; }
+        .vx-btn-warning:hover { background: #94550B; border-color: #94550B; color: white; }
+        .vx-btn-danger { background: #C0392B; color: white; border-color: #C0392B; }
+        .vx-btn-danger:hover { background: #A32B1E; border-color: #A32B1E; color: white; }
         .vx-btn-info { background: var(--vx-info); color: white; border-color: var(--vx-info); }
         .vx-btn-info:hover { background: #2980B9; border-color: #2980B9; color: white; }
         .vx-btn-ghost { background: transparent; color: var(--vx-text-secondary); border-color: transparent; }
@@ -309,8 +310,8 @@
         .vx-input:focus, .vx-select:focus, .vx-textarea:focus { border-color: var(--vx-primary); box-shadow: 0 0 0 3px rgba(51, 170, 221, 0.15); }
         .vx-input.is-invalid, .vx-select.is-invalid { border-color: var(--vx-danger); }
         .vx-input.is-invalid:focus, .vx-select.is-invalid:focus { box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15); }
-        .vx-select-create { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--vx-primary); text-decoration: none; margin-top: 4px; padding: 2px 0; transition: color 0.15s; }
-        .vx-select-create:hover { color: var(--vx-primary-dark); text-decoration: underline; }
+        .vx-select-create { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--vx-primary-dark); text-decoration: underline; margin-top: 4px; padding: 2px 0; transition: color 0.15s; }
+        .vx-select-create:hover { color: #1F7AA0; }
         .vx-invalid-feedback { font-size: 12px; color: var(--vx-danger); margin-top: 4px; }
         .vx-form-hint { font-size: 12px; color: var(--vx-text-muted); margin-top: 4px; }
         .vx-checkbox { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; }
@@ -388,7 +389,7 @@
         .vx-stat-card { background: var(--vx-surface); border: 1px solid var(--vx-border); border-radius: var(--vx-radius-lg); padding: 20px; display: flex; align-items: flex-start; gap: 16px; transition: all 0.2s; text-decoration: none; }
         .vx-stat-card:hover { box-shadow: var(--vx-shadow); border-color: var(--vx-gray-300); transform: translateY(-1px); }
         .vx-stat-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
-        .vx-stat-content h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--vx-text-muted); margin-bottom: 4px; }
+        .vx-stat-content h2, .vx-stat-content h3, .vx-stat-content h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--vx-text-muted); margin-bottom: 4px; }
         .vx-stat-content .vx-stat-value { font-size: 22px; font-weight: 800; color: var(--vx-text); }
 
         /* Info Row (for show views) */
@@ -603,8 +604,13 @@
                 <button type="button" onclick="setViewMode('dev'); closeMobileToolsMenu();"><i class="bi bi-code-slash"></i> Vista desarrollador</button>
                 <button type="button" onclick="setViewMode('client'); closeMobileToolsMenu();"><i class="bi bi-person"></i> Vista cliente</button>
                 @auth
+                    <a href="{{ route('manual.index') }}"><i class="bi bi-book"></i> Manual de usuario</a>
+                    @can('ver incidencias')
+                    <a href="{{ route('incidencias.index') }}"><i class="bi bi-exclamation-triangle"></i> Incidencias</a>
+                    @endcan
                     @role('Super Admin')
                     <a href="{{ route('logs.index') }}"><i class="bi bi-journal-text"></i> Visor de logs</a>
+                    <a href="{{ route('ai.control') }}"><i class="bi bi-cpu"></i> Control de IA</a>
                     @endrole
                     <button type="button" onclick="toggleNotifications(); closeMobileToolsMenu();"><i class="bi bi-bell"></i> Notificaciones</button>
                     <a href="{{ route('dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
@@ -620,20 +626,36 @@
 
         <div class="vx-nav-right">
             <!-- Global Search -->
-            <button class="vx-icon-btn" onclick="openSearch()" title="Buscar (Ctrl+K)">
-                <i class="bi bi-search"></i>
+            <button class="vx-icon-btn" onclick="openSearch()" title="Buscar (Ctrl+K)" aria-label="Buscar (Ctrl+K)">
+                <i class="bi bi-search" aria-hidden="true"></i>
             </button>
 
             <!-- Theme Toggle -->
-            <button class="vx-icon-btn" onclick="toggleTheme()" title="Cambiar tema" id="themeToggle">
-                <i class="bi bi-moon"></i>
+            <button class="vx-icon-btn" onclick="toggleTheme()" title="Cambiar tema" id="themeToggle" aria-label="Cambiar tema">
+                <i class="bi bi-moon" aria-hidden="true"></i>
             </button>
 
             @auth
+                <!-- Manual de usuario -->
+                <a href="{{ route('manual.index') }}" class="vx-icon-btn" title="Manual de usuario" aria-label="Manual de usuario">
+                    <i class="bi bi-book" aria-hidden="true"></i>
+                </a>
+
+                @can('ver incidencias')
+                <!-- Incidencias -->
+                <a href="{{ route('incidencias.index') }}" class="vx-icon-btn" title="Incidencias" aria-label="Incidencias">
+                    <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+                </a>
+                @endcan
+
                 @role('Super Admin')
                 <!-- Log Viewer (Super Admin) -->
-                <a href="{{ route('logs.index') }}" class="vx-icon-btn" title="Visor de logs">
-                    <i class="bi bi-journal-text"></i>
+                <a href="{{ route('logs.index') }}" class="vx-icon-btn" title="Visor de logs" aria-label="Visor de logs">
+                    <i class="bi bi-journal-text" aria-hidden="true"></i>
+                </a>
+                <!-- Control IA (Super Admin) -->
+                <a href="{{ route('ai.control') }}" class="vx-icon-btn" title="Control de IA" aria-label="Control de IA">
+                    <i class="bi bi-cpu" aria-hidden="true"></i>
                 </a>
                 @endrole
             @endauth
@@ -641,8 +663,8 @@
             @auth
             <!-- Notifications -->
             <div class="vx-nav-item" style="position:relative;">
-                <button class="vx-icon-btn" onclick="toggleNotifications()" title="Notificaciones" style="position:relative;">
-                    <i class="bi bi-bell"></i>
+                <button class="vx-icon-btn" onclick="toggleNotifications()" title="Notificaciones" aria-label="Notificaciones" style="position:relative;">
+                    <i class="bi bi-bell" aria-hidden="true"></i>
                     <span class="vx-notif-badge" id="notifBadge" style="display:none;"></span>
                 </button>
                 <div class="vx-notif-panel" id="notifPanel">
@@ -950,14 +972,14 @@
             <div class="vx-alert vx-alert-success">
                 <i class="bi bi-check-circle-fill"></i>
                 <span>{{ session('success') }}</span>
-                <button class="vx-alert-close" onclick="this.parentElement.remove()"><i class="bi bi-x"></i></button>
+                <button class="vx-alert-close" onclick="this.parentElement.remove()" aria-label="Cerrar aviso"><i class="bi bi-x" aria-hidden="true"></i></button>
             </div>
         @endif
         @if(session('error'))
             <div class="vx-alert vx-alert-danger">
                 <i class="bi bi-exclamation-triangle-fill"></i>
                 <span>{{ session('error') }}</span>
-                <button class="vx-alert-close" onclick="this.parentElement.remove()"><i class="bi bi-x"></i></button>
+                <button class="vx-alert-close" onclick="this.parentElement.remove()" aria-label="Cerrar aviso"><i class="bi bi-x" aria-hidden="true"></i></button>
             </div>
         @endif
         @yield('content')
@@ -1172,7 +1194,7 @@
                 return `<div class="vx-notif-item ${n.read ? '' : 'unread'}">
                     <div class="vx-notif-icon ${iconClass}"><i class="bi ${icons[n.type] || 'bi-info-circle'}"></i></div>
                     <div class="vx-notif-body"><div class="vx-notif-text">${n.message}</div><div class="vx-notif-time">${n.time}</div></div>
-                    <button class="vx-notif-close" onclick="removeNotif(${i})" title="Eliminar"><i class="bi bi-x"></i></button>
+                    <button class="vx-notif-close" onclick="removeNotif(${i})" title="Eliminar" aria-label="Eliminar notificación"><i class="bi bi-x" aria-hidden="true"></i></button>
                 </div>`;
             }).join('');
         }
@@ -1338,7 +1360,7 @@
        ============================================ */
     (function(){
         window.VexisFormSelect = { refresh: null };
-        const MIN_OPTIONS = 5; // skip tiny dropdowns
+        const MIN_OPTIONS = 3; // skip tiny dropdowns
 
         function shouldEnhance(sel) {
             if (!sel || sel.dataset.fsApplied === '1') return false;
@@ -1502,6 +1524,33 @@
         window.VexisFormSelect.enhanceAll = enhanceAll;
     })();
     </script>
+
+    {{-- A11y: associate every .vx-form-group label (sibling .vx-label) with its
+         input/select/textarea via aria-label so axe-core stops flagging label
+         and select-name. We never had `for=`/`id=` pairs on these forms; setting
+         aria-label preserves the visual layout exactly. --}}
+    <script>
+    (function () {
+        function applyFormLabels(root) {
+            (root || document).querySelectorAll('.vx-form-group').forEach(function (group) {
+                var label = group.querySelector(':scope > .vx-label');
+                if (!label) return;
+                var labelText = label.textContent.replace(/\s+/g, ' ').trim();
+                if (!labelText) return;
+                group.querySelectorAll('input, select, textarea').forEach(function (ctrl) {
+                    // Skip radios/checkboxes inside a sub-label (they have their own visible text).
+                    if (ctrl.closest('label') !== null && ctrl.closest('label') !== label) return;
+                    if (ctrl.hasAttribute('aria-label') || ctrl.getAttribute('aria-labelledby')) return;
+                    ctrl.setAttribute('aria-label', labelText);
+                });
+            });
+        }
+        document.addEventListener('DOMContentLoaded', function () { applyFormLabels(); });
+        window.VexisA11y = window.VexisA11y || {};
+        window.VexisA11y.applyFormLabels = applyFormLabels;
+    })();
+    </script>
+
     @stack('scripts')
 </body>
 </html>

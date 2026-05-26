@@ -132,10 +132,19 @@ class UserRepository implements UserRepositoryInterface
     }
 
     /**
-     * Obtener todos los roles para el formulario
+     * Obtener todos los roles para el formulario, ordenados por jerarquía descendente.
+     * Excluye el rol "Cliente" (uso exclusivo del registro público).
      */
     public function getRoles()
     {
-        return \Spatie\Permission\Models\Role::all();
+        $orden = [
+            'Super Admin', 'Administrador', 'Gerente', 'Vendedor',
+            'Mecánico', 'Recepción Taller', 'Consultor',
+        ];
+
+        return \Spatie\Permission\Models\Role::whereNotIn('name', ['Cliente'])
+            ->get()
+            ->sortBy(fn ($r) => array_search($r->name, $orden, true) === false ? 99 : array_search($r->name, $orden, true))
+            ->values();
     }
 }

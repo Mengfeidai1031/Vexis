@@ -21,28 +21,28 @@
         @can('ver talleres')
         <a href="{{ route('talleres.index') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#33AADD,#2980b9);"><i class="bi bi-tools"></i></div>
-            <div class="mod-card-info"><h4>Talleres</h4><p>Gestión de talleres por isla y marca</p></div>
+            <div class="mod-card-info"><h2>Talleres</h2><p>Gestión de talleres por isla y marca</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan
         @can('ver mecanicos')
         <a href="{{ route('mecanicos.index') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#2ECC71,#27AE60);"><i class="bi bi-person-gear"></i></div>
-            <div class="mod-card-info"><h4>Mecánicos</h4><p>Registro de mecánicos por taller</p></div>
+            <div class="mod-card-info"><h2>Mecánicos</h2><p>Registro de mecánicos por taller</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan
         @can('ver citas')
         <a href="{{ route('citas.index') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#9B59B6,#8E44AD);"><i class="bi bi-calendar-check"></i></div>
-            <div class="mod-card-info"><h4>Citas</h4><p>Calendario de citas disponibles</p></div>
+            <div class="mod-card-info"><h2>Citas</h2><p>Calendario de citas disponibles</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan
         @can('ver coches-sustitucion')
         <a href="{{ route('coches-sustitucion.index') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#F39C12,#E67E22);"><i class="bi bi-car-front"></i></div>
-            <div class="mod-card-info"><h4>Coches de Sustitución</h4><p>Flota y calendario de reservas</p></div>
+            <div class="mod-card-info"><h2>Coches de Sustitución</h2><p>Flota y calendario de reservas</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan

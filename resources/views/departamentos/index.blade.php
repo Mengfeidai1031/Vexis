@@ -39,7 +39,7 @@
                                 <td><span class="vx-badge vx-badge-gray">{{ $departamento->abreviatura }}</span></td>
                                 <td>{{ $departamento->created_at->format('d/m/Y') }}</td>
                                 <td>
-                                    <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">@can('view', $departamento)
+                                    <div class="vx-actions"><button class="vx-actions-toggle" aria-label="Abrir acciones" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button><div class="vx-actions-menu">@can('view', $departamento)
                                             <a href="{{ route('departamentos.show', $departamento) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
                                         @endcan
                                         @can('update', $departamento)

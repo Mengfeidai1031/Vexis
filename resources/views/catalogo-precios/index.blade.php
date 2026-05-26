@@ -48,7 +48,7 @@
             </div>
             <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center;">
                 @if($item->disponible)<span class="vx-badge vx-badge-success">Disponible</span>@else<span class="vx-badge vx-badge-gray">No disponible</span>@endif
-                <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+                <div class="vx-actions"><button class="vx-actions-toggle" aria-label="Abrir acciones" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button><div class="vx-actions-menu">
                     @can('editar catalogo-precios')<a href="{{ route('catalogo-precios.edit', $item) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>@endcan
                     @can('eliminar catalogo-precios')<form action="{{ route('catalogo-precios.destroy', $item) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar?');">@csrf @method('DELETE')<button type="submit" class="act-danger"><i class="bi bi-trash"></i> Eliminar</button></form>@endcan
                 </div></div>

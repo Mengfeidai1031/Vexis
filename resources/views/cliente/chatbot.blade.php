@@ -18,7 +18,7 @@
         </div>
         <div style="flex-shrink:0;padding:12px 16px;border-top:1px solid var(--vx-border);display:flex;gap:8px;">
             <input type="text" id="chatInput" class="vx-input" placeholder="Escribe tu pregunta..." style="flex:1;" autocomplete="off">
-            <button id="chatSend" class="vx-btn vx-btn-primary" style="padding:8px 16px;"><i class="bi bi-send"></i></button>
+            <button id="chatSend" class="vx-btn vx-btn-primary" style="padding:8px 16px;" aria-label="Enviar mensaje"><i class="bi bi-send" aria-hidden="true"></i></button>
         </div>
     </div>
     <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">

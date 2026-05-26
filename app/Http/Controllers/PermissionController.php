@@ -18,7 +18,7 @@ class PermissionController extends Controller
             $query->where('id', (int) $request->id);
         }
         if ($request->filled('nombre')) {
-            $query->where('name', 'like', '%' . $request->nombre . '%');
+            $query->where('name', 'like', '%'.$request->nombre.'%');
         }
         if ($request->filled('roles_min')) {
             $query->has('roles', '>=', (int) $request->roles_min);

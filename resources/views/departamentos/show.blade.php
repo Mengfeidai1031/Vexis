@@ -28,7 +28,7 @@
 
     @if($departamento->users->count() > 0)
     <div class="vx-card">
-        <div class="vx-card-header"><h4>Usuarios en este Departamento</h4></div>
+        <div class="vx-card-header"><h2>Usuarios en este Departamento</h2></div>
         <div class="vx-card-body" style="padding: 0;">
             <div class="vx-table-wrapper">
                 <table class="vx-table">

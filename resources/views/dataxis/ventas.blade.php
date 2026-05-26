@@ -4,11 +4,11 @@
 <div class="vx-page-header"><h1 class="vx-page-title">Dataxis — Ventas</h1><div class="vx-page-actions"><a href="{{ route('dataxis.inicio') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div></div>
 
 <div class="dx-grid">
-    <div class="vx-card dx-grid-full dx-chart-lg"><div class="vx-card-header"><h4>Ventas e Importe por Mes</h4></div><div class="vx-card-body"><canvas id="chartVentasMes" height="120"></canvas></div></div>
-    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4>Por Estado</h4></div><div class="vx-card-body"><canvas id="chartEstado" height="180"></canvas></div></div>
-    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4>Forma de Pago</h4></div><div class="vx-card-body"><canvas id="chartPago" height="180"></canvas></div></div>
-    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4>Ventas por Marca</h4></div><div class="vx-card-body"><canvas id="chartMarca" height="180"></canvas></div></div>
-    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4>Top Vendedores</h4></div><div class="vx-card-body"><canvas id="chartVendedores" height="180"></canvas></div></div>
+    <div class="vx-card dx-grid-full dx-chart-lg"><div class="vx-card-header"><h2>Ventas e Importe por Mes</h2></div><div class="vx-card-body"><canvas id="chartVentasMes" height="120"></canvas></div></div>
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h2>Por Estado</h2></div><div class="vx-card-body"><canvas id="chartEstado" height="180"></canvas></div></div>
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h2>Forma de Pago</h2></div><div class="vx-card-body"><canvas id="chartPago" height="180"></canvas></div></div>
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h2>Ventas por Marca</h2></div><div class="vx-card-body"><canvas id="chartMarca" height="180"></canvas></div></div>
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h2>Top Vendedores</h2></div><div class="vx-card-body"><canvas id="chartVendedores" height="180"></canvas></div></div>
 </div>
 
 @push('scripts')

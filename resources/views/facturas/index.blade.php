@@ -29,7 +29,7 @@
             <td style="font-family:var(--vx-font-mono);font-weight:700;">{{ number_format($f->total, 2) }}€</td>
             <td>@switch($f->estado) @case('emitida')<span class="vx-badge vx-badge-info">Emitida</span>@break @case('pagada')<span class="vx-badge vx-badge-success">Pagada</span>@break @case('vencida')<span class="vx-badge vx-badge-warning">Vencida</span>@break @case('anulada')<span class="vx-badge vx-badge-danger">Anulada</span>@break @endswitch</td>
             <td style="font-size:12px;">{{ $f->fecha_factura->format('d/m/Y') }}</td>
-            <td><div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+            <td><div class="vx-actions"><button class="vx-actions-toggle" aria-label="Abrir acciones" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button><div class="vx-actions-menu">
                 <a href="{{ route('facturas.show', $f) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
                 <a href="{{ route('facturas.generatePdf', $f) }}"><i class="bi bi-file-earmark-pdf" style="color:var(--vx-danger);"></i> Generar PDF</a>
                 @can('editar facturas')<a href="{{ route('facturas.edit', $f) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>@endcan

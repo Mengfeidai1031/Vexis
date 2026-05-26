@@ -17,7 +17,7 @@
 <div style="max-width:800px;">
     {{-- Estado y tipo --}}
     <div class="vx-card" style="margin-bottom:16px;">
-        <div class="vx-card-header"><h4><i class="bi bi-shield-check"></i> Información del Registro</h4></div>
+        <div class="vx-card-header"><h2><i class="bi bi-shield-check"></i> Información del Registro</h2></div>
         <div class="vx-card-body">
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
                 <div>
@@ -120,7 +120,7 @@
 
     {{-- Hash chain --}}
     <div class="vx-card" style="margin-bottom:16px;">
-        <div class="vx-card-header"><h4><i class="bi bi-link-45deg"></i> Cadena de Hashes (SHA-256) — RD 1007/2023 art. 12</h4></div>
+        <div class="vx-card-header"><h2><i class="bi bi-link-45deg"></i> Cadena de Hashes (SHA-256) — RD 1007/2023 art. 12</h2></div>
         <div class="vx-card-body">
             <div style="display:grid;grid-template-columns:1fr;gap:12px;">
                 <div>
@@ -155,7 +155,7 @@
 
     {{-- Factura info --}}
     <div class="vx-card" style="margin-bottom:16px;">
-        <div class="vx-card-header"><h4><i class="bi bi-receipt"></i> Factura Asociada</h4></div>
+        <div class="vx-card-header"><h2><i class="bi bi-receipt"></i> Factura Asociada</h2></div>
         <div class="vx-card-body">
             @if($verifactu->factura)
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
@@ -186,7 +186,7 @@
 
     {{-- Sistema informatico --}}
     <div class="vx-card" style="margin-bottom:16px;">
-        <div class="vx-card-header"><h4><i class="bi bi-cpu"></i> Sistema Informático</h4></div>
+        <div class="vx-card-header"><h2><i class="bi bi-cpu"></i> Sistema Informático</h2></div>
         <div class="vx-card-body">
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
                 <div>
@@ -208,7 +208,7 @@
     {{-- AEAT Response --}}
     @if($verifactu->respuesta_aeat)
     <div class="vx-card" style="margin-bottom:16px;">
-        <div class="vx-card-header"><h4><i class="bi bi-building"></i> Respuesta AEAT</h4></div>
+        <div class="vx-card-header"><h2><i class="bi bi-building"></i> Respuesta AEAT</h2></div>
         <div class="vx-card-body">
             @if(isset($verifactu->respuesta_aeat['entorno']) && $verifactu->respuesta_aeat['entorno'] === 'sandbox')
             <div style="background:#fff3e0;padding:8px 12px;border-radius:6px;font-size:11px;color:#e65100;margin-bottom:12px;">
@@ -222,7 +222,7 @@
 
     {{-- XML preview --}}
     <div class="vx-card">
-        <div class="vx-card-header"><h4><i class="bi bi-filetype-xml"></i> XML AEAT (SuministroLR)</h4></div>
+        <div class="vx-card-header"><h2><i class="bi bi-filetype-xml"></i> XML AEAT (SuministroLR)</h2></div>
         <div class="vx-card-body">
             <pre style="background:#1e1e1e;color:#d4d4d4;padding:16px;border-radius:6px;font-size:10px;font-family:var(--vx-font-mono);margin:0;overflow-x:auto;white-space:pre-wrap;max-height:400px;">{{ $xml }}</pre>
         </div>

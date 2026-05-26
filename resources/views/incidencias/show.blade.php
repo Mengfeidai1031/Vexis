@@ -16,7 +16,7 @@
 
 {{-- Header info (full width) --}}
 <div class="vx-card" style="margin-bottom:16px;">
-    <div class="vx-card-header"><h4>{{ $incidencia->titulo }}</h4></div>
+    <div class="vx-card-header"><h2>{{ $incidencia->titulo }}</h2></div>
     <div class="vx-card-body">
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px;">
             <div>
@@ -54,7 +54,7 @@
     {{-- COLUMNA IZQUIERDA — Usuario --}}
     <div style="display:flex;flex-direction:column;gap:16px;">
         <div class="vx-card">
-            <div class="vx-card-header" style="background:rgba(51,170,221,0.06);"><h4><i class="bi bi-person" style="color:var(--vx-primary);"></i> Datos del emisor</h4></div>
+            <div class="vx-card-header" style="background:rgba(51,170,221,0.06);"><h2><i class="bi bi-person" style="color:var(--vx-primary);"></i> Datos del emisor</h2></div>
             <div class="vx-card-body">
                 <p style="font-size:11px;color:var(--vx-text-muted);margin:0;">Emisor</p>
                 <p style="font-weight:600;margin:2px 0 0;">{{ $incidencia->usuario?->nombre_completo ?? '—' }}</p>
@@ -65,7 +65,7 @@
         </div>
 
         <div class="vx-card">
-            <div class="vx-card-header" style="background:rgba(51,170,221,0.06);"><h4><i class="bi bi-chat-left-text" style="color:var(--vx-primary);"></i> Descripción del usuario</h4></div>
+            <div class="vx-card-header" style="background:rgba(51,170,221,0.06);"><h2><i class="bi bi-chat-left-text" style="color:var(--vx-primary);"></i> Descripción del usuario</h2></div>
             <div class="vx-card-body">
                 <div style="white-space:pre-wrap;font-size:13px;line-height:1.7;">{{ $incidencia->descripcion }}</div>
             </div>
@@ -73,7 +73,7 @@
 
         @php $archivosUsuario = $incidencia->archivos->where('tipo', 'usuario'); @endphp
         <div class="vx-card">
-            <div class="vx-card-header" style="background:rgba(51,170,221,0.06);"><h4><i class="bi bi-paperclip" style="color:var(--vx-primary);"></i> Archivos del usuario ({{ $archivosUsuario->count() }})</h4></div>
+            <div class="vx-card-header" style="background:rgba(51,170,221,0.06);"><h2><i class="bi bi-paperclip" style="color:var(--vx-primary);"></i> Archivos del usuario ({{ $archivosUsuario->count() }})</h2></div>
             <div class="vx-card-body">
                 @if($archivosUsuario->count() > 0)
                 <div style="display:flex;flex-direction:column;gap:6px;">
@@ -103,7 +103,7 @@
     {{-- COLUMNA DERECHA — Técnico --}}
     <div style="display:flex;flex-direction:column;gap:16px;">
         <div class="vx-card">
-            <div class="vx-card-header" style="background:rgba(142,68,173,0.06);"><h4><i class="bi bi-person-gear" style="color:#8e44ad;"></i> Técnico asignado</h4></div>
+            <div class="vx-card-header" style="background:rgba(142,68,173,0.06);"><h2><i class="bi bi-person-gear" style="color:#8e44ad;"></i> Técnico asignado</h2></div>
             <div class="vx-card-body">
                 <p style="font-size:11px;color:var(--vx-text-muted);margin:0;">Técnico</p>
                 <p style="font-weight:600;margin:2px 0 0;color:{{ $incidencia->tecnico ? 'var(--vx-text)' : 'var(--vx-text-muted)' }};">{{ $incidencia->tecnico?->nombre_completo ?? 'Sin asignar' }}</p>
@@ -114,7 +114,7 @@
         </div>
 
         <div class="vx-card">
-            <div class="vx-card-header" style="background:rgba(142,68,173,0.06);"><h4><i class="bi bi-tools" style="color:#8e44ad;"></i> Comentario del técnico</h4></div>
+            <div class="vx-card-header" style="background:rgba(142,68,173,0.06);"><h2><i class="bi bi-tools" style="color:#8e44ad;"></i> Comentario del técnico</h2></div>
             <div class="vx-card-body">
                 @if($incidencia->comentario_tecnico)
                 <div style="background:#f5f0ff;padding:12px 16px;border-left:3px solid #8e44ad;border-radius:0 6px 6px 0;">
@@ -128,7 +128,7 @@
 
         @php $archivosTecnico = $incidencia->archivos->where('tipo', 'tecnico'); @endphp
         <div class="vx-card">
-            <div class="vx-card-header" style="background:rgba(142,68,173,0.06);"><h4><i class="bi bi-paperclip" style="color:#8e44ad;"></i> Archivos del técnico ({{ $archivosTecnico->count() }})</h4></div>
+            <div class="vx-card-header" style="background:rgba(142,68,173,0.06);"><h2><i class="bi bi-paperclip" style="color:#8e44ad;"></i> Archivos del técnico ({{ $archivosTecnico->count() }})</h2></div>
             <div class="vx-card-body">
                 @if($archivosTecnico->count() > 0)
                 <div style="display:flex;flex-direction:column;gap:6px;">
@@ -158,7 +158,7 @@
 
 {{-- Timeline (full width) --}}
 <div class="vx-card">
-    <div class="vx-card-header"><h4><i class="bi bi-clock-history"></i> Timeline</h4></div>
+    <div class="vx-card-header"><h2><i class="bi bi-clock-history"></i> Timeline</h2></div>
     <div class="vx-card-body">
         <div style="display:flex;flex-direction:column;gap:12px;">
             <div style="display:flex;align-items:flex-start;gap:12px;">

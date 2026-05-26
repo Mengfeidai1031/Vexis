@@ -41,7 +41,7 @@
                 <td style="font-size:12px;">{{ $s->almacen->nombre ?? '—' }}</td>
                 <td style="font-size:12px;">{{ $s->empresa->abreviatura ?? '—' }}</td>
                 <td>
-                    <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+                    <div class="vx-actions"><button class="vx-actions-toggle" aria-label="Abrir acciones" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button><div class="vx-actions-menu">
                         <a href="{{ route('stocks.show', $s) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
                         @can('editar stocks')<a href="{{ route('stocks.edit', $s) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>@endcan
                         @can('eliminar stocks')

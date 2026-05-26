@@ -4,10 +4,10 @@
 <div class="vx-page-header"><h1 class="vx-page-title">Dataxis — Taller</h1><div class="vx-page-actions"><a href="{{ route('dataxis.inicio') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div></div>
 
 <div class="dx-grid">
-    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4>Citas por Estado</h4></div><div class="vx-card-body"><canvas id="chartCitasEstado" height="180"></canvas></div></div>
-    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4>Citas por Día de la Semana</h4></div><div class="vx-card-body"><canvas id="chartCitasDia" height="180"></canvas></div></div>
-    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4>Carga por Mecánico</h4></div><div class="vx-card-body"><canvas id="chartMecanicos" height="180"></canvas></div></div>
-    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4>Tasaciones por Estado</h4></div><div class="vx-card-body"><canvas id="chartTasaciones" height="180"></canvas></div></div>
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h2>Citas por Estado</h2></div><div class="vx-card-body"><canvas id="chartCitasEstado" height="180"></canvas></div></div>
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h2>Citas por Día de la Semana</h2></div><div class="vx-card-body"><canvas id="chartCitasDia" height="180"></canvas></div></div>
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h2>Carga por Mecánico</h2></div><div class="vx-card-body"><canvas id="chartMecanicos" height="180"></canvas></div></div>
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h2>Tasaciones por Estado</h2></div><div class="vx-card-body"><canvas id="chartTasaciones" height="180"></canvas></div></div>
 </div>
 
 @push('scripts')

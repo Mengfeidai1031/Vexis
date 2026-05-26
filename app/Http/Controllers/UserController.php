@@ -117,8 +117,6 @@ class UserController extends Controller
         if ($request->has('restrictions')) {
             $restrictions = [
                 'empresas' => $request->input('restrictions.empresas', []),
-                'clientes' => $request->input('restrictions.clientes', []),
-                'vehiculos' => $request->input('restrictions.vehiculos', []),
                 'centros' => $request->input('restrictions.centros', []),
                 'departamentos' => $request->input('restrictions.departamentos', []),
             ];
@@ -181,8 +179,6 @@ class UserController extends Controller
         // Gestionar restricciones
         $restrictions = [
             'empresas' => $request->input('restrictions.empresas', []),
-            'clientes' => $request->input('restrictions.clientes', []),
-            'vehiculos' => $request->input('restrictions.vehiculos', []),
             'centros' => $request->input('restrictions.centros', []),
             'departamentos' => $request->input('restrictions.departamentos', []),
         ];

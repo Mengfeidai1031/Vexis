@@ -19,7 +19,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -231,75 +230,19 @@ class ClienteModuloController extends Controller
         $contexto .= 'MARCAS OFICIALES: '.implode(', ', $marcas)."\n\n";
         $contexto .= implode("\n\n", $contextBlocks);
 
-        try {
-            $apiKey = config('services.gemini.api_key');
-            if (empty($apiKey)) {
-                return response()->json(['respuesta' => 'Error: API key de Gemini no configurada. Añade GEMINI_API_KEY en el archivo .env']);
-            }
+        $result = app(\App\Services\GeminiService::class)->generate(
+            'chatbot',
+            $contexto."\n\nPregunta del cliente: ".$mensaje,
+            ['temperature' => 0.7, 'maxOutputTokens' => 800],
+        );
 
-            // Usar modelos disponibles según la API v1beta
-            $combinations = [
-                ['version' => 'v1beta', 'model' => 'gemini-2.5-flash'],
-                ['version' => 'v1beta', 'model' => 'gemini-3-flash-preview'],
-                ['version' => 'v1beta', 'model' => 'gemini-2.0-flash'],
-                ['version' => 'v1beta', 'model' => 'gemini-2.5-pro'],
-            ];
-
-            $response = null;
-            $workingConfig = null;
-            $lastError = null;
-
-            foreach ($combinations as $config) {
-                $url = "https://generativelanguage.googleapis.com/{$config['version']}/models/{$config['model']}:generateContent?key=".urlencode($apiKey);
-                try {
-                    $testResponse = Http::timeout(30)->post($url, [
-                        'contents' => [
-                            [
-                                'parts' => [
-                                    ['text' => $contexto."\n\nPregunta del cliente: ".$mensaje],
-                                ],
-                            ],
-                        ],
-                        'generationConfig' => ['temperature' => 0.7, 'maxOutputTokens' => 800],
-                    ]);
-
-                    if ($testResponse->successful()) {
-                        $response = $testResponse;
-                        $workingConfig = $config;
-                        break;
-                    } else {
-                        $errorData = $testResponse->json();
-                        $lastError = $errorData['error']['message'] ?? 'HTTP '.$testResponse->status();
-                        // Si es 404, continuar con el siguiente
-                        if ($testResponse->status() === 404) {
-                            continue;
-                        }
-                    }
-                } catch (\Exception $e) {
-                    $lastError = $e->getMessage();
-
-                    continue;
-                }
-            }
-
-            if (! $response) {
-                return response()->json([
-                    'respuesta' => 'Error: No se pudo conectar con ningún modelo de Gemini disponible. Último error: '.Str::limit($lastError ?? 'Desconocido', 200)."\n\nPor favor, verifica tu API key y conexión a internet.",
-                ]);
-            }
-
-            $data = $response->json();
-            $respuesta = $data['candidates'][0]['content']['parts'][0]['text'] ?? 'Lo siento, no pude procesar tu consulta. Inténtalo de nuevo.';
-
-            // Añadir información del modelo que funcionó
-            if ($workingConfig) {
-                $respuesta .= "\n\n[INFO: Modelo funcionando - API: {$workingConfig['version']}, Modelo: {$workingConfig['model']}]";
-            }
-        } catch (\Exception $e) {
-            $respuesta = 'Error al conectar con el asistente: '.Str::limit($e->getMessage(), 150);
+        if (! $result['ok']) {
+            return response()->json([
+                'respuesta' => 'Error: '.Str::limit($result['error'] ?? 'No se pudo conectar con Gemini', 200),
+            ]);
         }
 
-        return response()->json(['respuesta' => $respuesta]);
+        return response()->json(['respuesta' => $result['text']]);
     }
 
     // === PRETASACIÓN IA ===
@@ -334,103 +277,31 @@ class ClienteModuloController extends Controller
         $prompt .= "\n3) Cierre con aclaración: es orientativo y la tasación formal se solicita en concesionario.";
         $prompt .= "\nNo dejes frases a medias ni respuestas incompletas.";
 
-        try {
-            $apiKey = config('services.gemini.api_key');
-            if (empty($apiKey)) {
-                return response()->json(['respuesta' => 'Error: API key de Gemini no configurada. Añade GEMINI_API_KEY en el archivo .env']);
+        $gemini = app(\App\Services\GeminiService::class);
+        $result = $gemini->generate('pretasacion', $prompt, ['temperature' => 0.45, 'maxOutputTokens' => 1800]);
+
+        if (! $result['ok']) {
+            return response()->json([
+                'respuesta' => 'Error: '.Str::limit($result['error'] ?? 'No se pudo conectar con Gemini', 200),
+            ]);
+        }
+
+        $respuesta = $result['text'];
+
+        // Retry si respuesta parece cortada
+        if ($this->seemsIncompleteResponse($respuesta)) {
+            $retry = $gemini->generate(
+                'pretasacion',
+                $prompt."\n\nLa respuesta anterior quedó incompleta. Reescribe TODA la respuesta completa desde cero, siguiendo exactamente el formato solicitado y sin cortar ninguna frase.",
+                ['temperature' => 0.35, 'maxOutputTokens' => 2200],
+            );
+            if ($retry['ok'] && ! empty($retry['text']) && ! $this->seemsIncompleteResponse($retry['text'])) {
+                $respuesta = $retry['text'];
             }
+        }
 
-            // Usar modelos disponibles según la API v1beta
-            $combinations = [
-                ['version' => 'v1beta', 'model' => 'gemini-2.5-flash'],
-                ['version' => 'v1beta', 'model' => 'gemini-3-flash-preview'],
-                ['version' => 'v1beta', 'model' => 'gemini-2.0-flash'],
-                ['version' => 'v1beta', 'model' => 'gemini-2.5-pro'],
-            ];
-
-            $response = null;
-            $workingConfig = null;
-            $lastError = null;
-
-            foreach ($combinations as $config) {
-                $url = "https://generativelanguage.googleapis.com/{$config['version']}/models/{$config['model']}:generateContent?key=".urlencode($apiKey);
-                try {
-                    $testResponse = Http::timeout(30)->post($url, [
-                        'contents' => [
-                            [
-                                'parts' => [
-                                    ['text' => $prompt],
-                                ],
-                            ],
-                        ],
-                        'generationConfig' => ['temperature' => 0.45, 'maxOutputTokens' => 1800],
-                    ]);
-
-                    if ($testResponse->successful()) {
-                        $response = $testResponse;
-                        $workingConfig = $config;
-                        break;
-                    } else {
-                        $errorData = $testResponse->json();
-                        $lastError = $errorData['error']['message'] ?? 'HTTP '.$testResponse->status();
-                        // Si es 404, continuar con el siguiente
-                        if ($testResponse->status() === 404) {
-                            continue;
-                        }
-                    }
-                } catch (\Exception $e) {
-                    $lastError = $e->getMessage();
-
-                    continue;
-                }
-            }
-
-            if (! $response) {
-                return response()->json([
-                    'respuesta' => 'Error: No se pudo conectar con ningún modelo de Gemini disponible. Último error: '.Str::limit($lastError ?? 'Desconocido', 200)."\n\nPor favor, verifica tu API key y conexión a internet.",
-                ]);
-            }
-
-            $data = $response->json();
-            $respuesta = $this->extractGeminiText($data);
-            $finishReason = Str::upper((string) data_get($data, 'candidates.0.finishReason', ''));
-
-            if (
-                $workingConfig &&
-                (
-                    $finishReason === 'MAX_TOKENS' ||
-                    $this->seemsIncompleteResponse($respuesta)
-                )
-            ) {
-                $retryPrompt = $prompt.
-                    "\n\nLa respuesta anterior quedó incompleta. Reescribe TODA la respuesta completa desde cero, ".
-                    'siguiendo exactamente el formato solicitado y sin cortar ninguna frase.';
-
-                $retryUrl = "https://generativelanguage.googleapis.com/{$workingConfig['version']}/models/{$workingConfig['model']}:generateContent?key=".urlencode($apiKey);
-                $retryResponse = Http::timeout(30)->post($retryUrl, [
-                    'contents' => [
-                        [
-                            'parts' => [
-                                ['text' => $retryPrompt],
-                            ],
-                        ],
-                    ],
-                    'generationConfig' => ['temperature' => 0.35, 'maxOutputTokens' => 2200],
-                ]);
-
-                if ($retryResponse->successful()) {
-                    $retryText = $this->extractGeminiText($retryResponse->json());
-                    if (! empty($retryText) && ! $this->seemsIncompleteResponse($retryText)) {
-                        $respuesta = $retryText;
-                    }
-                }
-            }
-
-            if ($respuesta === '') {
-                $respuesta = 'No se pudo generar la pretasación.';
-            }
-        } catch (\Exception $e) {
-            $respuesta = 'Error al conectar con el servicio de tasación: '.Str::limit($e->getMessage(), 150);
+        if ($respuesta === '') {
+            $respuesta = 'No se pudo generar la pretasación.';
         }
 
         return response()->json(['respuesta' => $respuesta]);

@@ -18,7 +18,7 @@
         @csrf
         @method('PUT')
         <div class="vx-card">
-            <div class="vx-card-header"><h4><i class="bi bi-pencil-square" style="color: var(--vx-primary);"></i> Datos de la oferta</h4></div>
+            <div class="vx-card-header"><h2><i class="bi bi-pencil-square" style="color: var(--vx-primary);"></i> Datos de la oferta</h2></div>
             <div class="vx-card-body">
                 <div class="vx-form-grid vx-form-grid-3">
                     <div class="vx-form-group">

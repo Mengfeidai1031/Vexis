@@ -15,6 +15,7 @@
 <div class="vx-page-header">
     <h1 class="vx-page-title">Detalle del Vehículo</h1>
     <div class="vx-page-actions">
+        <a href="{{ route('vehiculos.documentos.index', $vehiculo) }}" class="vx-btn vx-btn-secondary"><i class="bi bi-folder2-open"></i> Documentos ({{ $vehiculo->documentos->count() }})</a>
         @can('update', $vehiculo)
             <a href="{{ route('vehiculos.edit', $vehiculo) }}" class="vx-btn vx-btn-warning"><i class="bi bi-pencil"></i> Editar</a>
         @endcan
@@ -44,68 +45,32 @@
         </div>
     </div>
 
-    {{-- Documentos --}}
+    {{-- Documentos (solo lectura) --}}
     <div class="vx-card" style="margin-top:16px;">
-        <div class="vx-card-header">
-            <h4><i class="bi bi-file-earmark-text" style="color: var(--vx-info); margin-right:6px;"></i>Documentación</h4>
+        <div class="vx-card-header" style="display:flex;justify-content:space-between;align-items:center;">
+            <h4><i class="bi bi-file-earmark-text" style="color: var(--vx-info); margin-right:6px;"></i>Documentación ({{ $vehiculo->documentos->count() }})</h4>
+            <a href="{{ route('vehiculos.documentos.index', $vehiculo) }}" class="vx-btn vx-btn-secondary vx-btn-sm"><i class="bi bi-folder2-open"></i> Gestionar</a>
         </div>
-        <div class="vx-card-body">
-            @can('update', $vehiculo)
-            <form action="{{ route('vehiculos.documentos.store', $vehiculo) }}" method="POST" enctype="multipart/form-data" style="margin-bottom:16px;">
-                @csrf
-                <div class="vx-form-grid vx-form-grid-3">
-                    <div class="vx-form-group">
-                        <label class="vx-label" for="tipo">Tipo <span class="required">*</span></label>
-                        <select name="tipo" id="tipo" class="vx-select" required>
-                            @foreach(\App\Models\VehiculoDocumento::$tipos as $k => $v)
-                                <option value="{{ $k }}">{{ $v }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="vx-form-group">
-                        <label class="vx-label" for="archivo">Archivo (PDF/JPG/PNG) <span class="required">*</span></label>
-                        <input type="file" name="archivo" id="archivo" class="vx-input" accept="application/pdf,image/jpeg,image/png" required>
-                    </div>
-                    <div class="vx-form-group">
-                        <label class="vx-label" for="fecha_vencimiento">Vencimiento</label>
-                        <input type="date" name="fecha_vencimiento" id="fecha_vencimiento" class="vx-input">
-                    </div>
-                </div>
-                <div class="vx-form-group">
-                    <label class="vx-label" for="observaciones">Observaciones</label>
-                    <input type="text" name="observaciones" id="observaciones" class="vx-input" maxlength="500">
-                </div>
-                <div style="display:flex;justify-content:flex-end;">
-                    <button type="submit" class="vx-btn vx-btn-primary"><i class="bi bi-upload"></i> Subir</button>
-                </div>
-            </form>
-            @endcan
-
+        <div class="vx-card-body" style="padding:0;">
             @if($vehiculo->documentos->count())
                 <table class="vx-table">
-                    <thead><tr><th>Tipo</th><th>Archivo</th><th>Vence</th><th>Subido por</th><th style="text-align:right;">Acciones</th></tr></thead>
+                    <thead><tr><th>Tipo</th><th>Archivo</th><th>Vence</th><th>Subido por</th><th style="text-align:right;">Descargar</th></tr></thead>
                     <tbody>
                     @foreach($vehiculo->documentos as $doc)
                         <tr>
                             <td><span class="vx-badge vx-badge-info">{{ $doc->tipo_etiqueta }}</span></td>
                             <td style="font-size:12.5px;"><i class="bi bi-file-earmark"></i> {{ $doc->nombre_original }}</td>
-                            <td>{{ $doc->fecha_vencimiento?->format('d/m/Y') ?? '—' }}</td>
+                            <td style="font-size:12px;">{{ $doc->fecha_vencimiento?->format('d/m/Y') ?? '—' }}</td>
                             <td style="font-size:12px;color:var(--vx-text-muted);">{{ $doc->user?->nombre }} · {{ $doc->created_at->format('d/m/Y') }}</td>
                             <td style="text-align:right;">
                                 <a href="{{ route('vehiculos.documentos.download', $doc) }}" class="vx-btn vx-btn-secondary vx-btn-sm"><i class="bi bi-download"></i></a>
-                                @can('update', $vehiculo)
-                                <form action="{{ route('vehiculos.documentos.destroy', $doc) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar documento?');">
-                                    @csrf @method('DELETE')
-                                    <button class="vx-btn vx-btn-danger vx-btn-sm"><i class="bi bi-trash"></i></button>
-                                </form>
-                                @endcan
                             </td>
                         </tr>
                     @endforeach
                     </tbody>
                 </table>
             @else
-                <p style="color:var(--vx-text-muted);margin:0;">Sin documentos adjuntos.</p>
+                <p style="color:var(--vx-text-muted);margin:16px;">Sin documentos adjuntos.</p>
             @endif
         </div>
     </div>

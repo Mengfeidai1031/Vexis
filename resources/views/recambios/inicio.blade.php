@@ -21,21 +21,21 @@
         @can('ver almacenes')
         <a href="{{ route('almacenes.index') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#33AADD,#2980b9);"><i class="bi bi-boxes"></i></div>
-            <div class="mod-card-info"><h4>Almacenes</h4><p>Gestión de almacenes por isla</p></div>
+            <div class="mod-card-info"><h2>Almacenes</h2><p>Gestión de almacenes por isla</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan
         @can('ver stocks')
         <a href="{{ route('stocks.index') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#2ECC71,#27AE60);"><i class="bi bi-box2"></i></div>
-            <div class="mod-card-info"><h4>Stock</h4><p>Inventario de recambios por almacén</p></div>
+            <div class="mod-card-info"><h2>Stock</h2><p>Inventario de recambios por almacén</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan
         @can('ver repartos')
         <a href="{{ route('repartos.index') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#F39C12,#E67E22);"><i class="bi bi-truck"></i></div>
-            <div class="mod-card-info"><h4>Repartos</h4><p>Gestión de repartos entre almacenes</p></div>
+            <div class="mod-card-info"><h2>Repartos</h2><p>Gestión de repartos entre almacenes</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan

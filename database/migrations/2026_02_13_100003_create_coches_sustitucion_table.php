@@ -28,7 +28,8 @@ return new class extends Migration
         Schema::create('reservas_sustitucion', function (Blueprint $table) {
             $table->id();
             $table->foreignId('coche_id')->constrained('coches_sustitucion')->cascadeOnDelete();
-            $table->string('cliente_nombre', 200);
+            $table->foreignId('cliente_id')->nullable()->constrained('clientes')->nullOnDelete();
+            $table->string('cliente_nombre', 200)->nullable();
             $table->date('fecha_inicio');
             $table->date('fecha_fin');
             $table->enum('estado', ['reservado', 'entregado', 'devuelto', 'cancelado'])->default('reservado');
@@ -37,6 +38,7 @@ return new class extends Migration
 
             $table->index(['coche_id', 'estado']);
             $table->index(['fecha_inicio', 'fecha_fin']);
+            $table->index('cliente_id');
         });
     }
 

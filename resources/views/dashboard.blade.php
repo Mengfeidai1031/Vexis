@@ -48,7 +48,7 @@
         @canany(['ver usuarios', 'ver departamentos', 'ver centros', 'ver roles', 'ver restricciones', 'ver clientes'])
         <a href="{{ route('gestion.inicio') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#33AADD,#2890BB);"><i class="bi bi-building"></i></div>
-            <div class="mod-card-info"><h4>Gestión</h4><p>Usuarios, Clientes, Seguridad, Mantenimiento</p></div>
+            <div class="mod-card-info"><h2>Gestión</h2><p>Usuarios, Clientes, Seguridad, Mantenimiento</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcanany
@@ -56,7 +56,7 @@
         @canany(['ver vehículos', 'ver ofertas'])
         <a href="{{ route('comercial.inicio') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#F39C12,#E67E22);"><i class="bi bi-car-front"></i></div>
-            <div class="mod-card-info"><h4>Comercial</h4><p>Ofertas, Vehículos, Ventas, Tasaciones</p></div>
+            <div class="mod-card-info"><h2>Comercial</h2><p>Ofertas, Vehículos, Ventas, Tasaciones</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcanany
@@ -64,7 +64,7 @@
         @can('ver almacenes')
         <a href="{{ route('recambios.inicio') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#1ABC9C,#16A085);"><i class="bi bi-box-seam"></i></div>
-            <div class="mod-card-info"><h4>Recambios</h4><p>Almacenes, Stock, Repartos</p></div>
+            <div class="mod-card-info"><h2>Recambios</h2><p>Almacenes, Stock, Repartos</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan
@@ -72,20 +72,20 @@
         @canany(['ver talleres', 'ver citas', 'ver coches-sustitucion'])
         <a href="{{ route('talleres.inicio') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#8E44AD,#9B59B6);"><i class="bi bi-wrench-adjustable"></i></div>
-            <div class="mod-card-info"><h4>Talleres</h4><p>Talleres, Citas, Coches de sustitución</p></div>
+            <div class="mod-card-info"><h2>Talleres</h2><p>Talleres, Citas, Coches de sustitución</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcanany
 
         <a href="{{ route('dataxis.inicio') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#2ECC71,#27AE60);"><i class="bi bi-bar-chart-line"></i></div>
-            <div class="mod-card-info"><h4>Dataxis</h4><p>Análisis, KPIs, Informes</p></div>
+            <div class="mod-card-info"><h2>Dataxis</h2><p>Análisis, KPIs, Informes</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
 
         <a href="{{ route('cliente.inicio') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#E74C3C,#C0392B);"><i class="bi bi-person-heart"></i></div>
-            <div class="mod-card-info"><h4>Cliente</h4><p>Chatbot IA, Pretasación, Configurador</p></div>
+            <div class="mod-card-info"><h2>Cliente</h2><p>Chatbot IA, Pretasación, Configurador</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
     </div>
@@ -99,25 +99,25 @@
     @can('ver usuarios')
     <a href="{{ route('users.index') }}" class="vx-stat-card">
         <div class="vx-stat-icon" style="background: rgba(51,170,221,0.12); color: var(--vx-primary);"><i class="bi bi-people"></i></div>
-        <div class="vx-stat-content"><h4>Usuarios</h4></div>
+        <div class="vx-stat-content"><h3>Usuarios</h3></div>
     </a>
     @endcan
     @can('ver clientes')
     <a href="{{ route('clientes.index') }}" class="vx-stat-card">
         <div class="vx-stat-icon" style="background: rgba(46,204,113,0.12); color: var(--vx-success);"><i class="bi bi-person-lines-fill"></i></div>
-        <div class="vx-stat-content"><h4>Clientes</h4></div>
+        <div class="vx-stat-content"><h3>Clientes</h3></div>
     </a>
     @endcan
     @can('ver vehículos')
     <a href="{{ route('vehiculos.index') }}" class="vx-stat-card">
         <div class="vx-stat-icon" style="background: rgba(243,156,18,0.12); color: var(--vx-warning);"><i class="bi bi-truck"></i></div>
-        <div class="vx-stat-content"><h4>Vehículos</h4></div>
+        <div class="vx-stat-content"><h3>Vehículos</h3></div>
     </a>
     @endcan
     @can('ver ofertas')
     <a href="{{ route('ofertas.index') }}" class="vx-stat-card">
         <div class="vx-stat-icon" style="background: rgba(231,76,60,0.12); color: var(--vx-danger);"><i class="bi bi-file-earmark-text"></i></div>
-        <div class="vx-stat-content"><h4>Ofertas</h4></div>
+        <div class="vx-stat-content"><h3>Ofertas</h3></div>
     </a>
     @endcan
 </div>

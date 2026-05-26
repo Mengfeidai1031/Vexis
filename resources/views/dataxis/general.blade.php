@@ -17,9 +17,9 @@
 
 {{-- Gráficas --}}
 <div class="dx-grid">
-    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4>Modelos por Marca</h4></div><div class="vx-card-body"><canvas id="chartCatalogo" height="180"></canvas></div></div>
-    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4>Precio Medio por Marca</h4></div><div class="vx-card-body"><canvas id="chartPrecioMedio" height="180"></canvas></div></div>
-    <div class="vx-card dx-grid-full dx-chart-lg"><div class="vx-card-header"><h4>Nuevos Clientes por Mes</h4></div><div class="vx-card-body"><canvas id="chartClientes" height="120"></canvas></div></div>
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h2>Modelos por Marca</h2></div><div class="vx-card-body"><canvas id="chartCatalogo" height="180"></canvas></div></div>
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h2>Precio Medio por Marca</h2></div><div class="vx-card-body"><canvas id="chartPrecioMedio" height="180"></canvas></div></div>
+    <div class="vx-card dx-grid-full dx-chart-lg"><div class="vx-card-header"><h2>Nuevos Clientes por Mes</h2></div><div class="vx-card-body"><canvas id="chartClientes" height="120"></canvas></div></div>
 </div>
 
 @push('scripts')

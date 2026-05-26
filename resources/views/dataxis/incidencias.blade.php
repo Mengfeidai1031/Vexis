@@ -13,10 +13,10 @@
 
 {{-- Gráficas --}}
 <div class="dx-grid">
-    <div class="vx-card dx-grid-full dx-chart-lg"><div class="vx-card-header"><h4>Incidencias por Mes</h4></div><div class="vx-card-body"><canvas id="chartIncMes" height="120"></canvas></div></div>
-    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4>Por Estado</h4></div><div class="vx-card-body"><canvas id="chartIncEstado" height="180"></canvas></div></div>
-    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h4>Por Prioridad</h4></div><div class="vx-card-body"><canvas id="chartIncPrioridad" height="180"></canvas></div></div>
-    <div class="vx-card dx-grid-full dx-chart-lg"><div class="vx-card-header"><h4>Carga por Técnico</h4></div><div class="vx-card-body"><canvas id="chartIncTecnico" height="140"></canvas></div></div>
+    <div class="vx-card dx-grid-full dx-chart-lg"><div class="vx-card-header"><h2>Incidencias por Mes</h2></div><div class="vx-card-body"><canvas id="chartIncMes" height="120"></canvas></div></div>
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h2>Por Estado</h2></div><div class="vx-card-body"><canvas id="chartIncEstado" height="180"></canvas></div></div>
+    <div class="vx-card dx-chart-sm"><div class="vx-card-header"><h2>Por Prioridad</h2></div><div class="vx-card-body"><canvas id="chartIncPrioridad" height="180"></canvas></div></div>
+    <div class="vx-card dx-grid-full dx-chart-lg"><div class="vx-card-header"><h2>Carga por Técnico</h2></div><div class="vx-card-body"><canvas id="chartIncTecnico" height="140"></canvas></div></div>
 </div>
 
 @push('scripts')

@@ -8,8 +8,6 @@
     @php
         $restrictionTypes = [
             'empresas' => ['label' => 'Empresas', 'icon' => 'bi-building', 'nameField' => 'nombre', 'extraField' => 'cif'],
-            'clientes' => ['label' => 'Clientes', 'icon' => 'bi-person-lines-fill', 'nameField' => 'nombre_completo', 'extraField' => null],
-            'vehiculos' => ['label' => 'Vehículos', 'icon' => 'bi-truck', 'nameField' => null, 'extraField' => null],
             'centros' => ['label' => 'Centros', 'icon' => 'bi-geo-alt', 'nameField' => 'nombre', 'extraField' => null],
             'departamentos' => ['label' => 'Departamentos', 'icon' => 'bi-diagram-3', 'nameField' => 'nombre', 'extraField' => 'abreviatura'],
         ];
@@ -37,15 +35,13 @@
                                 {{ in_array($item->id, old('restrictions.' . $type, $existingRestrictions[$type] ?? [])) ? 'checked' : '' }}
                             >
                             <span style="font-size: 12px;">
-                                @if($type === 'vehiculos')
-                                    {{ $item->modelo }} {{ $item->version }}
-                                @else
-                                    {{ $config['nameField'] ? $item->{$config['nameField']} : $item->nombre }}
-                                @endif
+                                {{ $config['nameField'] ? $item->{$config['nameField']} : $item->nombre }}
                                 @if($config['extraField'] && $item->{$config['extraField']})
                                     <span style="color: var(--vx-text-muted);">({{ $item->{$config['extraField']} }})</span>
                                 @endif
-                                <span style="color: var(--vx-text-muted);">· {{ $item->empresa->nombre ?? '' }}</span>
+                                @if(isset($item->empresa))
+                                    <span style="color: var(--vx-text-muted);">· {{ $item->empresa->nombre }}</span>
+                                @endif
                             </span>
                         </label>
                     @endforeach

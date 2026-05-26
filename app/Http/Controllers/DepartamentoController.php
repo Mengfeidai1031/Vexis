@@ -24,33 +24,31 @@ class DepartamentoController extends Controller
      */
     public function index(Request $request)
     {
-        $departamentos = $this->departamentoRepository->all();
+        $query = Departamento::query();
 
         if ($request->filled('id')) {
-            $departamentos = $departamentos->filter(fn ($d) => (int) $d->id === (int) $request->id)->values();
+            $query->where('id', (int) $request->input('id'));
         }
         if ($request->filled('nombre')) {
-            $departamentos = $departamentos->filter(fn ($d) => $d->nombre === $request->nombre)->values();
+            $query->where('nombre', $request->input('nombre'));
         }
         if ($request->filled('abreviatura')) {
-            $departamentos = $departamentos->filter(fn ($d) => $d->abreviatura === $request->abreviatura)->values();
+            $query->where('abreviatura', $request->input('abreviatura'));
         }
         if ($request->filled('creado_desde')) {
-            $desde = $request->creado_desde;
-            $departamentos = $departamentos->filter(fn ($d) => $d->created_at && $d->created_at->format('Y-m-d') >= $desde)->values();
+            $query->whereDate('created_at', '>=', $request->input('creado_desde'));
         }
 
-        // Sorting
         $sortable = ['id', 'nombre', 'abreviatura', 'created_at'];
-        if ($request->filled('sort_by') && in_array($request->sort_by, $sortable)) {
-            $dir = $request->sort_dir === 'desc' ? 'desc' : 'asc';
-            if ($departamentos instanceof \Illuminate\Pagination\AbstractPaginator) {
-                $sorted = $departamentos->getCollection()->sortBy($request->sort_by, SORT_REGULAR, $dir === 'desc')->values();
-                $departamentos->setCollection($sorted);
-            } else {
-                $departamentos = $departamentos->sortBy($request->sort_by, SORT_REGULAR, $dir === 'desc')->values();
-            }
+        $sortBy = $request->input('sort_by');
+        if ($sortBy && in_array($sortBy, $sortable, true)) {
+            $dir = $request->input('sort_dir') === 'desc' ? 'desc' : 'asc';
+            $query->orderBy($sortBy, $dir);
+        } else {
+            $query->orderBy('nombre', 'asc');
         }
+
+        $departamentos = $query->paginate(10)->withQueryString();
 
         return view('departamentos.index', compact('departamentos'));
     }

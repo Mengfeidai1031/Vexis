@@ -18,6 +18,14 @@ class VehiculoDocumentoController extends Controller
         private readonly VehiculoEstadoService $estadoService,
     ) {}
 
+    public function index(Vehiculo $vehiculo)
+    {
+        $this->authorize('view', $vehiculo);
+        $vehiculo->load(['documentos.user', 'marca', 'empresa']);
+
+        return view('vehiculos.documentos', compact('vehiculo'));
+    }
+
     public function store(Request $request, Vehiculo $vehiculo): RedirectResponse
     {
         $this->authorize('update', $vehiculo);

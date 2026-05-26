@@ -4,7 +4,7 @@
 <div class="vx-page-header"><h1 class="vx-page-title">Editar: {{ $tasacion->codigo_tasacion }}</h1><a href="{{ route('tasaciones.index') }}" class="vx-btn vx-btn-secondary"><i class="bi bi-arrow-left"></i> Volver</a></div>
 <div style="max-width:750px;"><div class="vx-card"><div class="vx-card-body">
     <form action="{{ route('tasaciones.update', $tasacion) }}" method="POST">@csrf @method('PUT')
-        <h5 style="font-size:13px;font-weight:700;color:var(--vx-text-muted);margin-bottom:12px;">DATOS DEL VEHÍCULO</h5>
+        <h2 style="font-size:13px;font-weight:700;color:var(--vx-text-muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.4px;">DATOS DEL VEHÍCULO</h2>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 16px;">
             <div class="vx-form-group"><label class="vx-label">Marca vehículo <span class="required">*</span></label><input type="text" class="vx-input" name="vehiculo_marca" value="{{ old('vehiculo_marca', $tasacion->vehiculo_marca) }}" required></div>
             <div class="vx-form-group"><label class="vx-label">Modelo <span class="required">*</span></label><input type="text" class="vx-input" name="vehiculo_modelo" value="{{ old('vehiculo_modelo', $tasacion->vehiculo_modelo) }}" required></div>
@@ -22,7 +22,7 @@
                 @endforeach
             </div>
         </div>
-        <h5 style="font-size:13px;font-weight:700;color:var(--vx-text-muted);margin:16px 0 12px;">VALORACIÓN</h5>
+        <h2 style="font-size:13px;font-weight:700;color:var(--vx-text-muted);margin:16px 0 12px;text-transform:uppercase;letter-spacing:0.4px;">VALORACIÓN</h2>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 16px;">
             <div class="vx-form-group"><label class="vx-label">Valor Estimado (€)</label><input type="number" class="vx-input" name="valor_estimado" value="{{ old('valor_estimado', $tasacion->valor_estimado) }}" step="0.01" style="font-family:var(--vx-font-mono);"></div>
             <div class="vx-form-group"><label class="vx-label">Valor Final (€)</label><input type="number" class="vx-input" name="valor_final" value="{{ old('valor_final', $tasacion->valor_final) }}" step="0.01" style="font-family:var(--vx-font-mono);font-weight:700;"></div>

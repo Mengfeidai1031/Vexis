@@ -19,7 +19,7 @@
 
         {{-- Cabecera resumen del vehículo (solo lectura) --}}
         <div class="vx-card" style="margin-bottom:16px;">
-            <div class="vx-card-header"><h4><i class="bi bi-truck" style="color:var(--vx-primary);"></i> Vehículo asociado</h4></div>
+            <div class="vx-card-header"><h2><i class="bi bi-truck" style="color:var(--vx-primary);"></i> Vehículo asociado</h2></div>
             <div class="vx-card-body">
                 <div class="vx-form-grid vx-form-grid-3">
                     <div class="vx-form-group"><label class="vx-label">Chasis</label><input type="text" class="vx-input" value="{{ $vehiculo->chasis }}" readonly></div>
@@ -30,7 +30,7 @@
         </div>
 
         <div class="vx-card">
-            <div class="vx-card-header"><h4><i class="bi bi-file-earmark-pdf" style="color:var(--vx-danger);"></i> Datos del documento</h4></div>
+            <div class="vx-card-header"><h2><i class="bi bi-file-earmark-pdf" style="color:var(--vx-danger);"></i> Datos del documento</h2></div>
             <div class="vx-card-body">
 
                 @if($tipo === 'ficha_tecnica')
@@ -39,7 +39,7 @@
                             <label class="vx-label" for="numero_homologacion">Nº Homologación <span class="required">*</span></label>
                             <div style="display:flex;gap:6px;">
                                 <input type="text" class="vx-input @error('numero_homologacion') is-invalid @enderror" id="numero_homologacion" name="numero_homologacion" value="{{ old('numero_homologacion') }}" style="flex:1;font-family:var(--vx-font-mono);" required>
-                                <button type="button" class="vx-btn vx-btn-secondary" data-gen-codigo="numero_homologacion" title="Generar automáticamente"><i class="bi bi-magic"></i></button>
+                                <button type="button" class="vx-btn vx-btn-secondary" data-gen-codigo="numero_homologacion" title="Generar automáticamente" aria-label="Generar automáticamente"><i class="bi bi-magic" aria-hidden="true"></i></button>
                             </div>
                             @error('numero_homologacion')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
                         </div>
@@ -109,7 +109,7 @@
                             <label class="vx-label" for="numero_informe">Nº Informe ITV <span class="required">*</span></label>
                             <div style="display:flex;gap:6px;">
                                 <input type="text" class="vx-input" id="numero_informe" name="numero_informe" value="{{ old('numero_informe') }}" style="flex:1;font-family:var(--vx-font-mono);" required>
-                                <button type="button" class="vx-btn vx-btn-secondary" data-gen-codigo="numero_informe" title="Generar automáticamente"><i class="bi bi-magic"></i></button>
+                                <button type="button" class="vx-btn vx-btn-secondary" data-gen-codigo="numero_informe" title="Generar automáticamente" aria-label="Generar automáticamente"><i class="bi bi-magic" aria-hidden="true"></i></button>
                             </div>
                             @error('numero_informe')<div class="vx-invalid-feedback">{{ $message }}</div>@enderror
                         </div>
@@ -151,7 +151,7 @@
                             <label class="vx-label" for="numero_permiso">Nº Permiso <span class="required">*</span></label>
                             <div style="display:flex;gap:6px;">
                                 <input type="text" class="vx-input" id="numero_permiso" name="numero_permiso" value="{{ old('numero_permiso') }}" style="flex:1;font-family:var(--vx-font-mono);" required>
-                                <button type="button" class="vx-btn vx-btn-secondary" data-gen-codigo="numero_permiso" title="Generar automáticamente"><i class="bi bi-magic"></i></button>
+                                <button type="button" class="vx-btn vx-btn-secondary" data-gen-codigo="numero_permiso" title="Generar automáticamente" aria-label="Generar automáticamente"><i class="bi bi-magic" aria-hidden="true"></i></button>
                             </div>
                         </div>
                         <div class="vx-form-group">
@@ -203,7 +203,7 @@
                             <label class="vx-label" for="numero_poliza">Nº Póliza <span class="required">*</span></label>
                             <div style="display:flex;gap:6px;">
                                 <input type="text" class="vx-input" id="numero_poliza" name="numero_poliza" value="{{ old('numero_poliza') }}" style="flex:1;font-family:var(--vx-font-mono);" required>
-                                <button type="button" class="vx-btn vx-btn-secondary" data-gen-codigo="numero_poliza" title="Generar automáticamente"><i class="bi bi-magic"></i></button>
+                                <button type="button" class="vx-btn vx-btn-secondary" data-gen-codigo="numero_poliza" title="Generar automáticamente" aria-label="Generar automáticamente"><i class="bi bi-magic" aria-hidden="true"></i></button>
                             </div>
                         </div>
                         <div class="vx-form-group">
@@ -252,7 +252,7 @@
                             <label class="vx-label" for="numero_contrato">Nº Contrato <span class="required">*</span></label>
                             <div style="display:flex;gap:6px;">
                                 <input type="text" class="vx-input" id="numero_contrato" name="numero_contrato" value="{{ old('numero_contrato') }}" style="flex:1;font-family:var(--vx-font-mono);" required>
-                                <button type="button" class="vx-btn vx-btn-secondary" data-gen-codigo="numero_contrato" title="Generar automáticamente"><i class="bi bi-magic"></i></button>
+                                <button type="button" class="vx-btn vx-btn-secondary" data-gen-codigo="numero_contrato" title="Generar automáticamente" aria-label="Generar automáticamente"><i class="bi bi-magic" aria-hidden="true"></i></button>
                             </div>
                         </div>
                         <div class="vx-form-group">

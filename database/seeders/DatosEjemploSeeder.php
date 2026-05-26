@@ -10,7 +10,6 @@ use App\Models\Cliente;
 use App\Models\CocheSustitucion;
 use App\Models\Empresa;
 use App\Models\Incidencia;
-use App\Models\IncidenciaArchivo;
 use App\Models\Mecanico;
 use App\Models\NamingPc;
 use App\Models\Reparto;
@@ -179,9 +178,11 @@ class DatosEjemploSeeder extends Seeder
             return;
         }
         $empresas = Empresa::pluck('id')->toArray();
+        $clientesReg = Cliente::pluck('id')->toArray();
+        $vehiculosReg = Vehiculo::pluck('id')->toArray();
 
-        $clientes = ['Ana López', 'Pedro Suárez', 'María García', 'Carlos Díaz', 'Laura Medina', 'Roberto Fernández', 'Elena Cruz', 'Pablo Martín', 'Lucía Pérez', 'Javier Torres', 'Alba Hernández', 'Daniel Ruiz', 'Marta Gómez', 'Sergio Quintana', 'Rocío Pérez'];
-        $vehiculos = ['Nissan Qashqai 2023', 'Renault Clio 2022', 'Dacia Duster 2024', 'Nissan Juke 2023', 'Renault Captur 2022', 'Dacia Sandero 2024', 'Renault Megane 2023', 'Nissan X-Trail 2024', 'Dacia Jogger 2024', 'Renault Austral 2024'];
+        $clientesAd = ['Ana López', 'Pedro Suárez', 'María García', 'Carlos Díaz', 'Laura Medina', 'Roberto Fernández', 'Elena Cruz', 'Pablo Martín', 'Lucía Pérez', 'Javier Torres'];
+        $vehiculosAd = ['Nissan Qashqai 2023', 'Renault Clio 2022', 'Dacia Duster 2024', 'Nissan Juke 2023', 'Renault Captur 2022', 'Dacia Sandero 2024'];
         $descripciones = ['Revisión de los 30.000 km', 'Cambio de aceite y filtros', 'Ruido en la dirección', 'Revisión ITV', 'Cambio de neumáticos', 'Diagnóstico motor', 'Reparación aire acondicionado', 'Cambio pastillas de freno', 'Alineación y equilibrado', 'Sustitución de correa de distribución', 'Reparación embrague'];
         $estados = ['pendiente', 'confirmada', 'en_curso', 'completada', 'cancelada'];
 
@@ -189,13 +190,17 @@ class DatosEjemploSeeder extends Seeder
             $mec = $mecanicos->random();
             $fecha = $this->fechaAleatoria();
             $hora = rand(8, 16);
+            $useFkCliente = ! empty($clientesReg) && rand(0, 1) === 1;
+            $useFkVehiculo = ! empty($vehiculosReg) && rand(0, 1) === 1;
             CitaTaller::create([
                 'mecanico_id' => $mec->id,
                 'taller_id' => $mec->taller_id,
                 'marca_id' => $mec->taller?->marca_id,
                 'empresa_id' => $empresas[array_rand($empresas)],
-                'cliente_nombre' => $clientes[array_rand($clientes)],
-                'vehiculo_info' => $vehiculos[array_rand($vehiculos)],
+                'cliente_id' => $useFkCliente ? $clientesReg[array_rand($clientesReg)] : null,
+                'vehiculo_id' => $useFkVehiculo ? $vehiculosReg[array_rand($vehiculosReg)] : null,
+                'cliente_nombre' => $useFkCliente ? null : $clientesAd[array_rand($clientesAd)],
+                'vehiculo_info' => $useFkVehiculo ? null : $vehiculosAd[array_rand($vehiculosAd)],
                 'fecha' => $fecha->toDateString(),
                 'hora_inicio' => sprintf('%02d:00', $hora),
                 'hora_fin' => sprintf('%02d:00', $hora + 1),
@@ -218,6 +223,7 @@ class DatosEjemploSeeder extends Seeder
         }
 
         $colores = ['Blanco', 'Gris', 'Rojo', 'Azul', 'Negro', 'Plata'];
+        $clientesReg = Cliente::pluck('id')->toArray();
 
         foreach ($vehiculos->values() as $i => $v) {
             $coche = CocheSustitucion::firstOrCreate(
@@ -237,11 +243,13 @@ class DatosEjemploSeeder extends Seeder
             // Reservas históricas
             for ($r = 0; $r < rand(1, 4); $r++) {
                 $fi = $this->fechaAleatoria();
+                $useFk = ! empty($clientesReg) && rand(0, 1) === 1;
                 ReservaSustitucion::firstOrCreate(
                     ['coche_id' => $coche->id, 'fecha_inicio' => $fi->toDateString(), 'cliente_nombre' => 'Cliente Histórico '.($i + 1).'-'.$r],
                     [
                         'coche_id' => $coche->id,
-                        'cliente_nombre' => 'Cliente Histórico '.($i + 1).'-'.$r,
+                        'cliente_id' => $useFk ? $clientesReg[array_rand($clientesReg)] : null,
+                        'cliente_nombre' => $useFk ? null : 'Cliente Histórico '.($i + 1).'-'.$r,
                         'fecha_inicio' => $fi->toDateString(),
                         'fecha_fin' => $fi->copy()->addDays(rand(2, 10))->toDateString(),
                         'estado' => ['reservado', 'entregado', 'devuelto', 'cancelado'][rand(0, 3)],

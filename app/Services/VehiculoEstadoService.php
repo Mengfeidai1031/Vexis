@@ -61,4 +61,15 @@ class VehiculoEstadoService
             $this->cambiarEstado($vehiculo, $mapa[$estadoVenta], 'Sincronización con venta (estado '.$estadoVenta.')');
         }
     }
+
+    /**
+     * Sincroniza el vehículo cuando entra/sale del taller por una cita.
+     */
+    public function sincronizarConCita(Vehiculo $vehiculo, string $estadoCita, ?string $codigoCita = null): void
+    {
+        $obs = 'Sincronización con cita taller'.($codigoCita ? ' #'.$codigoCita : '').' (estado '.$estadoCita.')';
+        if (in_array($estadoCita, ['confirmada', 'en_curso'], true)) {
+            $this->cambiarEstado($vehiculo, 'taller', $obs);
+        }
+    }
 }

@@ -34,7 +34,7 @@
                         <td>{{ $empresa->codigo_postal }}</td>
                         <td>{{ $empresa->telefono }}</td>
                         <td>
-                            <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+                            <div class="vx-actions"><button class="vx-actions-toggle" aria-label="Abrir acciones" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button><div class="vx-actions-menu">
                                 @can('ver empresas')<a href="{{ route('empresas.show', $empresa) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>@endcan
                                 @can('editar empresas')<a href="{{ route('empresas.edit', $empresa) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>@endcan
                                 @can('eliminar empresas')

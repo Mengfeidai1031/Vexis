@@ -12,6 +12,9 @@
         $groupLabels = [
             'modulos' => ['Módulos', 'bi-grid-3x3-gap', 'Activar o desactivar módulos del sistema. Los módulos desactivados no aparecerán en la navegación.'],
             'verifactu' => ['Verifactu', 'bi-shield-check', 'Configuración del sistema de facturación electrónica Verifactu (RD 1007/2023).'],
+            'facturacion' => ['Facturación', 'bi-receipt', 'Parámetros de facturación: serie, impuestos, régimen.'],
+            'rrhh' => ['Recursos Humanos', 'bi-people', 'Vacaciones, ausencias y políticas de personal.'],
+            'ia' => ['Inteligencia Artificial', 'bi-cpu', 'Toggles y cuotas mensuales de los servicios Gemini.'],
             'sistema' => ['Sistema', 'bi-pc-display', 'Configuración general del sistema.'],
             'seguridad' => ['Seguridad', 'bi-lock', 'Opciones de seguridad y control de acceso.'],
         ];

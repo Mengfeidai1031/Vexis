@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 
 class Factura extends Model
@@ -74,5 +75,15 @@ class Factura extends Model
     public function emisor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'emisor_id');
+    }
+
+    public function verifactus(): HasMany
+    {
+        return $this->hasMany(Verifactu::class);
+    }
+
+    public function verifactuActivo(): ?Verifactu
+    {
+        return $this->verifactus()->whereNotIn('estado', ['anulado', 'rechazado'])->latest()->first();
     }
 }

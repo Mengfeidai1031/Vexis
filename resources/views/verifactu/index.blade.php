@@ -64,7 +64,7 @@
                 @case('anulado')<span class="vx-badge vx-badge-gray">Anulado</span>@break
             @endswitch</td>
             <td style="font-size:12px;">{{ $r->fecha_registro->format('d/m/Y H:i') }}</td>
-            <td><div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+            <td><div class="vx-actions"><button class="vx-actions-toggle" aria-label="Abrir acciones" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button><div class="vx-actions-menu">
                 <a href="{{ route('verifactu.show', $r) }}"><i class="bi bi-eye" style="color:var(--vx-info);"></i> Ver</a>
             </div></div></td>
         </tr>@endforeach</tbody>

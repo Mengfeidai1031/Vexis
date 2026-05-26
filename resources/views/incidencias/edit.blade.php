@@ -11,7 +11,7 @@
     {{-- COLUMNA IZQUIERDA — Usuario --}}
     <div style="display:flex;flex-direction:column;gap:16px;">
         <div class="vx-card">
-            <div class="vx-card-header" style="background:rgba(51,170,221,0.06);"><h4><i class="bi bi-person" style="color:var(--vx-primary);"></i> Datos del usuario</h4></div>
+            <div class="vx-card-header" style="background:rgba(51,170,221,0.06);"><h2><i class="bi bi-person" style="color:var(--vx-primary);"></i> Datos del usuario</h2></div>
             <div class="vx-card-body">
                 <div class="vx-form-group">
                     <label class="vx-label">Emisor</label>
@@ -44,7 +44,7 @@
     {{-- COLUMNA DERECHA — Técnico --}}
     <div style="display:flex;flex-direction:column;gap:16px;">
         <div class="vx-card">
-            <div class="vx-card-header" style="background:rgba(142,68,173,0.06);"><h4><i class="bi bi-person-gear" style="color:#8e44ad;"></i> Datos del técnico</h4></div>
+            <div class="vx-card-header" style="background:rgba(142,68,173,0.06);"><h2><i class="bi bi-person-gear" style="color:#8e44ad;"></i> Datos del técnico</h2></div>
             <div class="vx-card-body">
                 <div class="vx-form-group">
                     <label class="vx-label">Técnico asignado</label>

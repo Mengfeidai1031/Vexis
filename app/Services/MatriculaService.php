@@ -175,7 +175,7 @@ class MatriculaService
             }
         }
 
-        $num = str_pad($numeros, 4, '0', STR_PAD_LEFT);
+        $num = str_pad((string) $numeros, 4, '0', STR_PAD_LEFT);
         $let = self::LETRAS[$l1].self::LETRAS[$l2].self::LETRAS[$l3];
 
         return "{$num} {$let}";

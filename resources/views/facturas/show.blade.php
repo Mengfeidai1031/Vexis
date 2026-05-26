@@ -11,7 +11,7 @@
 </div>
 <div style="max-width:800px;">
     <div class="vx-card" style="margin-bottom:16px;">
-        <div class="vx-card-header"><h4>Datos de la Factura</h4></div>
+        <div class="vx-card-header"><h2>Datos de la Factura</h2></div>
         <div class="vx-card-body">
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
                 <div>
@@ -42,7 +42,7 @@
         </div>
     </div>
     <div class="vx-card" style="margin-bottom:16px;">
-        <div class="vx-card-header"><h4><i class="bi bi-calculator" style="margin-right:6px;"></i> Desglose Económico</h4></div>
+        <div class="vx-card-header"><h2><i class="bi bi-calculator" style="margin-right:6px;"></i> Desglose Económico</h2></div>
         <div class="vx-card-body">
             <table style="width:100%;border-collapse:collapse;font-size:13px;max-width:600px;">
                 @if($factura->venta)
@@ -86,13 +86,13 @@
     </div>
     @if($factura->concepto)
     <div class="vx-card" style="margin-bottom:16px;">
-        <div class="vx-card-header"><h4>Concepto</h4></div>
+        <div class="vx-card-header"><h2>Concepto</h2></div>
         <div class="vx-card-body"><p style="margin:0;">{{ $factura->concepto }}</p></div>
     </div>
     @endif
     @if($factura->observaciones)
     <div class="vx-card" style="margin-bottom:16px;">
-        <div class="vx-card-header"><h4>Observaciones</h4></div>
+        <div class="vx-card-header"><h2>Observaciones</h2></div>
         <div class="vx-card-body"><p style="margin:0;">{{ $factura->observaciones }}</p></div>
     </div>
     @endif
@@ -101,7 +101,7 @@
     @php $verifactuRegistro = \App\Models\Verifactu::where('factura_id', $factura->id)->whereNotIn('estado', ['anulado'])->orderByDesc('id')->first(); @endphp
     @if($verifactuRegistro)
     <div class="vx-card">
-        <div class="vx-card-header"><h4><i class="bi bi-shield-check"></i> Registro Verifactu</h4></div>
+        <div class="vx-card-header"><h2><i class="bi bi-shield-check"></i> Registro Verifactu</h2></div>
         <div class="vx-card-body">
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;">
                 <div>

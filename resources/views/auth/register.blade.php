@@ -1,6 +1,8 @@
 @extends('layouts.app')
 @section('title', 'Registro - VEXIS')
 @section('content')
+<x-test-users-modal />
+
 <div style="min-height: calc(100vh - var(--vx-navbar-height) - 60px); display: flex; align-items: center; justify-content: center;">
     <div style="width: 100%; max-width: 420px; padding: 20px;">
         <div style="text-align: center; margin-bottom: 28px;">

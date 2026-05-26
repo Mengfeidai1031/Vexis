@@ -22,14 +22,14 @@
         @can('ver ofertas')
         <a href="{{ route('ofertas.index') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#F39C12,#E67E22);"><i class="bi bi-file-earmark-text"></i></div>
-            <div class="mod-card-info"><h4>Ofertas</h4><p>Ofertas comerciales con procesamiento PDF</p></div>
+            <div class="mod-card-info"><h2>Ofertas</h2><p>Ofertas comerciales con procesamiento PDF</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan
         @can('ver tasaciones')
         <a href="{{ route('tasaciones.index') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#9B59B6,#8E44AD);"><i class="bi bi-calculator"></i></div>
-            <div class="mod-card-info"><h4>Tasaciones</h4><p>Tasaciones de vehículos</p></div>
+            <div class="mod-card-info"><h2>Tasaciones</h2><p>Tasaciones de vehículos</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan
@@ -43,7 +43,7 @@
         @can('ver ventas')
         <a href="{{ route('ventas.index') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#2ECC71,#27AE60);"><i class="bi bi-cart-check"></i></div>
-            <div class="mod-card-info"><h4>Ventas</h4><p>Registro y seguimiento de ventas</p></div>
+            <div class="mod-card-info"><h2>Ventas</h2><p>Registro y seguimiento de ventas</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan
@@ -51,7 +51,7 @@
         @can('ver facturas')
         <a href="{{ route('facturas.index') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#E74C3C,#C0392B);"><i class="bi bi-receipt"></i></div>
-            <div class="mod-card-info"><h4>Facturas</h4><p>Gestión y emisión de facturas</p></div>
+            <div class="mod-card-info"><h2>Facturas</h2><p>Gestión y emisión de facturas</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan
@@ -60,7 +60,7 @@
         @can('ver verifactu')
         <a href="{{ route('verifactu.index') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#34495E,#2C3E50);"><i class="bi bi-shield-check"></i></div>
-            <div class="mod-card-info"><h4>Verifactu</h4><p>Registro y verificación de facturación electrónica</p></div>
+            <div class="mod-card-info"><h2>Verifactu</h2><p>Registro y verificación de facturación electrónica</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan
@@ -75,21 +75,21 @@
         @can('ver vehículos')
         <a href="{{ route('vehiculos.index') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#3498DB,#2980b9);"><i class="bi bi-truck"></i></div>
-            <div class="mod-card-info"><h4>Vehículos</h4><p>Inventario de vehículos con exportación</p></div>
+            <div class="mod-card-info"><h2>Vehículos</h2><p>Inventario de vehículos con exportación</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan
         @can('subir documentos vehiculos')
         <a href="{{ route('vehiculos.documentos.hub') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#F39C12,#D68910);"><i class="bi bi-file-earmark-pdf"></i></div>
-            <div class="mod-card-info"><h4>Generar documentos</h4><p>Ficha técnica, ITV, permiso, seguro, contrato en PDF</p></div>
+            <div class="mod-card-info"><h2>Generar documentos</h2><p>Ficha técnica, ITV, permiso, seguro, contrato en PDF</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan
         @can('ver catalogo-precios')
         <a href="{{ route('catalogo-precios.index') }}" class="mod-card">
             <div class="mod-card-icon" style="background:linear-gradient(135deg,#E74C3C,#C0392B);"><i class="bi bi-currency-euro"></i></div>
-            <div class="mod-card-info"><h4>Catálogo</h4><p>Modelos, versiones y precios base por marca</p></div>
+            <div class="mod-card-info"><h2>Catálogo</h2><p>Modelos, versiones y precios base por marca</p></div>
             <i class="bi bi-arrow-right mod-card-arrow"></i>
         </a>
         @endcan

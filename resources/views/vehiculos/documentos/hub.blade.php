@@ -18,7 +18,7 @@
         @csrf
 
         <div class="vx-card">
-            <div class="vx-card-header"><h4><i class="bi bi-collection" style="color:var(--vx-primary);"></i> Paso 1 — Tipo de documento</h4></div>
+            <div class="vx-card-header"><h2><i class="bi bi-collection" style="color:var(--vx-primary);"></i> Paso 1 — Tipo de documento</h2></div>
             <div class="vx-card-body">
                 <div class="vx-tipos-grid">
                     @foreach($tipos as $k => $v)
@@ -52,7 +52,7 @@
         </div>
 
         <div class="vx-card" style="margin-top:16px;">
-            <div class="vx-card-header"><h4><i class="bi bi-truck" style="color:var(--vx-primary);"></i> Paso 2 — Vehículo</h4></div>
+            <div class="vx-card-header"><h2><i class="bi bi-truck" style="color:var(--vx-primary);"></i> Paso 2 — Vehículo</h2></div>
             <div class="vx-card-body">
                 <div class="vx-form-group">
                     <label class="vx-label" for="vehiculo_id">Vehículo <span class="required">*</span></label>

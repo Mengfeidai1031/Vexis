@@ -48,7 +48,7 @@
                             @else<span class="vx-badge vx-badge-gray">Inactivo</span>@endif
                         </td>
                         <td>
-                            <div class="vx-actions"><button class="vx-actions-toggle"><i class="bi bi-three-dots-vertical"></i></button><div class="vx-actions-menu">
+                            <div class="vx-actions"><button class="vx-actions-toggle" aria-label="Abrir acciones" aria-haspopup="menu" aria-expanded="false"><i class="bi bi-three-dots-vertical" aria-hidden="true"></i></button><div class="vx-actions-menu">
                                 @can('editar tipos-cliente')
                                     <a href="{{ route('tipos-cliente.edit', $tipo) }}"><i class="bi bi-pencil" style="color:var(--vx-warning);"></i> Editar</a>
                                 @endcan

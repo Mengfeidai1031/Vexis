@@ -181,7 +181,7 @@ class FacturaController extends Controller
 
         $verifactuRegistro = $this->verifactuRegistration->registroActivoDeFactura($factura);
         $qrBase64 = null;
-        if ($verifactuRegistro?->url_qr) {
+        if ($verifactuRegistro?->url_qr && setting('verifactu_qr_facturas', true)) {
             $qrBase64 = AeatVerifactuService::generateQrImage($verifactuRegistro->url_qr);
         }
 

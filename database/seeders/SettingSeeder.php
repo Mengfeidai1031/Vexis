@@ -36,6 +36,22 @@ class SettingSeeder extends Seeder
             ['key' => 'max_login_attempts', 'value' => '5', 'type' => 'integer', 'group' => 'seguridad', 'description' => 'Máximo de intentos de login antes de bloqueo'],
             ['key' => 'session_timeout', 'value' => '120', 'type' => 'integer', 'group' => 'seguridad', 'description' => 'Tiempo de sesión en minutos'],
             ['key' => 'audit_logins', 'value' => '1', 'type' => 'boolean', 'group' => 'seguridad', 'description' => 'Registrar auditoría de inicios de sesión'],
+            ['key' => 'password_min_length', 'value' => '8', 'type' => 'integer', 'group' => 'seguridad', 'description' => 'Longitud mínima de contraseña'],
+
+            // Facturación
+            ['key' => 'iva_default', 'value' => '21', 'type' => 'integer', 'group' => 'facturacion', 'description' => 'Porcentaje IVA por defecto (península)'],
+            ['key' => 'igic_default', 'value' => '7', 'type' => 'integer', 'group' => 'facturacion', 'description' => 'Porcentaje IGIC por defecto (Canarias)'],
+            ['key' => 'factura_serie_actual', 'value' => 'A', 'type' => 'string', 'group' => 'facturacion', 'description' => 'Serie actual de facturas (A, B, C...)'],
+            ['key' => 'verifactu_clave_regimen', 'value' => '08', 'type' => 'string', 'group' => 'facturacion', 'description' => 'Clave régimen Verifactu (08=IGIC Canarias, 01=IVA general)'],
+
+            // RRHH
+            ['key' => 'dias_vacaciones_anuales', 'value' => '22', 'type' => 'integer', 'group' => 'rrhh', 'description' => 'Días laborables de vacaciones por año'],
+
+            // IA
+            ['key' => 'ai_chatbot_enabled', 'value' => '1', 'type' => 'boolean', 'group' => 'ia', 'description' => 'Habilitar chatbot Gemini en portal cliente'],
+            ['key' => 'ai_pretasacion_enabled', 'value' => '1', 'type' => 'boolean', 'group' => 'ia', 'description' => 'Habilitar pretasación IA Gemini en portal cliente'],
+            ['key' => 'ai_quota_chatbot_mensual', 'value' => '1000', 'type' => 'integer', 'group' => 'ia', 'description' => 'Límite mensual de peticiones al chatbot (0 = sin límite)'],
+            ['key' => 'ai_quota_pretasacion_mensual', 'value' => '500', 'type' => 'integer', 'group' => 'ia', 'description' => 'Límite mensual de peticiones a pretasación (0 = sin límite)'],
         ];
 
         foreach ($settings as $setting) {

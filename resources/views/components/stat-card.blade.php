@@ -29,15 +29,15 @@
 <{{ $tag }} @if($href) href="{{ $href }}" @endif class="vx-stat-card">
     @if($icon)
         <div class="vx-stat-icon" style="background: {{ $bgVar }}; color: {{ $colorVar }};">
-            <i class="bi {{ $icon }}"></i>
+            <i class="bi {{ $icon }}" aria-hidden="true"></i>
         </div>
     @endif
     <div class="vx-stat-content">
-        <h4>{{ $label }}</h4>
+        <h3>{{ $label }}</h3>
         <div class="vx-stat-value">{{ $value }}</div>
         @if(!is_null($trend))
             <div class="vx-stat-trend vx-stat-trend-{{ $trendDirection ?? 'neutral' }}">
-                @if($trendDirection === 'up')<i class="bi bi-arrow-up-right"></i>@elseif($trendDirection === 'down')<i class="bi bi-arrow-down-right"></i>@endif
+                @if($trendDirection === 'up')<i class="bi bi-arrow-up-right" aria-hidden="true"></i>@elseif($trendDirection === 'down')<i class="bi bi-arrow-down-right" aria-hidden="true"></i>@endif
                 {{ $trend }}
             </div>
         @endif
