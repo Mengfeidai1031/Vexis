@@ -76,6 +76,16 @@
 .vx-searchable .vx-ss-opt.selected { background: rgba(51,170,221,0.1); font-weight: 600; }
 .vx-searchable .vx-ss-opt.hidden { display: none; }
 .vx-searchable .vx-ss-empty { padding: 8px; font-size: 11px; color: var(--vx-text-muted); text-align: center; }
+
+/* Modo oscuro: este widget de filtro mantiene fondo claro (no usa --vx-input-bg),
+   así que forzamos texto oscuro para que se lea. Solo afecta a los filtros del componente;
+   los filtros nativos (.vx-input/.vx-select) adaptan su color y se dejan como están. */
+[data-theme="dark"] .vx-filtros-form .vx-ss-display,
+[data-theme="dark"] .vx-filtros-form .vx-ss-search,
+[data-theme="dark"] .vx-filtros-form .vx-ss-opt,
+[data-theme="dark"] .vx-filtros-form .vx-ss-empty { color: #1e293b; }
+[data-theme="dark"] .vx-filtros-form .vx-ss-display .vx-ss-arrow { color: #64748b; }
+[data-theme="dark"] .vx-filtros-form .vx-ss-search::placeholder { color: #94a3b8; }
 </style>
 @endpush
 

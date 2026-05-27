@@ -4,9 +4,9 @@
 <div class="vx-page-header"><h1 class="vx-page-title"><i class="bi bi-cpu" style="color:var(--vx-primary);"></i> Control de IA</h1></div>
 <div style="max-width:900px;">
     <div class="vx-card" style="margin-bottom:16px;background:rgba(51,170,221,0.06);border-color:rgba(51,170,221,0.25);">
-        <div class="vx-card-body" style="padding:12px 16px;font-size:12.5px;display:flex;gap:10px;align-items:center;color:var(--vx-text-muted);">
-            <i class="bi bi-info-circle" style="color:var(--vx-info);font-size:18px;flex-shrink:0;"></i>
-            VEXIS usa dos APIs de Google Gemini separadas. Las claves se almacenan en <code>.env</code> y nunca se muestran completas. La cuota mensual se reinicia el <strong>{{ $reset_at }}</strong>.
+        <div class="vx-card-body" style="padding:12px 16px;font-size:12.5px;display:flex;gap:10px;align-items:flex-start;color:var(--vx-text-muted);">
+            <i class="bi bi-info-circle" style="color:var(--vx-info);font-size:18px;flex-shrink:0;margin-top:1px;"></i>
+            <span style="flex:1;line-height:1.6;">VEXIS usa dos APIs de Google Gemini separadas. Las claves se almacenan en <code>.env</code> y nunca se muestran completas. La cuota mensual se reinicia el <strong>{{ $reset_at }}</strong>.</span>
         </div>
     </div>
 

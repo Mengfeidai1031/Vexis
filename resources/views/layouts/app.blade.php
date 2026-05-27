@@ -588,16 +588,6 @@
             @endauth
         </a>
         @auth
-        <div class="vx-navbar-modes">
-            <div class="vx-mode-toggle" role="group" aria-label="Modo de interfaz">
-                <button type="button" id="uiModeDesktopBtn" class="active" onclick="setUiMode('desktop')">Ordenador</button>
-                <button type="button" id="uiModeMobileBtn" onclick="setUiMode('mobile')">Móvil</button>
-            </div>
-            <div class="vx-mode-toggle" role="group" aria-label="Vista de usuario">
-                <button type="button" id="viewModeDevBtn" class="active" onclick="setViewMode('dev')">Desarrollador</button>
-                <button type="button" id="viewModeClientBtn" onclick="setViewMode('client')">Cliente</button>
-            </div>
-        </div>
         <div class="vx-navbar-mobile-tools" id="vxMobileTools">
             <button class="vx-mobile-tools-btn" type="button" onclick="toggleMobileToolsMenu()">
                 <i class="bi bi-list"></i> Opciones
@@ -605,10 +595,6 @@
             <div class="vx-mobile-tools-menu">
                 <button type="button" onclick="openSearch(); closeMobileToolsMenu();"><i class="bi bi-search"></i> Buscar</button>
                 <button type="button" onclick="toggleTheme(); closeMobileToolsMenu();"><i class="bi bi-moon-stars"></i> Cambiar tema</button>
-                <button type="button" onclick="setUiMode('desktop'); closeMobileToolsMenu();"><i class="bi bi-display"></i> Vista ordenador</button>
-                <button type="button" onclick="setUiMode('mobile'); closeMobileToolsMenu();"><i class="bi bi-phone"></i> Vista móvil</button>
-                <button type="button" onclick="setViewMode('dev'); closeMobileToolsMenu();"><i class="bi bi-code-slash"></i> Vista desarrollador</button>
-                <button type="button" onclick="setViewMode('client'); closeMobileToolsMenu();"><i class="bi bi-person"></i> Vista cliente</button>
                 @auth
                     <a href="{{ route('manual.index') }}"><i class="bi bi-book"></i> Manual de usuario</a>
                     @can('ver incidencias')
