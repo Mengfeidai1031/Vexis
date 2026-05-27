@@ -433,6 +433,9 @@
             .vx-page-header { flex-direction: column; align-items: flex-start; }
             .vx-navbar { padding: 0 12px; }
             .vx-navbar-modes { display: none; }
+            /* Consolidar el cluster de iconos en el botón "Opciones" (solo si hay sesión) */
+            .vx-navbar:has(.vx-navbar-mobile-tools) .vx-nav-right { display: none; }
+            .vx-navbar-mobile-tools { display: block; margin-left: auto; }
             .vx-modulebar-inner { padding: 8px 12px; }
             .vx-modules-toggle { display: inline-flex; }
             .vx-module-panel { margin-top: 6px; padding: 8px; border-radius: 10px; background: rgba(9, 39, 78, 0.22); border: 1px solid rgba(255,255,255,0.14); display: none; }
