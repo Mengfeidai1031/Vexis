@@ -434,6 +434,9 @@
             .vx-navbar { padding: 0 12px; }
             .vx-navbar-modes { display: none; }
             .vx-modulebar-inner { padding: 8px 12px; }
+            .vx-modules-toggle { display: inline-flex; }
+            .vx-module-panel { margin-top: 6px; padding: 8px; border-radius: 10px; background: rgba(9, 39, 78, 0.22); border: 1px solid rgba(255,255,255,0.14); display: none; }
+            .vx-module-panel.open { display: block; }
             .vx-module-nav { flex-direction: column; align-items: stretch; }
             .vx-module-nav .vx-nav-item { width: 100%; }
             .vx-module-nav .vx-nav-link { width: 100%; justify-content: space-between; }
@@ -1015,7 +1018,7 @@
             localStorage.setItem('vexis-ui-mode', mode);
             document.getElementById('uiModeDesktopBtn')?.classList.toggle('active', !isMobile);
             document.getElementById('uiModeMobileBtn')?.classList.toggle('active', isMobile);
-            if (!isMobile) {
+            if (!isMobile && !window.matchMedia('(max-width: 768px)').matches) {
                 toggleModulesPanel(true);
             }
             updateMobilePreviewScale();
@@ -1029,12 +1032,17 @@
             document.getElementById('viewModeClientBtn')?.classList.toggle('active', isClient);
         }
 
+        function vxIsMobileView() {
+            return document.body.classList.contains('vx-force-mobile') || window.matchMedia('(max-width: 768px)').matches;
+        }
+
         function toggleModulesPanel(forceOpen = null) {
             const panel = document.getElementById('vxModulesPanel');
             const icon = document.getElementById('vxModulesToggleIcon');
             if (!panel) return;
 
-            if (!document.body.classList.contains('vx-force-mobile')) {
+            // En escritorio (sin preview ni viewport móvil) el panel siempre visible.
+            if (!vxIsMobileView()) {
                 panel.classList.add('open');
                 if (icon) icon.className = 'bi bi-chevron-up';
                 return;
@@ -1045,6 +1053,15 @@
             if (icon) icon.className = nextOpen ? 'bi bi-chevron-up' : 'bi bi-chevron-down';
             localStorage.setItem('vexis-modules-open', nextOpen ? '1' : '0');
         }
+
+        // Al cruzar el breakpoint: escritorio -> abierto; móvil -> colapsado salvo que el usuario lo dejara abierto.
+        window.addEventListener('resize', function () {
+            if (!vxIsMobileView()) {
+                toggleModulesPanel(true);
+            } else if (localStorage.getItem('vexis-modules-open') !== '1') {
+                toggleModulesPanel(false);
+            }
+        });
 
         function toggleMobileToolsMenu() {
             const panel = document.getElementById('vxMobileTools');
@@ -1064,7 +1081,7 @@
             setUiMode(savedUiMode);
             setViewMode(savedViewMode);
             if (savedModulesOpen === null) {
-                toggleModulesPanel(true);
+                toggleModulesPanel(!vxIsMobileView());
             } else {
                 toggleModulesPanel(savedModulesOpen === '1');
             }

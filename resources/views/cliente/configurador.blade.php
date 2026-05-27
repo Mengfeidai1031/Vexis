@@ -267,6 +267,11 @@
 }
 .cfg-brand-logo { height: 36px; max-width: 90px; object-fit: contain; }
 .cfg-brand-name { font-size: 17px; font-weight: 800; letter-spacing: 0.2px; position: relative; z-index: 1; }
+/* Modo oscuro: recuadro claro tras el logo para que las marcas se vean bien */
+[data-theme="dark"] .cfg-brand:not(.active) .cfg-brand-logo {
+    background: #eef2f7; border-radius: 8px; padding: 6px 10px;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.06);
+}
 
 /* Model grid */
 .cfg-grid-models { display: flex; gap: 10px; flex-wrap: wrap; }
