@@ -69,20 +69,4 @@ class GeminiServiceTest extends TestCase
         $this->assertTrue($result['ok']);
         $this->assertEquals('gemini-2.0-flash', $result['model']);
     }
-
-    public function test_quota_limit_blocks_call(): void
-    {
-        Setting::set('ai_quota_chatbot_mensual', 1);
-        AiUsage::create([
-            'provider' => 'chatbot', 'user_id' => null,
-            'tokens_in' => 0, 'tokens_out' => 0, 'ok' => true,
-        ]);
-        Http::fake();
-
-        $result = app(GeminiService::class)->generate('chatbot', 'x');
-        $this->assertFalse($result['ok']);
-        $this->assertStringContainsString('Cuota', $result['error']);
-
-        Setting::set('ai_quota_chatbot_mensual', 1000);
-    }
 }

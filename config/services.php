@@ -50,6 +50,15 @@ return [
             'api_key' => env('GEMINI_PRETASACION_API_KEY', env('GEMINI_API_KEY')),
             'project' => env('GEMINI_PRETASACION_PROJECT', 'projects/1036016335421'),
         ],
+
+        // Límites del plan gratuito de Google (referencia para el panel /ai/control).
+        // Orientativos: Google los ajusta. Verifica en https://aistudio.google.com (Rate limits).
+        // El límite por día se reinicia a medianoche hora del Pacífico (~09:00 en España).
+        'free_tier' => [
+            'rpm' => (int) env('GEMINI_FREE_RPM', 15),          // peticiones/minuto
+            'rpd' => (int) env('GEMINI_FREE_RPD', 1500),         // peticiones/día
+            'tpm' => (int) env('GEMINI_FREE_TPM', 1000000),      // tokens/minuto
+        ],
     ],
 
 ];

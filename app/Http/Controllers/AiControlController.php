@@ -24,17 +24,36 @@ class AiControlController extends Controller
                 'project' => config('services.gemini.pretasacion.project'),
             ],
         ];
-        $reset_at = now()->addMonthNoOverflow()->startOfMonth()->format('d/m/Y H:i');
 
-        return view('ai.control', compact('summary', 'apis', 'reset_at'));
+        return view('ai.control', [
+            'summary' => $summary,
+            'apis' => $apis,
+            'limits' => $this->limits(),
+        ]);
     }
 
     public function summary(): JsonResponse
     {
         return response()->json([
             'summary' => AiUsage::summary(),
-            'reset_at' => now()->addMonthNoOverflow()->startOfMonth()->format('d/m/Y H:i'),
+            'limits' => $this->limits(),
         ]);
+    }
+
+    /**
+     * Límites del plan gratuito de Google (referencia) + coste.
+     *
+     * @return array{rpm:int, rpd:int, tpm:int, cost:string, reset:string}
+     */
+    private function limits(): array
+    {
+        return [
+            'rpm' => (int) config('services.gemini.free_tier.rpm', 15),
+            'rpd' => (int) config('services.gemini.free_tier.rpd', 1500),
+            'tpm' => (int) config('services.gemini.free_tier.tpm', 1000000),
+            'cost' => '0 € (plan gratuito, sin facturación)',
+            'reset' => 'Límite diario: se reinicia a medianoche (hora del Pacífico)',
+        ];
     }
 
     private function maskKey(?string $key): string

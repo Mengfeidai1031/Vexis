@@ -50,8 +50,6 @@ class SettingSeeder extends Seeder
             // IA
             ['key' => 'ai_chatbot_enabled', 'value' => '1', 'type' => 'boolean', 'group' => 'ia', 'description' => 'Habilitar chatbot Gemini en portal cliente'],
             ['key' => 'ai_pretasacion_enabled', 'value' => '1', 'type' => 'boolean', 'group' => 'ia', 'description' => 'Habilitar pretasación IA Gemini en portal cliente'],
-            ['key' => 'ai_quota_chatbot_mensual', 'value' => '1000', 'type' => 'integer', 'group' => 'ia', 'description' => 'Límite mensual de peticiones al chatbot (0 = sin límite)'],
-            ['key' => 'ai_quota_pretasacion_mensual', 'value' => '500', 'type' => 'integer', 'group' => 'ia', 'description' => 'Límite mensual de peticiones a pretasación (0 = sin límite)'],
         ];
 
         foreach ($settings as $setting) {

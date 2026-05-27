@@ -24,7 +24,7 @@ class AiControlTest extends TestCase
         $this->actingAsSuperAdmin();
         $this->get('/ai/control/summary')
             ->assertOk()
-            ->assertJsonStructure(['summary', 'reset_at']);
+            ->assertJsonStructure(['summary', 'limits']);
     }
 
     public function test_ai_usage_summary_includes_both_providers(): void
@@ -37,11 +37,21 @@ class AiControlTest extends TestCase
 
     public function test_api_keys_masked_in_view(): void
     {
+        // Claves ficticias inyectadas en tiempo de test: nunca usamos claves reales aquí.
+        $fakeChatbot = 'AIzaSyTESTchatbot0000000000000000000000';
+        $fakePretasa = 'AIzaSyTESTpretasa1111111111111111111111';
+        config([
+            'services.gemini.chatbot.api_key' => $fakeChatbot,
+            'services.gemini.pretasacion.api_key' => $fakePretasa,
+        ]);
+
         $this->actingAsSuperAdmin();
         $html = $this->get('/ai/control')->getContent();
-        // Las keys reales nunca aparecen completas
-        $this->assertStringNotContainsString('AIzaSyBFSntRXUGKC7GQ96IYzh8sIm2cN1DmfXw', $html);
-        $this->assertStringNotContainsString('AIzaSyBl2sA1ogPpmF_Un1iqJKBgKJp4NWNnWNU', $html);
-        $this->assertStringContainsString('•', $html); // máscara
+
+        // La clave completa nunca debe aparecer en el HTML…
+        $this->assertStringNotContainsString($fakeChatbot, $html);
+        $this->assertStringNotContainsString($fakePretasa, $html);
+        // …sino enmascarada.
+        $this->assertStringContainsString('•', $html);
     }
 }

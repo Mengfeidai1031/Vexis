@@ -44,16 +44,8 @@ class GeminiService
             return ['ok' => false, 'text' => '', 'model' => null, 'error' => "El servicio IA ({$provider}) está desactivado por el administrador."];
         }
 
-        // Cuota mensual
-        $quotaSetting = (int) \App\Models\Setting::get("ai_quota_{$provider}_mensual", 0);
-        if ($quotaSetting > 0) {
-            $usedThisMonth = AiUsage::where('provider', $provider)
-                ->where('created_at', '>=', now()->startOfMonth())
-                ->count();
-            if ($usedThisMonth >= $quotaSetting) {
-                return ['ok' => false, 'text' => '', 'model' => null, 'error' => "Cuota mensual ({$quotaSetting}) de {$provider} alcanzada."];
-            }
-        }
+        // Sin tope interno: usamos al máximo el plan gratuito de Google.
+        // El único límite real es el del propio Google (rate limit por minuto/día).
 
         $apiKey = config("services.gemini.{$provider}.api_key");
         if (empty($apiKey)) {

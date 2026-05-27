@@ -371,7 +371,7 @@
                 <li><strong>Chatbot</strong> (<code>GEMINI_CHATBOT_API_KEY</code>) — asistente del portal cliente. Responde con permisos del rol del cliente.</li>
                 <li><strong>Pretasación</strong> (<code>GEMINI_PRETASACION_API_KEY</code>) — valoración orientativa de vehículos.</li>
             </ul>
-            <p style="font-size:13px;line-height:1.7;">Cada llamada se registra en la tabla <code>ai_usage</code>. Super Admin puede ver el consumo en el icono <i class="bi bi-cpu"></i> del navbar. Toggles globales y cuota mensual en <code>Configuración → IA</code>.</p>
+            <p style="font-size:13px;line-height:1.7;">Cada llamada se registra en la tabla <code>ai_usage</code>. Super Admin puede ver el consumo en tiempo real (peticiones, tokens y límite diario de Google) en el icono <i class="bi bi-cpu"></i> del navbar (<code>/ai/control</code>). Se usa el plan gratuito de Google al máximo, sin tope interno. Los toggles globales de IA están en <code>Configuración → IA</code>.</p>
         </section>
 
         <section class="wiki-section" id="logs">
