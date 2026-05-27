@@ -1,25 +1,22 @@
-# Despliegue VEXIS en Oracle Cloud (Always Free) — de cero a producción
+# Despliegue VEXIS en DigitalOcean — de cero a producción
 
-Scripts que llevan un servidor **vacío** (Ubuntu 22/24 o Oracle Linux 8/9) hasta VEXIS
-funcionando 24/7, accesible desde cualquier sitio con HTTPS y un dominio gratuito.
+Scripts que llevan un Droplet **vacío** (Ubuntu 24.04 LTS) hasta VEXIS funcionando 24/7,
+accesible desde Internet con HTTPS y dominio DuckDNS.
 
 Stack que instalan: **Nginx + PHP-FPM 8.3 + MariaDB + Node 20 + Composer + Certbot**.
+Incluyen **swap automático (2 GB)** y **firewall ufw** (SSH + 80/443).
+
+Droplet de referencia: Ubuntu 24.04 x64, 1 vCPU, 2 GB RAM, 50 GB SSD.
 
 ---
 
-## ⚠️ PASO MANUAL OBLIGATORIO (consola web de Oracle, NO se puede por SSH)
+## Red y firewall (sin pasos manuales)
 
-Oracle tiene **dos** cortafuegos. Los scripts abren el del sistema operativo (iptables/ufw/firewalld),
-pero el de red (Security List) **solo se abre desde la consola**:
+DigitalOcean tiene red plana: el Droplet ya trae **IPv4 pública estable** (no cambia al reiniciar) y
+**no bloquea tráfico entrante por defecto**. No hay que tocar nada en el panel.
 
-1. OCI Console → *Networking → Virtual Cloud Networks → tu VCN → Subnet → Security List*.
-2. **Add Ingress Rules** (Stateless: No):
-   - Source `0.0.0.0/0`, IP Protocol `TCP`, Destination Port **80**
-   - Source `0.0.0.0/0`, IP Protocol `TCP`, Destination Port **443**
-3. (Recomendado) *Instance → Reserved Public IP* para que la IP no cambie al reiniciar
-   (DuckDNS se reactualiza solo cada 5 min, pero una IP fija evita cortes de DNS).
-
-Sin este paso, la web no será accesible desde fuera y Let's Encrypt fallará.
+El único cortafuegos es **ufw**, que `01-install-stack.sh` configura solo (permite SSH + 80 + 443).
+Si más adelante añades un *Cloud Firewall* de DigitalOcean, recuerda permitir TCP **22/80/443**.
 
 ---
 
@@ -50,7 +47,6 @@ sudo bash deploy/02-database.sh        # crea BD + usuario MariaDB leyendo tu .e
 sudo bash deploy/03-app.sh             # composer, build assets, .env→prod, migrate --seed, permisos, cache
 sudo bash deploy/04-webserver.sh       # vhost Nginx
 sudo bash deploy/05-ssl.sh             # HTTPS Let's Encrypt (graceful)
-sudo bash deploy/06-keepalive.sh       # anti-reclamación idle de Oracle
 ```
 
 ---
@@ -83,21 +79,6 @@ Tu respuesta se guarda en `deploy.conf` (no vuelve a preguntar). También puedes
 
 ---
 
-## Anti-reclamación de Oracle (keep-alive)
-
-`06-keepalive.sh` instala un **timer de systemd** que cada 25 min lanza una ráfaga de CPU de
-**baja prioridad** (`nice 19`, clase IO idle) durante ~4 min sobre la mitad de los núcleos, más un
-ping HTTP. Mantiene el percentil 95 de CPU por encima del 20% que exige Oracle para no marcar la
-instancia como *idle*, **sin afectar al rendimiento de la web** (cede la CPU en cuanto la app la pide).
-
-```bash
-systemctl list-timers vexis-keepalive.timer   # ver próxima ejecución
-systemctl status vexis-keepalive.service      # ver última ejecución
-# Para desactivarlo:  sudo systemctl disable --now vexis-keepalive.timer
-```
-
----
-
 ## Qué tocan los scripts en tu `.env`
 
 Tu `.env` se pega **tal cual** (local). `03-app.sh` solo ajusta a producción:
@@ -113,8 +94,7 @@ Tu `.env` se pega **tal cual** (local). `03-app.sh` solo ajusta a producción:
 `APP_KEY`, `DB_*`, `GEMINI_*` y el resto se conservan intactos.
 
 > **Nota:** se instala **MariaDB** (no MySQL 8). Es 100% compatible con `DB_CONNECTION=mysql`
-> y permite crear la BD/usuario de forma idéntica en Ubuntu y Oracle Linux sin la contraseña
-> temporal ni `validate_password` de MySQL 8.
+> y permite crear la BD/usuario por socket sin la contraseña temporal ni `validate_password` de MySQL 8.
 
 ---
 

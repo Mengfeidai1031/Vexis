@@ -26,6 +26,6 @@ if certbot --nginx -d "$DOMAIN" --non-interactive --agree-tos -m "$EMAIL" --redi
   systemctl enable --now certbot.timer 2>/dev/null || true
   ok "05 — HTTPS activo en https://${DOMAIN}"
 else
-  warn "No se pudo emitir el certificado (rate limit / DNS / puerto 80 cerrado en consola OCI)."
+  warn "No se pudo emitir el certificado (rate limit / DNS aun propagando / puerto 80 bloqueado)."
   warn "El sitio sigue funcionando en HTTP. Reintenta luego: sudo certbot --nginx -d ${DOMAIN}"
 fi

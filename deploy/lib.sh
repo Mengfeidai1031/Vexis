@@ -80,10 +80,8 @@ public_ip() {
   local ip=""
   ip="$(curl -fsS --max-time 8 https://api.ipify.org 2>/dev/null || true)"
   [ -z "$ip" ] && ip="$(curl -fsS --max-time 8 https://ifconfig.me 2>/dev/null || true)"
-  if [ -z "$ip" ]; then
-    ip="$(curl -fsS --max-time 8 -H 'Authorization: Bearer Oracle' \
-      http://169.254.169.254/opc/v2/vnics/ 2>/dev/null | grep -o '"publicIp"[ :]*"[^"]*"' | head -1 | grep -o '[0-9.]\+' || true)"
-  fi
+  # Fallback: metadata de DigitalOcean
+  [ -z "$ip" ] && ip="$(curl -fsS --max-time 5 http://169.254.169.254/metadata/v1/interfaces/public/0/ipv4/address 2>/dev/null || true)"
   echo "$ip"
 }
 
@@ -158,6 +156,24 @@ prompt_domain() {
   DUCKDNS_SUBDOMAIN="$sub"; DUCKDNS_TOKEN="$tok"
   ok "Dominio configurado: ${sub}.duckdns.org"
   echo
+}
+
+# Crea swap si no existe (clave en droplets de 1-2 GB para que el build de Vite no muera por OOM).
+setup_swap() {
+  if [ "$(swapon --show --noheadings 2>/dev/null | wc -l)" -gt 0 ]; then
+    ok "Swap ya presente."
+    return
+  fi
+  local size="${SWAP_SIZE:-2G}"
+  log "Creando swap de ${size} en /swapfile..."
+  fallocate -l "$size" /swapfile 2>/dev/null || dd if=/dev/zero of=/swapfile bs=1M count=2048
+  chmod 600 /swapfile
+  mkswap /swapfile >/dev/null
+  swapon /swapfile
+  grep -q '^/swapfile' /etc/fstab || echo '/swapfile none swap sw 0 0' >> /etc/fstab
+  sysctl -w vm.swappiness=10 >/dev/null 2>&1 || true
+  grep -q '^vm.swappiness' /etc/sysctl.conf || echo 'vm.swappiness=10' >> /etc/sysctl.conf
+  ok "Swap activo (${size})."
 }
 
 # Inicializa todas las variables de entorno de los scripts

@@ -8,6 +8,11 @@ init
 log "Distro detectada: PKG=$PKG  WEB_USER=$WEB_USER  PHP=$PHP_VER"
 
 # ---------------------------------------------------------------------------
+# Swap (droplet de 2 GB: necesario para el build de Vite)
+# ---------------------------------------------------------------------------
+setup_swap
+
+# ---------------------------------------------------------------------------
 # Paquetes base + repos
 # ---------------------------------------------------------------------------
 if [ "$PKG" = "apt" ]; then
@@ -100,29 +105,28 @@ systemctl restart "$FPM_SERVICE"
 ok "php-fpm reiniciado"
 
 # ---------------------------------------------------------------------------
-# Firewall del sistema operativo (NO el de la consola OCI — ver README)
+# Firewall del sistema operativo
 # ---------------------------------------------------------------------------
-log "Abriendo puertos 80/443 en el firewall del SO..."
-if systemctl is-active --quiet firewalld 2>/dev/null; then
+log "Configurando firewall (80/443 + SSH)..."
+if [ "$PKG" = "apt" ]; then
+  # Ubuntu (DigitalOcean): ufw. Permitimos SSH ANTES de activar para no perder acceso.
+  apt-get install -y ufw >/dev/null 2>&1 || true
+  ufw allow OpenSSH >/dev/null 2>&1 || ufw allow 22/tcp
+  ufw allow 80/tcp
+  ufw allow 443/tcp
+  ufw --force enable
+  ok "ufw: SSH + 80/443 abiertos y activo"
+elif systemctl is-active --quiet firewalld 2>/dev/null; then
+  firewall-cmd --permanent --add-service=ssh
   firewall-cmd --permanent --add-service=http
   firewall-cmd --permanent --add-service=https
   firewall-cmd --reload
-  ok "firewalld: http/https abiertos"
-elif command -v ufw >/dev/null 2>&1 && ufw status 2>/dev/null | grep -q "Status: active"; then
-  ufw allow 80/tcp
-  ufw allow 443/tcp
-  ok "ufw: 80/443 abiertos"
+  ok "firewalld: ssh/http/https abiertos"
 else
-  # Oracle Ubuntu trae reglas iptables que bloquean todo menos SSH.
   iptables -C INPUT -p tcp --dport 80 -j ACCEPT 2>/dev/null  || iptables -I INPUT -p tcp --dport 80 -j ACCEPT
   iptables -C INPUT -p tcp --dport 443 -j ACCEPT 2>/dev/null || iptables -I INPUT -p tcp --dport 443 -j ACCEPT
-  if [ "$PKG" = "apt" ]; then
-    apt-get install -y iptables-persistent netfilter-persistent >/dev/null 2>&1 || true
-    netfilter-persistent save 2>/dev/null || iptables-save > /etc/iptables/rules.v4 2>/dev/null || true
-  else
-    service iptables save 2>/dev/null || iptables-save > /etc/sysconfig/iptables 2>/dev/null || true
-  fi
-  ok "iptables: 80/443 abiertos y persistidos"
+  iptables-save > /etc/sysconfig/iptables 2>/dev/null || true
+  ok "iptables: 80/443 abiertos"
 fi
 
 ok "01 — Stack instalado."

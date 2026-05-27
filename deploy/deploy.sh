@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# deploy.sh — Orquestador: ejecuta 01..06 en orden. Equivalente a lanzarlos a mano.
+# deploy.sh — Orquestador: ejecuta 01..05 en orden. Equivalente a lanzarlos a mano.
 #   sudo bash deploy/deploy.sh
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib.sh"
 require_root
@@ -9,7 +9,7 @@ require_env
 prompt_domain
 
 D="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-for step in 01-install-stack 02-database 02b-duckdns 03-app 04-webserver 05-ssl 06-keepalive; do
+for step in 01-install-stack 02-database 02b-duckdns 03-app 04-webserver 05-ssl; do
   echo
   log "================  ${step}  ================"
   bash "$D/${step}.sh"
