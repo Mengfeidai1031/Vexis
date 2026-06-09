@@ -1,22 +1,34 @@
-# Vexis - Documentación del proyecto (Versión 2)
+# Vexis - Documentación del proyecto (Versión 3)
 
-Este repositorio contiene la **versión 2 (V2)** de Vexis, plataforma interna de gestión empresarial para automoción de Grupo ARI.
+Este repositorio contiene la **versión 3 (V3)** de Vexis, plataforma interna de gestión empresarial para automoción de **Grupo DAI**.
 
-La V2 amplía el alcance de la V1 con nuevos módulos operativos y de análisis, manteniendo la base de seguridad por roles, permisos y políticas.
+La V3 consolida Vexis como producto: añade el área fiscal y de facturación (facturas y Verifactu), gestión de incidencias, tipos de cliente, activación/desactivación de módulos por Super Admin, panel de control de IA, endurecimiento de seguridad y despliegue automatizado a producción. Mantiene la base de seguridad por roles, permisos y políticas heredada de V1 y V2.
+
+> Nota: respecto a la V2, la organización pasa a denominarse **Grupo DAI** (dominio de correo `@grupo-dai.com`).
 
 ---
 
-## 1) Resumen de la V2
+## 1) Resumen de la V3
 
-La V2 consolida el sistema en 5 áreas funcionales:
+La V3 organiza el sistema en las siguientes áreas:
 
-- **Gestión**: usuarios, empresas, departamentos, centros, roles, restricciones, noticias, campañas, naming PCs, festivos, vacaciones.
-- **Comercial**: clientes, vehículos, ofertas, ventas, tasaciones, catálogo de precios.
+- **Gestión**: usuarios, empresas, departamentos, centros, roles, permisos, restricciones, noticias, campañas, naming PCs, festivos, vacaciones, visor de logs y ajustes del sistema.
+- **Comercial y fiscal**: clientes, tipos de cliente, vehículos, ofertas, ventas (con conceptos de extras/descuentos e impuestos automáticos), facturas, Verifactu, tasaciones y catálogo.
 - **Recambios**: almacenes, stock y repartos.
 - **Talleres**: talleres, mecánicos, citas y coches de sustitución.
-- **Cliente + Analítica**: portal cliente y módulo DatAxis (vistas de análisis).
+- **Incidencias**: tickets con archivos adjuntos y asignaciones.
+- **Cliente + Analítica**: portal de cliente (con chatbot y pre-tasación por IA) y módulo DatAxis de análisis.
 
-Incluye además integración de chatbot con Gemini en el módulo cliente, con control de acceso por permisos.
+Novedades transversales de la V3:
+
+- Activación/desactivación de módulos desde **Ajustes** (Super Admin) mediante middleware `module:`.
+- **Panel de Control IA** (Super Admin) con registro de uso de Gemini (`ai_usage`).
+- **Visor de logs** en tiempo real (seguridad y errores).
+- **Modo mantenimiento** y **cabeceras de seguridad** (security headers).
+- **Rate limiting** en login, registro y endpoints de IA.
+- **Generación automática de PDF** de documentos de vehículo e historial documental.
+- **Manual de usuario** integrado.
+- Integración con la **API externa de la DGT** y generación/asignación de matrícula.
 
 ---
 
@@ -38,9 +50,17 @@ Incluye además integración de chatbot con Gemini en el módulo cliente, con co
 
 - `spatie/laravel-permission` (roles/permisos)
 - `maatwebsite/excel` (exportaciones Excel)
-- `barryvdh/laravel-dompdf` (exportaciones PDF)
+- `barryvdh/laravel-dompdf` (exportaciones y facturas PDF)
 - `spatie/pdf-to-text` (parseo de PDFs de ofertas)
-- `@google/generative-ai` (chatbot del módulo cliente)
+- `endroid/qr-code` (QR de Verifactu) — **nuevo en V3**
+- `@google/generative-ai` (chatbot y pre-tasación del módulo cliente)
+
+### Calidad y pruebas
+
+- `larastan/larastan` (análisis estático PHPStan)
+- `laravel/pint` (estilo de código)
+- `phpunit/phpunit` (tests)
+- `lighthouse` + `puppeteer` (auditoría de accesibilidad, script `npm run a11y`)
 
 ---
 
@@ -49,17 +69,18 @@ Incluye además integración de chatbot con Gemini en el módulo cliente, con co
 Estructura principal de la aplicación:
 
 - `app/Http/Controllers`: controladores por módulo
+- `app/Http/Middleware`: `CheckModuleEnabled` (toggles de módulo), `MaintenanceMode`, `SecurityHeaders`
 - `app/Models`: entidades de dominio
 - `app/Policies`: autorización por recurso
 - `app/Repositories` + `app/Repositories/Interfaces`: acceso a datos desacoplado
-- `app/Services`: lógica de negocio especializada
+- `app/Services`: lógica de negocio especializada (ofertas PDF, Verifactu, IA, documentos de vehículo, ...)
 - `app/Exports`: exportaciones
 - `database/migrations`: evolución del esquema
 - `database/seeders`: carga inicial y datos de ejemplo
 - `resources/views`: vistas Blade
 - `routes/web.php`: rutas de aplicación
 
-En `AppServiceProvider` se mantienen bindings de repositorios e inscripción de políticas con `Gate::policy`.
+En `AppServiceProvider` se mantienen los bindings de repositorios e inscripción de políticas con `Gate::policy`.
 
 ---
 
@@ -67,55 +88,61 @@ En `AppServiceProvider` se mantienen bindings de repositorios e inscripción de 
 
 ### Autenticación
 
-- Login/Logout con sesión.
-- Registro disponible en V2 (`/register`).
+- Login/Logout con sesión y registro (`/register`), con **rate limiting** (`throttle`).
 - Protección global con middleware `auth`.
 
 ### Autorización
 
 - Permisos granulares por módulo (ver/crear/editar/eliminar).
-- Roles base: `Super Admin`, `Administrador`, `Gerente`, `Vendedor`, `Consultor`.
-- Políticas activas para: empresa, usuario, centro, departamento, cliente, vehículo, oferta y restricciones.
+- Roles: `Super Admin`, `Administrador`, `Gerente`, `Vendedor`, `Consultor`, `Mecánico` y `Cliente`.
+- Políticas activas por recurso (empresa, usuario, centro, departamento, cliente, vehículo, oferta, restricciones, ...).
+- Zonas exclusivas de Super Admin: ajustes, permisos, visor de logs y control de IA.
 
-### Restricciones de visibilidad
+### Activación de módulos
 
-Se conserva el modelo de restricciones por usuario (`user_restrictions`), con soporte polimórfico para segmentar acceso por entidad.
+El middleware `module:` (`CheckModuleEnabled`) permite habilitar/deshabilitar módulos (p.ej. `facturas`, `verifactu`, `incidencias`) desde **Ajustes**, sin tocar código.
+
+### Endurecimiento
+
+- Cabeceras de seguridad (`SecurityHeaders`).
+- Modo mantenimiento (`MaintenanceMode`).
+- Visor de logs en tiempo real (stream / descarga / limpieza).
+- Restricciones de visibilidad por usuario (`user_restrictions`, soporte polimórfico).
 
 ---
 
-## 5) Funcionalidades destacadas de la V2
+## 5) Funcionalidades destacadas de la V3
 
-### 5.1 Comercial
+### 5.1 Comercial y fiscal
 
-- CRUD de clientes, vehículos y ofertas.
-- Exportación en clientes, vehículos, ventas y tasaciones (Excel/PDF).
-- Procesamiento de ofertas por PDF (Nissan y Renault/Dacia) con `OfertaPdfService`.
+- Tipos de cliente (CRUD).
+- Vehículos con marca/modelo/versión dinámicos desde catálogo y matrícula (manual o vía **API DGT**).
+- Ventas con líneas de concepto (extras/descuentos) e impuestos automáticos (IGIC/IVA).
+- **Facturas** vinculadas a venta, con generación de PDF (datos registrales, IGIC/IVA, RGPD, reserva de dominio y garantía) y exportación.
+- **Verifactu**: cadena de hash SHA-256, estados AEAT, XML, QR, declaración responsable y verificación de la cadena.
+- Generación automática de documentos PDF de vehículo (varios tipos) e historial documental.
 
-### 5.2 Recambios
+### 5.2 Incidencias
 
-- CRUD de almacenes.
-- CRUD de stock con exportación Excel/PDF.
-- CRUD de repartos.
+- Tickets con archivos adjuntos, asignaciones y seguimiento.
 
-### 5.3 Talleres
+### 5.3 Recambios y talleres
 
-- CRUD de talleres.
-- CRUD de mecánicos.
-- CRUD de citas de taller.
-- CRUD de coches de sustitución + reserva.
+- Recambios: almacenes, stock (con exportación Excel/PDF) y repartos.
+- Talleres: talleres, mecánicos, citas y coches de sustitución (con reserva).
 
-### 5.4 Gestión
+### 5.4 Cliente y DatAxis
 
-- Empresas, usuarios, departamentos, centros, roles y restricciones.
-- Noticias y campañas (incluyendo gestión de fotos de campañas).
-- Naming de equipos y festivos.
-- Gestión de vacaciones.
+- Portal cliente: campañas, precios, concesionarios, noticias, talleres, configurador (acepta JPG/PNG), pre-tasación y tasación.
+- **Chatbot** y **pre-tasación** con Gemini (con rate limiting y control por permisos).
+- DatAxis: análisis general, ventas, stock, taller, **facturas** e **incidencias**.
 
-### 5.5 Cliente y DatAxis
+### 5.5 Administración
 
-- Portal cliente con campañas, precios, concesionarios, tasación y pre-tasación.
-- Chatbot con Gemini, limitado por permisos del usuario autenticado.
-- DatAxis con vistas de análisis: general, ventas, stock y taller.
+- Ajustes del sistema y toggles de módulos (Super Admin).
+- Panel de Control IA con registro de uso (`ai_usage`).
+- Visor de logs y gestión de permisos.
+- Manual de usuario integrado.
 
 ---
 
@@ -130,7 +157,8 @@ Variables importantes:
 
 - `DB_*` para conexión a base de datos
 - `APP_KEY` generado con Artisan
-- `GEMINI_API_KEY` para habilitar el chatbot de cliente
+- `GEMINI_API_KEY` para habilitar la IA del módulo cliente (opcionales: `GEMINI_MODEL`, `GEMINI_API_VERSION` y claves/proyectos por feature `GEMINI_CHATBOT_*`, `GEMINI_PRETASACION_*`)
+- `APP_MAINTENANCE_DRIVER` para el modo mantenimiento
 
 Nota: para `spatie/pdf-to-text` se necesitan utilidades del sistema compatibles con extracción de texto PDF.
 
@@ -144,7 +172,9 @@ Nota: para `spatie/pdf-to-text` se necesitan utilidades del sistema compatibles 
 composer run setup
 ```
 
-Ejecuta instalación de dependencias, creación de `.env`, clave de aplicación, migraciones, instalación frontend y build.
+Instala dependencias, crea `.env` si no existe, genera `APP_KEY`, ejecuta migraciones y construye el frontend.
+
+> En V3, `setup` no ejecuta seeders: lanza `php artisan db:seed` aparte para cargar los datos iniciales.
 
 ### Opción manual
 
@@ -177,38 +207,45 @@ Inicia en paralelo:
 
 ## 9) Seeders y datos iniciales
 
-`DatabaseSeeder` en V2 carga, en orden:
+`DatabaseSeeder` en V3 carga, en orden:
 
 - empresas, departamentos y centros,
 - roles/permisos,
+- tipos de cliente,
+- marcas,
 - usuarios,
 - clientes y vehículos,
-- marcas, noticias y festivos,
-- talleres,
 - catálogo de precios,
+- noticias y festivos,
+- talleres,
 - almacenes,
-- datos de ejemplo.
+- datos de ejemplo,
+- ajustes del sistema (`settings`).
 
-Usuarios iniciales (password: `password`):
+Usuarios iniciales (password: `password`), dominio `@grupo-dai.com`:
 
-- `superadmin@grupoari.com`
-- `admin@grupoari.com`
-- `francisco@grupoari.com`
-- `maria@grupoari.com`
-- `joseantonio@grupoari.com`
-- `pedro@grupoari.com`
+- `mengfei.dai@grupo-dai.com` (Super Admin)
+- `carmen.santana@grupo-dai.com` (Administrador)
+- `francisco.hernandez@grupo-dai.com` (Gerente)
+- `maria.gonzalez@grupo-dai.com` (Vendedor)
+- `joseantonio.rodriguez@grupo-dai.com` (Vendedor)
+- `pedro.cabrera@grupo-dai.com` (Consultor)
+
+También existen usuarios adicionales por centro/rol para pruebas (Tenerife, Gran Canaria, etc.).
 
 ---
 
 ## 10) Rutas principales (resumen)
 
-- `/`, `/login`, `/register`, `/dashboard`
-- Gestión: `/gestion`, `/empresas`, `/users`, `/departamentos`, `/centros`, `/roles`, `/restricciones`, `/noticias`, `/campanias`, `/naming-pcs`, `/festivos`, `/vacaciones`
-- Comercial: `/comercial`, `/clientes`, `/vehiculos`, `/ofertas`, `/ventas`, `/tasaciones`, `/catalogo-precios`
+- `/`, `/login`, `/register`, `/dashboard`, `/manual`
+- Gestión: `/gestion`, `/empresas`, `/users`, `/departamentos`, `/centros`, `/roles`, `/permisos`, `/restricciones`, `/noticias`, `/campanias`, `/naming-pcs`, `/festivos`, `/vacaciones`, `/gestion/logs`, `/settings`
+- Comercial: `/comercial`, `/clientes`, `/tipos-cliente`, `/vehiculos`, `/ofertas`, `/ventas`, `/facturas`, `/verifactu`, `/tasaciones`, `/catalogo-precios`
 - Recambios: `/recambios`, `/almacenes`, `/stocks`, `/repartos`
 - Talleres: `/talleres-modulo`, `/talleres`, `/mecanicos`, `/citas`, `/coches-sustitucion`
-- Analítica: `/dataxis`, `/dataxis/general`, `/dataxis/ventas`, `/dataxis/stock`, `/dataxis/taller`
-- Cliente: `/cliente`, `/cliente/chatbot`, `/cliente/pretasacion`, `/cliente/tasacion`, `/cliente/campanias`, `/cliente/concesionarios`, `/cliente/precios`, `/cliente/configurador`
+- Incidencias: `/incidencias`
+- IA: `/ai/control` (Super Admin)
+- Analítica: `/dataxis`, `/dataxis/general`, `/dataxis/ventas`, `/dataxis/stock`, `/dataxis/taller`, `/dataxis/facturas`, `/dataxis/incidencias`
+- Cliente: `/cliente`, `/cliente/chatbot`, `/cliente/pretasacion`, `/cliente/tasacion`, `/cliente/campanias`, `/cliente/concesionarios`, `/cliente/precios`, `/cliente/configurador`, `/cliente/noticias`, `/cliente/talleres`
 
 ---
 
@@ -224,49 +261,90 @@ php artisan db:seed
 # Seeder puntual
 php artisan db:seed --class=RolePermissionSeeder
 
-# Limpiar caches
+# Limpiar cachés
 php artisan optimize:clear
+
+# Análisis estático (larastan/PHPStan)
+vendor/bin/phpstan analyse
+
+# Estilo de código
+vendor/bin/pint
+
+# Auditoría de accesibilidad (Lighthouse)
+npm run a11y
 ```
 
 ---
 
 ## 12) Base de datos (visión general)
 
-Entidades incorporadas en V2 (además de V1):
+Entidades incorporadas en V3 (además de V1 y V2):
 
-- `marcas`, `noticias`, `campanias`, `naming_pcs`, `vacaciones`, `festivos`
-- `almacenes`, `stocks`, `repartos`
-- `talleres`, `mecanicos`, `citas_taller`, `coches_sustitucion`
-- `ventas`, `tasaciones`, `catalogo_precios`
+- `tipos_cliente`
+- `facturas`, `verifactus`
+- `venta_conceptos`
+- `incidencias`
+- `settings`
+- `vehiculo_historial_documentos` (e historial documental de vehículos)
+- `ai_usage`
 
-Se mantienen también las tablas base de usuarios, permisos, clientes, vehículos, ofertas y estructura organizativa.
+Se mantienen las tablas base de V1/V2: usuarios, permisos/roles (Spatie), clientes, vehículos, ofertas, ventas, tasaciones, catálogo, almacenes/stock/repartos, talleres/mecánicos/citas, noticias/campañas, festivos, naming PCs, estructura organizativa, etc.
 
 ---
 
-## 13) Cambios por versión
+## 13) Despliegue (V3)
+
+V3 incorpora **scripts de despliegue automatizado** (de cero a producción) orientados a **Oracle Cloud**, con DNS mediante **DuckDNS**:
+
+```
+deploy/
+  deploy.sh            # orquestador
+  01-install-stack.sh  # PHP, Nginx, base de datos, ...
+  02-database.sh
+  02b-duckdns.sh       # dominio dinámico DuckDNS
+  03-app.sh
+  04-webserver.sh
+  05-ssl.sh            # certificado (Let's Encrypt)
+  06-keepalive.sh      # evita la reclamación de la instancia gratuita
+  update.sh            # actualizaciones
+```
+
+Guía detallada en `deploy/GUIA-DESPLIEGUE.md`.
+
+---
+
+## 14) Cambios por versión
 
 ### V1
 
-- Núcleo de gestión, comercial base y seguridad por permisos/policies.
+- Núcleo de gestión, comercial base y seguridad por permisos/políticas.
 
-### V2 (actual)
+### V2
 
-- Expansión a módulos de recambios, talleres, cliente y analítica.
-- Nuevos CRUD operativos (almacenes, stock, repartos, talleres, mecánicos, citas, coches de sustitución, ventas, tasaciones, catálogo de precios, noticias, campañas, festivos, naming PCs).
-- Registro de usuarios habilitado.
-- Chatbot cliente con Gemini y controles por permiso.
-- Mayor cobertura de exportaciones Excel/PDF.
+- Recambios, talleres, ventas/tasaciones/catálogo, portal cliente con chatbot Gemini y DatAxis.
+
+### V3 (actual)
+
+- Renombrado a **Grupo DAI** (`@grupo-dai.com`).
+- Área fiscal: **facturas** y **Verifactu** (cadena de hash, QR, XML, estados AEAT).
+- Ventas con conceptos e impuestos automáticos (IGIC/IVA).
+- **Tipos de cliente**; matrícula vía **API DGT**; documentos PDF de vehículo e historial.
+- Módulo de **incidencias**.
+- **Ajustes** con toggles de módulos; **Panel de Control IA**; **visor de logs**; **modo mantenimiento**; cabeceras de seguridad; **rate limiting**.
+- **Manual de usuario**; nuevas vistas DatAxis (facturas, incidencias) y de cliente (noticias, talleres).
+- Análisis estático (larastan), estilo (pint), auditoría de accesibilidad y ampliación de la batería de tests.
+- **Scripts de despliegue automatizado** (Oracle Cloud + DuckDNS).
 
 ---
 
-## 14) Estado de versión documentada
+## 15) Estado de versión documentada
 
-- Versión documentada: **V2**
-- Rama objetivo: **versión 2**
-- Última actualización de este README: **2026-04-01**
+- Versión documentada: **V3**
+- Rama objetivo: **versión 3 (VX_v.3)**
+- Última actualización de este README: **2026-05-26**
 
 ---
 
-## 15) Licencia
+## 16) Licencia
 
 El proyecto mantiene licencia MIT (según `composer.json`), salvo cambios futuros definidos por el equipo.
