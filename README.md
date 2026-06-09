@@ -1,29 +1,34 @@
-# Vexis - Documentación del proyecto (Versión 1)
+# Vexis - Documentación del proyecto (Versión 3)
 
-Este repositorio contiene la **versión 1 (V1)** de Vexis, una aplicación web de gestión interna basada en Laravel, orientada a la administración de:
+Este repositorio contiene la **versión 3 (V3)** de Vexis, plataforma interna de gestión empresarial para automoción de **Grupo DAI**.
 
-- usuarios,
-- estructura organizativa (empresa, departamento, centro),
-- clientes,
-- vehículos,
-- ofertas,
-- y restricciones de acceso por usuario.
+La V3 consolida Vexis como producto: añade el área fiscal y de facturación (facturas y Verifactu), gestión de incidencias, tipos de cliente, activación/desactivación de módulos por Super Admin, panel de control de IA, endurecimiento de seguridad y despliegue automatizado a producción. Mantiene la base de seguridad por roles, permisos y políticas heredada de V1 y V2.
 
-Este README describe el estado actual del sistema en V1 y sirve como base para futuras versiones.
+> Nota: respecto a la V2, la organización pasa a denominarse **Grupo DAI** (dominio de correo `@grupo-dai.com`).
 
 ---
 
-## 1) Estado actual del proyecto
+## 1) Resumen de la V3
 
-V1 está enfocada en un flujo administrativo completo con:
+La V3 organiza el sistema en las siguientes áreas:
 
-- autenticación de usuarios,
-- autorización por roles y permisos,
-- políticas de acceso por recurso,
-- restricciones de visibilidad por entidad,
-- gestión CRUD de módulos principales,
-- exportación de vehículos a Excel/PDF,
-- importación y procesamiento de PDFs de ofertas (Nissan y Renault/Dacia).
+- **Gestión**: usuarios, empresas, departamentos, centros, roles, permisos, restricciones, noticias, campañas, naming PCs, festivos, vacaciones, visor de logs y ajustes del sistema.
+- **Comercial y fiscal**: clientes, tipos de cliente, vehículos, ofertas, ventas (con conceptos de extras/descuentos e impuestos automáticos), facturas, Verifactu, tasaciones y catálogo.
+- **Recambios**: almacenes, stock y repartos.
+- **Talleres**: talleres, mecánicos, citas y coches de sustitución.
+- **Incidencias**: tickets con archivos adjuntos y asignaciones.
+- **Cliente + Analítica**: portal de cliente (con chatbot y pre-tasación por IA) y módulo DatAxis de análisis.
+
+Novedades transversales de la V3:
+
+- Activación/desactivación de módulos desde **Ajustes** (Super Admin) mediante middleware `module:`.
+- **Panel de Control IA** (Super Admin) con registro de uso de Gemini (`ai_usage`).
+- **Visor de logs** en tiempo real (seguridad y errores).
+- **Modo mantenimiento** y **cabeceras de seguridad** (security headers).
+- **Rate limiting** en login, registro y endpoints de IA.
+- **Generación automática de PDF** de documentos de vehículo e historial documental.
+- **Manual de usuario** integrado.
+- Integración con la **API externa de la DGT** y generación/asignación de matrícula.
 
 ---
 
@@ -33,7 +38,7 @@ V1 está enfocada en un flujo administrativo completo con:
 
 - PHP `^8.2`
 - Laravel `^12.0`
-- MySQL/MariaDB (o motor compatible con Laravel)
+- MySQL/MariaDB (o compatible)
 
 ### Frontend
 
@@ -41,142 +46,135 @@ V1 está enfocada en un flujo administrativo completo con:
 - Tailwind CSS `^4`
 - Axios
 
-### Librerías clave
+### Paquetes clave
 
-- `spatie/laravel-permission` (roles y permisos)
+- `spatie/laravel-permission` (roles/permisos)
 - `maatwebsite/excel` (exportaciones Excel)
-- `barryvdh/laravel-dompdf` (generación de PDF)
-- `spatie/pdf-to-text` (extracción de texto desde PDF)
+- `barryvdh/laravel-dompdf` (exportaciones y facturas PDF)
+- `spatie/pdf-to-text` (parseo de PDFs de ofertas)
+- `endroid/qr-code` (QR de Verifactu) — **nuevo en V3**
+- `@google/generative-ai` (chatbot y pre-tasación del módulo cliente)
+
+### Calidad y pruebas
+
+- `larastan/larastan` (análisis estático PHPStan)
+- `laravel/pint` (estilo de código)
+- `phpunit/phpunit` (tests)
+- `lighthouse` + `puppeteer` (auditoría de accesibilidad, script `npm run a11y`)
 
 ---
 
-## 3) Arquitectura y organización
+## 3) Arquitectura
 
-El proyecto sigue una estructura en capas habitual en Laravel, reforzada con repositorios e interfaces:
+Estructura principal de la aplicación:
 
 - `app/Http/Controllers`: controladores por módulo
-- `app/Models`: modelos Eloquent
-- `app/Policies`: políticas de autorización por recurso
+- `app/Http/Middleware`: `CheckModuleEnabled` (toggles de módulo), `MaintenanceMode`, `SecurityHeaders`
+- `app/Models`: entidades de dominio
+- `app/Policies`: autorización por recurso
 - `app/Repositories` + `app/Repositories/Interfaces`: acceso a datos desacoplado
-- `app/Services`: lógica de dominio especializada (ej. procesamiento PDF de ofertas)
-- `app/Exports`: clases de exportación
-- `database/migrations`: definición de esquema
-- `database/seeders`: datos iniciales y escenarios de prueba
+- `app/Services`: lógica de negocio especializada (ofertas PDF, Verifactu, IA, documentos de vehículo, ...)
+- `app/Exports`: exportaciones
+- `database/migrations`: evolución del esquema
+- `database/seeders`: carga inicial y datos de ejemplo
 - `resources/views`: vistas Blade
-- `routes/web.php`: rutas HTTP de la aplicación
+- `routes/web.php`: rutas de aplicación
 
-En `AppServiceProvider` se registran:
-
-- los bindings de interfaces a repositorios,
-- y las políticas (`Gate::policy`) para autorización por modelo.
+En `AppServiceProvider` se mantienen los bindings de repositorios e inscripción de políticas con `Gate::policy`.
 
 ---
 
-## 4) Módulos funcionales en V1
-
-La V1 incluye CRUD con control de acceso para:
-
-- Usuarios
-- Departamentos
-- Centros
-- Roles
-- Restricciones
-- Clientes
-- Vehículos
-- Ofertas
-
-Además:
-
-- endpoint interno para obtener centros por empresa (`/api/centros-by-empresa`),
-- exportación de vehículos a Excel,
-- exportación de vehículos a PDF,
-- procesamiento de ofertas desde PDF con creación de cabecera y líneas.
-
----
-
-## 5) Autenticación, autorización y seguridad de acceso
+## 4) Seguridad y control de acceso
 
 ### Autenticación
 
-- Login basado en sesión (`/login`)
-- Logout con invalidación de sesión y regeneración de token
-- Acceso a rutas protegidas mediante middleware `auth`
+- Login/Logout con sesión y registro (`/register`), con **rate limiting** (`throttle`).
+- Protección global con middleware `auth`.
 
-### Roles y permisos
+### Autorización
 
-Se utiliza `spatie/laravel-permission` con permisos por módulo, por ejemplo:
+- Permisos granulares por módulo (ver/crear/editar/eliminar).
+- Roles: `Super Admin`, `Administrador`, `Gerente`, `Vendedor`, `Consultor`, `Mecánico` y `Cliente`.
+- Políticas activas por recurso (empresa, usuario, centro, departamento, cliente, vehículo, oferta, restricciones, ...).
+- Zonas exclusivas de Super Admin: ajustes, permisos, visor de logs y control de IA.
 
-- `ver usuarios`, `crear usuarios`, `editar usuarios`, `eliminar usuarios`
-- mismo patrón para departamentos, centros, clientes, vehículos, ofertas, roles y restricciones
+### Activación de módulos
 
-Roles definidos en seeders:
+El middleware `module:` (`CheckModuleEnabled`) permite habilitar/deshabilitar módulos (p.ej. `facturas`, `verifactu`, `incidencias`) desde **Ajustes**, sin tocar código.
 
-- Super Admin
-- Administrador
-- Gerente
-- Vendedor
-- Consultor
+### Endurecimiento
 
-### Políticas (Policies)
-
-Existen políticas para modelos principales:
-
-- `ClientePolicy`
-- `VehiculoPolicy`
-- `OfertaPolicy`
-- `UserRestrictionPolicy`
-- `CentroPolicy`
-- `DepartamentoPolicy`
-- `UserPolicy`
-- `EmpresaPolicy`
-
-Las rutas sensibles combinan permisos (`middleware('permission:...')`) y políticas (`middleware('can:...,modelo')`).
-
-### Restricciones por usuario
-
-La aplicación contempla restricciones por entidad mediante `UserRestriction`, incluyendo modelo polimórfico en migraciones recientes de V1.
+- Cabeceras de seguridad (`SecurityHeaders`).
+- Modo mantenimiento (`MaintenanceMode`).
+- Visor de logs en tiempo real (stream / descarga / limpieza).
+- Restricciones de visibilidad por usuario (`user_restrictions`, soporte polimórfico).
 
 ---
 
-## 6) Gestión de ofertas por PDF (V1)
+## 5) Funcionalidades destacadas de la V3
 
-El servicio `OfertaPdfService` implementa:
+### 5.1 Comercial y fiscal
 
-- almacenamiento del PDF en disco (`storage/app/public`),
-- extracción de texto,
-- parseo por marca (`nissan` y `renault_dacia`),
-- detección y normalización de datos de empresa/cliente,
-- extracción de líneas de oferta,
-- búsqueda de chasis,
-- creación de vehículo asociado cuando aplica,
-- creación de cabecera y líneas de oferta,
-- cálculo y actualización de totales,
-- persistencia transaccional para consistencia.
+- Tipos de cliente (CRUD).
+- Vehículos con marca/modelo/versión dinámicos desde catálogo y matrícula (manual o vía **API DGT**).
+- Ventas con líneas de concepto (extras/descuentos) e impuestos automáticos (IGIC/IVA).
+- **Facturas** vinculadas a venta, con generación de PDF (datos registrales, IGIC/IVA, RGPD, reserva de dominio y garantía) y exportación.
+- **Verifactu**: cadena de hash SHA-256, estados AEAT, XML, QR, declaración responsable y verificación de la cadena.
+- Generación automática de documentos PDF de vehículo (varios tipos) e historial documental.
+
+### 5.2 Incidencias
+
+- Tickets con archivos adjuntos, asignaciones y seguimiento.
+
+### 5.3 Recambios y talleres
+
+- Recambios: almacenes, stock (con exportación Excel/PDF) y repartos.
+- Talleres: talleres, mecánicos, citas y coches de sustitución (con reserva).
+
+### 5.4 Cliente y DatAxis
+
+- Portal cliente: campañas, precios, concesionarios, noticias, talleres, configurador (acepta JPG/PNG), pre-tasación y tasación.
+- **Chatbot** y **pre-tasación** con Gemini (con rate limiting y control por permisos).
+- DatAxis: análisis general, ventas, stock, taller, **facturas** e **incidencias**.
+
+### 5.5 Administración
+
+- Ajustes del sistema y toggles de módulos (Super Admin).
+- Panel de Control IA con registro de uso (`ai_usage`).
+- Visor de logs y gestión de permisos.
+- Manual de usuario integrado.
 
 ---
 
-## 7) Requisitos de entorno
-
-Antes de arrancar:
+## 6) Requisitos de entorno
 
 - PHP 8.2+
 - Composer
 - Node.js 20+ y npm
 - Base de datos configurada en `.env`
 
-Para funcionalidades PDF basadas en extracción de texto, asegúrate de tener disponibles en el servidor las utilidades necesarias para `spatie/pdf-to-text` (según sistema operativo).
+Variables importantes:
+
+- `DB_*` para conexión a base de datos
+- `APP_KEY` generado con Artisan
+- `GEMINI_API_KEY` para habilitar la IA del módulo cliente (opcionales: `GEMINI_MODEL`, `GEMINI_API_VERSION` y claves/proyectos por feature `GEMINI_CHATBOT_*`, `GEMINI_PRETASACION_*`)
+- `APP_MAINTENANCE_DRIVER` para el modo mantenimiento
+
+Nota: para `spatie/pdf-to-text` se necesitan utilidades del sistema compatibles con extracción de texto PDF.
 
 ---
 
-## 8) Instalación y arranque local
+## 7) Instalación
 
-### Opción rápida (recomendada)
+### Opción rápida
 
 ```bash
 composer run setup
 ```
 
-Este script ejecuta: instalación de dependencias, creación de `.env` si no existe, `key:generate`, migraciones, instalación de paquetes frontend y build.
+Instala dependencias, crea `.env` si no existe, genera `APP_KEY`, ejecuta migraciones y construye el frontend.
+
+> En V3, `setup` no ejecuta seeders: lanza `php artisan db:seed` aparte para cargar los datos iniciales.
 
 ### Opción manual
 
@@ -190,132 +188,163 @@ npm install
 npm run build
 ```
 
-### Entorno de desarrollo
+---
 
-Puedes usar el comando compuesto definido en `composer.json`:
+## 8) Desarrollo local
 
 ```bash
 composer run dev
 ```
 
-Esto levanta en paralelo:
+Inicia en paralelo:
 
 - servidor Laravel,
-- listener de cola,
+- `queue:listen`,
 - logs con `pail`,
 - Vite en modo desarrollo.
 
 ---
 
-## 9) Datos de prueba y seeders
+## 9) Seeders y datos iniciales
 
-`DatabaseSeeder` ejecuta, en orden, seeders de empresa, estructura, permisos, usuarios, clientes, vehículos y datos de prueba de restricciones.
+`DatabaseSeeder` en V3 carga, en orden:
 
-Usuarios iniciales relevantes (contraseña por defecto: `password`):
+- empresas, departamentos y centros,
+- roles/permisos,
+- tipos de cliente,
+- marcas,
+- usuarios,
+- clientes y vehículos,
+- catálogo de precios,
+- noticias y festivos,
+- talleres,
+- almacenes,
+- datos de ejemplo,
+- ajustes del sistema (`settings`).
 
-- `superadmin@grupoari.com` (Super Admin)
-- `admin@grupoari.com` (Administrador)
-- `juan@grupoari.com` (Gerente)
-- `maria@grupoari.com` (Vendedor)
-- `pedro@grupoari.com` (Consultor)
+Usuarios iniciales (password: `password`), dominio `@grupo-dai.com`:
 
-También existen usuarios específicos para pruebas de políticas y restricciones (por ejemplo, `admin@test.com`, `restringido@test.com`, etc.).
+- `mengfei.dai@grupo-dai.com` (Super Admin)
+- `carmen.santana@grupo-dai.com` (Administrador)
+- `francisco.hernandez@grupo-dai.com` (Gerente)
+- `maria.gonzalez@grupo-dai.com` (Vendedor)
+- `joseantonio.rodriguez@grupo-dai.com` (Vendedor)
+- `pedro.cabrera@grupo-dai.com` (Consultor)
+
+También existen usuarios adicionales por centro/rol para pruebas (Tenerife, Gran Canaria, etc.).
 
 ---
 
 ## 10) Rutas principales (resumen)
 
-- Pública: `/`
-- Autenticación: `/login`, `/logout`
-- Panel: `/dashboard`
-- Módulos protegidos por permisos y políticas:
-	- `/users`
-	- `/departamentos`
-	- `/centros`
-	- `/roles`
-	- `/restricciones`
-	- `/clientes`
-	- `/vehiculos`
-	- `/ofertas`
-
-Rutas de exportación de vehículos:
-
-- `/vehiculos/export/excel`
-- `/vehiculos/export/pdf`
+- `/`, `/login`, `/register`, `/dashboard`, `/manual`
+- Gestión: `/gestion`, `/empresas`, `/users`, `/departamentos`, `/centros`, `/roles`, `/permisos`, `/restricciones`, `/noticias`, `/campanias`, `/naming-pcs`, `/festivos`, `/vacaciones`, `/gestion/logs`, `/settings`
+- Comercial: `/comercial`, `/clientes`, `/tipos-cliente`, `/vehiculos`, `/ofertas`, `/ventas`, `/facturas`, `/verifactu`, `/tasaciones`, `/catalogo-precios`
+- Recambios: `/recambios`, `/almacenes`, `/stocks`, `/repartos`
+- Talleres: `/talleres-modulo`, `/talleres`, `/mecanicos`, `/citas`, `/coches-sustitucion`
+- Incidencias: `/incidencias`
+- IA: `/ai/control` (Super Admin)
+- Analítica: `/dataxis`, `/dataxis/general`, `/dataxis/ventas`, `/dataxis/stock`, `/dataxis/taller`, `/dataxis/facturas`, `/dataxis/incidencias`
+- Cliente: `/cliente`, `/cliente/chatbot`, `/cliente/pretasacion`, `/cliente/tasacion`, `/cliente/campanias`, `/cliente/concesionarios`, `/cliente/precios`, `/cliente/configurador`, `/cliente/noticias`, `/cliente/talleres`
 
 ---
 
 ## 11) Comandos útiles
 
 ```bash
-# Ejecutar tests
+# Tests
 composer run test
 
-# Limpiar cachés de configuración/rutas/vistas
-php artisan optimize:clear
-
-# Ejecutar seeders
+# Seed completo
 php artisan db:seed
 
-# Ejecutar un seeder concreto
+# Seeder puntual
 php artisan db:seed --class=RolePermissionSeeder
+
+# Limpiar cachés
+php artisan optimize:clear
+
+# Análisis estático (larastan/PHPStan)
+vendor/bin/phpstan analyse
+
+# Estilo de código
+vendor/bin/pint
+
+# Auditoría de accesibilidad (Lighthouse)
+npm run a11y
 ```
 
 ---
 
-## 12) Estructura de base de datos (visión general)
+## 12) Base de datos (visión general)
 
-Tablas núcleo en V1:
+Entidades incorporadas en V3 (además de V1 y V2):
 
-- `empresas`
-- `departamentos`
-- `centros`
-- `users`
-- `clientes`
-- `vehiculos`
-- `oferta_cabeceras`
-- `oferta_lineas`
-- `user_restrictions`
-- tablas de permisos/roles de Spatie (`roles`, `permissions`, pivotes)
+- `tipos_cliente`
+- `facturas`, `verifactus`
+- `venta_conceptos`
+- `incidencias`
+- `settings`
+- `vehiculo_historial_documentos` (e historial documental de vehículos)
+- `ai_usage`
 
-La evolución de esquema está trazada en migraciones fechadas dentro de `database/migrations`.
+Se mantienen las tablas base de V1/V2: usuarios, permisos/roles (Spatie), clientes, vehículos, ofertas, ventas, tasaciones, catálogo, almacenes/stock/repartos, talleres/mecánicos/citas, noticias/campañas, festivos, naming PCs, estructura organizativa, etc.
 
 ---
 
-## 13) Convenciones de evolución para futuras versiones
+## 13) Despliegue (V3)
 
-Para mantener este README alineado con próximas entregas (V2, V3, ...), se recomienda:
+V3 incorpora **scripts de despliegue automatizado** (de cero a producción) orientados a **Oracle Cloud**, con DNS mediante **DuckDNS**:
 
-1. Añadir una sección "Cambios por versión" al final.
-2. Mantener este documento como referencia acumulada del sistema.
-3. Registrar en cada versión:
-	 - módulos nuevos,
-	 - cambios de permisos/policies,
-	 - cambios de datos/migraciones,
-	 - cambios en instalación/despliegue.
+```
+deploy/
+  deploy.sh            # orquestador
+  01-install-stack.sh  # PHP, Nginx, base de datos, ...
+  02-database.sh
+  02b-duckdns.sh       # dominio dinámico DuckDNS
+  03-app.sh
+  04-webserver.sh
+  05-ssl.sh            # certificado (Let's Encrypt)
+  06-keepalive.sh      # evita la reclamación de la instancia gratuita
+  update.sh            # actualizaciones
+```
 
-### Plantilla de registro por versión
+Guía detallada en `deploy/GUIA-DESPLIEGUE.md`.
 
-```md
-## Cambios por versión
+---
 
-### V1 (actual)
-- Estado inicial productivo del sistema.
+## 14) Cambios por versión
+
+### V1
+
+- Núcleo de gestión, comercial base y seguridad por permisos/políticas.
 
 ### V2
-- [pendiente]
-```
+
+- Recambios, talleres, ventas/tasaciones/catálogo, portal cliente con chatbot Gemini y DatAxis.
+
+### V3 (actual)
+
+- Renombrado a **Grupo DAI** (`@grupo-dai.com`).
+- Área fiscal: **facturas** y **Verifactu** (cadena de hash, QR, XML, estados AEAT).
+- Ventas con conceptos e impuestos automáticos (IGIC/IVA).
+- **Tipos de cliente**; matrícula vía **API DGT**; documentos PDF de vehículo e historial.
+- Módulo de **incidencias**.
+- **Ajustes** con toggles de módulos; **Panel de Control IA**; **visor de logs**; **modo mantenimiento**; cabeceras de seguridad; **rate limiting**.
+- **Manual de usuario**; nuevas vistas DatAxis (facturas, incidencias) y de cliente (noticias, talleres).
+- Análisis estático (larastan), estilo (pint), auditoría de accesibilidad y ampliación de la batería de tests.
+- **Scripts de despliegue automatizado** (Oracle Cloud + DuckDNS).
 
 ---
 
-## 14) Estado de versión documentada
+## 15) Estado de versión documentada
 
-- Versión funcional documentada: **V1**
-- Rama objetivo de esta documentación: **rama de versión 1**
-- Última actualización de este README: **2026-04-01**
+- Versión documentada: **V3**
+- Rama objetivo: **versión 3 (VX_v.3)**
+- Última actualización de este README: **2026-05-26**
 
 ---
 
-## 15) Licencia
+## 16) Licencia
 
-El proyecto mantiene la licencia indicada en `composer.json` (MIT), salvo que se acuerde una política distinta en versiones futuras.
+El proyecto mantiene licencia MIT (según `composer.json`), salvo cambios futuros definidos por el equipo.
