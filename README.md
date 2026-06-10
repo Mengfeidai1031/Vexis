@@ -1,6 +1,6 @@
 # Vexis
 
-**Plataforma de gestión integral para automoción**
+**Plataforma de gestión integral para automoción** 
 
 <img width="320" height="208" alt="vexis-logo" src="https://github.com/user-attachments/assets/9b0d8d14-1607-473b-83e4-386937b4c7a5" />
 
