@@ -1,6 +1,8 @@
 # Vexis
 
-**Plataforma de gestión integral para automoción — Grupo DAI**
+**Plataforma de gestión integral para automoción**
+
+<img width="320" height="208" alt="vexis-logo" src="https://github.com/user-attachments/assets/9b0d8d14-1607-473b-83e4-386937b4c7a5" />
 
 Vexis es una aplicación web interna construida con **Laravel 12** para la gestión completa de un grupo de concesionarios: administración y estructura organizativa, área comercial y fiscal (ofertas, ventas, facturas y Verifactu), recambios, talleres, incidencias, portal de cliente con **IA (Gemini)** y analítica de negocio (**DatAxis**).
 
