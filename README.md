@@ -1,14 +1,24 @@
-# Vexis
+<p align="center">
+  <img width="320" height="208" alt="vexis-logo" src="https://github.com/user-attachments/assets/9b0d8d14-1607-473b-83e4-386937b4c7a5" />
+</p>
 
-**Plataforma de gestión integral para automoción** 
+<h1 align="center">Vexis</h1>
 
-<img width="320" height="208" alt="vexis-logo" src="https://github.com/user-attachments/assets/9b0d8d14-1607-473b-83e4-386937b4c7a5" />
+<p align="center"><strong>Plataforma de gestión integral para automoción</strong></p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Laravel%2012-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 12" />
+  <img src="https://img.shields.io/badge/PHP%208.2-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP 8.2" />
+  <img src="https://img.shields.io/badge/Tailwind%20CSS%204-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS 4" />
+  <img src="https://img.shields.io/badge/Vite%207-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite 7" />
+  <img src="https://img.shields.io/badge/MySQL%20%2F%20MariaDB-4479A1?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL / MariaDB" />
+  <img src="https://img.shields.io/badge/Google%20Gemini-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white" alt="Google Gemini" />
+  <img src="https://img.shields.io/badge/Licencia-MIT-22C55E?style=for-the-badge" alt="Licencia MIT" />
+</p>
 
 Vexis es una aplicación web interna construida con **Laravel 12** para la gestión completa de un grupo de concesionarios: administración y estructura organizativa, área comercial y fiscal (ofertas, ventas, facturas y Verifactu), recambios, talleres, incidencias, portal de cliente con **IA (Gemini)** y analítica de negocio (**DatAxis**).
 
 Esta rama `main` representa el **estado final y de producción** del proyecto. La documentación de cada hito se conserva en las ramas de versión: [`VX_v.1`](../../tree/VX_v.1), [`VX_v.2`](../../tree/VX_v.2) y [`VX_v.3`](../../tree/VX_v.3).
-
-> **Stack:** Laravel 12 · PHP 8.2 · Tailwind CSS 4 · Vite 7 · MySQL/MariaDB · Gemini · Licencia MIT
 
 ---
 
@@ -83,15 +93,19 @@ La interfaz es **responsive** (navbar de módulos colapsable en móvil, menú de
 
 ### Backend
 
-- PHP `^8.2`
-- Laravel `^12.0`
-- MySQL/MariaDB (o compatible)
+| | Tecnología | Función |
+|:---:|---|---|
+| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/php/php-original.svg" width="32" alt="PHP" /> | **PHP** `^8.2` | Lenguaje del backend |
+| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/laravel/laravel-original.svg" width="32" alt="Laravel" /> | **Laravel** `^12.0` | Framework de aplicación |
+| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg" width="32" alt="MySQL" /> | **MySQL / MariaDB** | Base de datos relacional (o compatible) |
 
 ### Frontend
 
-- Vite `^7`
-- Tailwind CSS `^4`
-- Axios
+| | Tecnología | Función |
+|:---:|---|---|
+| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vitejs/vitejs-original.svg" width="32" alt="Vite" /> | **Vite** `^7` | Bundler y servidor de desarrollo |
+| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg" width="32" alt="Tailwind CSS" /> | **Tailwind CSS** `^4` | Sistema de estilos |
+| <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/axios/axios-plain.svg" width="32" alt="Axios" /> | **Axios** | Cliente HTTP |
 
 ### Paquetes clave
 
