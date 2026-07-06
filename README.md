@@ -145,7 +145,7 @@ El proyecto sigue una arquitectura en capas sobre Laravel, reforzada con reposit
 En `AppServiceProvider` se registran los *bindings* de repositorios y las políticas con `Gate::policy`.
 
 <p align="center">
-  <img src="docs/screenshots/arquitectura-logica.png" alt="Diagrama de arquitectura lógica de Vexis" width="720" />
+  <img src="docs/screenshots/arquitectura-logica.png" alt="Diagrama de arquitectura lógica de Vexis" width="600" />
 </p>
 
 ---
@@ -248,7 +248,7 @@ deploy/
 Configura `deploy/deploy.conf` (subdominio y token de DuckDNS, o `APP_DOMAIN`) y sigue la guía paso a paso en **`deploy/GUIA-DESPLIEGUE.md`**.
 
 <p align="center">
-  <img src="docs/screenshots/infraestructura-fisica.png" alt="Diagrama de infraestructura física de Vexis" width="720" />
+  <img src="docs/screenshots/infraestructura-fisica.png" alt="Diagrama de infraestructura física de Vexis" width="600" />
 </p>
 
 ---
@@ -314,7 +314,7 @@ php artisan optimize:clear   # limpiar cachés
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/pipeline-verificacion.png" alt="Pipeline de verificación: tests, análisis estático, estilo y Lighthouse" width="720" />
+  <img src="docs/screenshots/pipeline-verificacion.png" alt="Pipeline de verificación: tests, análisis estático, estilo y Lighthouse" width="600" />
 </p>
 
 ---
