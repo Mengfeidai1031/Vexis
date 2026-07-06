@@ -16,9 +16,30 @@
   <img src="https://img.shields.io/badge/Licencia-MIT-22C55E?style=for-the-badge" alt="Licencia MIT" />
 </p>
 
+<p align="center">
+  <a href="https://vexis-app.duckdns.org/"><img src="https://img.shields.io/badge/Demo%20en%20producción-vexis--app.duckdns.org-1f7a4d?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Demo en producción" /></a>
+</p>
+
 Vexis es una aplicación web interna construida con **Laravel 12** para la gestión completa de un grupo de concesionarios: administración y estructura organizativa, área comercial y fiscal (ofertas, ventas, facturas y Verifactu), recambios, talleres, incidencias, portal de cliente con **IA (Gemini)** y analítica de negocio (**DatAxis**).
 
 Esta rama `main` representa el **estado final y de producción** del proyecto. La documentación de cada hito se conserva en las ramas de versión: [`VX_v.1`](../../tree/VX_v.1), [`VX_v.2`](../../tree/VX_v.2) y [`VX_v.3`](../../tree/VX_v.3).
+
+---
+
+## Vista previa
+
+<table>
+  <tr>
+    <td width="33%"><img src="docs/screenshots/vexis-welcome.png" alt="Pantalla de bienvenida" /><p align="center"><sub>Bienvenida</sub></p></td>
+    <td width="33%"><img src="docs/screenshots/vexis-dashboard.png" alt="Dashboard de módulos" /><p align="center"><sub>Dashboard de módulos</sub></p></td>
+    <td width="33%"><img src="docs/screenshots/modulo-comercial-dark.png" alt="Módulo comercial en modo oscuro" /><p align="center"><sub>Módulo comercial (modo oscuro)</sub></p></td>
+  </tr>
+  <tr>
+    <td width="33%"><img src="docs/screenshots/chatbot-gemini.png" alt="Chatbot del portal de cliente" /><p align="center"><sub>Chatbot con Gemini</sub></p></td>
+    <td width="33%"><img src="docs/screenshots/control-ia.png" alt="Panel de Control IA" /><p align="center"><sub>Panel de Control IA</sub></p></td>
+    <td width="33%"><img src="docs/screenshots/verifactu-cadena-hashes.png" alt="Cadena de hashes de Verifactu" /><p align="center"><sub>Cadena de hashes Verifactu</sub></p></td>
+  </tr>
+</table>
 
 ---
 
@@ -138,6 +159,10 @@ El proyecto sigue una arquitectura en capas sobre Laravel, reforzada con reposit
 - `routes/web.php` — rutas de aplicación
 
 En `AppServiceProvider` se registran los *bindings* de repositorios y las políticas con `Gate::policy`.
+
+<p align="center">
+  <img src="docs/screenshots/arquitectura-mermaid.png" alt="Diagrama de arquitectura de Vexis" width="720" />
+</p>
 
 ---
 
@@ -295,6 +320,10 @@ vendor/bin/pint              # estilo de código
 npm run a11y                 # auditoría de accesibilidad (Lighthouse)
 php artisan optimize:clear   # limpiar cachés
 ```
+
+<p align="center">
+  <img src="docs/screenshots/lighthouse-resultados.png" alt="Resultados de Lighthouse: 99 Performance, 96 Accesibilidad, 100 Buenas prácticas, 92 SEO" width="600" />
+</p>
 
 ---
 
