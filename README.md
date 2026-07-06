@@ -344,7 +344,7 @@ php artisan optimize:clear   # limpiar cachés
     <td width="33%"><img src="docs/screenshots/verifactu-cadena-hashes.png" alt="Cadena de hashes de Verifactu" /><p align="center"><sub>Cadena de hashes Verifactu</sub></p></td>
   </tr>
   <tr>
-    <td width="33%"><img src="docs/screenshots/loading-vexis.png" alt="Animación de carga" /><p align="center"><sub>Animación de carga</sub></p></td>
+    <td width="33%" align="center"><img src="docs/screenshots/loading-vexis.png" alt="Animación de carga" width="150" /><p align="center"><sub>Animación de carga</sub></p></td>
     <td width="33%"><img src="docs/screenshots/dataxis-completo.png" alt="Dataxis — Ventas" /><p align="center"><sub>Dataxis — Ventas</sub></p></td>
     <td width="33%"><img src="docs/screenshots/configurador-paso2.png" alt="Configurador de vehículos, Renault Arkana" /><p align="center"><sub>Configurador de vehículos</sub></p></td>
   </tr>
