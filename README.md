@@ -26,23 +26,6 @@ Esta rama `main` representa el **estado final y de producción** del proyecto. L
 
 ---
 
-## Vista previa
-
-<table>
-  <tr>
-    <td width="33%"><img src="docs/screenshots/vexis-welcome.png" alt="Pantalla de bienvenida" /><p align="center"><sub>Bienvenida</sub></p></td>
-    <td width="33%"><img src="docs/screenshots/vexis-dashboard.png" alt="Dashboard de módulos" /><p align="center"><sub>Dashboard de módulos</sub></p></td>
-    <td width="33%"><img src="docs/screenshots/modulo-comercial-dark.png" alt="Módulo comercial en modo oscuro" /><p align="center"><sub>Módulo comercial (modo oscuro)</sub></p></td>
-  </tr>
-  <tr>
-    <td width="33%"><img src="docs/screenshots/chatbot-gemini.png" alt="Chatbot del portal de cliente" /><p align="center"><sub>Chatbot con Gemini</sub></p></td>
-    <td width="33%"><img src="docs/screenshots/control-ia.png" alt="Panel de Control IA" /><p align="center"><sub>Panel de Control IA</sub></p></td>
-    <td width="33%"><img src="docs/screenshots/verifactu-cadena-hashes.png" alt="Cadena de hashes de Verifactu" /><p align="center"><sub>Cadena de hashes Verifactu</sub></p></td>
-  </tr>
-</table>
-
----
-
 ## Tabla de contenidos
 
 1. [Visión general](#1-visión-general)
@@ -61,7 +44,8 @@ Esta rama `main` representa el **estado final y de producción** del proyecto. L
 14. [Base de datos](#14-base-de-datos)
 15. [Calidad y pruebas](#15-calidad-y-pruebas)
 16. [Historial de versiones](#16-historial-de-versiones)
-17. [Licencia](#17-licencia)
+17. [Vista previa](#17-vista-previa)
+18. [Licencia](#18-licencia)
 
 ---
 
@@ -161,7 +145,7 @@ El proyecto sigue una arquitectura en capas sobre Laravel, reforzada con reposit
 En `AppServiceProvider` se registran los *bindings* de repositorios y las políticas con `Gate::policy`.
 
 <p align="center">
-  <img src="docs/screenshots/arquitectura-mermaid.png" alt="Diagrama de arquitectura de Vexis" width="720" />
+  <img src="docs/screenshots/arquitectura-logica.png" alt="Diagrama de arquitectura lógica de Vexis" width="720" />
 </p>
 
 ---
@@ -263,6 +247,10 @@ deploy/
 
 Configura `deploy/deploy.conf` (subdominio y token de DuckDNS, o `APP_DOMAIN`) y sigue la guía paso a paso en **`deploy/GUIA-DESPLIEGUE.md`**.
 
+<p align="center">
+  <img src="docs/screenshots/infraestructura-fisica.png" alt="Diagrama de infraestructura física de Vexis" width="720" />
+</p>
+
 ---
 
 ## 12) Datos de demostración
@@ -325,6 +313,10 @@ php artisan optimize:clear   # limpiar cachés
   <img src="docs/screenshots/lighthouse-resultados.png" alt="Resultados de Lighthouse: 99 Performance, 96 Accesibilidad, 100 Buenas prácticas, 92 SEO" width="600" />
 </p>
 
+<p align="center">
+  <img src="docs/screenshots/pipeline-verificacion.png" alt="Pipeline de verificación: tests, análisis estático, estilo y Lighthouse" width="720" />
+</p>
+
 ---
 
 ## 16) Historial de versiones
@@ -338,6 +330,28 @@ php artisan optimize:clear   # limpiar cachés
 
 ---
 
-## 17) Licencia
+## 17) Vista previa
+
+<table>
+  <tr>
+    <td width="33%"><img src="docs/screenshots/vexis-welcome.png" alt="Pantalla de bienvenida" /><p align="center"><sub>Bienvenida</sub></p></td>
+    <td width="33%"><img src="docs/screenshots/dashboard-navbar.png" alt="Dashboard de módulos" /><p align="center"><sub>Dashboard de módulos</sub></p></td>
+    <td width="33%"><img src="docs/screenshots/modulo-comercial-dark.png" alt="Módulo comercial en modo oscuro" /><p align="center"><sub>Módulo comercial (modo oscuro)</sub></p></td>
+  </tr>
+  <tr>
+    <td width="33%"><img src="docs/screenshots/chatbot-gemini.png" alt="Chatbot del portal de cliente" /><p align="center"><sub>Chatbot con Gemini</sub></p></td>
+    <td width="33%"><img src="docs/screenshots/control-ia.png" alt="Panel de Control IA" /><p align="center"><sub>Panel de Control IA</sub></p></td>
+    <td width="33%"><img src="docs/screenshots/verifactu-cadena-hashes.png" alt="Cadena de hashes de Verifactu" /><p align="center"><sub>Cadena de hashes Verifactu</sub></p></td>
+  </tr>
+  <tr>
+    <td width="33%"><img src="docs/screenshots/loading-vexis.png" alt="Animación de carga" /><p align="center"><sub>Animación de carga</sub></p></td>
+    <td width="33%"><img src="docs/screenshots/dataxis-completo.png" alt="Dataxis — Ventas" /><p align="center"><sub>Dataxis — Ventas</sub></p></td>
+    <td width="33%"><img src="docs/screenshots/configurador-paso2.png" alt="Configurador de vehículos, Renault Arkana" /><p align="center"><sub>Configurador de vehículos</sub></p></td>
+  </tr>
+</table>
+
+---
+
+## 18) Licencia
 
 Distribuido bajo licencia **MIT** (según `composer.json`).
