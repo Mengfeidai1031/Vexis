@@ -17,6 +17,10 @@
 </p>
 
 <p align="center">
+  <a href="../../actions/workflows/ci.yml"><img src="../../actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+</p>
+
+<p align="center">
   <a href="https://vexis-app.duckdns.org/"><img src="https://img.shields.io/badge/Demo%20en%20producción-vexis--app.duckdns.org-1f7a4d?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Demo en producción" /></a>
 </p>
 
@@ -308,6 +312,8 @@ vendor/bin/pint              # estilo de código
 npm run a11y                 # auditoría de accesibilidad (Lighthouse)
 php artisan optimize:clear   # limpiar cachés
 ```
+
+**Integración continua**: un workflow de **GitHub Actions** (`.github/workflows/ci.yml`) ejecuta en cada push y pull request a `main` los tests (PHPUnit contra MySQL), el análisis estático (Larastan) y la comprobación de estilo (Pint), garantizando que ningún cambio rompa la build o degrade la calidad del código.
 
 <p align="center">
   <img src="docs/screenshots/lighthouse-resultados.png" alt="Resultados de Lighthouse: 99 Performance, 96 Accesibilidad, 100 Buenas prácticas, 92 SEO" width="600" />
