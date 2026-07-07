@@ -105,4 +105,5 @@ jobs:
           DB_DATABASE: vexis_test_db
           DB_USERNAME: root
           DB_PASSWORD:
+          GEMINI_API_KEY: ci-fake-key-for-http-fake
         run: php artisan test

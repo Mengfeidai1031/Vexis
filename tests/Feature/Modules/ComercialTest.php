@@ -125,6 +125,30 @@ class ComercialTest extends TestCase
     public function test_factura_pdf_generation(): void
     {
         $factura = Factura::first();
+
+        if (! $factura) {
+            $vehiculo = Vehiculo::where('estado', 'disponible')->first();
+            $cliente = Cliente::first();
+            $empresa = Empresa::first();
+            $centro = Centro::where('empresa_id', $empresa->id)->first();
+
+            $venta = Venta::create([
+                'codigo_venta' => 'TEST-PDF-'.uniqid(),
+                'vehiculo_id' => $vehiculo->id,
+                'cliente_id' => $cliente->id,
+                'empresa_id' => $empresa->id,
+                'centro_id' => $centro->id,
+                'vendedor_id' => auth()->id(),
+                'fecha_venta' => now(),
+                'precio_venta' => 12000, 'precio_final' => 12000,
+                'subtotal' => 12000, 'impuesto_nombre' => 'IGIC',
+                'impuesto_porcentaje' => 7, 'impuesto_importe' => 840,
+                'total' => 12840, 'estado' => 'reservada', 'forma_pago' => 'contado',
+            ]);
+
+            $factura = app(FacturaCreationService::class)->crearDesdeVenta($venta)['factura'];
+        }
+
         $resp = $this->get("/facturas/{$factura->id}/generate-pdf");
         $resp->assertOk();
         $this->assertEquals('application/pdf', $resp->headers->get('Content-Type'));
